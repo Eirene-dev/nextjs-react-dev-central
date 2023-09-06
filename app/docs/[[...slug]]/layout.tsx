@@ -1,27 +1,27 @@
-'use client';
+'use client'
 
-import { docsConfig } from '@/config/docs';
-import { DocsSidebarNav } from '@/components/sidebar-nav';
-import { useState } from 'react';
+import { docsConfig } from '@/config/docs'
+import { DocsSidebarNav } from '@/components/sidebar-nav'
+import { useState } from 'react'
 
 interface DocsLayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export default function DocsLayout({ children }: DocsLayoutProps) {
-  const [navShow, setNavShow] = useState(false);
+  const [navShow, setNavShow] = useState(false)
 
   const onToggleNav = () => {
     setNavShow((status) => {
       if (status) {
-        document.body.style.overflow = 'auto';
+        document.body.style.overflow = 'auto'
       } else {
         // Prevent scrolling
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden'
       }
-      return !status;
-    });
-  };
+      return !status
+    })
+  }
 
   return (
     <div className="flex-1 md:grid md:grid-cols-[190px_1fr] md:gap-6 lg:grid-cols-[200px_1fr] lg:gap-10">
@@ -40,17 +40,5 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
       </aside>
       {children}
     </div>
-  );
+  )
 }
-
-
-// export default function DocsLayout({ children }: DocsLayoutProps) {
-//   return (
-//     <div className="flex-1 md:grid md:grid-cols-[190px_1fr] md:gap-6 lg:grid-cols-[200px_1fr] lg:gap-10">
-//       <aside className="fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-r py-6 pr-2 md:sticky md:block lg:py-10">
-//         <DocsSidebarNav items={docsConfig.sidebarNav} />
-//       </aside>
-//       {children}
-//     </div>
-//   )
-// }
