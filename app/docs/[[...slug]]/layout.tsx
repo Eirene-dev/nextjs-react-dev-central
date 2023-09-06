@@ -17,7 +17,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
         document.body.style.overflow = 'auto'
       } else {
         // Prevent scrolling
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = 'auto'
       }
       return !status
     })
