@@ -30,6 +30,10 @@ const computedFields: ComputedFields = {
     type: 'string',
     resolve: (doc) => doc._raw.flattenedPath.replace(/^.+?(\/)/, ''),
   },
+  slugAsParams: {
+    type: "string",
+    resolve: (doc) => doc._raw.flattenedPath.split("/").slice(1).join("/"),
+  },
   path: {
     type: 'string',
     resolve: (doc) => doc._raw.flattenedPath,
@@ -73,6 +77,28 @@ function createSearchIndex(allBlogs) {
     console.log('Local search index generated...')
   }
 }
+
+export const Doc = defineDocumentType(() => ({
+  name: "Doc",
+  filePathPattern: `docs/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    description: {
+      type: "string",
+    },
+    published: {
+      type: "boolean",
+      default: true,
+    },
+    date: { type: 'date' },
+    summary: { type: 'string' },
+  },
+  computedFields,
+}))
 
 export const Blog = defineDocumentType(() => ({
   name: 'Blog',
@@ -130,7 +156,7 @@ export const Authors = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors],
+  documentTypes: [Blog, Authors, Doc],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
@@ -150,8 +176,10 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs } = await importData()
+    const { allBlogs, allDocs } = await importData()
     createTagCount(allBlogs)
+    
+    // createSearchIndex(allDocs)
     createSearchIndex(allBlogs)
   },
 })

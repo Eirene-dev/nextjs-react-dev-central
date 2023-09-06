@@ -1,0 +1,1777 @@
+---
+title: "UI 구축하기"
+description: 이 튜토리얼에서는 작은 틱택토 게임을 만들어 볼 것입니다. 
+---
+
+React는 사용자 인터페이스(UI)를 렌더링하기 위한 자바스크립트 라이브러리입니다. UI는 버튼, 텍스트, 이미지와 같은 작은 단위로 구성됩니다. React를 사용하면 이러한 작은 단위를 재사용 가능하고 중첩 가능한 컴포넌트로 조합할 수 있습니다. 웹사이트부터 휴대폰 앱까지, 화면에 표시되는 모든 것은 컴포넌트로 분해할 수 있습니다. 이 장에서는 React 컴포넌트를 생성하고, 사용자 정의하며, 조건부로 표시하는 방법에 대해 알아보게 될 것입니다.
+
+## 첫 번째 컴포넌트
+
+컴포넌트는 React의 핵심 개념 중 하나입니다. 컴포넌트는 사용자 인터페이스(UI)를 구축하는 데 사용되며, React 여행을 시작하는 이상적인 장소입니다!
+
+### 컴포넌트: UI 구축 블록
+
+웹에서는 HTML을 사용하여 `<h1>`과 `<li>`와 같은 태그를 이용해 풍부한 구조화된 문서를 생성할 수 있습니다:
+
+```html
+<article>
+  <h1>My First Component</h1>
+  <ol>
+    <li>Components: UI Building Blocks</li>
+    <li>Defining a Component</li>
+    <li>Using a Component</li>
+  </ol>
+</article>
+```
+
+이 마크업은 이 `<article> `문서, `<h1>` 제목, 그리고 목차를 나타내는 (요약된) 순서 목록인 `<ol>`을 나타냅니다. 이와 같은 마크업은 CSS를 통해 스타일을 지정하고 JavaScript를 통해 상호 작용성을 부여하여 웹 상에서 보이는 모든 사이드바, 아바타, 모달, 드롭다운과 같은 UI의 기본 요소가 됩니다.
+
+React를 사용하면 마크업, CSS, JavaScript를 결합하여 사용자 정의 "컴포넌트"인 **재사용 가능한 UI 요소**를 만들 수 있습니다. 위에서 보았던 목차 코드는 각 페이지에서 렌더링할 수 있는 `<TableOfContents />` 컴포넌트로 변환될 수 있습니다. 내부적으로는 여전히 `<article>`, `<h1> `등과 같은 동일한 HTML 태그를 사용합니다.
+
+HTML 태그와 마찬가지로 컴포넌트를 조합, 순서화, 중첩하여 전체 페이지를 디자인할 수 있습니다. 예를 들어, 현재 읽고 있는 문서 페이지는 다음과 같은 React 컴포넌트로 구성됩니다:
+
+```html
+<PageLayout>
+  <NavigationHeader>
+    <SearchBar />
+    <Link to="/docs">Docs</Link>
+  </NavigationHeader>
+  <Sidebar />
+  <PageContent>
+    <TableOfContents />
+    <DocumentationText />
+  </PageContent>
+</PageLayout>
+```
+
+프로젝트가 성장함에 따라 많은 디자인 요소가 이미 작성한 컴포넌트를 재사용하여 구성될 수 있다는 사실을 알게될 것입니다. 위의 목차는 `<TableOfContents />`를 사용하여 어떤 화면에도 추가할 수 있습니다! 또한 [Chakra UI](https://chakra-ui.com/)나 [Material UI](https://material-ui.com/)와 같은 React 오픈 소스 커뮤니티에서 공유하는 수천 개의 컴포넌트를 사용하여 프로젝트를 시작할 수도 있습니다.
+
+### 컴포넌트 정의
+
+전통적으로 웹 페이지를 생성할 때, 웹 개발자는 콘텐츠를 마크업한 후 일부 JavaScript를 추가하여 상호 작용성을 부여했습니다. 이는 웹에서 상호 작용이 필요한 경우에는 훌륭한 방법이었습니다. 그러나 이제는 많은 사이트와 모든 앱에서 상호 작용이 필요한 것으로 간주됩니다. React는 여전히 동일한 기술을 사용하면서 상호 작용성을 우선시하는데, **React 컴포넌트는 마크업을 넣을 수 있는 JavaScript 함수입니다.** 이렇게 보입니다 (아래 예제를 편집할 수 있습니다):
+
+<iframe 
+  src="https://codesandbox.io/embed/loving-hill-xocbip?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="loving-hill-xocbip"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+그리고 컴포넌트를 작성하는 방법은 다음과 같습니다:
+
+#### 단계 1: 컴포넌트 내보내기
+
+`export default` 접두사는 React에 특정된 것이 아닌 [표준 JavaScript 구문](https://developer.mozilla.org/docs/web/javascript/reference/statements/export)입니다. 이를 사용하면 파일에서 주요 함수를 표시하여 다른 파일에서 가져올 수 있습니다. (컴포넌트 가져오기에 대해서는 [컴포넌트 가져오기와 내보내기](https://react.dev/learn/importing-and-exporting-components)에서 자세히 알아보세요!)
+
+#### 단계 2: 함수 정의
+
+함수 `Profile() { }`를 사용하여 Profile이라는 이름의 JavaScript 함수를 정의합니다.
+
+> 주의
+React 컴포넌트는 일반적인 JavaScript 함수입니다. 그러나 **이름은 반드시 대문자로 시작**해야 동작합니다!
+
+#### 단계 3: 마크업 추가
+
+이 컴포넌트는 src와 alt 속성이 있는 `<img />` 태그를 반환합니다. `<img />`는 HTML과 같이 작성되었지만 실제로는 JavaScript입니다! 이 구문은 [JSX](https://react.dev/learn/writing-markup-with-jsx)라고 하는 것으로, JavaScript 내에서 마크업을 포함할 수 있도록 해줍니다.
+
+return 문은 한 줄로 작성될 수도 있습니다:
+
+```jsx
+return <img src="https://i.imgur.com/MK3eW3As.jpg" alt="Katherine Johnson" />;
+```
+
+그러나 마크업이 return 키워드와 동일한 줄에 없는 경우, 괄호로 묶어야 합니다:
+
+```jsx
+return (
+  <div>
+    <img src="https://i.imgur.com/MK3eW
+
+3As.jpg" alt="Katherine Johnson" />
+  </div>
+);
+```
+
+> 주의
+괄호 없이 return 이후의 코드는 [무시되게 됩니다](https://stackoverflow.com/questions/2846283/what-are-the-rules-for-javascripts-automatic-semicolon-insertion-asi)!
+
+### 컴포넌트 사용하기
+
+이제 Profile 컴포넌트를 정의했으므로 다른 컴포넌트 내에서 중첩시킬 수 있습니다. 예를 들어, 여러 개의 Profile 컴포넌트를 사용하는 Gallery 컴포넌트를 내보낼 수 있습니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/affectionate-tdd-tefyif?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="affectionate-tdd-tefyif"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+### 브라우저에서 보이는 내용
+
+대소문자의 차이에 주의하세요:
+
+- `<section>`은 소문자로 시작하므로 React는 HTML 태그를 참조한다는 것을 알 수 있습니다.
+- `<Profile />`은 대문자로 시작하므로 React는 Profile이라는 컴포넌트를 사용하려는 것을 알 수 있습니다.
+
+그리고 Profile은 더 많은 HTML을 포함하고 있습니다: `<img />`. 최종적으로 브라우저에서는 다음과 같이 표시됩니다:
+
+```html
+<section>
+  <h1>Amazing scientists</h1>
+  <img src="https://i.imgur.com/MK3eW3As.jpg" alt="Katherine Johnson" />
+  <img src="https://i.imgur.com/MK3eW3As.jpg" alt="Katherine Johnson" />
+  <img src="https://i.imgur.com/MK3eW3As.jpg" alt="Katherine Johnson" />
+</section>
+```
+
+### 컴포넌트 중첩과 구성
+
+컴포넌트는 일반적인 JavaScript 함수이므로 같은 파일에 여러 컴포넌트를 유지할 수 있습니다. 이는 컴포넌트가 상대적으로 작거나 서로 밀접한 관련이 있을 때 편리합니다. 이 파일이 혼잡해지면 Profile을 별도의 파일로 이동할 수 있습니다. 곧 [가져오기 페이지](https://react.dev/learn/importing-and-exporting-components)에서 이에 대해 자세히 알게될 것입니다.
+
+Profile 컴포넌트가 Gallery 내에서 렌더링되기 때문에 Gallery는 각각 "자식"으로 Profile을 렌더링하는 **부모 컴포넌트**입니다. 이것이 React의 매력 중 일부입니다. 컴포넌트를 한 번 정의한 다음 원하는 만큼의 장소와 횟수에 따라 사용할 수 있습니다.
+
+### 컴포넌트 중첩 시 주의 사항
+
+컴포넌트는 다른 컴포넌트를 렌더링할 수 있지만 **절대로 그들의 정의를 중첩해서 사용해서는 안 됩니다:**
+
+```jsx
+export default function Gallery() {
+  // 🔴 절대로 다른 컴포넌트 내에서 컴포넌트를 정의하지 마세요!
+  function Profile() {
+    // ...
+  }
+  // ...
+}
+```
+
+위의 코드 조각은 [매우 느리고 버그를 일으킵니다.](https://react.dev/learn/preserving-and-resetting-state#different-components-at-the-same-position-reset-state) 대신 모든 컴포넌트를 최상위 수준에서 정의하세요:
+
+```jsx
+export default function Gallery() {
+  // ...
+}
+
+// ✅ 최상위 수준에서 컴포넌트를 선언하세요
+function Profile() {
+  // ...
+}
+```
+
+자식 컴포넌트가 부모로부터 데이터를 필요로 할 때는 정의를 중첩하는 대신 [프롭스(props)를 통해 전달하세요.](https://react.dev/learn/passing-props-to-a-component)
+
+<Callout>
+**컴포넌트가 전부 입니다.**
+
+React 애플리케이션은 "루트" 컴포넌트에서 시작합니다. 보통 새 프로젝트를 시작할 때 자동으로 생성됩니다. 예를 들어, [CodeSandbox](https://codesandbox.io/)나 [Create React App](https://create-react-app.dev/)을 사용한다면 루트 컴포넌트는 src/App.js에 정의됩니다. [Next.js](https://nextjs.org/) 프레임워크를 사용한다면 루트 컴포넌트는 pages/index.js에 정의됩니다. 이러한 예에서는 루트 컴포넌트를 내보내고 있습니다.
+
+대부분의 React 앱은 컴포넌트를 최하위까지 사용합니다. 이는 버튼과 같은 재사용 가능한 구성 요소뿐만 아니라 사이드바, 목록, 최종적으로는 완전한 페이지와 같은 큰 구성 요소에도 컴포넌트를 사용한다는 것을 의미합니다! 컴포넌트는 UI 코드와 마크업을 구성하기에 편리한 방법이며, 일부는 한 번만 사용되는 경우도 있습니다.
+
+[React 기반 프레임워크](https://react.dev/learn/start-a-new-react-project)는 이를 한 단계 더 나아가고 있습니다. 빈 HTML 파일을 사용하여 React에게 페이지 관리를 JavaScript로 맡기는 대신, 이들 프레임워크는 React 컴포넌트에서 자동으로 HTML을 생성합니다. 이를 통해 JavaScript 코드가 로드되기 전에 앱이 일부 내용을 표시할 수 있습니다.
+
+그럼에도 불구하고, 많은 웹사이트는 [기존 HTML 페이지에 상호작용성을 추가하기 위해 React만 사용합니다.](https://react.dev/learn/add-react-to-an-existing-project#using-react-for-a-part-of-your-existing-page) 전체 페이지를 위한 단일 루트 컴포넌트 대신 여러 개의 루트 컴포넌트를 가지고 있습니다. 필요에 따라 React를 많이 또는 적게 사용할 수 있습니다.
+</Callout>
+
+
+### 요약
+
+React에 대한 첫 번째 접선을 경험했습니다! 몇 가지 핵심 포인트를 다시 확인해보겠습니다.
+
+- React를 사용하면 앱에 **재사용 가능한 UI 요소인 컴포넌트**를 생성할 수 있습니다.
+- React 앱에서 UI의 모든 부분은 컴포넌트입니다.
+- React 컴포넌트는 일반적인 JavaScript 함수입니다. 다만,
+    1. 이름은 항상 대문자로 시작해야 합니다.
+    2. JSX 마크업을 반환합니다.
+
+## 컴포넌트 가져오기 및 내보내기
+
+
+
+컴포넌트의 마법은 재사용성에 있습니다. 여러 컴포넌트로 구성된 컴포넌트를 생성할 수 있습니다. 그러나 컴포넌트를 점점 중첩하면서 파일을 여러 개로 분리하는 것이 합리적일 때가 많습니다. 이렇게 하면 파일을 쉽게 스캔하고 다른 위치에서 컴포넌트를 재사용할 수 있습니다.
+
+### 루트 컴포넌트 파일
+
+[Your First Component](https://react.dev/learn/your-first-component)에서 Profile 컴포넌트와 그를 렌더링하는 Gallery 컴포넌트를 만들었습니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/affectionate-tdd-tefyif?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="affectionate-tdd-tefyif"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+현재 이들은 이 예시에서 App.js라는 **루트 컴포넌트 파일**에 위치해 있습니다. [Create React App](https://create-react-app.dev/)에서는 앱이 src/App.js에 있습니다. 설정에 따라 루트 컴포넌트가 다른 파일에 있을 수도 있습니다. Next.js와 같은 파일 기반 라우팅을 사용하는 프레임워크를 사용하는 경우, 루트 컴포넌트는 각 페이지마다 다를 수 있습니다.
+
+### 컴포넌트 내보내기와 가져오기
+
+앞으로 랜딩 화면을 변경하여 과학 책 목록을 넣거나 모든 프로필을 다른 곳에 배치하고 싶다면 어떻게 해야 할까요? Gallery와 Profile을 루트 컴포넌트 파일에서 분리하는 것이 합리적입니다. 이렇게 하면 모듈화되어 다른 파일에서 재사용할 수 있게 됩니다. 컴포넌트를 이동하는 방법은 다음과 같습니다.
+
+1. 컴포넌트를 넣을 새로운 JS 파일을 만듭니다.
+2. 파일에서 함수 컴포넌트를 **내보냅니다** (default 또는 named exports 중 하나를 사용하여).
+3. 컴포넌트를 사용할 파일에서 해당 컴포넌트를 **가져옵니다** (default 또는 named exports에 해당하는 가져오기 기술을 사용하여).
+
+여기서 Profile과 Gallery가 App.js에서 Gallery.js로 이동되었습니다. 이제 App.js에서 Gallery를 Gallery.js에서 가져오도록 변경할 수 있습니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/youthful-worker-lv71nq?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="youthful-worker-lv71nq"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+위의 예시에서 이제 두 개의 컴포넌트 파일로 분할되었음을 알 수 있습니다.
+
+1. Gallery.js:
+   - 동일한 파일 내에서만 사용되며 내보내지 않는 **Profile** 컴포넌트를 정의합니다.
+   - **default export**로 Gallery 컴포넌트를 내보냅니다.
+2. App.js:
+   - Gallery.js로부터 **default import**로 Gallery를 가져옵니다.
+   - 루트 컴포넌트인 App 컴포넌트를 **default export**로 내보냅니다.
+
+> 참고
+.jsx 파일 확장자를 생략한 파일을 마주칠 수도 있습니다. 예를 들면 다음과 같습니다:
+```jsx
+import Gallery from './Gallery';
+```
+React에서는 './Gallery.js' 또는 './Gallery' 둘 다 작동하지만, 전자는 네이티브 ES 모듈 동작에 더 가깝습니다.
+
+<Callout>
+**기본 내보내기 vs 명명된 내보내기**
+
+JavaScript에서 값들을 내보내는 데에는 두 가지 기본적인 방법이 있습니다: 기본 내보내기(default exports)와 명명된 내보내기(named exports). 지금까지의 예제에서는 기본 내보내기만 사용했습니다. 하지만 동일한 파일에서 하나 이상의 방법을 함께 사용할 수도 있습니다. **파일은 기본 내보내기를 하나만 가질 수 있지만, 명명된 내보내기는 원하는 만큼 가질 수 있습니다.**
+
+![내보내기 구문과 가져오기 구문의 비교](https://react.dev/images/docs/illustrations/i_import-export.svg)
+
+컴포넌트를 내보내는 방식에 따라 가져오는 방식도 달라집니다. 명명된 내보내기와 동일한 방식으로 기본 내보내기를 가져오려고 하면 오류가 발생합니다! 아래의 차트를 통해 구분할 수 있습니다:
+
+구문|내보내기 구문|가져오기 구문
+---|---|---
+기본 내보내기|`export default function Button() {}`|`import Button from './Button.js';`
+명명된 내보내기|`export function Button() {}`|`import { Button } from './Button.js';`
+
+기본 가져오기를 작성할 때에는 import 뒤에 어떤 이름을 사용해도 상관 없습니다. 예를 들어, `import Banana from './Button.js'`와 같이 작성해도 동일한 기본 내보내기가 제공됩니다. 반면, 명명된 가져오기는 이름이 양쪽에서 일치해야 합니다. 이것이 명명된 가져오기라고 불리는 이유입니다!
+
+**하나의 파일에서 하나의 컴포넌트만 내보낼 경우에는 기본 내보내기를 사용하고, 여러 컴포넌트와 값들을 내보낼 경우에는 명명된 내보내기를 사용하는 경향이 있습니다.** 어떤 코딩 스타일을 선호하든지, 항상 컴포넌트 함수와 해당 파일에 의미있는 이름을 부여하는 것이 좋습니다. `export default () => {}`와 같이 이름이 없는 컴포넌트는 디버깅을 어렵게 만들기 때문에 권장되지 않습니다.
+</Callout>
+
+
+## 동일한 파일에서 여러 컴포넌트 내보내고 가져오기
+
+갤러리 대신 하나의 프로필만 표시하려면 어떻게 해야 할까요? Profile 컴포넌트도 내보낼 수 있습니다. 그러나 Gallery.js에는 이미 `default export`가 있고 두 개의 `default export`는 가질 수 없습니다. 새로운 파일에 default export를 생성하거나 Profile에 대한 `named export`를 추가할 수 있습니다. **파일에는 하나의 `default export`만 가질 수 있지만 여러 개의 `named export`가 있을 수 있습니다!**
+
+> 참고  
+> default와 named export 간의 잠재적인 혼동을 줄이기 위해 일부 팀은 하나의 스타일(`default` 또는 `named`)에만 따르거나 하나의 파일에 혼합하지 않도록 선택합니다. 가장 잘 맞는 방식을 사용하십시오!
+
+먼저, `named export`(기본 키워드 없이)를 사용하여 Gallery.js에서 Profile을 내보냅니다.
+
+```jsx
+export function Profile() {
+  // ...
+}
+```
+
+그런 다음, 중괄호를 사용하여 Gallery.js에서 App.js로 Profile을 `named import`로 가져옵니다.
+
+```jsx
+import { Profile } from './Gallery.js';
+```
+
+마지막으로, App 컴포넌트에서 `<Profile />`을 렌더링합니다.
+
+```jsx
+export default function App() {
+  return <Profile />;
+}
+```
+
+이제 Gallery.js에는 두 개의 내보내기가 있습니다: Profile을 `named export`로, Gallery를 `default export`로 내보냅니다. App.js에서 둘 모두를 가져옵니다. 이 예시에서 `<Profile />`을 `<Gallery />`로 편집하고 다시 시도해보세요.
+
+<iframe 
+  src="https://codesandbox.io/embed/laughing-elbakyan-il8s2f?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="laughing-elbakyan-il8s2f"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+이제 `default`와 `named export`를 혼합하여 사용하고 있습니다.
+
+- Gallery.js:
+    - **Profile** 컴포넌트를 **Profile**이라는 **named export**로 내보냅니다.
+    - Gallery 컴포넌트를 **default export**로 내보냅니다.
+- App.js:
+    - Gallery.js에서 **named import**로 **Profile**을 **Profile**이라는 **named import**으로 가져옵니다.
+    - Gallery.js에서 **default import**로 Gallery를 가져옵니다.
+    - 루트 컴포넌트인 App 컴포넌트를 **default export**로 내보냅니다.
+
+### 요약
+
+이 페이지에서 다음을 배웠습니다.
+
+- 루트 컴포넌트 파일이 무엇인지
+- 컴포넌트를 가져오고 내보내는 방법
+- `default` 및 `named import` 및 `export`를 언제 어떻게 사용하는지
+- 동일한 파일에서 여러 컴포넌트를 내보내는 방법
+
+### 도전 과제: 컴포넌트를 더 세분화하기
+현재, Gallery.js 파일에서는 Profile과 Gallery 두 개의 컴포넌트를 내보내는데, 조금 혼동스럽습니다.
+
+Profile 컴포넌트를 자체적인 Profile.js 파일로 이동시킨 후, App 컴포넌트를 수정하여 `<Profile />`와 `<Gallery />`를 연이어 렌더링하도록 변경하세요.
+
+Profile에 대해서는 기본 내보내기(`default export`) 또는 명명된 내보내기(`named export`)를 사용할 수 있지만, App.js와 Gallery.js 모두에서 해당 가져오기(import) 구문을 사용하는지 확인하세요! 이전에 설명한 표를 참고할 수 있습니다:
+
+구문|내보내기 구문|가져오기 구문
+---|---|---
+기본 내보내기|`export default function Button() {}`|`import Button from './Button.js';`
+명명된 내보내기|`export function Button() {}`|`import { Button } from './Button.js';`  
+  
+  
+<iframe 
+  src="https://codesandbox.io/embed/determined-shape-vkkovt?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="determined-shape-vkkovt"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+한 종류의 내보내기 방식으로 작동하는 것을 확인한 후, 다른 종류의 내보내기 방식으로도 작동하도록 만들어보세요.
+
+
+## JSX를 사용한 마크업 작성
+
+
+JSX는 JavaScript의 구문 확장으로, JavaScript 파일 내에서 HTML과 유사한 마크업을 작성할 수 있게 해줍니다. 컴포넌트를 작성하는 다른 방법도 있지만, 대부분의 React 개발자는 JSX의 간결성을 선호하며 대부분의 코드베이스에서 JSX를 사용합니다.
+
+
+### JSX: JavaScript에 마크업 넣기
+
+웹은 HTML, CSS 및 JavaScript로 구성되어 있습니다. 오랜 기간 동안 웹 개발자들은 내용을 HTML, 디자인을 CSS, 로직을 JavaScript에 유지했습니다. 종종 이들은 별도의 파일에서 관리되었습니다! 내용은 HTML 내에서 마크업되었고 페이지의 로직은 JavaScript에서 별도로 유지되었습니다.  
+
+<div style={{ textAlign: 'center' }}>
+  <table style={{ borderCollapse: 'collapse', border: 'none' }}>
+    <tbody>
+      <tr>
+        <td style={{ border: 'none', padding: 20 }}>
+          <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fwriting_jsx_html.png&w=384&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
+          <p style={{ margin: 0, textAlign: 'center' }}>HTML</p>
+        </td>
+        <td style={{ border: 'none', padding: 20 }}>
+          <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fwriting_jsx_js.png&w=384&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
+          <p style={{ margin: 0, textAlign: 'center' }}>JavaScript</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+그러나 웹이 더 인터랙티브해짐에 따라 로직이 내용을 결정하는 경우가 더 많아졌습니다. JavaScript가 HTML을 담당하게 되었습니다! 이것이 바로 **React에서 렌더링 로직과 마크업이 함께 있는 곳인 컴포넌트입니다.**  
+<div style={{ textAlign: 'center' }}>
+  <table style={{ borderCollapse: 'collapse', border: 'none' }}>
+    <tbody>
+      <tr>
+        <td style={{ border: 'none', padding: 20 }}>
+          <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fwriting_jsx_sidebar.png&w=384&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
+          <p style={{ margin: 0, textAlign: 'center' }}><code>Sidebar.js</code> React component</p>
+        </td>
+        <td style={{ border: 'none', padding: 20 }}>
+          <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fwriting_jsx_form.png&w=384&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
+          <p style={{ margin: 0, textAlign: 'center' }}><code>Form.js</code> React component</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+버튼의 렌더링 로직과 마크업을 함께 유지함으로써, 편집할 때마다 둘 사이의 동기화를 보장할 수 있습니다. 반면, 버튼의 마크업과 사이드바의 마크업과 같이 관련이 없는 세부 정보는 서로 독립적으로 분리되어 변경해도 안전합니다.
+
+각 React 컴포넌트는 JavaScript 함수이며, React는 해당 컴포넌트를 브라우저에 렌더링하는 마크업을 포함할 수 있습니다. React 컴포넌트는 JSX라는 구문 확장을 사용하여 해당 마크업을 표현합니다. JSX는 HTML과 많이 비슷하지만 약간의 규칙이 더 있으며 동적 정보를 표시할 수 있습니다. 이해하는 가장 좋은 방법은 일부 HTML 마크업을 JSX 마크업으로 변환하는 것입니다.
+
+> 참고  
+JSX와 React는 서로 다른 것입니다. 종종 함께 사용되지만, [서로 독립적으로 사용](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#whats-a-jsx-transform)할 수도 있습니다. JSX는 구문 확장이며, React는 JavaScript 라이브러리입니다.
+
+### HTML을 JSX로 변환하기
+
+다음은 일부(완벽하게 유효한) HTML 예시입니다:
+
+```html
+<h1>Hedy Lamarr's Todos</h1>
+<img 
+  src="https://i.imgur.com/yXOvdOSs.jpg" 
+  alt="Hedy Lamarr" 
+  class="photo"
+>
+<ul>
+    <li>Invent new traffic lights
+    <li>Rehearse a movie scene
+    <li>Improve the spectrum technology
+</ul>
+```
+
+이를 컴포넌트에 넣고자 한다고 가정해보겠습니다:
+
+```javascript
+export default function TodoList() {
+  return (
+    // ???
+  )
+}
+```
+
+그대로 복사하여 붙여넣으면 작동하지 않습니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/peaceful-fermi-4vsb0o?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="peaceful-fermi-4vsb0o"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+이는 JSX가 HTML보다 엄격하고 몇 가지 추가 규칙을 가지기 때문입니다! 위의 오류 메시지를 읽으면 마크업을 수정하는 데 도움이 될 것이거나, 아래 안내를 따를 수 있습니다.
+
+> 참고
+> 대부분의 경우, React의 화면에 표시되는 오류 메시지가 문제의 위치를 찾는 데 도움이 됩니다. 막힐 경우 메시지를 읽어보세요!
+
+
+
+
+### JSX의 규칙
+
+#### 1\. 하나의 루트 요소 반환
+
+컴포넌트에서 여러 요소를 반환하려면 **하나의 부모 태그로 감싸야 합니다.**
+
+예를 들어, `<div>`를 사용할 수 있습니다:
+
+```javascript
+<div>
+  <h1>Hedy Lamarr's Todos</h1>
+  <img 
+    src="https://i.imgur.com/yXOvdOSs.jpg" 
+    alt="Hedy Lamarr" 
+    class="photo"
+  >
+  <ul>
+    ...
+  </ul>
+</div>
+```
+
+추가적인 `<div>`를 마크업에 추가하고 싶지 않은 경우에는 `<>`와 `</>` 대신 사용할 수도 있습니다:
+
+```javascript
+<>
+  <h1>Hedy Lamarr Todos</h1>
+  <img 
+    src="https://i.imgur.com/yXOvdOSs.jpg" 
+    alt="Hedy Lamarr" 
+    class="photo"
+  >
+  <ul>
+    ...
+  </ul>
+</>
+```
+
+이 빈 태그를 [Fragment](https://react.dev/reference/react/Fragment)라고 합니다. Fragment를 사용하면 브라우저 HTML 트리에 아무런 흔적을 남기지 않고 요소를 그룹화할 수 있습니다.
+
+#### 2\. 모든 태그를 닫아야 함
+
+JSX에서는 태그를 명시적으로 닫아야 합니다: `<img>`와 같은 self-closing 태그는 `<img />`로 변경되어야 하며, `<li>`oranges와 같은 wrapping 태그는 `<li>`oranges`</li>`로 작성되어야 합니다.
+
+이는 Hedy Lamarr의 이미지와 목록 항목이 닫힌 모습입니다:
+
+```javascript
+<>
+  <img 
+    src="https://i.imgur.com/yXOvdOSs.jpg" 
+    alt="Hedy Lamarr" 
+    class="photo"
+   />
+  <ul>
+    <li>Invent new traffic lights</li>
+    <li>Rehearse a movie scene</li>
+    <li>Improve the spectrum technology</li>
+  </ul>
+</>
+```
+
+
+<Callout type="warning">
+**왜 여러 개의 JSX 태그를 감싸야 하는가?**
+
+JSX는 HTML처럼 보이지만 실제로는 일반적인 JavaScript 객체로 변환됩니다. 함수에서 두 개의 객체를 반환하려면 배열로 감싸야 합니다. 이와 마찬가지로 두 개의 JSX 태그를 반환하려면 다른 태그나 Fragment로 감싸야 합니다.
+</Callout>
+
+#### 3\. 모든 것을 camelCase로 작성
+
+JSX는 JavaScript로 변환되며, JSX에서 작성한 속성은 JavaScript 객체의 키가 됩니다. 자체 컴포넌트에서는 이러한 속성을 변수로 읽어올 때가 많습니다. 그러나 JavaScript에는 변수 이름에 제한이 있습니다. 예를 들어, 변수 이름에는 대시(-)를 포함하거나 class와 같은 예약어를 사용할 수 없습니다.
+
+이것이 React에서 HTML 및 SVG 속성의 많은 부분이 camelCase로 작성되는 이유입니다. 예를 들어, stroke-width 대신 strokeWidth를 사용합니다. class는 예약어이므로 React에서는 className을 사용하며, [해당 DOM 속성](https://developer.mozilla.org/en-US/docs/Web/API/Element/className)에 맞춰서 작성됩니다.
+
+```javascript
+<img 
+  src="https://i.imgur.com/yXOvdOSs.jpg" 
+  alt="Hedy Lamarr" 
+  className="photo"
+/>
+```
+
+이러한 속성은 [DOM 컴포넌트 props 목록](https://react.dev/reference/react-dom/components/common)에서 찾을 수 있습니다. 하나를 잘못 작성하면 React가 브라우저 콘솔에 가능한 수정과 함께 메시지를 출력합니다.
+
+<Callout type="warning">
+역사적인 이유로 [aria-\*](https://developer.mozilla.org/docs/Web/Accessibility/ARIA) 및 [data-\*](https://developer.mozilla.org/docs/Learn/HTML/Howto/Use_data_attributes) 속성은 HTML과 마찬가지로 대시(-)로 작성됩니다.
+</Callout>
+
+#### 팁: JSX 변환기 사용
+
+기존 마크업의 모든 속성을 변환하는 것은 번거로울 수 있습니다! 기존의 HTML 및 SVG를 JSX로 변환하기 위해 [변환기](https://transform.tools/html-to-jsx)를 사용하는 것을 권장합니다. 변환기는 실제로 매우 유용하지만, 스스로 JSX를 편안하게 작성할 수 있도록 변환하는 과정을 이해하는 것도 가치가 있습니다.
+
+최종 결과는 다음과 같습니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/laughing-shockley-t0kw2k?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="laughing-shockley-t0kw2k"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+### 요약
+
+이제 JSX가 왜 존재하는지 알고, 컴포넌트에서 어떻게 사용하는지 알게 되었습니다:
+
+- React 컴포넌트는 관련이 있는 렌더링 로직과 마크업을 함께 그룹화합니다.
+- JSX는 HTML과 유사하지만 몇 가지 차이점이 있습니다. [변환기](https://transform.tools/html-to-jsx)를 사용할 수 있습니다.
+- 오류 메시지는 주로 마크업 수정 방향을 가리키는 데 도움이 됩니다.
+
+### 도전 과제: 일부 HTML을 JSX로 변환하기
+
+이 HTML은 컴포넌트에 붙여넣었지만 유효한 JSX가 아닙니다. 수정하세요:
+
+<iframe 
+  src="https://codesandbox.io/embed/hungry-pascal-xff8yf?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="hungry-pascal-xff8yf"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+수동으로 하든 변환기를 사용하든 선택은 여러분입니다!
+
+
+## 중괄호를 사용한 JSX 내에서의 JavaScript
+
+
+JSX는 JavaScript 파일 내에서 HTML과 유사한 마크업을 작성할 수 있게 해주어 렌더링 로직과 콘텐츠를 동일한 장소에 유지할 수 있습니다. 때로는 마크업 내에서 약간의 JavaScript 로직을 추가하거나 동적 속성을 참조해야 할 때가 있습니다. 이러한 상황에서 JSX에서 중괄호를 사용하여 JavaScript로의 창문을 열 수 있습니다.
+
+### 따옴표를 사용한 문자열 전달
+
+JSX에 문자열 속성을 전달하려면 따옴표로 감싸면 됩니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/optimistic-franklin-sxgf4x?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="optimistic-franklin-sxgf4x"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+여기에서 "[https://i.imgur.com/7vQD0fPs.jpg](https://i.imgur.com/7vQD0fPs.jpg)"와 "Gregorio Y. Zara"가 문자열로 전달되고 있습니다.
+
+하지만 동적으로 src 또는 alt 텍스트를 지정하려면 `"`와 `"` 대신 `{`와 `}`를 사용하여 JavaScript 값을 사용할 수 있습니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/runtime-cookies-9oxidm?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="runtime-cookies-9oxidm"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+`className="avatar"`는 이미지를 원형으로 만드는 "avatar" CSS 클래스 이름을 지정하고, `src={avatar}`는 avatar라는 JavaScript 변수의 값을 읽습니다. 중괄호를 사용하면 마크업 내에서 JavaScript를 직접 다룰 수 있습니다!
+
+### 중괄호 사용: JavaScript 세계로의 창문
+
+JSX는 JavaScript를 작성하는 특별한 방법입니다. 그렇기 때문에 중괄호 `{ }`를 사용하여 JSX 내에서 JavaScript를 사용할 수 있습니다. 아래의 예제에서는 우선 과학자의 이름인 name을 선언한 다음 중괄호를 사용하여 `<h1>` 태그 내에 삽입합니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/zen-david-1md7xv?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="zen-david-1md7xv"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+name의 값을 'Gregorio Y. Zara'에서 'Hedy Lamarr'로 변경해 보세요. 목록 제목이 어떻게 변경되는지 확인하세요.  
+
+`formatDate()`와 같은 함수 호출을 포함하여 중괄호 사이에는 모든 JavaScript 표현식을 사용할 수 있습니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/admiring-wu-hghefp?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="admiring-wu-hghefp"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+  
+#### 중괄호 사용 위치
+
+JSX 내에서 중괄호는 두 가지 방법으로만 사용할 수 있습니다:
+
+1. JSX 태그 내에서 **텍스트**로 직접 사용: `<h1>{name}'s To Do List</h1>`은 동작하지만 `<{tag}>Gregorio Y. Zara's To Do List</{tag}>`은 동작하지 않습니다.
+2. 등호 (`=`) 바로 뒤에서 **속성**으로 사용: `src={avatar}`는 avatar 변수를 읽지만 `src=\"{avatar}\"`는 문자열 `\"{avatar}\"`을 전달합니다.
+
+
+## "이중 중괄호" 사용: JSX에서 CSS 및 기타 객체 사용
+
+문자열, 숫자 및 기타 JavaScript 표현식 외에도 JSX에서 객체를 전달할 수도 있습니다. 객체는 `{ name: "Hedy Lamarr", inventions: 5 }`와 같이 중괄호로 표시됩니다. 따라서 JSX에서 JavaScript 객체를 전달하려면 객체를 또 다른 중괄호로 감싸야 합니다: `person={{ name: "Hedy Lamarr", inventions: 5 }}`.
+
+JSX에서 인라인 CSS 스타일을 사용할 때도 이를 볼 수 있습니다. React는 인라인 스타일을 사용하도록 요구하지 않습니다(CSS 클래스가 대부분의 경우에 훌륭하게 작동합니다). 그러나 인라인 스타일이 필요한 경우 style 속성에 객체를 전달합니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/recursing-panka-lgpqxu?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="recursing-panka-lgpqxu"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+backgroundColor 및 color의 값을 변경해 보세요.
+
+다음과 같이 JavaScript 객체를 중괄호 내에서 작성하면 JavaScript 객체를 명확하게 볼 수 있습니다.
+
+```jsx
+<ul style={
+  {
+    backgroundColor: 'black',
+    color: 'pink'
+  }
+}>
+```
+
+JSX에서 `{{`와 `}}`를 볼 때는 JSX 중괄호 안에 있는 JavaScript 객체일 뿐이라는 것을 알아두세요!
+
+<Callout type="warning">
+인라인 스타일 속성은 카멜 케이스로 작성됩니다. 예를 들어, HTML `<ul style="background-color: black">`은 컴포넌트에서 `<ul style={{ backgroundColor: 'black' }}>`로 작성됩니다.
+</Callout>
+
+### JavaScript 객체와 중괄호로 더욱 재미있게
+
+여러 표현식을 하나의 객체로 이동시킬 수 있으며, JSX에서 중괄호 내에서 참조할 수 있습니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/heuristic-wave-crznkm?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="heuristic-wave-crznkm"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+이 예제에서는 person JavaScript 객체에 이름 문자열과 테마 객체가 포함되어 있습니다:
+
+```jsx
+const person = {
+  name: 'Gregorio Y. Zara',
+  theme: {
+    backgroundColor: 'black',
+    color: 'pink'
+  }
+};
+```
+
+컴포넌트는 다음과 같이 person에서 이러한 값을 사용할 수 있습니다:
+
+```jsx
+<div style={person.theme}>
+  <h1>{person.name} s Todos</h1>
+```
+
+JSX는 JavaScript를 사용하여 데이터와 로직을 조직화할 수 있는 매우 간단한 템플릿 언어입니다.
+
+### 요약
+
+이제 JSX에 대해 거의 모든 것을 알게 되었습니다:
+
+- 따옴표로 둘러싼 JSX 속성은 문자열로 전달됩니다.
+- 중괄호를 사용하여 JavaScript 로직과 변수를 마크업에 포함할 수 있습니다.
+- 중괄호는 JSX 태그 콘텐츠 내부나 속성의 = 바로 뒤에서 작동합니다.
+- `{{`와 `}}`는 특별한 구문이 아니라 JSX 중괄호 안에 포함된 JavaScript 객체입니다.
+
+
+## 컴포넌트에 Props 속성 전달하기
+
+
+React 컴포넌트는 서로 통신하기 위해 props를 사용합니다. 부모 컴포넌트는 자식 컴포넌트에 props를 제공하여 정보를 전달할 수 있습니다. Props는 HTML 속성을 생각나게 할 수도 있지만, 객체, 배열 및 함수와 같은 모든 JavaScript 값으로 props를 통해 전달할 수 있습니다.
+
+### 익숙한 props
+
+props는 JSX 태그에 전달하는 정보입니다. 예를 들어, className, src, alt, width, height는 `<img>`에 전달할 수 있는 일부 props입니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/silly-moon-2nuz15?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="silly-moon-2nuz15"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+`<img>` 태그에 전달할 수 있는 props는 미리 정의되어 있습니다 (ReactDOM은 [HTML 표준](https://www.w3.org/TR/html52/semantics-embedded-content.html#the-img-element)을 준수합니다). 하지만 `<Avatar>`와 같이 직접 만든 컴포넌트에도 다양한 props를 전달할 수 있습니다. 다음은 그 방법입니다!
+
+### 컴포넌트에 props 전달하기
+
+다음 코드에서 Profile 컴포넌트는 자식 컴포넌트인 Avatar에 어떤 props도 전달하지 않고 있습니다:
+
+```jsx
+export default function Profile() {
+  return (
+    <Avatar />
+  );
+}
+```
+
+Avatar에 일부 props를 전달할 수 있습니다.
+
+
+#### 단계 1: 자식 컴포넌트에 props 전달하기
+
+먼저, Avatar에 일부 props를 전달하세요. 예를 들어, `person (객체)`와 `size (숫자)`라는 두 가지 props를 전달해 보겠습니다:
+
+```jsx
+export default function Profile() {
+  return (
+    <Avatar
+      person={{ name: 'Lin Lanying', imageId: '1bX5QH6' }}
+      size={100}
+    />
+  );
+}
+```
+
+> 참고
+`person=` 다음의 이중 중괄호가 혼란스럽다면, [그저 JSX 중괄호 내의 객체](https://react.dev/learn/javascript-in-jsx-with-curly-braces#using-double-curlies-css-and-other-objects-in-jsx)일 뿐임을 상기하세요.
+
+이제 Avatar 컴포넌트 내에서 이러한 props를 읽을 수 있습니다.
+
+
+
+#### 단계 2: 자식 컴포넌트 내에서 props 읽기
+
+person, size와 같은 이름을 콤마로 구분하여 `({` 와 `})` 바로 다음의 function Avatar 뒤에 나열하여 이러한 props를 읽을 수 있습니다. 이를 통해 변수처럼 Avatar 코드 내에서 사용할 수 있습니다.
+
+```jsx
+function Avatar({ person, size }) {
+  // person과 size를 이곳에서 사용할 수 있습니다
+}
+```
+
+person과 size props를 사용하여 렌더링하는 데 필요한 로직을 Avatar에 추가하면 됩니다.
+
+이제 다양한 props로 Avatar를 다양한 방식으로 렌더링할 수 있습니다. 값을 조정해 보세요!
+
+<iframe 
+  src="https://codesandbox.io/embed/immutable-hill-1l09cq?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="immutable-hill-1l09cq"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+Props를 사용하면 부모와 자식 컴포넌트를 독립적으로 생각할 수 있습니다. 예를 들어, Profile 내에서 person 또는 size props를 변경하더라도 Avatar가 이를 사용하는 방식을 생각할 필요가 없습니다. 마찬가지로, Avatar가 이러한 props를 사용하는 방법을 변경할 수 있으며 Profile을 확인하지 않아도 됩니다.
+
+Props를 "버튼"으로 생각할 수 있습니다. 함수의 인수와 마찬가지로, props는 컴포넌트의 유일한 인수입니다! React 컴포넌트 함수는 단일 인수, 즉 props 객체를 허용합니다.
+
+```jsx
+function Avatar(props) {
+  let person = props.person;
+  let size = props.size;
+  // ...
+}
+```
+
+일반적으로 전체 props 객체 자체가 필요하지 않기 때문에 개별적인 props로 분해합니다.
+
+<Callout type="warning">
+props를 선언할 때 `(` 와 `)` 사이에 있는 `{`와 `}` 중괄호 쌍을 놓치지 마세요.
+
+```jsx
+function Avatar({ person, size }) {
+  // ...
+}
+```
+
+이 구문은 [해체 할당](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_fields_from_objects_passed_as_a_function_parameter)이라고 하며, 함수 매개변수에서 속성을 읽는 것과 동일합니다.
+
+```jsx
+function Avatar(props) {
+  let person = props.person;
+  let size = props.size;
+  // ...
+}
+```
+</Callout>
+
+
+### props에 기본값 지정하기
+
+값이 지정되지 않았을 때 기본값을 props에 지정하려면, 파라미터 바로 뒤에 =와 기본값을 넣는 해체 할당을 사용할 수 있습니다.
+
+```jsx
+function Avatar({ person, size = 100 }) {
+  // ...
+}
+```
+
+이제 size prop이 없이 `<Avatar person={...} />`로 렌더링되면 size는 100으로 설정됩니다.
+
+기본값은 size prop이 누락되었거나 `size={undefined}`로 전달된 경우에만 사용됩니다. 그러나 `size={null}` 또는 `size={0}`과 같이 전달하는 경우 기본값은 사용되지 **않습니다**.
+
+
+
+### JSX 스프레드 구문을 사용하여 props 전달하기
+
+가끔씩 props를 전달하는 것이 매우 반복적일 수 있습니다.
+
+```jsx
+function Profile({ person, size, isSepia, thickBorder }) {
+  return (
+    <div className="card">
+      <Avatar
+        person={person}
+        size={size}
+        isSepia={isSepia}
+        thickBorder={thickBorder}
+      />
+    </div>
+  );
+}
+```
+
+반복적인 코드는 문제가 없습니다. 가독성이 좋을 수도 있습니다. 그러나 때로는 간결함을 더 중요시할 수 있습니다. 일부 컴포넌트는 Avatar와 같이 모든 props를 자식 컴포넌트로 전달합니다. 그들은 직접 props 중 하나도 사용하지 않기 때문에 더 간결한 "스프레드" 구문을 사용하는 것이 의미가 있을 수 있습니다.
+
+```jsx
+function Profile(props) {
+  return (
+    <div className="card">
+      <Avatar {...props} />
+    </div>
+  );
+}
+```
+
+이렇게 하면 Profile의 모든 props가 개별적으로 나열되지 않고도 Avatar에 모두 전달됩니다.
+
+**스프레드 구문을 사용할 때는 분별하여 사용하세요.** 거의 모든 컴포넌트에서 사용하고 있다면 문제가 있을 수 있습니다. 종종 컴포넌트를 분할하고 자식을 JSX로 전달해야 하는지 확인해야 합니다. 이에 대해서는 곧 자세히 알아보겠습니다!
+
+
+### 자식으로 JSX 전달하기
+
+내장된 브라우저 태그를 중첩하는 것이 일반적입니다.
+
+```jsx
+<div>
+  <img />
+</div>
+```
+
+자체 컴포넌트도 동일한 방식으로 중첩할 때가 있습니다.
+
+```jsx
+<Card>
+  <Avatar />
+</Card>
+```
+
+JSX 태그 내에 콘텐츠를 중첩할 때, 부모 컴포넌트는 해당 콘텐츠를 children이라는 prop으로 수신합니다. 예를 들어, 아래의 Card 컴포넌트는 children prop으로 `<Avatar />`를 받아서 래퍼 div 안에서 렌더링합니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/clever-herschel-e3k6xg?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="clever-herschel-e3k6xg"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+`<Avatar>`을 `<Card>` 안에 있는 일부 텍스트로 바꿔보면 Card 컴포넌트가 중첩된 콘텐츠를 어떻게 감쌀 수 있는지 확인할 수 있습니다. Card는 그 안에 렌더링되는 내용을 "알 필요"가 없습니다. 이 유연한 패턴은 많은 곳에서 볼 수 있습니다.
+
+컴포넌트에 children prop이 있는 것은 부모 컴포넌트에 의해 임의의 JSX로 "채워질 수 있는" "빈 공간"이 있는 것으로 생각할 수 있습니다. 일반적으로 children prop을 시각적인 래퍼 (패널, 그리드 등)에 사용합니다.
+
+
+### props가 시간에 따라 어떻게 변경되는지
+
+아래의 Clock 컴포넌트는 부모 컴포넌트로부터 두 가지 props를 받습니다: color와 time (부모 컴포넌트의 코드는 생략되었습니다. 이 코드는 [상태](https://react.dev/learn/state-a-components-memory)를 사용하며, 현재는 자세히 설명하지 않을 예정입니다.)
+
+아래의 선택 상자에서 색상을 변경해 보세요:
+
+<iframe 
+  src="https://codesandbox.io/embed/brave-bardeen-k30nx2?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="brave-bardeen-k30nx2"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+이 예제는 **컴포넌트가 시간이 지남에 따라 다른 props를 받을 수 있다**는 것을 보여줍니다. Props는 항상 정적이지 않습니다! 여기에서는 time prop이 1초마다 변경되고, color prop은 다른 색상을 선택할 때 변경됩니다. Props는 단지 컴포넌트의 데이터를 나타내는 것뿐만 아니라 어느 시점에서든 컴포넌트의 데이터를 반영합니다.
+
+그러나 props는 변경할 수 없는 [불변](https://en.wikipedia.org/wiki/Immutable_object)이라는 컴퓨터 과학 용어입니다. 컴포넌트가 props를 변경해야 하는 경우 (예: 사용자 상호 작용 또는 새 데이터에 대한 응답으로) 부모 컴포넌트에게 다른 props (새 객체)를 전달해야 합니다! 그리고 예전 props는 버려지고, 결국 JavaScript 엔진이 그들이 사용한 메모리를 회수할 것입니다.
+
+**props를 "변경하려고 하지 마세요".** 사용자 입력에 대응해야 할 때 (예: 선택한 색상 변경) props를 "설정"해야 합니다. 이에 대해서는 [상태: 컴포넌트의 메모리](https://react.dev/learn/state-a-components-memory)에서 알아보실 수 있습니다.
+
+### 요약
+
+- props를 전달하려면 HTML 속성과 마찬가지로 JSX에 추가합니다.
+- props를 읽으려면 `function Avatar({ person, size })` 해체 구문을 사용합니다.
+- 누락된 및 undefined props에 대한 기본값으로 `size = 100`과 같이 기본값을 지정할 수 있습니다.
+- JSX 스프레드 구문인 `<Avatar {...props} />`를 사용하여 모든 props를 전달할 수 있지만, 과용하지 않도록 주의하세요!
+- `<Card><Avatar /></Card>`와 같이 중첩된 JSX는 Card 컴포넌트의 children prop으로 나타납니다.
+- Props는 시간에 따라 변경됩니다. 각 렌더링은 새로운 버전의 props를 받습니다.
+- props를 \"변경하려고\"하지 마세요. 사용자 상호 작용에 응답해야 할 때는 \"상태를 설정\"해야 합니다.
+
+
+
+## 조건부 렌더링
+
+
+컴포넌트는 다양한 조건에 따라 다른 내용을 표시해야 할 때가 많습니다. React에서는 JavaScript 문법인 `if` 문,`&&` 연산자, 삼항 연산자 등을 사용하여 조건부로 JSX를 렌더링할 수 있습니다.
+
+
+### JSX를 조건부로 반환하기
+
+예를 들어, PackingList 컴포넌트에서 여러 항목(Item)을 렌더링하고, 해당 항목들을 패킹 여부에 따라 표시하려고 합니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/gifted-sun-8w0i8b?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="gifted-sun-8w0i8b"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+Item 컴포넌트 중 일부는 isPacked prop이 false가 아닌 true로 설정되어 있습니다. `isPacked={true}`인 항목에 체크 표시 (✔)를 추가하려고 합니다.
+
+다음과 같이 [if/else 문](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else)으로 작성할 수 있습니다.
+
+```jsx
+if (isPacked) {
+  return <li className="item">{name} ✔</li>;
+}
+return <li className="item">{name}</li>;
+```
+
+`isPacked` prop이 true인 경우, 이 코드는 **다른 JSX 트리를 반환**합니다. 이 변경으로 인해 일부 항목에는 끝에 체크 표시가 추가됩니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/quirky-morning-skw4mc?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="quirky-morning-skw4mc"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+   
+각 경우에 반환되는 내용을 편집해 보고 결과가 어떻게 변경되는지 확인해 보세요!
+
+주목할 점은 JavaScript의 if 문과 return 문을 사용하여 분기 로직을 생성한다는 것입니다. React에서는 제어 흐름 (조건과 같은)이 JavaScript로 처리됩니다.
+
+#### null을 사용하여 조건부로 아무것도 반환하지 않기
+
+일부 상황에서는 아무 것도 렌더링하지 않을 수도 있습니다. 예를 들어, 패킹된 항목을 전혀 표시하고 싶지 않을 수 있습니다. 컴포넌트는 무언가를 반환해야 합니다. 이 경우 null을 반환할 수 있습니다.
+
+```jsx
+if (isPacked) {
+  return null;
+}
+return <li className="item">{name}</li>;
+```
+
+`isPacked`가 true인 경우, 컴포넌트는 아무것도(null) 반환합니다. 그렇지 않으면 JSX를 반환하여 렌더링합니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/youthful-jang-2ui3qz?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="youthful-jang-2ui3qz"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+실제로 컴포넌트에서 null을 반환하는 것은 일반적이지 않습니다. 왜냐하면 렌더링하려는 개발자에게 의외일 수 있기 때문입니다. 더 자주, 부모 컴포넌트의 JSX에서 해당 컴포넌트를 조건적으로 포함하거나 제외하는 방법을 사용합니다. 이 방법을 사용하는 방법을 알아보겠습니다!
+
+
+### JSX를 조건부로 포함하기
+
+이전 예제에서 컴포넌트가 반환할 JSX 트리를 조건적으로 제어했습니다. 렌더링 출력에서 일부 중복을 이미 발견할 수도 있습니다.
+
+```jsx
+<li className="item">{name} ✔</li>
+```
+
+와
+
+```jsx
+<li className="item">{name}</li>
+```
+
+모두 동일한 `<li className="item">...</li>`을 반환합니다.
+
+```jsx
+if (isPacked) {
+  return <li className="item">{name} ✔</li>;
+}
+return <li className="item">{name}</li>;
+```
+
+이러한 중복은 해로울 수는 없지만 코드를 유지 관리하기 어려울 수 있습니다. className을 변경하려면 코드의 두 곳에서 변경해야 합니다! 이러한 상황에서 코드를 더 [DRY(Don't Repeat Yourself)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)하게 만들기 위해 JSX를 조건부로 포함할 수 있습니다.
+
+#### 삼항 연산자 `(? :)`
+
+JavaScript에는 조건 표현식을 간단하게 작성할 수 있는 [조건 연산자](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) 또는 "삼항 연산자"가 있습니다.
+
+다음과 같이 작성할 수 있습니다.
+
+```jsx
+return (
+  <li className="item">
+    {isPacked ? name + ' ✔' : name}
+  </li>
+);
+```
+
+이를 "isPacked가 true이면 `(?) name + ' ✔'`를 렌더링하고, 그렇지 않으면 `(:) name`을 렌더링한다"라고 읽을 수 있습니다.
+
+<Callout>
+**두 예제가 완전히 동일한가요?**
+
+객체 지향 프로그래밍 배경이 있다면 위의 두 예제가 미묘하게 다르다고 가정할 수 있습니다. 왜냐하면 둘 중 하나가 `<li>`의 두 가지 다른 "인스턴스"를 만들 수 있기 때문입니다. 그러나 JSX 요소는 내부 상태를 가지지 않고 실제 DOM 노드가 아닌 가벼운 설명(청사진)입니다. 따라서 이러한 두 예제는 완전히 동일합니다. [상태 보존과 재설정](https://react.dev/learn/preserving-and-resetting-state)에서 이 작동 방식에 대해 자세히 설명합니다.
+</Callout>
+
+이제 완료된 항목의 텍스트를 `<del>`로 감싸려고 합니다. 더 많은 줄바꿈과 괄호를 추가하여 JSX 내에서 더 많은 JSX를 중첩하기 쉽게 만듭니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/sharp-yalow-mejx8z?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="sharp-yalow-mejx8z"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+이 스타일은 간단한 조건에 대해서는 잘 작동하지만, 너무 많은 중첩된 조건부 마크업으로 인해 코드가 복잡해질 경우, 자식 컴포넌트를 추출하여 코드를 정리하는 것을 고려해야 합니다. React에서 마크업은 코드의 일부이므로 변수와 함수와 같은 도구를 사용하여 복잡한 표현을 정리할 수 있습니다.
+
+
+
+#### 논리 AND 연산자 (&&) 
+
+다른 자주 사용되는 단축키는 [JavaScript 논리 AND (&&) 연산자](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND#:~:text=The%20logical%20AND%20(%20%26%26%20)%20operator,it%20returns%20a%20Boolean%20value.)입니다. React 컴포넌트 내에서 자주 사용되며, 조건이 true일 때 일부 JSX를 렌더링하거나, 그렇지 않으면 아무것도 렌더링하지 않을 때 사용됩니다. &&를 사용하여 isPacked가 true인 경우에만 체크 표시를 조건부로 렌더링할 수 있습니다.
+
+```javascript
+return (
+  <li className="item">
+    {name} {isPacked && '✔'}
+  </li>
+);
+```
+
+이를 "isPacked가 true이면 (&&) 체크 표시를 렌더링하고, 그렇지 않으면 아무 것도 렌더링하지 않는다"라고 읽을 수 있습니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/flamboyant-pascal-3o6p96?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="flamboyant-pascal-3o6p96"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+실제로 JavaScript && 표현식은 왼쪽 측면의 값(여기서는 체크 표시)을 반환합니다. 왼쪽 측면(조건)이 true인 경우. 그러나 조건이 false인 경우 전체 표현식은 false가 되며, React는 false를 JSX 트리의 "빈 공간"으로 간주하고 그 자리에 아무 것도 렌더링하지 않습니다.
+
+<Callout type="warning">
+**&&의 왼쪽에 숫자를 넣지 마세요.**
+
+조건을 테스트하기 위해 JavaScript는 왼쪽 측면을 자동으로 boolean으로 변환합니다. 그러나 왼쪽 측면이 0인 경우 전체 표현식은 해당 값(0)이 되고, React는 아무 것도 렌더링하지 않고 0 자체를 렌더링합니다.
+
+예를 들어, `messageCount && <p>New messages</p>`와 같은 코드를 작성하는 것은 자주 발생하는 실수입니다. messageCount가 0일 때는 아무 것도 렌더링하지 않을 것으로 생각하기 쉽지만, 실제로는 0 자체를 렌더링합니다!
+
+이를 수정하려면 왼쪽 측면을 boolean으로 만들어야 합니다. 예: `messageCount > 0 && <p>New messages</p>`.
+</Callout>
+
+
+
+### JSX를 변수에 조건부로 할당하기 
+
+단축키가 일반적인 코드 작성을 방해할 때는 if 문과 변수를 사용해 보세요. [let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let)으로 정의한 변수를 재할당할 수 있으므로, 표시할 기본 콘텐츠인 name을 제공합니다.
+
+```jsx
+let itemContent = name;
+```
+
+isPacked가 true인 경우 JSX 표현식을 itemContent에 다시 할당하기 위해 if 문을 사용합니다.
+
+```jsx
+if (isPacked) {
+  itemContent = name + " ✔";
+}
+```
+
+중괄호를 사용하여 반환된 JSX 트리 내에서 중첩된 이전에 계산된 표현식을 JSX에 중첩시켜 반환됩니다.
+
+```jsx
+<li className="item">
+  {itemContent}
+</li>
+```
+
+이 스타일은 가장 상세하지만, 가장 유연합니다. 실제로 작동하는 예제는 다음과 같습니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/sad-carlos-duhb3t?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="sad-carlos-duhb3t"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+이전처럼 텍스트뿐만 아니라 임의의 JSX에도 동작합니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/compassionate-perlman-8pgs5m?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="compassionate-perlman-8pgs5m"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+JavaScript에 익숙하지 않은 경우 이러한 다양한 스타일은 처음에는 압도적일 수 있습니다. 그러나 이러한 스타일을 익히면 어떤 JavaScript 코드든 읽고 작성하는 데 도움이 됩니다 - 그리고 React 컴포넌트에만 한정되지 않습니다! 시작할 때 선호하는 스타일을 선택한 다음, 다른 스타일이 어떻게 작동하는지 잊어버릴 경우 다시 이 참고 자료를 참조하십시오.
+
+### 요약
+
+- React에서는 JavaScript를 사용하여 분기 로직을 제어합니다.
+- 조건부로 JSX 표현식을 반환하려면 if 문을 사용할 수 있습니다.
+- 조건부로 일부 JSX를 변수에 저장하고, 중괄호를 사용하여 JSX 내에서 포함시킬 수 있습니다.
+- JSX에서 `{cond ? <A /> : <B />}` 는 "만약 cond이면 `<A />`를 렌더링하고, 그렇지 않으면 `<B />`를 렌더링한다"를 의미합니다.
+- JSX에서 `{cond && <A />}` 는 "만약 cond이면 `<A />`를 렌더링하고, 그렇지 않으면 아무것도 렌더링하지 않는다"를 의미합니다.
+- 이러한 단축키는 흔하지만, 순수한 if문을 선호하는 경우에는 사용하지 않아도 됩니다.
+
+
+
+## 리스트 렌더링
+자주 데이터 컬렉션에서 여러 유사한 컴포넌트를 표시해야 할 때가 있습니다. JavaScript의 배열 메소드를 사용하여 데이터 배열을 조작할 수 있습니다. 이 페이지에서는 React에서 데이터 배열을 필터링하고 변환하여 컴포넌트의 배열로 렌더링하기 위해 `filter()`와 `map()`을 사용할 것입니다.
+
+### 배열에서 데이터 렌더링하기
+
+다음과 같은 내용의 목록이 있다고 가정해 보겠습니다.
+
+```jsx
+<ul>
+  <li>Creola Katherine Johnson: mathematician</li>
+  <li>Mario José Molina-Pasquel Henríquez: chemist</li>
+  <li>Mohammad Abdus Salam: physicist</li>
+  <li>Percy Lavon Julian: chemist</li>
+  <li>Subrahmanyan Chandrasekhar: astrophysicist</li>
+</ul>
+```
+이 목록 항목들 사이의 유일한 차이점은 그들의 내용, 즉 데이터입니다. 사용자 인터페이스를 구축할 때 동일한 컴포넌트의 여러 인스턴스를 다른 데이터를 사용하여 표시해야 할 때가 많습니다. 이러한 상황에서는 데이터를 JavaScript 객체와 배열에 저장하고 `map()`과 `filter()`와 같은 메소드를 사용하여 컴포넌트의 배열로부터 컴포넌트 목록을 렌더링할 수 있습니다.
+
+다음은 배열에서 항목 목록을 생성하는 간단한 예입니다.
+
+- 데이터를 배열로 **이동**시킵니다.
+
+```jsx
+const people = [
+  'Creola Katherine Johnson: mathematician',
+  'Mario José Molina-Pasquel Henríquez: chemist',
+  'Mohammad Abdus Salam: physicist',
+  'Percy Lavon Julian: chemist',
+  'Subrahmanyan Chandrasekhar: astrophysicist'
+];
+```
+
+- `map()` 메소드를 사용하여 `people` 배열의 각 항목을 새로운 JSX 노드인 `listItems`로 **매핑**합니다.
+
+```jsx
+const listItems = people.map(person => <li>{person}</li>);
+```
+
+- 컴포넌트에서 `listItems`를 반환하며 `<ul>`로 감싸줍니다.
+
+```jsx
+return <ul>{listItems}</ul>;
+```
+
+결과는 다음과 같습니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/tender-dust-zf9r5h?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="tender-dust-zf9r5h"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+위의 샌드박스에서는 콘솔에 오류가 표시됩니다.
+
+```bash
+Warning: Each child in a list should have a unique “key” prop.
+```
+
+나중에 이 오류를 수정하는 방법을 알아보겠습니다. 하지만 먼저 데이터에 구조를 추가해 보겠습니다.
+
+
+### 배열 필터링하기
+
+데이터를 더 구조화할 수 있습니다.
+
+```jsx
+const people = [{
+  id: 0,
+  name: 'Creola Katherine Johnson',
+  profession: 'mathematician',
+}, {
+  id: 1,
+  name: 'Mario José Molina-Pasquel Henríquez',
+  profession: 'chemist',
+}, {
+  id: 2,
+  name: 'Mohammad Abdus Salam',
+  profession: 'physicist',
+}, {
+  name: 'Percy Lavon Julian',
+  profession: 'chemist',  
+}, {
+  name: 'Subrahmanyan Chandrasekhar',
+  profession: 'astrophysicist',
+}];
+```
+
+이제 'chemist' 전문가만 표시하고 싶다고 가정해 보겠습니다. `filter()` 메소드를 사용하여 'chemist'인 사람들만 반환할 수 있습니다. 이 메소드는 항목 배열을 가져와 "테스트"라고 불리는 함수를 통과시키고 테스트를 통과한 항목만으로 이루어진 새로운 배열을 반환합니다.
+
+'chemist' 전문가인 항목만 필요합니다. 이를 위한 "테스트" 함수는 다음과 같습니다: `person => person.profession === 'chemist'`. 다음과 같이 구성해 보겠습니다.
+
+- `filter()`를 사용하여 "chemist" 사람들의 배열인 `chemists`를 생성합니다. 이때 `person.profession === 'chemist'`로 필터링합니다.
+
+```jsx
+const chemists = people.filter(person =>
+  person.profession === 'chemist'
+);
+```
+
+- `chemists`에 대해 `map()`을 사용합니다.
+
+```jsx
+const listItems = chemists.map(person =>
+  <li>
+     <img
+       src={getImageUrl(person)}
+       alt={person.name}
+     />
+     <p>
+       <b>{person.name}:</b>
+       {' ' + person.profession + ' '}
+       known for {person.accomplishment}
+     </p>
+  </li>
+);
+```
+
+- 마지막으로 컴포넌트에서 `listItems`를 반환합니다.
+
+```jsx
+return <ul>{listItems}</ul>;
+```
+
+<iframe 
+  src="https://codesandbox.io/embed/intelligent-vaughan-8tkjdq?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="intelligent-vaughan-8tkjdq"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+<Callout type="warning">
+주의: 화살표 함수는 `=>` 다음에 오는 표현식을 암묵적으로 반환하므로 return 문을 사용하지 않아도 됩니다.
+</Callout>
+
+```jsx
+const listItems = chemists.map(person =>
+  <li>...</li> // 암묵적 반환!
+);
+```
+
+하지만 `=>` 다음에 중괄호 `{}`가 오는 경우에는 명시적으로 return 문을 작성해야 합니다.
+
+```jsx
+const listItems = chemists.map(person => { // 중괄호
+  return <li>...</li>;
+});
+```
+
+`=>` 다음에 중괄호가 있는 화살표 함수를 [블록 본문(block body)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#function_body)이라고 합니다.
+
+ 이를 사용하면 한 줄 이상의 코드를 작성할 수 있지만, 명시적으로 return 문을 작성해야 합니다. 누락되면 반환되는 값이 없습니다!
+
+### `key`를 사용하여 목록 항목 순서 유지하기
+
+앞서 언급한 샌드박스 모두 콘솔에 오류가 표시됩니다.
+
+```bash
+Warning: Each child in a list should have a unique “key” prop.
+```
+
+각 배열 항목에 고유한 식별자인 key를 제공해야 합니다. key는 문자열 또는 숫자로 이루어진 값으로, 해당 배열의 다른 항목들과 구별할 수 있어야 합니다.
+
+```jsx
+<li key={person.id}>...</li>
+```
+
+> 참고: JSX 요소는 항상 map() 호출 내에서 키가 필요합니다!
+
+키는 React에게 각 컴포넌트가 어떤 배열 항목에 해당하는지 알려줍니다. 이렇게 함으로써 컴포넌트를 추후에 매칭할 수 있습니다. 배열 항목이 이동(정렬 때문에), 삽입되거나 삭제되는 경우에 중요한 역할을 합니다. 잘 선택된 키는 React에게 변화가 발생한 내용을 추론하고 DOM 트리를 올바르게 업데이트할 수 있게 도와줍니다.
+
+키를 동적으로 생성하는 대신 데이터에 포함시켜야 합니다.
+
+<iframe 
+  src="https://codesandbox.io/embed/elated-chandrasekhar-2uxcdg?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="elated-chandrasekhar-2uxcdg"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+<Callout>
+**한 항목마다 하나 이상의 DOM 노드를 렌더링해야 하는 경우 어떻게 해야 할까요?**
+
+간단한 [`<>...</>` Fragment](https://react.dev/reference/react/Fragment) 구문에서는 키를 전달할 수 없으므로, 여러 DOM 노드를 단일 `<div>`로 그룹화하거나, 약간 더 긴 [`<Fragment>` 구문](https://react.dev/reference/react/Fragment#rendering-a-list-of-fragments)을 사용해야 합니다.
+
+```jsx
+import { Fragment } from 'react';
+
+// ...
+
+const listItems = people.map(person =>
+  <Fragment key={person.id}>
+    <h1>{person.name}</h1>
+    <p>{person.bio}</p>
+  </Fragment>
+);
+```
+
+Fragments는 DOM에서 사라지므로 `<h1>, <p>, <h1>, <p>`와 같은 평면 목록을 생성합니다.
+</Callout>
+
+
+#### `key`를 얻는 위치
+
+데이터의 소스에 따라 다양한 키 소스가 제공됩니다.
+
+- 데이터베이스에서 데이터 가져오기: 데이터가 데이터베이스에서 가져오는 경우, 고유한 키 또는 ID를 사용할 수 있습니다.
+- 로컬에서 생성된 데이터: 데이터가 로컬에서 생성되고 유지되는 경우(예: 메모 앱의 메
+
+모), 증가하는 카운터, [crypto.randomUUID()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID) 또는 `uuid`와 같은 패키지를 사용하여 항목을 생성할 때 사용할 수 있습니다.
+
+#### 키의 규칙
+
+- 키는 형제 사이에서 고유해야 합니다. 그러나 서로 다른 배열에서 JSX 노드에 동일한 키를 사용하는 것은 괜찮습니다.
+- 키는 변경되지 않아야 합니다. 그렇지 않으면 키의 목적이 상실됩니다! 렌더링 중에 키를 생성하지 마세요.
+
+#### React가 키가 필요한 이유
+
+만약 데스크톱의 파일들이 이름을 가지지 않고 대신 순서로 참조해야 한다고 상상해보세요. 첫 번째 파일, 두 번째 파일 등으로 참조해야 할 것입니다. 그것에 익숙해질 수 있겠지만, 한 번 파일을 삭제하면 혼란스러워질 것입니다. 두 번째 파일이 첫 번째 파일이 되고, 세 번째 파일이 두 번째 파일이 되는 식으로 계속될 것입니다.
+
+폴더의 파일 이름과 JSX의 키는 비슷한 목적을 가지고 있습니다. 이들은 우리가 형제 사이에서 항목을 고유하게 식별할 수 있도록 도와줍니다. 잘 선택된 키는 배열 내에서의 위치보다 더 많은 정보를 제공합니다. 항목이 재정렬되거나 삽입 또는 삭제되는 경우에도 키를 통해 React는 항목을 정확히 식별하고, 그 수명 동안 항목을 올바르게 처리할 수 있습니다.
+
+
+<Callout type="warning">
+
+항목의 인덱스를 키로 사용하려는 유혹을 느낄 수 있습니다. 사실, 키를 지정하지 않으면 React가 인덱스를 사용합니다. 그러나 항목이 삽입되거나 삭제되거나 배열이 재정렬되면 렌더링되는 항목의 순서가 변경됩니다. 인덱스를 키로 사용하는 것은 종종 subtile하고 혼란스러운 버그로 이어집니다.
+
+마찬가지로 키를 동적으로 생성하지 마세요. 예를 들어 `key={Math.random()}`와 같이 동적으로 키를 생성하면 키가 렌더링 사이에 일치하지 않아 모든 컴포넌트와 DOM이 매번 재생성됩니다. 이는 느리고 목록 항목 내부의 사용자 입력을 잃어버릴 수 있습니다. 대신 데이터를 기반으로 안정적인 ID를 사용하세요.
+
+참고로 컴포넌트는 키를 프롭으로 받지 않습니다. 키는 React 자체에 의해 힌트로 사용되는 것입니다. 컴포넌트가 ID를 필요로 하는 경우 별도의 프롭으로 전달해야 합니다: `<Profile key={id} userId={id} />`.
+</Callout>
+
+### 요약
+
+이 페이지에서 다음을 배웠습니다:
+
+- 컴포넌트에서 데이터를 컴포넌트 외부의 배열과 객체와 같은 데이터 구조로 이동하는 방법
+- JavaScript의 `map()`을 사용하여 유사한 컴포넌트 집합을 생성하는 방법
+- JavaScript의 `filter()`를 사용하여 필터링된 항목의 배열을 생성하는 방법
+- 각 컴포넌트에 키를 설정하여 React가 위치 또는 데이터가 변경되더라도 각 항목을 추적할 수 있도록 하는 방법
+
+
+
+## 컴포넌트의 순수성 유지하기
+
+
+일부 JavaScript 함수는 순수합니다. 순수 함수는 계산만 수행하고 그 이상의 작업을 수행하지 않습니다. 컴포넌트를 엄격하게 순수 함수로 작성함으로써 코드베이스가 커져도 혼란스러운 버그와 예측할 수 없는 동작을 피할 수 있습니다. 그러나 이러한 이점을 얻으려면 몇 가지 규칙을 준수해야 합니다.
+
+
+### 순수성: 컴포넌트를 수식으로 취급하기
+
+컴퓨터 과학(특히 함수형 프로그래밍의 세계)에서 [순수 함수](https://wikipedia.org/wiki/Pure_function)는 다음 특징을 갖는 함수입니다:
+
+- **자신의 일에만 전념합니다.** 호출되기 전에 존재한 객체나 변수를 변경하지 않습니다.
+- **같은 입력에 대해 항상 같은 출력을 반환합니다.**
+
+이미 순수 함수의 예시에 익숙할 수도 있습니다: 수학의 공식입니다.
+
+다음 수학 공식을 고려해보세요: `y = 2x`.
+
+* 만약 `x = 2`이면 `y = 4`입니다. 항상입니다.
+* 만약 `x = 3`이면 `y = 6`입니다. 항상입니다.
+* `x = 3`이라면 `y`는 시간이나 주식 시장의 상태에 따라 때로는 9, -1 또는 2.5와 같이 달라질 수 없습니다.
+* 만약 `y = 2x`이고 `x = 3`이라면 y는 항상 6이 됩니다.
+
+이를 JavaScript 함수로 만든다면 다음과 같을 것입니다:
+
+```jsx
+function double(number) {
+  return 2 * number;
+}
+```
+위의 예시에서 double은 **순수 함수**입니다. 3을 전달하면 항상 6을 반환합니다.
+
+React는 이 개념을 기반으로 설계되었습니다. **React는 작성하는 모든 컴포넌트가 순수 함수라고 가정합니다.** 즉, React 컴포넌트는 항상 동일한 JSX를 동일한 입력에 대해 반환해야 합니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/serene-monad-30gwpc?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="serene-monad-30gwpc"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+Recipe에 `drinkers={2}`를 전달하면 항상 2잔의 물을 포함하는 JSX를 반환합니다.
+
+`drinkers={4}`를 전달하면 항상 4잔의 물을 포함하는 JSX를 반환합니다.
+
+마치 수학 공식과 같이요.
+
+컴포넌트를 레시피처럼 생각할 수 있습니다: 레시피를 따르고 요리 과정 중에 새로운 재료를 도입하지 않는다면 매번 동일한 요리를 얻을 수 있습니다. 그 "요리"는 컴포넌트가 React에게 제공하는 JSX입니다.
+
+### Side Effects: (무)의도적인 결과
+
+React의 렌더링 과정은 항상 순수해야 합니다. 컴포넌트는 JSX만 반환해야 하며 렌더링 이전에 존재한 객체나 변수를 변경해서는 안 됩니다. 그렇게 되면 순수하지 않아집니다!
+
+다음은 이 규칙을 어긴 컴포넌트의 예시입니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/nifty-yonath-dd5hyk?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="nifty-yonath-dd5hyk"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+이 컴포넌트는 외부에서 선언된 guest 변수를 읽고 쓰고 있습니다. 이는 **이 컴포넌트를 여러 번 호출하면 다른 JSX가 생성됨을 의미합니다!** 게다가 guest를 읽는 다른 컴포넌트도 렌더링될 때마다 다른 JSX를 생성하게 됩니다! 이는 예측할 수 없는 동작입니다.
+
+다시 수식 y = 2x로 돌아가보면, 이제 x = 2라도 y = 4인지 믿을 수 없습니다. 테스트가 실패할 수 있고 사용자가 혼란스러워질 수 있으며 비행기가 하늘에서 떨어질 수 있다는 것을 상상해보세요. 혼란스러운 버그가 발생할 수 있다는 점을 알 수 있습니다!
+
+guest를 [프롭으로 전달하는 방식으로 이 컴포넌트를 수정할 수 있습니다](https://react.dev/learn/passing-props-to-a-component):
+
+<iframe 
+  src="https://codesandbox.io/embed/youthful-driscoll-qxptky?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="youthful-driscoll-qxptky"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+
+이제 컴포넌트는 순수하며 반환하는 JSX는 guest 프롭에만 의존합니다.
+
+일반적으로 컴포넌트가 렌더링되는 순서에 의존하지 않아야 합니다. y = 2x를 y = 5x보다 먼저 또는 나중에 호출하는 것은 중요하지 않습니다. 두 수식은 독립적으로 해결됩니다. 마찬가지로 각 컴포넌트는 "자기 일"만 처리하고 렌더링 중에 다른 컴포넌트와 조정하거나 의존해서는 안 됩니다. 렌더링은 학교 시험과 비슷합니다: 각
+
+ 컴포넌트는 스스로 JSX를 계산해야 합니다!
+
+<Callout>
+**Strict 모드를 사용하여 순수하지 않은 계산 찾기**
+
+아직 모두 사용해보지는 않았을 수 있지만, React에서는 렌더링 중에 읽을 수 있는 세 가지 종류의 입력이 있습니다: [Props](https://react.dev/learn/passing-props-to-a-component), [상태](https://react.dev/learn/state-a-components-memory) 및 [컨텍스트](https://react.dev/learn/passing-data-deeply-with-context)입니다. 이러한 입력은 항상 읽기 전용으로 취급해야 합니다.
+
+사용자 입력에 응답하여 무언가를 변경하려면 변수에 쓰는 대신 [상태를 설정](https://react.dev/learn/state-a-components-memory)해야 합니다. 컴포넌트가 렌더링되는 동안 기존 변수나 객체를 변경해서는 안 됩니다.
+
+React는 "Strict 모드"를 제공하여 개발 중에 각 컴포넌트 함수를 두 번 호출합니다. **Strict 모드는 컴포넌트 함수를 두 번 호출하여 이러한 규칙을 어긴 컴포넌트를 찾는 데 도움을 줍니다.**
+
+원래 예시에서 "Guest #2", "Guest #4", "Guest #6"이 아닌 "Guest #1", "Guest #2", "Guest #3"이 표시되는 것을 확인하세요. 원래 함수는 순수하지 않았기 때문에 두 번 호출하면 오작동합니다. 그러나 수정된 순수 버전은 함수를 매번 두 번 호출하더라도 작동합니다. **순수 함수는 계산만 수행하므로 두 번 호출해도 아무것도 변경되지 않습니다**
+- 마치 double(2)를 두 번 호출해도 반환 값이 변경되지 않고, y = 2x를 두 번 푸는 것이 y를 변경하지 않는 것과 같습니다. 같은 입력, 같은 출력. 항상 그렇습니다.
+
+Strict 모드는 프로덕션에서는 효과가 없으므로 사용자에게 앱이 느려지지 않습니다. Strict 모드를 사용하려면 루트 컴포넌트를 `<React.StrictMode>`로 감싸면 됩니다. 일부 프레임워크는 기본적으로 이를 수행합니다.
+</Callout>
+
+
+#### 로컬 변이: 컴포넌트의 작은 비밀
+
+위의 예시에서 문제는 컴포넌트가 렌더링 중에 기존 변수를 변경했다는 것입니다. 이는 약간 무섭게 들리도록 "변이(mutations)"라고 합니다. 순수 함수는 함수의 범위 외부의 변수나 이전에 생성된 객체를 변경하지 않습니다- 이로 인해 순수하지 않습니다!
+
+그러나 **렌더링하는 동안에만 생성한 변수와 객체를 변경하는 것은 전혀 문제가 없습니다.** 이 예시에서는 `[]` 배열을 생성하고 cups 변수에 할당한 다음 여러 잔의 컵을 push하는 것입니다:
+
+<iframe 
+  src="https://codesandbox.io/embed/dawn-flower-nyist5?fontsize=14&hidenavigation=1&theme=dark"
+  style={{
+    width: '100%',
+    height: '500px',
+    border: '0',
+    borderRadius: '4px',
+    overflow: 'hidden'
+  }}
+  title="dawn-flower-nyist5"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
+
+cups 변수나 `[]` 배열이 TeaGathering 함수 외부에서 생성되었다면 큰 문제가 될 것입니다! 이렇게 하면 기존 객체를 변경하고 배열에 항목을 push하는 것입니다.
+
+하지만 이는 TeaGathering 내에서 렌더링 동안 동일한 시기에 생성되었기 때문에 괜찮습니다. TeaGathering 외부의 코드는 이 일이 발생했다는 사실을 절대로 알 수 없습니다. 이를 **"로컬 변이"**라고 합니다- 컴포넌트의 작은 비밀입니다.
+
+
+### Side Effects을 일으킬 수 있는 위치
+
+함수형 프로그래밍은 순수성에 크게 의존하지만, 어느 시점에선가 무언가가 변경되어야 합니다. 그것이 프로그래밍의 목적이기 때문입니다! 이러한 변경- 화면 업데이트, 애니메이션 시작, 데이터 변경-을 **부작용(side effect)**라고 합니다. 이들은 렌더링 중에 발생하지 않는 것들입니다.
+
+React에서 **부작용은 일반적으로 [이벤트 핸들러](https://react.dev/learn/responding-to-events) 내에 속합니다.** 이벤트 핸들러는 특정 동작(예: 버튼 클릭)을 수행할 때 React가 실행하는 함수입니다. 이벤트 핸들러는 컴포넌트 내에서 정의되었지만 렌더링 중에 실행되지 않습니다! **따라서 이벤트 핸들러는 순수할 필요가 없습니다.**
+
+모든 다른 옵션을 모두 고갈하고도 올바른 부작용용 이벤트 핸들러를 찾을 수 없다면 여전히 반환된 JSX에 [useEffect](https://react.dev/reference/react/useEffect) 호출을 사용하여 부차적으로 연결할 수 있습니다. 이렇게 하면 React가 렌더링 후, 부작용이 허용되는 시점에 실행하도록 지시할 수 있습니다. **그러나 이 접근 방식은 마지막 수단으로 사용해야 합니다.**
+
+가능한 경우 논리를 렌더링 자체로 표현하려고 노력해보세요. 이렇게 하면 얼마나 멀리 갈 수 있는지 놀라실 겁니다!
+
+<Callout>
+**React가 순수성을 중요하게 여기는 이유**
+
+순수 함수를 작성하는 것은 일부 습관과 훈련이 필요하지만, 놀라운 기회를 열어줍니다:
+
+- 컴포넌트는 다른 환경(예: 서버)에서 실행될 수 있습니다! 입력에 대해 동일한 결과를 반환하기 때문에 하나의 컴포넌트가 여러 사용자 요청에 대해 서비스를 제공할 수 있습니다.
+- 순수 함수는 항상 동일한 결과를 반환하므로 입력이 변경되지 않은 컴포넌트의 렌더링을 건너뛰어 성능을 향상시킬 수 있습니다. 이는 순수 함수를 캐시해도 안전하다는 것을 의미합니다.
+- 깊은 컴포넌트 트리를 렌더링하는 도중에 데이터가 변경되면 React는 구식 렌더링을 완료하기 전에 다시 렌더링을 재시작할 수 있습니다. 순수성으로 인해 언제든지 계산을 중단해도 안전합니다.
+
+React가 구축하고 있는 모든 새로운 기능은 순수성을 활용합니다. 데이터 가져오기부터 애니메이션, 성능까지, 컴포넌트를 순수하게 유지하면 React 패러다임의 힘을 발휘할 수 있습니다.
+</Callout>
+
+### 요약
+
+- 컴포넌트는 순수해야 합니다. 즉:
+  - **자신의 일에만 전념합니다.** 렌더링하기 전에 존재한 객체나 변수를 변경해서는 안 됩니다.
+  - **같은 입력에 대해 항상 같은 출력을 반환합니다.** 컴포넌트는 항상 동일한 JSX를 반환해야 합니다.
+- 렌더링은 언제든지 발생할 수 있으므로 컴포넌트는 다른 컴포넌트의 렌더링 순서에 의존해서는 안 됩니다.
+- 렌더링에 사용하는 입력 중 어떤 것도 변경해서는 안 됩니다. 이에는 프롭, 상태, 컨텍스트가 포함됩니다. 화면을 업데이트하려면 기존 객체를 변경하는 대신 [상태를 "설정"해야](https://react.dev/learn/state-a-components-memory) 합니다.
+- 컴포넌트의 논리를 반환하는 JSX로 표현하기 위해 노력하세요. "사물을 변경해야" 하는 경우 대부분 이벤트 핸들러에서 수행하고자 할 것입니다. 마지막 수단으로 [useEffect](https://react.dev/reference/react/useEffect)를 사용할 수는 있지만, 가능한 경우 렌더링 자체로 로직을 표현해보세요.
+- 순수 함수를 작성하는 것은 연습이 필요하지만 React 패러다임의 힘을 발휘할 수 있습니다.
