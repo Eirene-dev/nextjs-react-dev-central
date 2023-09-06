@@ -31,8 +31,8 @@ const computedFields: ComputedFields = {
     resolve: (doc) => doc._raw.flattenedPath.replace(/^.+?(\/)/, ''),
   },
   slugAsParams: {
-    type: "string",
-    resolve: (doc) => doc._raw.flattenedPath.split("/").slice(1).join("/"),
+    type: 'string',
+    resolve: (doc) => doc._raw.flattenedPath.split('/').slice(1).join('/'),
   },
   path: {
     type: 'string',
@@ -79,25 +79,36 @@ function createSearchIndex(allBlogs) {
 }
 
 export const Doc = defineDocumentType(() => ({
-  name: "Doc",
+  name: 'Doc',
   filePathPattern: `docs/**/*.mdx`,
-  contentType: "mdx",
+  contentType: 'mdx',
   fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
-    description: {
-      type: "string",
-    },
-    published: {
-      type: "boolean",
-      default: true,
-    },
+    title: { type: 'string', required: true },
+    description: { type: 'string' },
+    published: { type: 'boolean', default: true },
     date: { type: 'date' },
     summary: { type: 'string' },
+    lastmod: { type: 'date' },
+    images: { type: 'list', of: { type: 'string' } },
+    authors: { type: 'list', of: { type: 'string' } },
   },
-  computedFields,
+  computedFields: {
+    ...computedFields,
+    structuredData: {
+      type: 'json',
+      resolve: (doc) => ({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: doc.title,
+        datePublished: doc.date,
+        dateModified: doc.lastmod || doc.date,
+        description: doc.summary,
+        image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
+        url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath}`,
+        author: doc.authors,
+      }),
+    },
+  },
 }))
 
 export const Blog = defineDocumentType(() => ({
@@ -176,10 +187,8 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs, allDocs } = await importData()
+    const { allBlogs } = await importData()
     createTagCount(allBlogs)
-    
-    // createSearchIndex(allDocs)
     createSearchIndex(allBlogs)
   },
 })
