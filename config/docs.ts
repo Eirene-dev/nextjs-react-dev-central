@@ -11,39 +11,39 @@ export const docsConfig: DocsConfig = {
     //   href: "/guides",
     // },
     {
-      title: "Blog",
-      href: "/blog",
+      title: 'Blog',
+      href: '/blog',
     },
     {
-      title: "Documentation",
-      href: "/docs",
+      title: 'Documentation',
+      href: '/docs',
     },
   ],
   sidebarNav: [
     {
-      title: "Getting Started",
+      title: 'Getting Started',
       items: [
         {
-          title: "Introduction",
-          href: "/docs",
+          title: 'Introduction',
+          href: '/docs',
         },
       ],
     },
     {
-      title: "React",
+      title: 'React',
       items: [
         {
-          title: "시작하기",
-          href: "/docs/react",
+          title: '시작하기',
+          href: '/docs/react',
         },
         {
-          title: "튜토리얼: 틱택토 게임",
-          href: "/docs/react/tic-tac-toe",
+          title: '튜토리얼: 틱택토 게임',
+          href: '/docs/react/tic-tac-toe',
           disabled: false,
         },
         {
-          title: "설치 및 환경 설정",
-          href: "/docs/react/installation",
+          title: '설치 및 환경 설정',
+          href: '/docs/react/installation',
           disabled: false,
           // items: [
           //   {
@@ -53,65 +53,65 @@ export const docsConfig: DocsConfig = {
           // ],
         },
         {
-          title: "UI 구축하기",
-          href: "/docs/react/describing-the-ui",
+          title: 'UI 구축하기',
+          href: '/docs/react/describing-the-ui',
           disabled: false,
         },
         {
-          title: "상호작용성 추가하기",
-          href: "/docs/react/adding-interactivity",
+          title: '상호작용성 추가하기',
+          href: '/docs/react/adding-interactivity',
           disabled: false,
         },
         {
-          title: "상태 관리",
-          href: "/docs/react/managing-state",
+          title: '상태 관리',
+          href: '/docs/react/managing-state',
           disabled: false,
         },
         {
-          title: "고급 기법",
-          href: "/docs/react/escape-hatches",
+          title: '고급 기법',
+          href: '/docs/react/escape-hatches',
           disabled: false,
         },
         {
-          title: "서버/클라이언트 컴포넌트",
-          href: "/docs/react/server-client-components",
+          title: '서버/클라이언트 컴포넌트',
+          href: '/docs/react/server-client-components',
           disabled: false,
         },
       ],
     },
     {
-      title: "Next.js",
+      title: 'Next.js',
       items: [
         {
-          title: "Introduction",
-          href: "/docs/react",
+          title: 'Introduction',
+          href: '/docs/react',
         },
       ],
     },
     {
-      title: "TypeScript",
+      title: 'TypeScript',
       items: [
         {
-          title: "Introduction",
-          href: "/docs/react",
+          title: 'Introduction',
+          href: '/docs/react',
         },
       ],
     },
     {
-      title: "JavaScript",
+      title: 'JavaScript',
       items: [
         {
-          title: "Introduction",
-          href: "/docs/react",
+          title: 'Introduction',
+          href: '/docs/react',
         },
       ],
     },
     {
-      title: "CSS",
+      title: 'CSS',
       items: [
         {
-          title: "Introduction",
-          href: "/docs/react",
+          title: 'Introduction',
+          href: '/docs/react',
         },
       ],
     },
@@ -166,6 +166,5 @@ export const docsConfig: DocsConfig = {
     //     },
     //   ],
     // },
-   
   ],
 }
