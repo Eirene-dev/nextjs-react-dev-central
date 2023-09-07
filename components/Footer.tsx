@@ -27,15 +27,15 @@ export default function Footer() {
           <SocialIcon kind="twitter" href={siteMetadata.twitter} size={6} />
           <SocialIcon kind="github" href={siteMetadata.github} size={6} />
           <span className="align-middle">{` • `}</span>
-            <span className="align-middle">Illustrations by </span>
-            <a
-              href="https://popsy.co"
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium underline align-middle underline-offset-4"
-            >
-              Popsy
-            </a>
+          <span className="align-middle">Illustrations by</span>
+          <a
+            href="https://popsy.co"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium underline align-middle underline-offset-4"
+          >
+            Popsy
+          </a>
         </div>
       </div>
     </footer>
