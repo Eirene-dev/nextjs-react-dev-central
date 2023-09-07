@@ -16,7 +16,7 @@ export default async function Page() {
       <div className="flex flex-col items-center justify-center divide-y divide-gray-200 dark:divide-gray-700 md:mt-24 md:flex-row md:space-x-6 md:divide-y-0">
         <div className="pt-6 pb-8 space-x-2 md:space-y-5">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:border-r-2 md:px-6 md:text-6xl md:leading-14">
-            Tags
+            블로그 태그
           </h1>
         </div>
         <div className="flex flex-wrap max-w-lg">

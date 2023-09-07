@@ -15,6 +15,16 @@ export default function Footer() {
             </Link>
             {` • `}
             {`© ${new Date().getFullYear()}`}
+            {` • `}
+            Illustrations by {" "}
+            <a
+              href="https://popsy.co"
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium underline underline-offset-4"
+            >
+              Popsy
+            </a>
           </div>
         </div>
         <div className="flex mb-2 space-x-2 text-sm text-gray-500 dark:text-gray-400">
