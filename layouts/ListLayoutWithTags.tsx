@@ -131,7 +131,7 @@ export default function ListLayoutWithTags({
 
                 return (
                   <li key={path} className="py-5">
-                    <article className="flex flex-col space-y-2 xl:space-y-0 xl:flex-row xl:space-x-4 xl:items-start">
+                    <article className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:space-x-4 md:items-start">
                       <div className="flex-1">
                         <dl>
                           <dt className="sr-only">Published on</dt>
@@ -155,7 +155,8 @@ export default function ListLayoutWithTags({
                           </div>
                         </div>
                       </div>
-                      <div className="aspect-[1/1] w-48 relative xl:w-1/4">
+
+                      <div className="aspect-[1/1] w-32 md:w-48 relative lg:w-1/4">
                         <Image src={displayImage} alt={title} fill className="object-cover" />
                       </div>
                     </article>
