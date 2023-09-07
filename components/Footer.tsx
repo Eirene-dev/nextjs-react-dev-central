@@ -34,7 +34,7 @@ export default function Footer() {
             rel="noreferrer"
             className="font-medium underline align-middle underline-offset-4"
           >
-           Popsy
+            Popsy
           </a>
         </div>
       </div>
