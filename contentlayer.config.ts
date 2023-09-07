@@ -20,6 +20,8 @@ import rehypeCitation from 'rehype-citation'
 import rehypePrismPlus from 'rehype-prism-plus'
 import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
+import rehypePrettyCode from "rehype-pretty-code"
+
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
 
 const root = process.cwd()
@@ -84,13 +86,16 @@ export const Doc = defineDocumentType(() => ({
   contentType: 'mdx',
   fields: {
     title: { type: 'string', required: true },
-    description: { type: 'string' },
-    published: { type: 'boolean', default: true },
-    date: { type: 'date' },
-    summary: { type: 'string' },
+    date: { type: 'date', required: true },
+    tags: { type: 'list', of: { type: 'string' }, default: [] },
     lastmod: { type: 'date' },
+    draft: { type: 'boolean' },
+    summary: { type: 'string' },
     images: { type: 'list', of: { type: 'string' } },
     authors: { type: 'list', of: { type: 'string' } },
+    layout: { type: 'string' },
+    bibliography: { type: 'string' },
+    canonicalUrl: { type: 'string' },
   },
   computedFields: {
     ...computedFields,

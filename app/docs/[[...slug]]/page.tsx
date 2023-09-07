@@ -1,105 +1,94 @@
-import { notFound } from 'next/navigation'
-import { allDocs } from 'contentlayer/generated'
+import 'css/prism.css'
+import 'katex/dist/katex.css'
 
-import { getTableOfContents } from '@/lib/toc'
-import { Mdx } from '@/components/mdx-components'
-import DocsPageHeader from '@/components/page-header'
-import { DocsPager } from '@/components/pager'
-import { DashboardTableOfContents } from '@/components/toc'
-
-import '@/styles/mdx.css'
+import PageTitle from '@/components/PageTitle'
+import { components } from '@/components/MDXComponents'
+import { MDXLayoutRenderer } from 'pliny/mdx-components'
+import { sortPosts, coreContent } from 'pliny/utils/contentlayer'
+import { allDocs, allAuthors } from 'contentlayer/generated'
+import type { Authors, Doc } from 'contentlayer/generated'
+import PostSimple from '@/layouts/PostSimple'
+import PostLayout from '@/layouts/PostLayout'
+import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
+import siteMetadata from '@/data/siteMetadata'
+import { DashboardTableOfContents } from '@/components/toc'
+import { getTableOfContents } from '@/lib/toc'
 
-// import { env } from "@/env.mjs"
-import { absoluteUrl } from '@/lib/utils'
-
-interface DocPageProps {
-  params: {
-    slug: string[]
-  }
+const isProduction = process.env.NODE_ENV === 'production'
+const defaultLayout = 'PostSimple'
+const layouts = {
+  PostSimple,
+  PostLayout,
+  PostBanner,
 }
 
-async function getDocFromParams(params) {
-  const slug = params.slug?.join('/') || ''
-  const doc = allDocs.find((doc) => doc.slugAsParams === slug)
+export const generateStaticParams = async () => {
+  const paths = allDocs.map((p) => ({ slug: p.slug.split('/') }))
 
-  if (!doc) {
-    null
-  }
-
-  return doc
+  return paths
 }
 
-export async function generateMetadata({ params }: DocPageProps): Promise<Metadata> {
-  const doc = await getDocFromParams(params)
-
-  if (!doc) {
-    return {}
+export default async function Page({ params }: { params: { slug: string[] } }) {
+  let slug = ''
+  if (params.slug) {
+    slug = decodeURI(params.slug.join('/'))
+  } else {
+    slug = 'overview'
   }
+  const sortedPosts = sortPosts(allDocs) as Doc[]
+  const postIndex = sortedPosts.findIndex((p) => p.slug === slug)
+  const prev = coreContent(sortedPosts[postIndex + 1])
+  const next = coreContent(sortedPosts[postIndex - 1])
+  const post = sortedPosts.find((p) => p.slug === slug) as Doc
+  const authorList = post?.authors || ['default']
+  const authorDetails = authorList.map((author) => {
+    const authorResults = allAuthors.find((p) => p.slug === author)
+    return coreContent(authorResults as Authors)
+  })
+  const mainContent = coreContent(post)
+  const jsonLd = post.structuredData
+  jsonLd['author'] = authorDetails.map((author) => {
+    return {
+      '@type': 'Person',
+      name: author.name,
+    }
+  })
 
-  // const url = env.NEXT_PUBLIC_APP_URL
-  const url = 'localhost:3000'
-
-  const ogUrl = new URL(`${url}/api/og`)
-  // const ogUrl = new URL(`./api/og`)
-  ogUrl.searchParams.set('heading', doc.description ?? doc.title)
-  ogUrl.searchParams.set('type', 'Documentation')
-  ogUrl.searchParams.set('mode', 'dark')
-
-  return {
-    title: doc.title,
-    description: doc.description,
-    openGraph: {
-      title: doc.title,
-      description: doc.description,
-      type: 'article',
-      url: absoluteUrl(doc.slug),
-      images: [
-        {
-          url: ogUrl.toString(),
-          width: 1200,
-          height: 630,
-          alt: doc.title,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: doc.title,
-      description: doc.description,
-      images: [ogUrl.toString()],
-    },
-  }
-}
-
-export async function generateStaticParams(): Promise<DocPageProps['params'][]> {
-  return allDocs.map((doc) => ({
-    slug: doc.slugAsParams.split('/'),
-  }))
-}
-
-export default async function DocPage({ params }: DocPageProps) {
-  const doc = await getDocFromParams(params)
-
-  if (!doc) {
-    notFound()
-  }
-
-  const toc = await getTableOfContents(doc.body.raw)
+  const Layout = layouts[post.layout || defaultLayout]
+  const toc = await getTableOfContents(post.body.raw)
 
   return (
-    <main className="relative py-6 lg:gap-10 lg:py-10 xl:grid xl:grid-cols-[1fr_180px]">
-      <div className="w-full min-w-0 mx-auto">
-        <DocsPageHeader heading={doc.title} text={doc.description} />
-        <Mdx code={doc.body.code} />
-        <hr className="my-4 md:my-6" />
-        <DocsPager doc={doc} />
-      </div>
-      <div className="hidden text-sm xl:block">
-        <div className="sticky top-16 -mt-10 max-h-[calc(var(--vh)-4rem)] overflow-y-auto pt-10">
-          <DashboardTableOfContents toc={toc} />
+    <>
+      {isProduction && post && 'draft' in post && post.draft === true ? (
+        <div className="mt-24 text-center">
+          <PageTitle>
+            Under Construction{' '}
+            <span role="img" aria-label="roadwork sign">
+              🚧
+            </span>
+          </PageTitle>
         </div>
-      </div>
-    </main>
+      ) : (
+        <>
+          <main className="relative py-6 lg:gap-10 lg:py-10 xl:grid xl:grid-cols-[1fr_180px]">
+            <div className="w-full min-w-0 mx-auto">
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+              />
+              <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
+                <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
+              </Layout>
+            </div>
+            <div className="hidden text-sm xl:block">
+              <div className="sticky top-16 -mt-10 max-h-[calc(var(--vh)-4rem)] overflow-y-auto pt-10">
+                <DashboardTableOfContents toc={toc} />
+              </div>
+            </div>
+          </main>
+        </>
+      )}
+    </>
   )
 }
