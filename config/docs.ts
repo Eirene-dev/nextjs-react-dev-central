@@ -1,24 +1,6 @@
-import { DocsConfig } from "types"
+import { DocsConfig } from 'types'
 
 export const docsConfig: DocsConfig = {
-  mainNav: [
-    // {
-    //   title: "Documentation",
-    //   href: "/docs",
-    // },
-    // {
-    //   title: "Guides",
-    //   href: "/guides",
-    // },
-    {
-      title: 'Blog',
-      href: '/blog',
-    },
-    {
-      title: 'Documentation',
-      href: '/docs',
-    },
-  ],
   sidebarNav: [
     {
       title: 'Getting Started',
@@ -45,12 +27,6 @@ export const docsConfig: DocsConfig = {
           title: '설치 및 환경 설정',
           href: '/docs/react/installation',
           disabled: false,
-          // items: [
-          //   {
-          //     title: "dasdfadsf",
-          //     href: "/docs/react/installation/hello",
-          //   },
-          // ],
         },
         {
           title: 'UI 구축하기',
@@ -166,5 +142,23 @@ export const docsConfig: DocsConfig = {
     //     },
     //   ],
     // },
+  ],
+  mainNav: [
+    // {
+    //   title: "Documentation",
+    //   href: "/docs",
+    // },
+    // {
+    //   title: "Guides",
+    //   href: "/guides",
+    // },
+    {
+      title: 'Blog',
+      href: '/blog',
+    },
+    {
+      title: 'Documentation',
+      href: '/docs',
+    },
   ],
 }
