@@ -7,8 +7,8 @@ export default function Footer() {
   return (
     <footer>
       <div className="flex flex-col items-center mt-16">
+        <Icons.logo />
         <div className="flex items-center text-sm dark:white">
-          <Icons.logo />
           <div className="text-gray-500 dark:text-gray-400">
             <Link href="/" className="font-medium">
               {siteMetadata.title}
