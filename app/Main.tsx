@@ -211,21 +211,24 @@ export default function Main({ posts }) {
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             단계별 오픈소스 예제
           </h2>
-          <Achievement />
-          <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-            Available on{' '}
-            <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-4"
-            >
-              GitHub
-            </Link>
-            <br />
-            "ReactNextCentral은 예제, 문서, 블로그 글 등을 단계별로 설명하며 이를 오픈소스로
-            제공합니다."
-          </p>
+          <div className="flex flex-col items-start items-center justify-start divide-y divide-gray-200 dark:divide-gray-700 md:mt-0 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0">
+            <p className="max-w-[50%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+              Available on{' '}
+              <Link
+                href={siteConfig.links.github}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl bg-gray-200 dark:bg-transparent px-4 py-1.5 text-sm font-medium"
+              >
+                GitHub
+              </Link>
+              <br />
+              <br />
+              "ReactNextCentral은 예제, 문서, 블로그 글 등을 단계별로 설명하며 이를 오픈소스로
+              제공합니다."
+            </p>
+            <Achievement />
+          </div>
         </div>
       </section>
     </>
