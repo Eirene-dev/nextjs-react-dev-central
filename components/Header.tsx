@@ -20,7 +20,7 @@ const Header = () => {
               <Image src="/static/Logo_RNC.png" alt="ReactNextCentral" width={65} height={65} />
             </div>
             {typeof siteMetadata.headerTitle === 'string' ? (
-              <div className="h-6 text-2xl font-semibold">{siteMetadata.headerTitle}</div>
+              <div className="text-xl font-bold sm:text-2xl">{siteMetadata.headerTitle}</div>
             ) : (
               siteMetadata.headerTitle
             )}
