@@ -16,7 +16,7 @@ export default function Footer() {
             {` • `}
             {`© ${new Date().getFullYear()}`}
             {` • `}
-            Illustrations by {" "}
+            Illustrations by{' '}
             <a
               href="https://popsy.co"
               target="_blank"
