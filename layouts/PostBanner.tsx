@@ -28,15 +28,17 @@ export default function PostBanner({ content, next, prev, children }: LayoutProp
       <article>
         <div>
           <div className="pb-10 space-y-1 text-center dark:border-gray-700">
-            <div className="w-full">
-              <Bleed>
-                <div className="aspect-[4/1] w-full relative">
-                  <Image src={displayImage} alt={title} fill className="object-cover" />
-                </div>
-              </Bleed>
-            </div>
             <div className="relative pt-10">
               <PageTitle>{title}</PageTitle>
+            </div>
+            <div className="flex justify-center">
+              <div className="w-full md:w-1/2 aspect-[1/1] relative">
+                <Bleed>
+                  <div className="aspect-[1/1] w-full relative">
+                    <Image src={displayImage} alt={title} fill className="object-cover" />
+                  </div>
+                </Bleed>
+              </div>
             </div>
           </div>
           <div className="py-4 prose max-w-none dark:prose-invert">{children}</div>

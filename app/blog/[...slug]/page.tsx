@@ -14,7 +14,7 @@ import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 
 const isProduction = process.env.NODE_ENV === 'production'
-const defaultLayout = 'PostBanner'
+const defaultLayout = 'PostLayout'
 const layouts = {
   PostSimple,
   PostLayout,

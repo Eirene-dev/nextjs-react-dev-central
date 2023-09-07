@@ -6,6 +6,7 @@ import Link from '@/components/Link'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import Image from '@/components/Image'
+import Bleed from 'pliny/ui/Bleed'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
@@ -30,8 +31,10 @@ interface LayoutProps {
 }
 
 export default function PostLayout({ content, authorDetails, next, prev, children }: LayoutProps) {
-  const { filePath, path, slug, date, title, tags } = content
+  const { filePath, path, slug, date, title, tags, images, summary } = content
   const basePath = path.split('/')[0]
+  const displayImage =
+    images && images.length > 0 ? images[0] : 'https://picsum.photos/seed/picsum/800/400'
 
   return (
     <SectionContainer>
@@ -52,6 +55,18 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               </dl>
               <div>
                 <PageTitle>{title}</PageTitle>
+              </div>
+              <div className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
+                {summary}
+              </div>
+              <div className="flex justify-center">
+                <div className="w-full md:w-1/2 aspect-[1/1] relative">
+                  <Bleed>
+                    <div className="aspect-[1/1] w-full relative">
+                      <Image src={displayImage} alt={title} fill className="object-cover" />
+                    </div>
+                  </Bleed>
+                </div>
               </div>
             </div>
           </header>
