@@ -155,7 +155,7 @@ export default function ListLayoutWithTags({
                           </div>
                         </div>
                       </div>
-                      <div className="aspect-[1/1] w-32 md:w-48 relative lg:w-1/4">
+                      <div className="relative w-full aspect-w-4 aspect-h-1 sm:w-32 md:w-48 lg:w-1/4">
                         <Image src={displayImage} alt={title} fill className="object-cover" />
                       </div>
                     </article>
