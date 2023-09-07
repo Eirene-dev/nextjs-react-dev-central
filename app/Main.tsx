@@ -78,11 +78,11 @@ export default function Main({ posts }) {
             블로그 태그
           </h2>
         </div>
-        <div className="flex flex-col items-start justify-start divide-y divide-gray-200 dark:divide-gray-700 md:mt-0 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0">
-          <div className="pt-0 pb-8 space-x-1 md:space-y-5">
+        <div className="flex flex-col items-start items-center justify-start divide-y divide-gray-200 dark:divide-gray-700 md:mt-0 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0">
+          <div className="items-center pt-0 pb-8 space-x-1 md:space-y-5">
             <HomeOffice />
           </div>
-          <div className="flex flex-wrap max-w-lg">
+          <div className="flex flex-wrap items-center max-w-lg">
             {tagKeys.length === 0 && 'No tags found.'}
             {sortedTags.map((t) => {
               return (
