@@ -11,6 +11,12 @@ import { slug } from 'github-slugger'
 import tagData from 'app/tag-data.json'
 import { genPageMetadata } from 'app/seo'
 
+import Image from 'next/image'
+import Genius from '@/data/illustration/genius.svg'
+import PaperPlane from '@/data/illustration/paper-plane.svg'
+import HomeOffice from '@/data/illustration/home-office-2.svg'
+import Achievement from '@/data/illustration/achievement.svg'
+
 export const metadata = genPageMetadata({ title: 'Tags', description: 'Things I blog about' })
 
 const MAX_DISPLAY = 5
@@ -59,16 +65,22 @@ export default function Main({ posts }) {
               단계별 구현 예제
             </Link>
           </div>
+          <PaperPlane />
           <p className="max-w-[42rem] leading-small text-muted-foreground sm:text-xl sm:leading-8">
             초보자부터 경험 많은 개발자까지, 모든 레벨에서 필요한 통찰과 지식을 제공합니다. 지금
             바로 여러분의 개발 스킬을 향상시켜 보세요.
           </p>
         </div>
-        <div className="flex flex-col items-start justify-start divide-y divide-gray-200 dark:divide-gray-700 md:mt-24 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0">
-          <div className="pt-6 pb-8 space-x-1 md:space-y-5">
-            <h1 className="text-3xl leading-9 tracking-tight text-gray-900 font-heading dark:text-gray-100 sm:text-4xl sm:leading-10 md:border-r-2 md:px-6 md:text-6xl md:leading-14">
-              블로그 태그
-            </h1>
+      </section>
+      <section id="blog" className="container py-8 md:py-12 lg:py-24">
+        <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
+          <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
+            블로그 태그
+          </h2>
+        </div>
+        <div className="flex flex-col items-start justify-start divide-y divide-gray-200 dark:divide-gray-700 md:mt-0 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0">
+          <div className="pt-0 pb-8 space-x-1 md:space-y-5">
+            <HomeOffice />
           </div>
           <div className="flex flex-wrap max-w-lg">
             {tagKeys.length === 0 && 'No tags found.'}
@@ -199,6 +211,7 @@ export default function Main({ posts }) {
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             단계별 오픈소스 예제
           </h2>
+          <Achievement />
           <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
             Available on{' '}
             <Link
