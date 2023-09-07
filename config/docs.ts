@@ -53,6 +53,20 @@ export const docsConfig: DocsConfig = {
           href: '/docs/react/server-client-components',
           disabled: false,
         },
+        {
+          title: 'Advanced React',
+          items: [
+            {
+              title: 'Hooks',
+              href: '/docs/react/server-client-components',
+            },
+            {
+              title: 'Context API',
+              href: '/docs/react/escape-hatches',
+            },
+            // ... 'Advanced React'의 하위 항목들
+          ],
+        },
       ],
     },
     {
