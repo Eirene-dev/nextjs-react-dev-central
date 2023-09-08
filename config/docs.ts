@@ -35,7 +35,7 @@ export const docsConfig: DocsConfig = {
             {
               title: '빠르게 시작해 보기',
               href: '/docs/react/learn/quick-start',
-              disabled: true,
+              disabled: false,
             },
             {
               title: '튜토리얼: 틱택토 게임',

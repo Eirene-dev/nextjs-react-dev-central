@@ -61,9 +61,9 @@ React는 성능, <span className="font-bold text-blue-600">컴포넌트의 재�
 
 ### 컴포넌트로부터 사용자 인터페이스 생성하기
 
-React는 Thumbnail, LikeButton, Video와 같은 개별적인 조각들을 컴포넌트라고 부르며, 이들을 조합하여 전체 화면, 페이지, 앱을 만들 수 있도록 해줍니다. 자신만의 React 컴포넌트를 생성하고 이들을 결합하여 사용자 인터페이스를 구성할 수 있습니다.
+React는 `Thumbnail`, `LikeButton`, `Video`와 같은 개별적인 조각들을 <span className="font-bold underline">컴포넌트</span>라고 부르며, 이들을 조합하여 전체 화면, 페이지, 앱을 만들 수 있도록 해줍니다. 자신만의 React 컴포넌트를 생성하고 이들을 결합하여 사용자 인터페이스를 구성할 수 있습니다.
 
-```jsx
+```jsx {1, 4, 9} showLineNumbers
 function Video({ video }) {
   return (
     <div>
@@ -86,8 +86,8 @@ function Video({ video }) {
 
 ### 코드와 마크업을 사용하여 컴포넌트 작성하기
 
-React 컴포넌트는 JavaScript 함수입니다. 어떤 내용을 조건부로 표시하고 싶을 때는 if 문을 사용하세요. 목록을 표시하고 싶을 때는 array map()을 사용해보세요. React를 배우는 것은 프로그래밍을 배우는 것과 동일합니다.
-```jsx
+React 컴포넌트는 JavaScript 함수입니다. 어떤 내용을 조건부로 표시하고 싶을 때는 `if` 문을 사용하세요. 목록을 표시하고 싶을 때는 `array map()`을 사용해보세요. React를 배우는 것은 프로그래밍을 배우는 것과 동일합니다.
+```jsx {4, 11-13} showLineNumbers
 function VideoList({ videos, emptyHeading }) {
   const count = videos.length;
   let heading = emptyHeading;
@@ -109,12 +109,12 @@ function VideoList({ videos, emptyHeading }) {
     ![React Screenshot](/static/images/doc/react-learn-overview-2.png)
 </div>
 
-이 마크업 구문은 JSX라고 불립니다. 이는 React에 의해 인기를 얻은 JavaScript 구문 확장입니다. JSX 마크업을 관련 렌더링 로직 근처에 배치하는 것은 React 컴포넌트를 쉽게 생성, 유지 및 삭제할 수 있도록 해줍니다.
+이 마크업 구문은 <span className="font-bold text-blue-600">JSX</span>라고 불립니다. 이는 React에 의해 인기를 얻은 JavaScript 구문 확장입니다. JSX 마크업을 관련 렌더링 로직 근처에 배치하는 것은 React 컴포넌트를 쉽게 생성, 유지 및 삭제할 수 있도록 해줍니다.
 
 ### 필요한 곳마다 상호작용성(interactivity)을 추가하세요.
 
 React 컴포넌트는 데이터를 받아들이고 화면에 표시해야 할 내용을 반환합니다. 사용자가 입력란에 입력하는 등의 상호작용에 대응하여 새로운 데이터를 컴포넌트에 전달할 수 있습니다. 그러면 React는 화면을 새로운 데이터와 일치하도록 업데이트합니다.
-```jsx
+```jsx {3, 9, 12} showLineNumbers
 import { useState } from 'react';
 
 function SearchableVideoList({ videos }) {
