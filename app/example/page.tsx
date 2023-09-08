@@ -1,6 +1,7 @@
 import projectsData from '@/data/projectsData'
 import Card from '@/components/Card'
 import { genPageMetadata } from 'app/seo'
+import WomanWithAGift from '@/data/illustration/woman-with-a-gift.svg'
 
 export const metadata = genPageMetadata({ title: 'Projects' })
 
@@ -29,6 +30,9 @@ export default function Projects() {
             ))}
           </div>
         </div>
+      </div>
+      <div className="flex justify-center w-full mt-1">
+        <WomanWithAGift />
       </div>
     </>
   )
