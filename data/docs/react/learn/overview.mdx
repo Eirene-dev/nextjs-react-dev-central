@@ -5,7 +5,6 @@ summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라�
 ---
 
 React는 Facebook에서 개발한 JavaScript 라이브러리로, 특히 **싱글 페이지 애플리케이션**을 위해 널리 사용됩니다. 애플리케이션의 각 상태에 대한 간단한 뷰를 설계하고, React는 데이터 변경 시 효율적으로 업데이트하고 적절한 컴포넌트를 렌더링합니다.
-
 ## React 알아보기
 
 React의 주요 특징을 간단히 살펴보겠습니다:
@@ -34,10 +33,28 @@ React는 실제 DOM의 가벼운 복사본인 <span className="text-green-600 fo
 React는 <span className="text-red-600 font-bold">단방향 데이터 흐름</span>을 구현하여 애플리케이션을 이해하기 쉽게 만듭니다. Flux는 데이터의 단방향 유지를 돕는 패턴입니다.
 </Card>
 
+<Callout>
+Redux는 JavaScript 애플리케이션의 상태를 관리하기 위한 라이브러리입니다. 주로 React와 함께 사용되지만, 다른 라이브러리나 프레임워크와도 호환됩니다. 
 
+Redux의 주요 특징은 다음과 같습니다:
+
+1. **단일 진실 원천 (Single Source of Truth)**: 애플리케이션의 모든 상태는 하나의 중앙 집중화된 객체 트리에 저장됩니다.
+2. **상태는 읽기 전용 (State is Read-Only)**: 상태를 변경하기 위해서는 액션(action)이라는 객체를 발행해야 합니다.
+3. **변경은 순수 함수로 작성 (Changes are Made with Pure Functions)**: 액션에 따라 상태를 변경하는 함수를 리듀서(reducer)라고 부릅니다. 리듀서는 순수 함수로 작성되어야 합니다.
+
+Redux의 이러한 특징은 애플리케이션의 복잡성을 관리하고 예측 가능한 상태 업데이트를 가능하게 합니다.
+</Callout>
 React 자체는 라우팅이나 전역 상태 관리와 같은 기능을 포함하지 않는 컴포저블한 사용자 인터페이스를 구축하기 위한 라이브러리입니다. 그러나 React는 Redux와 같은 추가적인 라이브러리를 사용하여 상태 관리 또는 React-Router를 사용하여 라우팅과 함께 자주 사용됩니다. 
- 
- React는 성능, 컴포넌트의 재사용성 및 넓은 생태계로 인해 개발자들 사이에서 매우 인기가 있습니다. 이는 Facebook과 개인 개발자, 기업의 커뮤니티에 의해 유지되고 있습니다.
+
+
+<Callout type="warning">
+<Info />
+**하지만, Next.js를 사용하는 개발자라면, <span className="text-red-600 font-bold">Next.js는 이미 라우팅을 내장</span>하고 있어 별도의 React-Router가 필요 없습니다. 상태 관리에 대해서는 필요에 따라 Redux나 다른 상태 관리 라이브러리를 Next.js와 함께 사용할 수 있습니다.**
+
+
+</Callout>
+
+React는 성능, <span className="font-bold text-blue-600">컴포넌트의 재사용성 및 넓은 생태계</span>로 인해 개발자들 사이에서 매우 인기가 있습니다. 이는 Facebook과 개인 개발자, 기업의 커뮤니티에 의해 유지되고 있습니다.
 
 
 ## React 특징
@@ -46,20 +63,106 @@ React 자체는 라우팅이나 전역 상태 관리와 같은 기능을 포함�
 
 React는 Thumbnail, LikeButton, Video와 같은 개별적인 조각들을 컴포넌트라고 부르며, 이들을 조합하여 전체 화면, 페이지, 앱을 만들 수 있도록 해줍니다. 자신만의 React 컴포넌트를 생성하고 이들을 결합하여 사용자 인터페이스를 구성할 수 있습니다.
 
-![](https://wikidocs.net/images/page/203295/0_1_1.png)
+```jsx
+function Video({ video }) {
+  return (
+    <div>
+      <Thumbnail video={video} />
+      <a href={video.url}>
+        <h3>{video.title}</h3>
+        <p>{video.description}</p>
+      </a>
+      <LikeButton video={video} />
+    </div>
+  );
+}
+```
+<div className="flex justify-center">
+    ![React Screenshot](/static/images/doc/react-learn-overview-1.png)
+</div>
+
 
 혼자 작업하든 수천 명의 다른 개발자와 함께 작업하든, React를 사용하면 동일한 느낌을 받을 수 있습니다. React는 독립된 사람들, 팀 및 조직이 작성한 컴포넌트를 원활하게 결합할 수 있도록 설계되었습니다. 이를 통해 다른 사람들이 작성한 컴포넌트를 자유롭게 조합할 수 있습니다.
 
 ### 코드와 마크업을 사용하여 컴포넌트 작성하기
 
 React 컴포넌트는 JavaScript 함수입니다. 어떤 내용을 조건부로 표시하고 싶을 때는 if 문을 사용하세요. 목록을 표시하고 싶을 때는 array map()을 사용해보세요. React를 배우는 것은 프로그래밍을 배우는 것과 동일합니다.
-![](https://wikidocs.net/images/page/203295/0_1_2.png)
+```jsx
+function VideoList({ videos, emptyHeading }) {
+  const count = videos.length;
+  let heading = emptyHeading;
+  if (count > 0) {
+    const noun = count > 1 ? 'Videos' : 'Video';
+    heading = count + ' ' + noun;
+  }
+  return (
+    <section>
+      <h2>{heading}</h2>
+      {videos.map(video =>
+        <Video key={video.id} video={video} />
+      )}
+    </section>
+  );
+}
+```
+<div className="flex justify-center">
+    ![React Screenshot](/static/images/doc/react-learn-overview-2.png)
+</div>
 
 이 마크업 구문은 JSX라고 불립니다. 이는 React에 의해 인기를 얻은 JavaScript 구문 확장입니다. JSX 마크업을 관련 렌더링 로직 근처에 배치하는 것은 React 컴포넌트를 쉽게 생성, 유지 및 삭제할 수 있도록 해줍니다.
 
 ### 필요한 곳마다 상호작용성(interactivity)을 추가하세요.
 
 React 컴포넌트는 데이터를 받아들이고 화면에 표시해야 할 내용을 반환합니다. 사용자가 입력란에 입력하는 등의 상호작용에 대응하여 새로운 데이터를 컴포넌트에 전달할 수 있습니다. 그러면 React는 화면을 새로운 데이터와 일치하도록 업데이트합니다.
-![](https://wikidocs.net/images/page/203295/0_1_3.png)
+```jsx
+import { useState } from 'react';
+
+function SearchableVideoList({ videos }) {
+  const [searchText, setSearchText] = useState('');
+  const foundVideos = filterVideos(videos, searchText);
+  return (
+    <>
+      <SearchInput
+        value={searchText}
+        onChange={newText => setSearchText(newText)} />
+      <VideoList
+        videos={foundVideos}
+        emptyHeading={`No matches for “${searchText}”`} />
+    </>
+  );
+}
+```
+<div className="flex justify-center">
+    ![React Screenshot](/static/images/doc/react-learn-overview-3.png)
+</div>
 
 페이지 전체를 React로 구축할 필요는 없습니다. 기존의 HTML 페이지에 React를 추가하고, 인터랙티브한 React 컴포넌트를 어디에서든 렌더링할 수 있습니다.
+
+
+## Next.js와 React
+Next.js는 React 위에 구축된 웹 개발 프레임워크입니다. 이를 통해 개발자는 서버 사이드 렌더링(SSR), 정적 사이트 생성(SSG), API 라우트 및 다양한 최적화 기능을 쉽게 활용할 수 있습니다.
+
+<Callout type="warning">
+<Info />
+
+### Next.js에서 React의 역할
+
+Next.js에서 React는 주요 사용자 인터페이스(UI) 라이브러리로 사용됩니다. 이를 통해 개발자는 재사용 가능한 UI 컴포넌트를 생성하고, 상태 및 생명 주기 메서드를 관리할 수 있습니다.
+
+- **컴포넌트:** React의 기본 단위. 재사용 가능하고 독립적인 UI 부분을 구축합니다.
+- **상태(State) & 속성(Props):** 컴포넌트 내부의 데이터를 관리하고 컴포넌트 간 데이터를 전달합니다.
+- **Hooks:** 함수 컴포넌트 내에서 상태 및 생명 주기 메서드에 액세스할 수 있게 해줍니다.
+
+### 알아야 하는 기술
+
+Next.js를 효과적으로 사용하려면 다음 기술과 개념에 익숙해져야 합니다:
+
+- **React:** 기본 구성 요소, 상태, 생명 주기 메서드, Hooks 등의 핵심 개념 이해.
+- **JavaScript/TypeScript:** Next.js는 JS 또는 TS로 작성됩니다. 따라서 이 언어의 고급 개념에 익숙해지는 것이 좋습니다.
+- **서버 사이드 렌더링 (SSR) 및 정적 사이트 생성 (SSG):** 이 두 개념은 Next.js의 핵심 기능입니다.
+- **API Routes:** Next.js에서 제공하는 API 라우팅 솔루션을 사용하여 서버리스 함수를 쉽게 구축할 수 있습니다.
+- **Styling:** CSS-in-JS 라이브러리인 `styled-components` 또는 `emotion`, 또는 `Tailwind CSS`와 같은 유틸리티 기반 프레임워크를 이용한 스타일링 방법 이해.
+
+Next.js와 React는 웹 개발의 강력한 조합입니다. 이 두 기술을 함께 사용함으로써 웹 애플리케이션을 빠르게, 최적화되게, 그리고 확장 가능하게 개발할 수 있습니다.
+
+</Callout>
