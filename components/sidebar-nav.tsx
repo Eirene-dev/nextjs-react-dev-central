@@ -33,12 +33,12 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
   return items.length ? (
     <div className="w-full">
       {items.map((item, index) => (
-        <div key={index} className={cn('pb-8')}>
+        <div key={index} className={cn('pb-3')}>
           <button
             className="px-2 py-1 mb-1 text-sm font-medium rounded-md cursor-pointer"
             onClick={() => handleToggle(item.title)}
           >
-            {item.title}
+            [ {item.title} ]
           </button>
 
           {expanded.includes(item.title) && item.items ? (
@@ -68,12 +68,12 @@ export function DocsSidebarNavItems({
       {items.map((item, index) => {
         if (item.items) {
           return (
-            <div key={index} className="pb-8">
+            <div key={index} className="pb-2">
               <button
                 className="px-2 py-1 mb-1 text-sm font-medium rounded-md cursor-pointer"
                 onClick={() => handleToggle(item.title)}
               >
-                {item.title}
+                + {item.title}
               </button>
 
               {expanded.includes(item.title) && item.items ? (
@@ -99,14 +99,14 @@ export function DocsSidebarNavItems({
             rel={item.external ? 'noreferrer' : ''}
             onClick={onClose}
           >
-            {item.title}
+            - {item.title}
           </Link>
         ) : (
           <span
             key={index}
             className="flex items-center w-full p-2 rounded-md cursor-not-allowed opacity-60"
           >
-            {item.title}
+            - {item.title}
           </span>
         )
       })}

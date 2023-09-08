@@ -1,63 +1,114 @@
 ---
 title: 개발 가이드 문서
-date: '2023-08-30'
+date: '2023-09-01'
 summary: Next.js와 React의 공식 문서를 참고하여 웹 개발에 필수적인 기술을 안내합니다.
+bibliography: references-data.bib
 ---
 
-This is the documentation for the Taxonomy site.
+이 개발 가이드 문서는 웹 개발의 세계에 입문하는 개발자들을 위해 준비되었습니다. 본 문서를 통해 Next.js와 React에 대한 핵심 개념을 탐구하고, 필수적인 웹 개발 기술을 습득하실 수 있습니다.
 
-This is an example of a doc site built using [ContentLayer](/docs/documentation/contentlayer) and MDX.
+프론트엔드에서 백엔드까지, 시작부터 완성까지의 모든 단계를 체계적으로 안내하며, 각 섹션별로 깊게 파고드는 세부 문서 링크를 제공합니다.
 
-```javascript
-var num1, num2, sum
-num1 = prompt('Enter first number')
-num2 = prompt('Enter second number')
-sum = parseInt(num1) + parseInt(num2) // "+" means "add"
-alert('Sum = ' + sum) // "+" means combine into a string
+아래는 간단한 Next.js와 React로 만든 컴포넌트의 예시입니다:
+
+```jsx
+// pages/index.js
+import React from 'react';
+
+function HomePage() {
+  return <div>Welcome to Next.js!</div>;
+}
+
+export default HomePage;
 ```
+
+프로젝트의 성공적인 시작을 위해 필요한 기초 지식을 제공하고자 합니다. 각 주제별로 세부 내용을 탐색하며 지식을 확장해 나가실 수 있습니다.
 
 <Callout>
 
-This site is a work in progress. If you see dummy text on a page, it means I'm still working on it. You can follow updates on Twitter [@shadcn](https://twitter.com/shadcn).
+이 사이트는 아직 작업 중입니다. 페이지에서 더미 텍스트를 보게 되면, 그것은 제가 아직 그 페이지 작업을 완료하지 않았다는 것을 의미합니다. Twitter [@IoPaxcode](https://twitter.com/IoPaxcode)에서 업데이트를 확인하실 수 있습니다.
 
 </Callout>
 
-## Features
 
-Select a feature below to learn more about it.
+## 주요 내용
+
+이 개발 가이드 문서는 Next.js와 React의 핵심 기능과 웹 개발에 필요한 기술들을 중심으로 작성되었습니다. 여기서는 프로젝트 시작부터 배포까지의 전반적인 과정과 각 단계에서 필요한 지식 및 기술을 쉽게 이해할 수 있게 구성하였습니다.
 
 <div className="grid sm:grid-cols-2 gap-4 mt-6">
 
-<Card href="/docs/documentation">
+<Card href="/docs/getting-started/nextjs-foundation" disabled>
 
-### Documentation
+### Getting Started
 
-This documentation site built using Contentlayer.
+Next.js를 활용한 웹 개발의 기본 지식과 함께 첫 Next.js 앱 제작 방법
 
 </Card>
 
-<Card href="/docs/marketing" disabled>
+<Card href="/docs/react/learn/overview">
 
-### Marketing
+### React
 
-The marketing site with landing pages.
+설치/환경설정, UI 구축, 사용자 상호작용성, State/Context/Reducer를 통한 데이터 관리, 서버/클라이언트 컴포넌트
 
 </Card>
 
 <Card href="/docs/app" disabled>
 
-### App
+### Next.js
 
-The dashboard with auth and subscriptions.
+라우팅, 데이터 가져오기, 렌더링 기법, 캐싱, 스타일링, 최적화, 배포, 업그레이드
 
 </Card>
 
 <Card href="/docs/blog" disabled>
 
-### Blog
+### TypeScript
 
-The blog built using Contentlayer and MDX.
+Next.js 앱을 위한 TypeScript 기본 문법
+
+</Card>
+
+<Card href="/docs/blog" disabled>
+
+### JavaScript
+
+웹 개발을 위한 JavaScript 기본 문법과 예제
+
+</Card>
+
+<Card href="/docs/blog" disabled>
+
+### CSS
+
+CSS 기본 이론, CSS Framework, Tailwind CSS 등
 
 </Card>
 
 </div>
+
+<div style={{ textAlign: "center" }}>
+    <img src="/static/illustration/work-from-home-2.svg" alt="Study" />
+</div>
+
+
+## 참고 자료
+
+다음은 이 페이지를 작성하는 데 참고한 주요 웹사이트들입니다:
+
+- [Next.js 공식 문서](https://nextjs.org/docs)
+- [React 공식 문서](https://react.dev/blog/2023/03/16/introducing-react-dev)
+- [Tailwind CSS 공식 문서](https://tailwindcss.com/docs)
+
+위의 링크를 통해 더 깊이 있는 내용과 자세한 정보를 찾아볼 수 있습니다.
+
+## 문서 변경 로그 (Changelog)
+
+### 2023-09-08
+- React 관련 내용 업데이트
+
+### 2023-09-02
+- Next.js 라우팅 섹션 수정
+
+### 2023-09-01
+- 초기 문서 생성
