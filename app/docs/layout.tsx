@@ -17,7 +17,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
         document.body.style.overflow = 'auto'
       } else {
         // Prevent scrolling
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = 'hidden'
       }
       return !status
     })
@@ -32,11 +32,11 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
         style={{ display: navShow ? 'block' : 'none' }}
         className="fixed top-30 z-30 h-[calc(100vh-3.5rem)] w-full shrink-0 overflow-y-auto border-r py-6 pr-2 bg-white bg-opacity-90 dark:bg-gray-950 md:sticky md:block lg:py-10 md:hidden"
       >
-        <DocsSidebarNav items={docsConfig.sidebarNav} />
+        <DocsSidebarNav items={docsConfig.sidebarNav} onClose={onToggleNav} />
       </aside>
 
       <aside className="hidden md:block">
-        <DocsSidebarNav items={docsConfig.sidebarNav} />
+        <DocsSidebarNav items={docsConfig.sidebarNav} onClose={onToggleNav} />
       </aside>
       {children}
     </div>

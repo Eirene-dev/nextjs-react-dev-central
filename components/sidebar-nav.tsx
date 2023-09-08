@@ -9,6 +9,7 @@ import { useState } from 'react'
 
 export interface DocsSidebarNavProps {
   items: SidebarNavItem[]
+  onClose?: () => void
 }
 
 interface DocsSidebarNavItemsProps {
@@ -16,9 +17,10 @@ interface DocsSidebarNavItemsProps {
   pathname: string | null
   expanded: string[]
   handleToggle: (title: string) => void
+  onClose?: () => void
 }
 
-export function DocsSidebarNav({ items }: DocsSidebarNavProps) {
+export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
   const [expanded, setExpanded] = useState<string[]>([])
   const pathname = usePathname()
 
@@ -45,6 +47,7 @@ export function DocsSidebarNav({ items }: DocsSidebarNavProps) {
               pathname={pathname}
               expanded={expanded}
               handleToggle={handleToggle}
+              onClose={onClose}
             />
           ) : null}
         </div>
@@ -58,6 +61,7 @@ export function DocsSidebarNavItems({
   pathname,
   expanded,
   handleToggle,
+  onClose,
 }: DocsSidebarNavItemsProps) {
   return items?.length ? (
     <div className="grid grid-flow-row text-sm auto-rows-max">
@@ -93,6 +97,7 @@ export function DocsSidebarNavItems({
             })}
             target={item.external ? '_blank' : ''}
             rel={item.external ? 'noreferrer' : ''}
+            onClick={onClose}
           >
             {item.title}
           </Link>
