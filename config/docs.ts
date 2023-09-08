@@ -11,12 +11,12 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: 'Next.js 기초',
-          href: '/docs/react/tic-tac-toe',
+          href: '/docs/getting-started/nextjs-foundation',
           disabled: true,
         },
         {
           title: 'Next.js 첫번째 앱 만들기',
-          href: '/docs/react/tic-tac-toe',
+          href: '/docs/getting-started/nextjs-first-app',
           disabled: true,
         },
       ],
@@ -30,7 +30,7 @@ export const docsConfig: DocsConfig = {
             {
               title: 'React 개요',
               href: '/docs/react/learn/overview',
-              disabled: true,
+              disabled: false,
             },
             {
               title: '빠르게 시작해 보기',

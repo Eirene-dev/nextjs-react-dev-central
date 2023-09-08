@@ -6,6 +6,34 @@ import Image from './Image'
 import CustomLink from './Link'
 import { Callout } from '@/components/callout'
 import { MdxCard } from '@/components/mdx-card'
+import {
+  AlertTriangle,
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Command,
+  CreditCard,
+  File,
+  FileText,
+  HelpCircle,
+  Laptop,
+  Loader2,
+  LucideProps,
+  Moon,
+  MoreVertical,
+  Pizza,
+  Plus,
+  Settings,
+  SunMedium,
+  Trash,
+  Twitter,
+  User,
+  X,
+  ShieldAlert,
+  Info,
+  type Icon as LucideIcon,
+} from 'lucide-react'
 
 export const components: MDXComponents = {
   Image,
@@ -15,4 +43,7 @@ export const components: MDXComponents = {
   BlogNewsletterForm,
   Callout,
   Card: MdxCard,
+  ShieldAlert,
+  Info,
+  FileText,
 }

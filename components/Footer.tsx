@@ -26,7 +26,8 @@ export default function Footer() {
           <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size={6} />
           <SocialIcon kind="twitter" href={siteMetadata.twitter} size={6} />
           <SocialIcon kind="github" href={siteMetadata.github} size={6} />
-          <span className="align-middle">{` • `}</span>
+        </div>
+        <div className="flex mb-2 space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <span className="align-middle">Illustrations by</span>
           <a
             href="https://popsy.co"
@@ -36,6 +37,17 @@ export default function Footer() {
           >
             Popsy
           </a>
+          <span className="align-middle">{` • `}</span>
+          <span className="align-middle">Icons by</span>
+          <a
+            href="https://lucide.dev/"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium underline align-middle underline-offset-4"
+          >
+            Lucide
+          </a>
+          <span className="align-middle">{`- Licensed under MIT`}</span>
         </div>
       </div>
     </footer>
