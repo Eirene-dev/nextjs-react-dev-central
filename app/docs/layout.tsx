@@ -36,7 +36,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
       </aside>
 
       <aside className="hidden md:block">
-        <DocsSidebarNav items={docsConfig.sidebarNav} onClose={onToggleNav} />
+        <DocsSidebarNav items={docsConfig.sidebarNav} />
       </aside>
       {children}
     </div>
