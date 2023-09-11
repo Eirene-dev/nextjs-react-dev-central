@@ -35,6 +35,7 @@ import {
   type Icon as LucideIcon,
 } from 'lucide-react'
 
+
 export const components: MDXComponents = {
   Image,
   TOCInline,
