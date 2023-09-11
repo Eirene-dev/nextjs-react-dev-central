@@ -45,7 +45,7 @@ export default function Main({ posts }) {
             제공합니다. 최신 트렌드에 부합하는 업데이트된 블로그, 개발 문서, 그리고 예제로 능력을 한
             능력을 한 단계 높일 수 있습니다.
           </p>
-          <div className="py-1 space-x-4 md:space-x-2 md:space-y-0">
+          <div className="py-1 space-x-2 space-y-2 md:space-x-2 md:space-y-0">
             <Link
               href="/blog"
               className={cn(buttonVariants({ variant: 'destructive', size: 'default' }))}
