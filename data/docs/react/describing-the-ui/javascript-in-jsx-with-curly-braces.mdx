@@ -1,0 +1,117 @@
+---
+title: JSX 내 자바스크립트
+date: '2023-04-05'
+summary: XXX
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+JSX는 JavaScript 파일 내에서 HTML과 유사한 마크업을 작성할 수 있게 해주어 렌더링 로직과 콘텐츠를 동일한 장소에 유지할 수 있습니다. 때로는 마크업 내에서 약간의 JavaScript 로직을 추가하거나 동적 속성을 참조해야 할 때가 있습니다. 이러한 상황에서 JSX에서 중괄호를 사용하여 JavaScript로의 창문을 열 수 있습니다.
+
+## 따옴표를 사용한 문자열 전달
+
+JSX에 문자열 속성을 전달하려면 따옴표로 감싸면 됩니다:
+
+[![Edit optimistic-franklin-sxgf4x](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/optimistic-franklin-sxgf4x?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+
+여기에서 "[https://i.imgur.com/7vQD0fPs.jpg](https://i.imgur.com/7vQD0fPs.jpg)"와 "Gregorio Y. Zara"가 문자열로 전달되고 있습니다.
+
+하지만 동적으로 src 또는 alt 텍스트를 지정하려면 `"`와 `"` 대신 `{`와 `}`를 사용하여 JavaScript 값을 사용할 수 있습니다:
+
+[![Edit runtime-cookies-9oxidm](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/runtime-cookies-9oxidm?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+
+`className="avatar"`는 이미지를 원형으로 만드는 "avatar" CSS 클래스 이름을 지정하고, `src={avatar}`는 avatar라는 JavaScript 변수의 값을 읽습니다. 중괄호를 사용하면 마크업 내에서 JavaScript를 직접 다룰 수 있습니다!
+
+## 중괄호 사용: JavaScript 세계로의 창문
+
+JSX는 JavaScript를 작성하는 특별한 방법입니다. 그렇기 때문에 중괄호 `{ }`를 사용하여 JSX 내에서 JavaScript를 사용할 수 있습니다. 아래의 예제에서는 우선 과학자의 이름인 name을 선언한 다음 중괄호를 사용하여 `<h1>` 태그 내에 삽입합니다:
+
+[![Edit zen-david-1md7xv](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/zen-david-1md7xv?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+
+name의 값을 'Gregorio Y. Zara'에서 'Hedy Lamarr'로 변경해 보세요. 목록 제목이 어떻게 변경되는지 확인하세요.  
+
+`formatDate()`와 같은 함수 호출을 포함하여 중괄호 사이에는 모든 JavaScript 표현식을 사용할 수 있습니다.
+
+[![Edit admiring-wu-hghefp](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/admiring-wu-hghefp?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+  
+### 중괄호 사용 위치
+
+JSX 내에서 중괄호는 두 가지 방법으로만 사용할 수 있습니다:
+
+1. JSX 태그 내에서 **텍스트**로 직접 사용: `<h1>{name}'s To Do List</h1>`은 동작하지만 `<{tag}>Gregorio Y. Zara's To Do List</{tag}>`은 동작하지 않습니다.
+2. 등호 (`=`) 바로 뒤에서 **속성**으로 사용: `src={avatar}`는 avatar 변수를 읽지만 `src=\"{avatar}\"`는 문자열 `\"{avatar}\"`을 전달합니다.
+
+
+## "이중 중괄호" 사용: JSX에서 CSS 및 기타 객체 사용
+
+문자열, 숫자 및 기타 JavaScript 표현식 외에도 JSX에서 객체를 전달할 수도 있습니다. 객체는 `{ name: "Hedy Lamarr", inventions: 5 }`와 같이 중괄호로 표시됩니다. 따라서 JSX에서 JavaScript 객체를 전달하려면 객체를 또 다른 중괄호로 감싸야 합니다: `person={{ name: "Hedy Lamarr", inventions: 5 }}`.
+
+JSX에서 인라인 CSS 스타일을 사용할 때도 이를 볼 수 있습니다. React는 인라인 스타일을 사용하도록 요구하지 않습니다(CSS 클래스가 대부분의 경우에 훌륭하게 작동합니다). 그러나 인라인 스타일이 필요한 경우 style 속성에 객체를 전달합니다:
+
+[![Edit recursing-panka-lgpqxu](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/recursing-panka-lgpqxu?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+
+backgroundColor 및 color의 값을 변경해 보세요.
+
+다음과 같이 JavaScript 객체를 중괄호 내에서 작성하면 JavaScript 객체를 명확하게 볼 수 있습니다.
+
+```jsx showLineNumbers
+<ul style={
+  {
+    backgroundColor: 'black',
+    color: 'pink'
+  }
+}>
+```
+
+JSX에서 `{{`와 `}}`를 볼 때는 JSX 중괄호 안에 있는 JavaScript 객체일 뿐이라는 것을 알아두세요!
+
+<Callout type="warning">
+인라인 스타일 속성은 카멜 케이스로 작성됩니다. 예를 들어, HTML `<ul style="background-color: black">`은 컴포넌트에서 `<ul style={{ backgroundColor: 'black' }}>`로 작성됩니다.
+</Callout>
+
+### JavaScript 객체와 중괄호로 더욱 재미있게
+
+여러 표현식을 하나의 객체로 이동시킬 수 있으며, JSX에서 중괄호 내에서 참조할 수 있습니다:
+
+[![Edit heuristic-wave-crznkm](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/heuristic-wave-crznkm?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+이 예제에서는 person JavaScript 객체에 이름 문자열과 테마 객체가 포함되어 있습니다:
+
+```jsx showLineNumbers
+const person = {
+  name: 'Gregorio Y. Zara',
+  theme: {
+    backgroundColor: 'black',
+    color: 'pink'
+  }
+};
+```
+
+컴포넌트는 다음과 같이 person에서 이러한 값을 사용할 수 있습니다:
+
+```jsx showLineNumbers
+<div style={person.theme}>
+  <h1>{person.name} s Todos</h1>
+```
+
+JSX는 JavaScript를 사용하여 데이터와 로직을 조직화할 수 있는 매우 간단한 템플릿 언어입니다.
+
+## 요약
+
+이제 JSX에 대해 거의 모든 것을 알게 되었습니다:
+
+- 따옴표로 둘러싼 JSX 속성은 문자열로 전달됩니다.
+- 중괄호를 사용하여 JavaScript 로직과 변수를 마크업에 포함할 수 있습니다.
+- 중괄호는 JSX 태그 콘텐츠 내부나 속성의 = 바로 뒤에서 작동합니다.
+- `{{`와 `}}`는 특별한 구문이 아니라 JSX 중괄호 안에 포함된 JavaScript 객체입니다.
+

@@ -1,0 +1,138 @@
+---
+title: 컴포넌트 가져오기/내보내기
+date: '2023-04-03'
+summary: XXX
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+컴포넌트의 마법은 재사용성에 있습니다. 여러 컴포넌트로 구성된 컴포넌트를 생성할 수 있습니다. 그러나 컴포넌트를 점점 중첩하면서 파일을 여러 개로 분리하는 것이 합리적일 때가 많습니다. 이렇게 하면 파일을 쉽게 스캔하고 다른 위치에서 컴포넌트를 재사용할 수 있습니다.
+
+## 루트 컴포넌트 파일
+
+[Your First Component](https://react.dev/learn/your-first-component)에서 Profile 컴포넌트와 그를 렌더링하는 Gallery 컴포넌트를 만들었습니다.
+
+[![Edit affectionate-tdd-tefyif](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/affectionate-tdd-tefyif?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+현재 이들은 이 예시에서 App.js라는 **루트 컴포넌트 파일**에 위치해 있습니다. [Create React App](https://create-react-app.dev/)에서는 앱이 src/App.js에 있습니다. 설정에 따라 루트 컴포넌트가 다른 파일에 있을 수도 있습니다. Next.js와 같은 파일 기반 라우팅을 사용하는 프레임워크를 사용하는 경우, 루트 컴포넌트는 각 페이지마다 다를 수 있습니다.
+
+## 컴포넌트 내보내기와 가져오기
+
+앞으로 랜딩 화면을 변경하여 과학 책 목록을 넣거나 모든 프로필을 다른 곳에 배치하고 싶다면 어떻게 해야 할까요? Gallery와 Profile을 루트 컴포넌트 파일에서 분리하는 것이 합리적입니다. 이렇게 하면 모듈화되어 다른 파일에서 재사용할 수 있게 됩니다. 컴포넌트를 이동하는 방법은 다음과 같습니다.
+
+1. 컴포넌트를 넣을 새로운 JS 파일을 만듭니다.
+2. 파일에서 함수 컴포넌트를 **내보냅니다** (default 또는 named exports 중 하나를 사용하여).
+3. 컴포넌트를 사용할 파일에서 해당 컴포넌트를 **가져옵니다** (default 또는 named exports에 해당하는 가져오기 기술을 사용하여).
+
+여기서 Profile과 Gallery가 App.js에서 Gallery.js로 이동되었습니다. 이제 App.js에서 Gallery를 Gallery.js에서 가져오도록 변경할 수 있습니다.
+
+[![Edit youthful-worker-lv71nq](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/youthful-worker-lv71nq?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+위의 예시에서 이제 두 개의 컴포넌트 파일로 분할되었음을 알 수 있습니다.
+
+1. Gallery.js:
+   - 동일한 파일 내에서만 사용되며 내보내지 않는 **Profile** 컴포넌트를 정의합니다.
+   - **default export**로 Gallery 컴포넌트를 내보냅니다.
+2. App.js:
+   - Gallery.js로부터 **default import**로 Gallery를 가져옵니다.
+   - 루트 컴포넌트인 App 컴포넌트를 **default export**로 내보냅니다.
+
+> 참고
+.jsx 파일 확장자를 생략한 파일을 마주칠 수도 있습니다. 예를 들면 다음과 같습니다:
+```jsx showLineNumbers
+import Gallery from './Gallery';
+```
+React에서는 './Gallery.js' 또는 './Gallery' 둘 다 작동하지만, 전자는 네이티브 ES 모듈 동작에 더 가깝습니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **기본 내보내기 vs 명명된 내보내기**</summary>
+
+
+JavaScript에서 값들을 내보내는 데에는 두 가지 기본적인 방법이 있습니다: 기본 내보내기(default exports)와 명명된 내보내기(named exports). 지금까지의 예제에서는 기본 내보내기만 사용했습니다. 하지만 동일한 파일에서 하나 이상의 방법을 함께 사용할 수도 있습니다. **파일은 기본 내보내기를 하나만 가질 수 있지만, 명명된 내보내기는 원하는 만큼 가질 수 있습니다.**
+
+![내보내기 구문과 가져오기 구문의 비교](https://react.dev/images/docs/illustrations/i_import-export.svg)
+
+컴포넌트를 내보내는 방식에 따라 가져오는 방식도 달라집니다. 명명된 내보내기와 동일한 방식으로 기본 내보내기를 가져오려고 하면 오류가 발생합니다! 아래의 차트를 통해 구분할 수 있습니다:
+
+구문|내보내기 구문|가져오기 구문
+---|---|---
+기본 내보내기|`export default function Button() {}`|`import Button from './Button.js';`
+명명된 내보내기|`export function Button() {}`|`import { Button } from './Button.js';`
+
+기본 가져오기를 작성할 때에는 import 뒤에 어떤 이름을 사용해도 상관 없습니다. 예를 들어, `import Banana from './Button.js'`와 같이 작성해도 동일한 기본 내보내기가 제공됩니다. 반면, 명명된 가져오기는 이름이 양쪽에서 일치해야 합니다. 이것이 명명된 가져오기라고 불리는 이유입니다!
+
+**하나의 파일에서 하나의 컴포넌트만 내보낼 경우에는 기본 내보내기를 사용하고, 여러 컴포넌트와 값들을 내보낼 경우에는 명명된 내보내기를 사용하는 경향이 있습니다.** 어떤 코딩 스타일을 선호하든지, 항상 컴포넌트 함수와 해당 파일에 의미있는 이름을 부여하는 것이 좋습니다. `export default () => {}`와 같이 이름이 없는 컴포넌트는 디버깅을 어렵게 만들기 때문에 권장되지 않습니다.
+</details>
+
+
+## 동일한 파일에서 여러 컴포넌트 내보내고 가져오기
+
+갤러리 대신 하나의 프로필만 표시하려면 어떻게 해야 할까요? Profile 컴포넌트도 내보낼 수 있습니다. 그러나 Gallery.js에는 이미 `default export`가 있고 두 개의 `default export`는 가질 수 없습니다. 새로운 파일에 default export를 생성하거나 Profile에 대한 `named export`를 추가할 수 있습니다. **파일에는 하나의 `default export`만 가질 수 있지만 여러 개의 `named export`가 있을 수 있습니다!**
+
+> 참고  
+> default와 named export 간의 잠재적인 혼동을 줄이기 위해 일부 팀은 하나의 스타일(`default` 또는 `named`)에만 따르거나 하나의 파일에 혼합하지 않도록 선택합니다. 가장 잘 맞는 방식을 사용하십시오!
+
+먼저, `named export`(기본 키워드 없이)를 사용하여 Gallery.js에서 Profile을 내보냅니다.
+
+```jsx showLineNumbers
+export function Profile() {
+  // ...
+}
+```
+
+그런 다음, 중괄호를 사용하여 Gallery.js에서 App.js로 Profile을 `named import`로 가져옵니다.
+
+```jsx showLineNumbers
+import { Profile } from './Gallery.js';
+```
+
+마지막으로, App 컴포넌트에서 `<Profile />`을 렌더링합니다.
+
+```jsx showLineNumbers
+export default function App() {
+  return <Profile />;
+}
+```
+
+이제 Gallery.js에는 두 개의 내보내기가 있습니다: Profile을 `named export`로, Gallery를 `default export`로 내보냅니다. App.js에서 둘 모두를 가져옵니다. 이 예시에서 `<Profile />`을 `<Gallery />`로 편집하고 다시 시도해보세요.
+
+[![Edit laughing-elbakyan-il8s2f](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/laughing-elbakyan-il8s2f?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+이제 `default`와 `named export`를 혼합하여 사용하고 있습니다.
+
+- Gallery.js:
+    - **Profile** 컴포넌트를 **Profile**이라는 **named export**로 내보냅니다.
+    - Gallery 컴포넌트를 **default export**로 내보냅니다.
+- App.js:
+    - Gallery.js에서 **named import**로 **Profile**을 **Profile**이라는 **named import**으로 가져옵니다.
+    - Gallery.js에서 **default import**로 Gallery를 가져옵니다.
+    - 루트 컴포넌트인 App 컴포넌트를 **default export**로 내보냅니다.
+
+## 요약
+
+이 페이지에서 다음을 배웠습니다.
+
+- 루트 컴포넌트 파일이 무엇인지
+- 컴포넌트를 가져오고 내보내는 방법
+- `default` 및 `named import` 및 `export`를 언제 어떻게 사용하는지
+- 동일한 파일에서 여러 컴포넌트를 내보내는 방법
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **도전 과제: 컴포넌트를 더 세분화하기**</summary>
+
+현재, Gallery.js 파일에서는 Profile과 Gallery 두 개의 컴포넌트를 내보내는데, 조금 혼동스럽습니다.
+
+Profile 컴포넌트를 자체적인 Profile.js 파일로 이동시킨 후, App 컴포넌트를 수정하여 `<Profile />`와 `<Gallery />`를 연이어 렌더링하도록 변경하세요.
+
+Profile에 대해서는 기본 내보내기(`default export`) 또는 명명된 내보내기(`named export`)를 사용할 수 있지만, App.js와 Gallery.js 모두에서 해당 가져오기(import) 구문을 사용하는지 확인하세요! 이전에 설명한 표를 참고할 수 있습니다:
+
+구문|내보내기 구문|가져오기 구문
+---|---|---
+기본 내보내기|`export default function Button() {}`|`import Button from './Button.js';`
+명명된 내보내기|`export function Button() {}`|`import { Button } from './Button.js';`  
+  
+[![Edit determined-shape-vkkovt](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/determined-shape-vkkovtt?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+한 종류의 내보내기 방식으로 작동하는 것을 확인한 후, 다른 종류의 내보내기 방식으로도 작동하도록 만들어보세요.
+
+</details>

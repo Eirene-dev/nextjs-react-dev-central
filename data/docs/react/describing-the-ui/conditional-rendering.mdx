@@ -1,0 +1,185 @@
+---
+title: 조건부 렌더링
+date: '2023-04-07'
+summary: XXX
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+컴포넌트는 다양한 조건에 따라 다른 내용을 표시해야 할 때가 많습니다. React에서는 JavaScript 문법인 `if` 문,`&&` 연산자, 삼항 연산자 등을 사용하여 조건부로 JSX를 렌더링할 수 있습니다.
+
+
+## JSX를 조건부로 반환하기
+
+예를 들어, PackingList 컴포넌트에서 여러 항목(Item)을 렌더링하고, 해당 항목들을 패킹 여부에 따라 표시하려고 합니다.
+
+[![Edit gifted-sun-8w0i8b](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/gifted-sun-8w0i8b?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+Item 컴포넌트 중 일부는 isPacked prop이 false가 아닌 true로 설정되어 있습니다. `isPacked={true}`인 항목에 체크 표시 (✔)를 추가하려고 합니다.
+
+다음과 같이 [if/else 문](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else)으로 작성할 수 있습니다.
+
+```jsx showLineNumbers
+if (isPacked) {
+  return <li className="item">{name} ✔</li>;
+}
+return <li className="item">{name}</li>;
+```
+
+`isPacked` prop이 true인 경우, 이 코드는 **다른 JSX 트리를 반환**합니다. 이 변경으로 인해 일부 항목에는 끝에 체크 표시가 추가됩니다.
+
+[![Edit quirky-morning-skw4mc](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/quirky-morning-skw4mc?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+   
+각 경우에 반환되는 내용을 편집해 보고 결과가 어떻게 변경되는지 확인해 보세요!
+
+주목할 점은 JavaScript의 if 문과 return 문을 사용하여 분기 로직을 생성한다는 것입니다. React에서는 제어 흐름 (조건과 같은)이 JavaScript로 처리됩니다.
+
+### null을 사용하여 조건부로 아무것도 반환하지 않기
+
+일부 상황에서는 아무 것도 렌더링하지 않을 수도 있습니다. 예를 들어, 패킹된 항목을 전혀 표시하고 싶지 않을 수 있습니다. 컴포넌트는 무언가를 반환해야 합니다. 이 경우 null을 반환할 수 있습니다.
+
+```jsx showLineNumbers
+if (isPacked) {
+  return null;
+}
+return <li className="item">{name}</li>;
+```
+
+`isPacked`가 true인 경우, 컴포넌트는 아무것도(null) 반환합니다. 그렇지 않으면 JSX를 반환하여 렌더링합니다.
+
+[![Edit youthful-jang-2ui3qz](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/youthful-jang-2ui3qz?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+실제로 컴포넌트에서 null을 반환하는 것은 일반적이지 않습니다. 왜냐하면 렌더링하려는 개발자에게 의외일 수 있기 때문입니다. 더 자주, 부모 컴포넌트의 JSX에서 해당 컴포넌트를 조건적으로 포함하거나 제외하는 방법을 사용합니다. 이 방법을 사용하는 방법을 알아보겠습니다!
+
+
+## JSX를 조건부로 포함하기
+
+이전 예제에서 컴포넌트가 반환할 JSX 트리를 조건적으로 제어했습니다. 렌더링 출력에서 일부 중복을 이미 발견할 수도 있습니다.
+
+```jsx showLineNumbers
+<li className="item">{name} ✔</li>
+```
+
+와
+
+```jsx showLineNumbers
+<li className="item">{name}</li>
+```
+
+모두 동일한 `<li className="item">...</li>`을 반환합니다.
+
+```jsx showLineNumbers
+if (isPacked) {
+  return <li className="item">{name} ✔</li>;
+}
+return <li className="item">{name}</li>;
+```
+
+이러한 중복은 해로울 수는 없지만 코드를 유지 관리하기 어려울 수 있습니다. className을 변경하려면 코드의 두 곳에서 변경해야 합니다! 이러한 상황에서 코드를 더 [DRY(Don't Repeat Yourself)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)하게 만들기 위해 JSX를 조건부로 포함할 수 있습니다.
+
+#### 삼항 연산자 `(? :)`
+
+JavaScript에는 조건 표현식을 간단하게 작성할 수 있는 [조건 연산자](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) 또는 "삼항 연산자"가 있습니다.
+
+다음과 같이 작성할 수 있습니다.
+
+```jsx showLineNumbers
+return (
+  <li className="item">
+    {isPacked ? name + ' ✔' : name}
+  </li>
+);
+```
+
+이를 "isPacked가 true이면 `(?) name + ' ✔'`를 렌더링하고, 그렇지 않으면 `(:) name`을 렌더링한다"라고 읽을 수 있습니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **두 예제가 완전히 동일한가요?**</summary>
+  
+객체 지향 프로그래밍 배경이 있다면 위의 두 예제가 미묘하게 다르다고 가정할 수 있습니다. 왜냐하면 둘 중 하나가 `<li>`의 두 가지 다른 "인스턴스"를 만들 수 있기 때문입니다. 그러나 JSX 요소는 내부 상태를 가지지 않고 실제 DOM 노드가 아닌 가벼운 설명(청사진)입니다. 따라서 이러한 두 예제는 완전히 동일합니다. [상태 보존과 재설정](https://react.dev/learn/preserving-and-resetting-state)에서 이 작동 방식에 대해 자세히 설명합니다.
+</details>
+
+이제 완료된 항목의 텍스트를 `<del>`로 감싸려고 합니다. 더 많은 줄바꿈과 괄호를 추가하여 JSX 내에서 더 많은 JSX를 중첩하기 쉽게 만듭니다.
+
+[![Edit sharp-yalow-mejx8z](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/sharp-yalow-mejx8z?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+이 스타일은 간단한 조건에 대해서는 잘 작동하지만, 너무 많은 중첩된 조건부 마크업으로 인해 코드가 복잡해질 경우, 자식 컴포넌트를 추출하여 코드를 정리하는 것을 고려해야 합니다. React에서 마크업은 코드의 일부이므로 변수와 함수와 같은 도구를 사용하여 복잡한 표현을 정리할 수 있습니다.
+
+
+
+### 논리 AND 연산자 (&&) 
+
+다른 자주 사용되는 단축키는 [JavaScript 논리 AND (&&) 연산자](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND#:~:text=The%20logical%20AND%20(%20%26%26%20)%20operator,it%20returns%20a%20Boolean%20value.)입니다. React 컴포넌트 내에서 자주 사용되며, 조건이 true일 때 일부 JSX를 렌더링하거나, 그렇지 않으면 아무것도 렌더링하지 않을 때 사용됩니다. &&를 사용하여 isPacked가 true인 경우에만 체크 표시를 조건부로 렌더링할 수 있습니다.
+
+```jsx showLineNumbers
+return (
+  <li className="item">
+    {name} {isPacked && '✔'}
+  </li>
+);
+```
+
+이를 "isPacked가 true이면 (&&) 체크 표시를 렌더링하고, 그렇지 않으면 아무 것도 렌더링하지 않는다"라고 읽을 수 있습니다.
+
+[![Edit flamboyant-pascal-3o6p96](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/flamboyant-pascal-3o6p96?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+실제로 JavaScript && 표현식은 왼쪽 측면의 값(여기서는 체크 표시)을 반환합니다. 왼쪽 측면(조건)이 true인 경우. 그러나 조건이 false인 경우 전체 표현식은 false가 되며, React는 false를 JSX 트리의 "빈 공간"으로 간주하고 그 자리에 아무 것도 렌더링하지 않습니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **&&의 왼쪽에 숫자를 넣지 마세요.**</summary>
+
+조건을 테스트하기 위해 JavaScript는 왼쪽 측면을 자동으로 boolean으로 변환합니다. 그러나 왼쪽 측면이 0인 경우 전체 표현식은 해당 값(0)이 되고, React는 아무 것도 렌더링하지 않고 0 자체를 렌더링합니다.
+
+예를 들어, `messageCount && <p>New messages</p>`와 같은 코드를 작성하는 것은 자주 발생하는 실수입니다. messageCount가 0일 때는 아무 것도 렌더링하지 않을 것으로 생각하기 쉽지만, 실제로는 0 자체를 렌더링합니다!
+
+이를 수정하려면 왼쪽 측면을 boolean으로 만들어야 합니다. 예: `messageCount > 0 && <p>New messages</p>`.
+</details>
+
+
+
+## JSX를 변수에 조건부로 할당하기 
+
+단축키가 일반적인 코드 작성을 방해할 때는 if 문과 변수를 사용해 보세요. [let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let)으로 정의한 변수를 재할당할 수 있으므로, 표시할 기본 콘텐츠인 name을 제공합니다.
+
+```jsx
+let itemContent = name;
+```
+
+isPacked가 true인 경우 JSX 표현식을 itemContent에 다시 할당하기 위해 if 문을 사용합니다.
+
+```jsx
+if (isPacked) {
+  itemContent = name + " ✔";
+}
+```
+
+중괄호를 사용하여 반환된 JSX 트리 내에서 중첩된 이전에 계산된 표현식을 JSX에 중첩시켜 반환됩니다.
+
+```jsx
+<li className="item">
+  {itemContent}
+</li>
+```
+
+이 스타일은 가장 상세하지만, 가장 유연합니다. 실제로 작동하는 예제는 다음과 같습니다.
+
+[![Edit sad-carlos-duhb3t](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/sad-carlos-duhb3t?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+이전처럼 텍스트뿐만 아니라 임의의 JSX에도 동작합니다.
+
+[![Edit compassionate-perlman-8pgs5m](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/compassionate-perlman-8pgs5m?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+JavaScript에 익숙하지 않은 경우 이러한 다양한 스타일은 처음에는 압도적일 수 있습니다. 그러나 이러한 스타일을 익히면 어떤 JavaScript 코드든 읽고 작성하는 데 도움이 됩니다 - 그리고 React 컴포넌트에만 한정되지 않습니다! 시작할 때 선호하는 스타일을 선택한 다음, 다른 스타일이 어떻게 작동하는지 잊어버릴 경우 다시 이 참고 자료를 참조하십시오.
+
+## 요약
+
+- React에서는 JavaScript를 사용하여 분기 로직을 제어합니다.
+- 조건부로 JSX 표현식을 반환하려면 if 문을 사용할 수 있습니다.
+- 조건부로 일부 JSX를 변수에 저장하고, 중괄호를 사용하여 JSX 내에서 포함시킬 수 있습니다.
+- JSX에서 `{cond ? <A /> : <B />}` 는 "만약 cond이면 `<A />`를 렌더링하고, 그렇지 않으면 `<B />`를 렌더링한다"를 의미합니다.
+- JSX에서 `{cond && <A />}` 는 "만약 cond이면 `<A />`를 렌더링하고, 그렇지 않으면 아무것도 렌더링하지 않는다"를 의미합니다.
+- 이러한 단축키는 흔하지만, 순수한 if문을 선호하는 경우에는 사용하지 않아도 됩니다.

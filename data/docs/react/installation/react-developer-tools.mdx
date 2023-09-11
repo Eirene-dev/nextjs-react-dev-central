@@ -1,0 +1,74 @@
+---
+title: React 개발자 도구
+date: '2023-03-06'
+summary: XXX
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+리액트 개발자 도구를 사용하여 리액트 컴포넌트를 검사하고 props와 state를 편집하며 성능 문제를 식별할 수 있습니다.
+
+## 브라우저 확장 프로그램
+
+리액트로 구축된 웹사이트를 디버깅하는 가장 쉬운 방법은 리액트 개발자 도구 브라우저 확장 프로그램을 설치하는 것입니다. 이 확장 프로그램은 여러 인기 있는 브라우저에서 사용할 수 있습니다:
+
+* [크롬용 설치](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
+* [파이어폭스용 설치](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/)
+* [엣지용 설치](https://microsoftedge.microsoft.com/addons/detail/react-developer-tools/gpphkfbcpidddadnkolkpfckpihlkkil)
+
+이제 리액트로 구축된 웹사이트를 방문하면 Components와 Profiler 패널이 표시됩니다.
+![](https://react.dev/images/docs/react-devtools-extension.png)
+
+## 사파리 및 기타 브라우저
+
+다른 브라우저(예: 사파리)의 경우 [react-devtools](https://www.npmjs.com/package/react-devtools) npm 패키지를 설치하세요:
+
+```bash
+# Yarn
+yarn global add react-devtools
+
+# Npm
+npm install -g react-devtools
+```
+
+다음으로 터미널에서 개발자 도구를 엽니다:
+
+```bash
+react-devtools
+```
+
+그런 다음 다음의 `<script>` 태그를 웹사이트의 `<head>` 시작 부분에 추가하여 웹사이트와 연결하세요:
+
+```javascript
+<html>
+  <head>
+    <script src="http://localhost:8097"></script>
+```
+이제 웹사이트를 브라우저에서 다시 로드하여 개발자 도구에서 확인할 수 있습니다.
+
+![](https://react.dev/images/docs/react-devtools-standalone.png)
+
+## 모바일(리액트 네이티브)
+
+리액트 네이티브로 구축된 앱도 리액트 개발자 도구를 사용하여 검사할 수 있습니다.
+
+[리액트 개발자 도구](https://reactnative.dev)를 사용하는 가장 쉬운 방법은 전역으로 설치하는 것입니다:
+
+```bash
+# Yarn
+yarn global add react-devtools
+
+# Npm
+npm install -g react-devtools
+```
+다음으로 터미널에서 개발자 도구를 엽니다.
+
+```bash
+react-devtools
+```
+
+이는 실행 중인 모든 로컬 리액트 네이티브 앱에 연결해야 합니다.
+
+> 몇 초 후에도 개발자 도구가 연결되지 않으면 앱을 다시 로드해 보세요.
+
+[리액트 네이티브 디버깅에 대해 자세히 알아보세요.](https://reactnative.dev/docs/debugging)
