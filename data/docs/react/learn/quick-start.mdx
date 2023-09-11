@@ -108,7 +108,7 @@ JavaScript의 `export default` 키워드는 모듈에 "별명"을 부여하여 �
 
 예를 들어, `myFunction.js`라는 모듈에서 다음과 같은 코드가 있다고 가정해봅시다:
 
-```javascript
+```javascript {1} showLineNumbers
 export default function myFunction() {
   return "Hello, world!";
 }
@@ -116,7 +116,7 @@ export default function myFunction() {
 
 다른 파일에서는 다음과 같이 이 함수를 쉽게 가져와 사용할 수 있습니다:
 
-```javascript
+```javascript {1} showLineNumbers
 import greet from './myFunction';
 
 console.log(greet());  // 출력: Hello, world!
@@ -137,7 +137,7 @@ console.log(greet());  // 출력: Hello, world!
 
 JSX는 HTML보다 엄격합니다. `<br />`과 같이 태그를 닫아야 합니다. 컴포넌트는 또한 여러 개의 JSX 태그를 반환할 수 없습니다. 이를 공유 부모(`<div>`...`</div> `또는 빈 `< >`...`< / >` 래퍼)로 묶어야 합니다:
 
-```javascript
+```javascript {3-6} showLineNumbers
 function AboutPage() {
   return (
     <>
@@ -148,24 +148,20 @@ function AboutPage() {
 }
 ```
 
-JSX로 변환할 HTML이 많은 경우 온라인 변환 도구 를 사용할 수 있습니다.
-
-
-### HTML to JSX 변환 도구
-> https://transform.tools/html-to-jsx
+> JSX로 변환할 HTML이 많은 경우, 온라인 변환 도구([HTML to JSX 변환 도구](https://transform.tools/html-to-jsx))를 사용할 수 있습니다.
 
 
 ### 스타일 추가
 
 React에서는 className으로 CSS 클래스를 지정합니다. 이는 HTML의 [class](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/class) 속성과 동일한 방식으로 작동합니다:
 
-```html
+```html showLineNumbers
 <img className="avatar" />
 ```
 
 그런 다음 별도의 CSS 파일에서 해당 클래스에 대한 CSS 규칙을 작성합니다:
 
-```css
+```css showLineNumbers
 /* CSS 파일에 작성 */
 .avatar {
   border-radius: 50%;
@@ -195,7 +191,7 @@ React 프로젝트에 CSS 파일을 추가하는 방법은 몇 가지 단계로 
 
 그리고 `MyComponent.css` 파일에 몇 가지 스타일이 포함되어 있다고 가정해 봅시다:
 
-```css
+```css showLineNumbers
 .container {
   margin: auto;
   width: 50%;
@@ -206,7 +202,7 @@ React 프로젝트에 CSS 파일을 추가하는 방법은 몇 가지 단계로 
 
 그럼, `MyComponent.js` 파일에서 이 CSS 파일을 다음과 같이 import합니다:
 
-```jsx
+```jsx {2, 6} showLineNumbers
 import React from 'react';
 import './MyComponent.css';  // CSS를 import합니다.
 
@@ -229,7 +225,7 @@ export default MyComponent;
 
 JSX를 사용하면 JavaScript 내에 마크업을 넣을 수 있습니다. 중괄호를 사용하여 코드의 변수를 포함하여 사용자에게 표시할 수 있습니다. 예를 들어, 다음은 `user.name`을 표시합니다:
 
-```javascript
+```jsx {3} showLineNumbers
 return (
   <h1>
     {user.name}
@@ -237,9 +233,10 @@ return (
 );
 ```
 
-JSX 속성에서도 중괄호를 사용하여 JavaScript로 "이스케이프"할 수 있지만, 따옴표 대신 중괄호를 사용해야 합니다. 예를 들어, `className="avatar"`는 `"avatar"` 문자열을 CSS 클래스로 전달하지만, `src={user.imageUrl}`은 JavaScript의 `user.imageUrl` 변수 값을 읽고 해당 값을 `src` 속성으로 전달합니다:
+JSX 속성에서도 중괄호를 사용하여 JavaScript로 "이스케이프"할 수 있지만, 
+<span className="font-bold bg-yellow-100">따옴표 대신 중괄호를 사용</span>해야 합니다. 예를 들어, `className="avatar"`는 `"avatar"` 문자열을 CSS 클래스로 전달하지만, `src={user.imageUrl}`은 JavaScript의 `user.imageUrl` 변수 값을 읽고 해당 값을 `src` 속성으로 전달합니다:
 
-```javascript
+```jsx {4} showLineNumbers
 return (
   <img
     className="avatar"
@@ -252,14 +249,38 @@ JSX 중괄호 안에는 [문자열 연결](https://javascript.info/operators#str
 
 [![Edit dazzling-kalam-6qm5em](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/dazzling-kalam-6qm5em?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
+```jsx {15-18} showLineNumbers
+const user = {
+  name: 'Hedy Lamarr',
+  imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
+  imageSize: 90,
+};
 
+export default function Profile() {
+  return (
+    <>
+      <h1>{user.name}</h1>
+      <img
+        className="avatar"
+        src={user.imageUrl}
+        alt={'Photo of ' + user.name}
+        style={{
+          width: user.imageSize,
+          height: user.imageSize
+        }}
+      />
+    </>
+  );
+}
+
+```
   위의 예제에서 `style={{}}`는 특별한 구문이 아니라, `style={ }` JSX 중괄호 내부의 일반 `{}` 객체입니다. 스타일이 JavaScript 변수에 따라 달라지는 경우 `style` 속성을 사용할 수 있습니다.
 
 ## 조건부 렌더링
 
 React에서 조건을 작성하는 특별한 구문은 없습니다. 대신 일반적인 JavaScript 코드를 작성할 때 사용하는 기술을 사용합니다. 예를 들어, JSX를 조건부로 포함시키려면 [`if` 문](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else)을 사용할 수 있습니다:
 
-```javascript
+```javascript {2, 4} showLineNumbers
 let content;
 if (isLoggedIn) {
   content = <AdminPanel />;
@@ -275,7 +296,7 @@ return (
 
 더 간결한 코드를 선호하는 경우, [조건부 `?` 연산자](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator)를 사용할 수 있습니다. `if`와 달리 JSX 내부에서 작동합니다:
 
-```javascript
+```javascript {2-6} showLineNumbers
 <div>
   {isLoggedIn ? (
     <AdminPanel />
@@ -287,7 +308,7 @@ return (
 
 `else` 분기가 필요하지 않은 경우, 더 짧은 논리 [`&&` 구문](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND#short-circuit_evaluation)을 사용할 수도 있습니다:
 
-```javascript
+```javascript {2} showLineNumbers
 <div>
   {isLoggedIn && <AdminPanel />}
 </div>
@@ -301,7 +322,7 @@ return (
 
 예를 들어, 제품의 배열이 있다고 가정해봅시다:
 
-```javascript
+```javascript showLineNumbers
 const products = [
   { title: '배추', id: 1 },
   { title: '마늘', id: 2 },
@@ -311,7 +332,7 @@ const products = [
 
 컴포넌트 내부에서 `map()` 함수를 사용하여 제품 배열을 `<li>` 항목의 배열로 변환합니다:
 
-```javascript
+```jsx {1-5} showLineNumbers
 const listItems = products.map(product =>
   <li key={product.id}>
     {product.title}
@@ -324,13 +345,11 @@ return (
 ```
 
 `<li>`에는 key 속성이 있음에 유의하세요. 목록의 각 항목마다 형제들 중에서 해당 항목을 고유하게 식별하는 문자열 또는 숫자를 전달해야 합니다. 일반적으로 키는 데이터로부터 가져온 데이터베이스 ID와 같은 값이어야 합니다. React는 키를 사용하여 항목을 나중에 삽입, 삭제 또는 재정렬할 때 어떤 일이 발생했는지 알 수 있습니다.
-[![Edit dazzling-kalam-6qm5em](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/dazzling-kalam-6qm5em?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
-
 
 ## 이벤트에 응답하기  
 컴포넌트 내부에서 이벤트 핸들러 함수를 선언함으로써 이벤트에 응답할 수 있습니다:
 
-```javascript
+```jsx {2-4, 7} showLineNumbers
 function MyButton() {
   function handleClick() {
     alert('You clicked me!');
@@ -346,37 +365,40 @@ function MyButton() {
 
 `onClick={handleClick}`에서 마지막에 괄호가 없음에 주목하세요! 이벤트 핸들러 함수를 호출하지 마세요. 함수를 전달하기만 하면 됩니다. React는 사용자가 버튼을 클릭할 때 이벤트 핸들러를 호출합니다.
 
-<Callout>
-**React 이벤트**
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **React 이벤트**</summary>
+
 
 React에서 이벤트는 사용자 상호작용, 시스템 업데이트 및 브라우저 트리거와 같은 다양한 동작에 의해 트리거됩니다. React 요소에서 이벤트를 처리하는 방법은 DOM 요소에서 이벤트를 처리하는 방법과 매우 유사하지만 구문과 동작에는 몇 가지 차이가 있습니다:
 
-- **대소문자 구분**: React 이벤트는 소문자 대신 camelCase로 작성됩니다.
+- **대소문자 구분**: <span className="text-red-600 font-bold">React 이벤트</span>는 
+<span className="font-bold bg-yellow-100"><strike>소문자 대신</strike> camelCase</span>로 작성됩니다.
 
-```javascript
+```javascript showLineNumbers
 <button onClick={myFunction}>Click me</button>
 ```
 
-- **이벤트 핸들러는 함수**: JSX에서 이벤트 핸들러는 문자열 대신 함수를 전달합니다.
+- **이벤트 핸들러는 함수**: JSX에서 <span className="text-red-600 font-bold">이벤트 핸들러</span>는 <span className="font-bold bg-yellow-100"><strike>문자열 대신</strike> 함수</span>를 전달합니다.
 
-```javascript
+```javascript showLineNumbers
 function myFunction() {
     alert('Button clicked!');
 }
 ```
 
-- **이벤트 객체**: 이벤트를 처리하는 함수를 정의할 때, React는 해당 함수에 이벤트 객체를 전달합니다. 이 이벤트 객체는 네이티브 HTML 이벤트 객체와 동일한 속성과 메서드를 갖지만, 모든 브라우저에서 동일하게 작동합니다 (React는 브라우저의 네이티브 이벤트를 SyntheticEvent로 감싸서 사용합니다).
+- **이벤트 객체**: <span className="text-red-600 font-bold">이벤트를 처리하는 함수를 정의</span>할 때, React는 해당 함수에 <span className="font-bold bg-yellow-100">이벤트 객체를 전달</span>합니다. 이 이벤트 객체는 네이티브 HTML 이벤트 객체와 동일한 속성과 메서드를 갖지만, 모든 브라우저에서 동일하게 작동합니다 (React는 브라우저의 네이티브 이벤트를 SyntheticEvent로 감싸서 사용합니다).
 
-```javascript
+```javascript showLineNumbers
 function handleClick(e) {
     e.preventDefault();
     console.log('The link was clicked.');
 }
 ```
 
-- **`this`에 대한 접근**: JavaScript 클래스에서는 기본적으로 메서드가 바인딩되지 않습니다. `this.handleClick`을 바인딩하지 않고 `onClick`에 전달하면 함수가 호출될 때 `this`는 `undefined`가 됩니다. 이는 React에 특정한 동작이 아니라 JavaScript에서 함수가 작동하는 방식의 일부입니다.
+- **`this`에 대한 접근**: <span className="font-semibold underline">JavaScript 클래스에서는 기본적으로 메서드가 바인딩[^1]되지 않습니다.</span> `this.handleClick`을 바인딩하지 않고 `onClick`에 전달하면 함수가 호출될 때 `this`는 `undefined`가 됩니다. 이는 React에 특정한 동작이 아니라 JavaScript에서 함수가 작동하는 방식의 일부입니다.
+[^1]: "바인딩(binding)"이라는 용어는, 프로그래밍 컨텍스트에서 특정 객체나 값과 함수나 변수를 연결하는 과정을 의미합니다. JavaScript의 객체 지향 프로그래밍에서, 특히 클래스와 관련된 메서드에서 this 키워드의 값은 해당 메서드가 호출되는 방식에 따라 다를 수 있습니다. JavaScript 클래스의 메서드에 대해 이야기할 때, "바인딩되지 않았다"는 것은, 해당 메서드가 호출될 때 `this`의 값이 그 클래스의 인스턴스를 자동으로 가리키지 않는다는 의미입니다.
 
-```javascript
+```javascript {6-7, 19} showLineNumbers
 class Toggle extends React.Component {
     constructor(props) {
         super(props);
@@ -403,31 +425,50 @@ class Toggle extends React.Component {
 ```
 
 React의 합성 이벤트 시스템은 이벤트 속성과 동작이 모든 브라우저에서 동일하게 작동하도록 보장하기 위해 사용됩니다. 합성 이벤트는 브라우저의 네이티브 이벤트를 감싸는 크로스 브라우저 래퍼이므로 호환되지 않는 이벤트 이름과 필드를 걱정할 필요가 없습니다.
-</Callout>
+</details>
 
 ## 화면 업데이트
 
-컴포넌트에서 정보를 "기억"하고 표시하려는 경우가 자주 있습니다. 예를 들어, 버튼이 클릭된 횟수를 세고 싶을 수 있습니다. 이를 위해 컴포넌트에 상태(state)를 추가하세요.
+컴포넌트에서 정보를 <span className="font-bold bg-yellow-100">"기억"</span>하고 표시하려는 경우가 자주 있습니다. 예를 들어, 버튼이 클릭된 횟수를 세고 싶을 수 있습니다. 이를 위해 컴포넌트에 <span className="text-red-600 font-bold">상태(state)</span>를 추가하세요.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **React에서 "state"라는 용어**</summary>
+
+React에서 "state"라는 용어는 컴포넌트의 내부 상태를 나타내는데 사용됩니다. 컴포넌트의 "state"는 시간에 따라 변경될 수 있으며, 그 변경은 컴포넌트의 재렌더링을 일으킬 수 있습니다.
+
+React에서 "state"라는 용어를 사용하는 이유는 다음과 같습니다:
+
+1. **의미적 명확성**: 상태(state)는 변화할 수 있는 것을 나타내며, 그 변화는 특정 조건 또는 이벤트에 따라 발생합니다. 반면, "props"는 부모 컴포넌트로부터 전달되는 고정된 값이므로 변경될 수 없습니다.
+
+2. **프로그래밍 패러다임**: React는 함수형 프로그래밍 패러다임에서 영향을 받았습니다. 함수형 프로그래밍에서 "상태"는 애플리케이션의 데이터와 그 데이터의 변화를 나타내는 중요한 개념입니다.
+
+3. **사용자 인터페이스와의 연관성**: 사용자 인터페이스는 사용자와의 상호작용에 따라 변경될 수 있습니다. 이러한 변경을 추적하고 관리하기 위해 "state"라는 개념이 필요합니다.
+
+4. **명료성**: React 컴포넌트의 "state"와 "props"는 뚜렷한 차이가 있습니다. "state"는 컴포넌트 내부에서 관리되며 변경될 수 있습니다. 반면 "props"는 부모 컴포넌트로부터 받은 값으로, 직접 변경할 수 없습니다.
+
+요약하면, React에서 "state"라는 용어는 컴포넌트의 내부 상태와 그 상태의 변화를 관리하기 위해 사용되며, 이는 React의 주요 개념 중 하나입니다.
+</details>
 
 먼저, React에서 `useState`를 import하세요:
 
-```javascript
+```jsx showLineNumbers
 import { useState } from 'react';
 ```
 
 이제 컴포넌트 내부에 상태 변수를 선언할 수 있습니다:
 
-```javascript
+```jsx {2} showLineNumbers
 function MyButton() {
   const [count, setCount] = useState(0);
   // ...
 ```
 
-`useState`에서 두 가지를 얻게 됩니다: 현재 상태(`count`)와 상태를 업데이트할 수 있는 함수(`setCount`). 이들에게 아무 이름이나 지정할 수 있지만, `[something, setSomething]` 형식으로 작성하는 것이 관례입니다.
+`useState`에서 두 가지를 얻게 됩니다: 현재 상태(`count`)와 상태를 업데이트할 수 있는 함수(`setCount`). 이들에게 아무 이름이나 지정할 수 있지만, 
+<span className="font-bold bg-yellow-100">`[something, setSomething]` 형식으로 작성</span>하는 것이 관례입니다.
 
 버튼이 처음 표시될 때 `count`는 0이 됩니다. 왜냐하면 `useState()`에 0을 전달했기 때문입니다. 상태를 변경하려면 `setCount()`를 호출하고 새 값을 전달하면 됩니다. 이 버튼을 클릭하면 카운터가 증가합니다:
 
-```javascript
+```jsx {2, 5, 10} showLineNumbers
 function MyButton() {
   const [count, setCount] = useState(0);
 
@@ -458,8 +499,8 @@ React는 컴포넌트 함수를 다시 호출합니다. 이번에는 `count`가 
 
 Hooks는 다른 함수보다 더 제한적입니다. 컴포넌트의 상단(또는 다른 Hooks)에서만 Hooks를 호출할 수 있습니다. 조건문이나 반복문에서 `useState`를 사용하려면 새로운 컴포넌트를 추출하고 그곳에 두세요.
 
-<Callout>
-**유용한 React 훅**
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **유용한 React 훅**</summary>
 
 많이 사용되는 몇 가지 React 훅은 다음과 같습니다:
 
@@ -477,7 +518,7 @@ Hooks는 다른 함수보다 더 제한적입니다. 컴포넌트의 상단(또�
 | `useDebugValue` | 이 훅은 React DevTools에서 사용자 정의 훅의 레이블을 표시하는 데 사용될 수 있습니다. |
 
 기본적인 `useState`와 `useEffect`를 제외하고 다른 훅은 복잡한 시나리오에서 특정 문제를 해결해야 할 때 자주 사용하지는 않을 수 있습니다. 그러나 복잡한 상황에서 특정 문제를 해결해야 할 때 강력한 도구입니다.
-</Callout>
+</details>
 
 
 
@@ -485,20 +526,17 @@ Hooks는 다른 함수보다 더 제한적입니다. 컴포넌트의 상단(또�
 
 이전 예제에서 각 `MyButton`은 독립적인 `count`를 가지고 있으며 각 버튼이 클릭될 때 클릭한 버튼의 `count`만 변경됩니다.
 
-<div style={{ display: 'flex', justifyContent: 'center' }}>
-  <table style={{ borderCollapse: 'collapse', border: 'none' }}>
-    <tr>
-      <td style={{ border: 'none', padding: 20 }}>
-        <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_child.png&w=640&q=75" alt="React Sharing Data" style={{ width: '320px', height: 'auto' }} />
-        <p style={{ margin: 0 }}>처음에는 각 MyButton의 count 상태가 0입니다.</p>
-      </td>
-      <td style={{ border: 'none', padding: 20 }}>
-        <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_child_clicked.png&w=640&q=75" alt="React Sharing Data" style={{ width: '320px', height: 'auto' }} />
-        <p style={{ margin: 0 }}>첫 번째 MyButton은 count를 1로 업데이트합니다.</p>
-      </td>
-    </tr>
-  </table>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_child.png&w=640&q=75" alt="React Sharing Data" style={{ width: '320px', height: 'auto' }} />
+    <p style={{ margin: 0 }}>처음에는 각 MyButton의 count 상태가 0입니다.</p>
+  </div>
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_child_clicked.png&w=640&q=75" alt="React Sharing Data" style={{ width: '320px', height: 'auto' }} />
+    <p style={{ margin: 0 }}>첫 번째 MyButton은 count를 1로 업데이트합니다.</p>
+  </div>
 </div>
+
 
 
 그러나 종종 컴포넌트들이 데이터를 공유하고 항상 함께 업데이트해야 할 필요가 있습니다.
@@ -506,21 +544,15 @@ Hooks는 다른 함수보다 더 제한적입니다. 컴포넌트의 상단(또�
 두 개의 `MyButton` 컴포넌트가 동일한 `count`를 표시하고 함께 업데이트하려면, 개별 버튼에서 상태를 "상위로" 이동하여 모두를 포함하는 가장 가까운 컴포넌트인 `MyApp`으로 이동해야 합니다.
 
 이 예시에서는 MyApp입니다:
-<div style={{ display: 'flex', justifyContent: 'center' }}>
-  <table style={{ borderCollapse: 'collapse', border: 'none' }}>
-    <tbody>
-      <tr>
-        <td style={{ border: 'none', padding: 20 }}>
-          <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_parent.png&w=640&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
-          <p style={{ margin: 0 }}>처음에는 <code>MyApp</code>의 <code>count</code> 상태는 0이며, 이는 두 개의 자식 컴포넌트에 전달됩니다.</p>
-        </td>
-        <td style={{ border: 'none', padding: 20 }}>
-          <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_parent_clicked.png&w=640&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
-          <p style={{ margin: 0 }}>클릭 이벤트 발생 시, <code>MyApp</code>은 자체적인 <code>count</code> 상태를 1로 업데이트하고 이를 두 개의 자식 컴포넌트에 전달합니다.</p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_parent.png&w=640&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
+    <p style={{ margin: 0 }}>처음에는 <code>MyApp</code>의 <code>count</code> 상태는 0이며, 이는 두 개의 자식 컴포넌트에 전달됩니다.</p>
+  </div>
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_data_parent_clicked.png&w=640&q=75" alt="React Sharing Data" style={{ width: 320, height: 'auto' }} />
+    <p style={{ margin: 0 }}>클릭 이벤트 발생 시, <code>MyApp</code>은 자체적인 <code>count</code> 상태를 1로 업데이트하고 이를 두 개의 자식 컴포넌트에 전달합니다.</p>
+  </div>
 </div>
 
 
@@ -528,7 +560,7 @@ Hooks는 다른 함수보다 더 제한적입니다. 컴포넌트의 상단(또�
 
 먼저, `MyButton`에서 상태를 `MyApp`으로 이동합니다:
 
-```javascript
+```jsx {2, 4-6, 11-12} showLineNumbers
 export default function MyApp() {
   const [count, setCount] = useState(0);
 
@@ -552,7 +584,7 @@ function MyButton() {
 
 그런 다음, `MyApp`에서 상태를 각 `MyButton`으로 전달하고 공유된 클릭 핸들러와 함께 전달합니다. JSX 중괄호를 사용하여 `MyButton`으로 정보를 전달할 수 있습니다. 이전에 `<img>`와 같은 내장 태그에 사용한 것과 같은 방식입니다:
 
-```javascript
+```jsx {2, 4-6, 11-12} showLineNumbers
 export default function MyApp() {
   const [count, setCount] = useState(0);
 
@@ -572,9 +604,27 @@ export default function MyApp() {
 
 이렇게 전달하는 정보를 `props`라고 합니다. 이제 `MyApp` 컴포넌트에는 `count` 상태와 `handleClick` 이벤트 핸들러가 포함되어 있으며, 두 가지 모두를 각 버튼으로 `props`로 전달합니다.
 
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **React에서 "props"라는 용어**</summary>
+
+React에서 "props"라는 용어는 "properties"의 줄임말입니다. "properties"는 객체, 컴포넌트, 함수 등에 대한 설정 또는 특성을 나타내는 일반적인 프로그래밍 용어입니다. React에서 "props"는 부모 컴포넌트로부터 자식 컴포넌트로 정보를 전달하는 데 사용되는 데이터입니다.
+
+React에서 "props"라는 용어를 사용하는 이유는 다음과 같습니다:
+
+1. **정적 특성**: "props"는 변경이 불가능한(immutable) 데이터로서, 컴포넌트가 생성될 때 전달되며 그 후에는 변경되지 않습니다. 이러한 특성은 컴포넌트의 동작을 예측 가능하게 하고 버그를 최소화합니다.
+
+2. **단방향 데이터 흐름**: React의 핵심 원칙 중 하나는 단방향 데이터 흐름입니다. 부모 컴포넌트에서 자식 컴포넌트로 "props"를 통해 데이터가 전달되며, 이는 컴포넌트 간의 상호작용과 정보 흐름을 명확하게 합니다.
+
+3. **재사용성**: "props"를 사용하면 동일한 컴포넌트를 다양한 데이터와 함께 여러 번 사용할 수 있습니다. 이로 인해 컴포넌트의 재사용성이 향상되며, 코드의 중복이 줄어듭니다.
+
+4. **명확성**: "props"는 컴포넌트의 API와 유사합니다. 어떤 "props"가 컴포넌트에 전달되는지 명확하게 알 수 있으므로, 컴포넌트의 사용 방법과 예상 동작을 쉽게 파악할 수 있습니다.
+
+요약하면, React에서 "props"는 컴포넌트 간의 데이터 전달과 컴포넌트의 재사용성을 위해 사용되는 중요한 개념입니다.
+</details>
+
 마지막으로, `MyButton`을 수정하여 부모 컴포넌트에서 전달된 `props`를 읽도록 변경합니다:
 
-```javascript
+```jsx {3-5} showLineNumbers
 function MyButton({ count, onClick }) {
   return (
     <button onClick={onClick}>
@@ -584,6 +634,11 @@ function MyButton({ count, onClick }) {
 }
 ```
 
-버튼을 클릭하면 `onClick` 핸들러가 실행됩니다. 각 버튼의 `onClick` `prop`은 `MyApp` 내부에서 `handleClick` 함수로 설정되었으므로 해당 함수 내의 코드가 실행됩니다. 해당 코드는 `setCount(count + 1)`을 호출하여 `count` 상태 변수를 증가시킵니다. 새로운 `count` 값은 각 버튼에 `prop`로 전달되므로 새로운 값이 모두 표시됩니다. 이를 "상태를 위로 끌어올리기(lifting state up)"라고 합니다. 상태를 위로 이동함으로써 여러 컴포넌트 간에 상태를 공유할 수 있게 되었습니다.
+버튼을 클릭하면 `onClick` 핸들러가 실행됩니다. 각 버튼의 `onClick` `prop`은 `MyApp` 내부에서 `handleClick` 함수로 설정되었으므로 
+해당 함수 내의 코드가 실행됩니다. 해당 코드는 `setCount(count + 1)`을 호출하여 `count` 상태 변수를 증가시킵니다. 
+새로운 `count` 값은 각 버튼에 `prop`로 전달되므로 새로운 값이 모두 표시됩니다. 
+
+이를 <span className="text-red-600 font-bold">"상태를 위로 끌어올리기(lifting state up)"</span>라고 합니다. 
+<span className="font-semibold bg-yellow-100">상태를 위로 이동함으로써 여러 컴포넌트 간에 상태를 공유</span>할 수 있게 되었습니다.
 
 [![Edit determined-wave-us42os](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/determined-wave-us42os?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
