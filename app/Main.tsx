@@ -45,27 +45,26 @@ export default function Main({ posts }) {
             제공합니다. 최신 트렌드에 부합하는 업데이트된 블로그, 개발 문서, 그리고 예제로 능력을 한
             능력을 한 단계 높일 수 있습니다.
           </p>
-          <div className="space-x-4">
+          <div className="py-1 space-x-4">
             <Link
               href="/blog"
-              className={cn(buttonVariants({ variant: 'outline', size: 'default' }))}
+              className={cn(buttonVariants({ variant: 'destructive', size: 'default' }))}
             >
               최신 기법 블로그
             </Link>
             <Link
               href="/docs"
-              className={cn(buttonVariants({ variant: 'outline', size: 'default' }))}
+              className={cn(buttonVariants({ variant: 'destructive', size: 'default' }))}
             >
               개발 가이드 문서
             </Link>
             <Link
               href="/example"
-              className={cn(buttonVariants({ variant: 'outline', size: 'default' }))}
+              className={cn(buttonVariants({ variant: 'destructive', size: 'default' }))}
             >
               단계별 구현 예제
             </Link>
           </div>
-          <PaperPlane />
           <p className="max-w-[42rem] leading-small text-muted-foreground sm:text-xl sm:leading-8">
             초보자부터 경험 많은 개발자까지, 모든 레벨에서 필요한 통찰과 지식을 제공합니다. 지금
             바로 여러분의 개발 스킬을 향상시켜 보세요.
