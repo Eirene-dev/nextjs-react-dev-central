@@ -1,8 +1,9 @@
 ---
 title: "튜토리얼: 틱택토 게임"
-date: '2023-08-30'
-summary: Next.js와 React의 공식 문서를 참고하여 웹 개발에 필수적인 기술을 안내합니다.
+date: '2023-02-05'
+summary: React 지식 없이 틱택토 게임을 만들며, 이를 통해 React의 핵심 개념을 깊게 이해할 수 있습니다.
 ---
+<TOCInline toc={props.toc} asDisclosure />
 
 이 튜토리얼은 React에 대한 기존 지식을 요구하지 않습니다. 튜토리얼에서 배우게 될 기술은 모든 React 앱을 구축하는 데 필수적이며, 이를 완전히 이해하면 React에 대한 깊은 이해를 갖게 될 것입니다.
 
@@ -30,8 +31,8 @@ summary: Next.js와 React의 공식 문서를 참고하여 웹 개발에 필수�
 [![Edit loving-fast-ljg0t8](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/loving-fast-ljg0t8?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
 
-<Callout>
-**로컬 개발 환경 설치**
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **로컬 개발 환경 설치**</summary>
 
 이 튜토리얼은 로컬 개발 환경에서도 따라할 수 있습니다. 이를 위해 다음 단계를 따라야 합니다:
 
@@ -41,7 +42,7 @@ summary: Next.js와 React의 공식 문서를 참고하여 웹 개발에 필수�
 4. `npm install` 명령어를 사용하여 종속성을 설치합니다.
 5. `npm start` 명령어를 실행하여 로컬 서버를 시작하고 브라우저에서 코드 실행을 확인합니다.
 6. 문제가 발생하면 걱정하지 마세요! 온라인으로 따라하고 나중에 로컬 설정을 다시 시도해보세요.
-</Callout>
+</details>
 
 ## 개요
 
@@ -75,7 +76,7 @@ export default function Square() {
 
 App.js 파일의 코드는 컴포넌트를 생성합니다. React에서 컴포넌트는 사용자 인터페이스의 일부를 나타내는 재사용 가능한 코드 조각입니다. 컴포넌트는 애플리케이션의 UI 요소를 렌더링, 관리 및 업데이트하는 데 사용됩니다. 컴포넌트를 줄 단위로 살펴보면 어떤 일이 일어나는지 알아봅시다.
 
-```javascript
+```jsx showLineNumbers
 export default function Square() {
   return <button className="square">X</button>;
 }
@@ -93,7 +94,7 @@ CodeSandbox의 파일 섹션에서 styles.css라고 표시된 파일을 클릭�
 
 CodeSandbox의 파일 섹션에서 index.js라고 표시된 파일을 클릭하세요. 이 튜토리얼에서는 이 파일을 편집하지 않지만 App.js 파일에서 생성한 컴포넌트와 웹 브라우저 간의 연결을 담당합니다.
 
-```javascript
+```jsx showLineNumbers
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
@@ -110,27 +111,28 @@ import App from './App';
 
 파일의 나머지 부분은 모든 구성 요소를 모아 최종 결과물을 index.html 파일로 주입하는 역할을 합니다.
 
-
 ### 게시판 만들기
 
 App.js로 돌아가 봅시다. 여기서 튜토리얼의 나머지 부분을 진행할 것입니다.
 
 현재 게시판은 하나의 사각형만 있습니다. 하지만 9개가 필요합니다! 단순히 사각형을 복사하여 두 개의 사각형을 만들려고 하면 다음과 같은 오류가 발생합니다.
 
-```javascript
+```jsx showLineNumbers
 export default function Square() {
-  return <button className="square">X</button><button className="square">X</button>;
+  return <button className="square">X</button>
+         <button className="square">X</button>;
 }
 ```
 
 에러 메시지:
 ```
-/src/App.js: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>?
+/src/App.js: Adjacent JSX elements must be wrapped in an enclosing tag. 
+Did you want a JSX fragment <>...</>?
 ```
 
 React 컴포넌트는 하나의 JSX 요소를 반환해야 하며, 두 개의 인접한 JSX 요소(두 개의 버튼)는 허용되지 않습니다. 이 문제를 해결하기 위해 프래그먼트(<>와 </>)를 사용하여 여러 인접한 JSX 요소를 감싸야 합니다.
 
-```javascript
+```jsx showLineNumbers
 export default function Square() {
   return (
     <>
@@ -140,6 +142,7 @@ export default function Square() {
   );
 }
 ```
+
 
 이제 두 개의 X가 채워진 사각형이 나타날 것입니다.  
 ![](https://react.dev/images/tutorial/two-x-filled-squares.png)  
@@ -151,7 +154,7 @@ export default function Square() {
 
 App.js 파일에서 Square 컴포넌트를 다음과 같이 업데이트하세요.
 
-```javascript
+```jsx showLineNumbers
 export default function Square() {
   return (
     <>
@@ -175,11 +178,12 @@ export default function Square() {
 }
 ```
 
+
 styles.css에서 정의된 CSS는 className이 board-row인 div에 스타일을 적용합니다. div로 컴포넌트를 그룹화한 후 스타일이 지정된 div로 게시판을 만들 수 있습니다.
 
 그러나 이제 문제가 있습니다. Square라는 컴포넌트의 이름이 더 이상 사각형이 아닙니다. 이를 해결하기 위해 이름을 Board로 변경해 봅시다.
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   //...
 }
@@ -190,7 +194,8 @@ export default function Board() {
 [![Edit peaceful-browser-8gvtku](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/peaceful-browser-8gvtku?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
 
-> 쪽쪽... 많이 입력해야 하는 것 같네요! 이 페이지에서 코드를 복사하여 붙여넣기 하는 것은 괜찮습니다. 그러나 약간의 도전을 원한다면, 최소한 한 번은 직접 타이핑한 코드만 복사하는 것을 권장합니다.
+> 짝짝... 많이 입력해야 하는 것 같네요! 이 페이지에서 코드를 복사하여 붙여넣기 하는 것은 괜찮습니다. 그러나 약간의 도전을 원한다면, 최소한 한 번은 직접 타이핑한 코드만 복사하는 것을 권장합니다.
+
 
 
 ### props를 통한 데이터 전달
@@ -199,7 +204,7 @@ export default function Board() {
 
 먼저, 보드 컴포넌트에서 첫 번째 사각형을 나타내는 라인 (`<button className="square">1</button>`)을 새로운 Square 컴포넌트로 복사합니다.
 
-```javascript
+```jsx showLineNumbers
 function Square() {
   return <button className="square">1</button>;
 }
@@ -211,7 +216,7 @@ export default function Board() {
 
 그런 다음 JSX 구문을 사용하여 Board 컴포넌트에서 해당 Square 컴포넌트를 렌더링하도록 Board 컴포넌트를 업데이트합니다.
 
-```javascript
+```jsx showLineNumbers
 // ...
 export default function Board() {
   return (
@@ -246,7 +251,7 @@ export default function Board() {
 
 Square 컴포넌트를 업데이트하여 Board에서 전달한 value 속성을 읽도록 합니다.
 
-```javascript
+```jsx showLineNumbers
 function Square({ value }) {
   return <button className="square">1</button>;
 }
@@ -256,7 +261,7 @@ function Square({ value }) {
 
 이제 각 사각형 내부에 1이 아닌 value를 표시하려고 합니다. 다음과 같이 JSX 내부에서 value 주위에 중괄호를 추가하여 JavaScript 변수인 value를 렌더링하면 됩니다.
 
-```javascript
+```jsx showLineNumbers
 function Square({ value }) {
   return <button className="square">{value}</button>;
 }
@@ -267,7 +272,7 @@ function Square({ value }) {
 
 "value"라는 단어가 아닌 컴포넌트 내에서 JavaScript 변수인 value를 렌더링하려고 했습니다. JSX에서 "JavaScript로 이동"하기 위해 중괄호를 사용해야 합니다. 다음과 같이 JSX 내부에서 value 주위에 중괄호를 추가하세요.
 
-```javascript
+```jsx showLineNumbers
 function Square({ value }) {
   return <button className="square">{value}</button>;
 }
@@ -279,7 +284,7 @@ function Square({ value }) {
 
 이는 Board 컴포넌트가 아직 각 Square 컴포넌트에 value 속성을 전달하지 않았기 때문입니다. 이를 수정하기 위해 Board 컴포넌트에서 렌더링된 각 Square 컴포넌트에 value 속성을 추가하세요.
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   return (
     <>
@@ -316,7 +321,7 @@ export default function Board() {
 
 이제 Square 내부에 클릭 시 X로 채우는 handleClick이라는 함수를 선언해보겠습니다. 그런 다음 Square에서 반환하는 button JSX 요소의 props에 onClick을 추가하세요.
 
-```javascript
+```jsx showLineNumbers
 function Square({ value }) {
   function handleClick() {
     console.log('clicked!');
@@ -343,7 +348,7 @@ React는 컴포넌트 내에서 "기억"할 수 있는 특별한 함수인 useSt
 
 파일 상단에 useState를 import하세요. 그리고 Square 컴포넌트에서 value prop을 제거하세요. 대신, Square의 시작 부분에서 useState를 호출하는 새로운 라인을 추가하세요. 이 함수는 value라는 상태 변수를 반환하도록 설정하세요.
 
-```javascript
+```jsx showLineNumbers
 import { useState } from 'react';
 
 function Square() {
@@ -357,7 +362,7 @@ value는 값을 저장하는 변수이고 setValue는 값을 변경하는 데 �
 
 Square 컴포넌트는 이제 더 이상 prop을 받지 않으므로 Board 컴포넌트에서 생성하는 모든 아홉 개의 Square 컴포넌트에서 value prop을 제거하세요.
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   return (
     <>
@@ -383,7 +388,7 @@ export default function Board() {
 
 이제 Square를 클릭할 때 "X"로 표시되도록 변경하세요. console.log("clicked!"); 이벤트 핸들러를 setValue('X');로 대체하세요. 이제 Square 컴포넌트는 다음과 같아야 합니다.
 
-```javascript
+```jsx showLineNumbers
 function Square() {
   const [value, setValue] = useState(null);
 
@@ -444,7 +449,7 @@ React DevTools로 페이지에서 컴포넌트 선택하기
 
 이 기회를 통해 해보겠습니다. Board 컴포넌트를 편집하여 squares라는 이름의 상태 변수를 선언하고, 해당 변수가 9개의 null로 구성된 배열을 기본값으로 갖도록 합니다.
 
-```javascript
+```jsx showLineNumbers
 // ...
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
@@ -458,7 +463,7 @@ Array(9).fill(null)은 아홉 개의 요소로 구성된 배열을 생성하고,
 `['O', null, 'X', 'X', 'X', 'O', 'O', null, null]`  
 이제 Board 컴포넌트는 렌더링하는 각 Square에게 value prop을 전달해야 합니다.
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
   return (
@@ -484,7 +489,7 @@ export default function Board() {
 ```
 다음으로, Square 컴포넌트를 편집하여 Board 컴포넌트로부터 value prop을 받도록 합니다. 이를 위해 Square 컴포넌트의 자체적인 상태 추적 및 button의 onClick prop을 제거해야 합니다.
 
-```
+```jsx showLineNumbers
 function Square({value}) {
   return <button className="square">{value}</button>;
 }
@@ -505,7 +510,7 @@ function Square({value}) {
 
 대신에 Board 컴포넌트에서 Square 컴포넌트로 함수를 전달하고, Square가 클릭되었을 때 그 함수를 호출하도록 만들 것입니다. Square 컴포넌트에서 호출할 함수를 onSquareClick으로 지정합니다:
 
-```javascript
+```jsx showLineNumbers
 function Square({ value }) {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -517,7 +522,7 @@ function Square({ value }) {
 
 다음으로, Square 컴포넌트의 props에 onSquareClick 함수를 추가합니다:
 
-```javascript
+```jsx showLineNumbers
 function Square({ value, onSquareClick }) {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -529,7 +534,7 @@ function Square({ value, onSquareClick }) {
 
 이제 onSquareClick prop을 handleClick이라는 Board 컴포넌트의 함수와 연결해야 합니다. onSquareClick을 handleClick에 연결하기 위해 첫 번째 Square 컴포넌트의 onSquareClick prop에 함수를 전달합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
 
@@ -546,7 +551,7 @@ export default function Board() {
 
 마지막으로, Board 컴포넌트 내부에 handleClick 함수를 정의하여 보드의 상태를 업데이트하도록 합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
 
@@ -573,7 +578,7 @@ JavaScript는 클로저를 지원하므로 내부 함수(handleClick)는 외부 
 
 이제 클릭한 Square에 X를 추가할 수 있지만, 첫 번째 Square (0)에만 추가됩니다. handleClick 함수가 첫 번째 Square에 대한 인덱스 (0)로 하드코딩되어 있기 때문입니다. handleClick을 업데이트하여 다른 Square를 업데이트할 수 있도록 변경해보겠습니다. handleClick 함수에 업데이트할 square의 인덱스를 나타내는 인수 i를 추가합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
 
@@ -591,7 +596,7 @@ export default function Board() {
 
 다음으로, handleClick에 i를 전달해야 합니다. JSX에서 `handleClick(0)`를 직접 `onSquareClick` prop으로 설정하려고 하면 작동하지 않습니다:
 
-```javascript
+```jsx showLineNumbers
 <Square value={squares[0]} onSquareClick={handleClick(0)} />
 ```
 
@@ -609,7 +614,7 @@ export default function Board() {
 
 이제 클릭한 Square에 X를 추가할 수 있지만, 첫 번째 Square (0)에만 추가됩니다. handleClick 함수가 첫 번째 Square에 대한 인덱스 (0)로 하드코딩되어 있기 때문입니다. handleClick을 업데이트하여 다른 Square를 업데이트할 수 있도록 변경해보겠습니다. handleClick 함수에 업데이트할 square의 인덱스를 나타내는 인수 i를 추가합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
 
@@ -627,7 +632,7 @@ export default function Board() {
 
 다음으로, handleClick에 i를 전달해야 합니다. JSX에서 `handleClick(0)`를 직접 onSquareClick prop으로 설정하려고 하면 작동하지 않습니다:
 
-```javascript
+```jsx showLineNumbers
 <Square value={squares[0]} onSquareClick={handleClick(0)} />
 ```
 
@@ -640,7 +645,7 @@ export default function Board() {
 
 하지만 아홉 개의 다른 함수를 정의하고 각각에 이름을 지정하는 것은 너무 많은 코드입니다. 대신 다음과 같이 할 수 있습니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   // ...
   return (
@@ -656,7 +661,7 @@ export default function Board() {
 
 나머지 여덟 개의 Square를 업데이트하여 해당 화살표 함수에서 handleClick을 호출하도록 해야 합니다. handleClick 호출의 인수가 올바른 Square의 인덱스와 일치하는지 확인하세요:
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   // ...
   return (
@@ -713,17 +718,19 @@ handleClick에서 기존 배열을 수정하는 대신 `.slice()`를 호출하�
 
 데이터를 변경하는 데는 일반적으로 두 가지 방법이 있습니다. 첫 번째 방법은 데이터의 값을 직접 변경하여 데이터 자체를 변형하는 것입니다. 두 번째 방법은 원하는 변경 사항을 가진 새로운 복사본으로 데이터를 대체하는 것입니다. 만약 squares 배열을 직접 변형한다면 다음과 같을 것입니다:
 
-```javascript
+```jsx showLineNumbers
 const squares = [null, null, null, null, null, null, null, null, null];
 squares[0] = 'X';
-// 이제 `squares`는 ["X", null, null, null, null, null, null, null, null]입니다.
+// 이제 `squares`는 
+// ["X", null, null, null, null, null, null, null, null]입니다.
 ```
 
 반면에 데이터를 변경하지 않고 squares 배열을 변형하지 않는다면 다음과 같을 것입니다:
-```javascript
+```jsx showLineNumbers
 const squares = [null, null, null, null, null, null, null, null, null];
 const nextSquares = ['X', null, null, null, null, null, null, null, null];
-// 이제 `squares`는 변경되지 않았지만 `nextSquares`의 첫 번째 요소는 `null`이 아닌 `'X'`입니다.
+// 이제 `squares`는 변경되지 않았지만,
+// `nextSquares`의 첫 번째 요소는 `null`이 아닌 `'X'`입니다.
 ```
 
 결과는 같지만 직접 데이터를 변형하지 않는 것으로써 여러 가지 이점을 얻을 수 있습니다.
@@ -732,14 +739,13 @@ const nextSquares = ['X', null, null, null, null, null, null, null, null];
 
 불변성의 또 다른 이점도 있습니다. 부모 컴포넌트의 상태가 변경되면 기본적으로 모든 하위 컴포넌트가 자동으로 다시 렌더링됩니다. 이는 변경 사항에 영향을 받지 않은 하위 컴포넌트까지 포함됩니다. 재렌더링 자체는 사용자에게 눈에 띄지 않을 수 있지만 (의도적으로 피하려고 노력해서는 안 됩니다!), 성능 상의 이유로 변경 사항과 관련이 없는 트리의 일부를 건너뛰고 재렌더링을 생략하고 싶을 수 있습니다. 불변성은 컴포넌트가 데이터가 변경되었는지 여부를 비교하는 것이 매우 저렴하게 만듭니다. React에서 컴포넌트를 언제 다시 렌더링할지 선택하는 방법에 대해서는 메모 API 참조에서 자세히 알아볼 수 있습니다.
 
-
 ### 턴 전환하기
 
 이제 이 틱택토 게임의 주요 결함을 수정할 시간입니다: "O"를 표시할 수 없습니다.
 
 첫 번째 움직임을 기본적으로 "X"로 설정합니다. Board 컴포넌트에 또 다른 상태를 추가하여 이를 추적합시다:
 
-```javascript
+```jsx showLineNumbers
 function Board() {
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
@@ -750,7 +756,7 @@ function Board() {
 
 각 플레이어가 움직일 때마다 `xIsNext (boolean 값)`이 변경되어 다음 플레이어가 누군지 결정되고 게임 상태가 저장됩니다. Board의 handleClick 함수를 업데이트하여 xIsNext의 값이 토글되도록 합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
@@ -781,7 +787,7 @@ O가 X를 덮어쓰고 있습니다! 이것은 매우 흥미로운 변화를 게
 
 X나 O로 사각형을 표시하기 전에 이미 X나 O 값을 가지고 있는지 확인하지 않고 있습니다. 이를 고치기 위해 조기에 종료하도록 할 것입니다. handleClick 함수에서 먼저 사각형이 이미 X나 O 값을 가지고 있는지 확인합니다. 사각형이 이미 채워져 있다면, board 상태를 업데이트하기 전에 함수를 조기에 종료합니다.
 
-```javascript
+```jsx showLineNumbers
 function handleClick(i) {
   if (squares[i]) {
     return;
@@ -800,7 +806,7 @@ function handleClick(i) {
 
 이제 플레이어들이 순서대로 움직일 수 있게 되었으므로, 게임이 이겨졌거나 더 이상 움직일 수 없는 경우를 보여주고 싶을 것입니다. 이를 위해, calculateWinner라는 도우미 함수를 추가할 것입니다. 이 함수는 9개의 사각형 배열을 가져와 승자가 있는지 확인하고, 'X', 'O' 또는 적절한 값인 null을 반환합니다. calculateWinner 함수는 React에 특정된 것이 아니므로, 너무 걱정할 필요는 없습니다.
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   //...
 }
@@ -829,7 +835,7 @@ function calculateWinner(squares) {
 
 Board 컴포넌트의 handleClick 함수에서 `calculateWinner(squares)`를 호출하여 플레이어가 이겼는지 확인할 것입니다. 이 체크를 수행할 때, 이미 X 또는 O가 있는 사각형을 클릭한 경우와 함께 조기에 반환하도록 하겠습니다.
 
-```javascript
+```jsx showLineNumbers
 function handleClick(i) {
   if (squares[i] || calculateWinner(squares)) {
     return;
@@ -840,7 +846,7 @@ function handleClick(i) {
 ```
 게임이 끝났을 때 플레이어에게 알려주기 위해 "Winner: X" 또는 "Winner: O"와 같은 텍스트를 표시할 수 있습니다. 이를 위해 Board 컴포넌트에 상태 섹션을 추가할 것입니다. 상태는 게임이 끝난 경우 승자를 표시하고, 게임이 진행 중인 경우 어느 플레이어의 차례인지를 표시할 것입니다.
 
-```javascript
+```jsx showLineNumbers
 export default function Board() {
   // ...
   const winner = calculateWinner(squares);
@@ -878,7 +884,7 @@ export default function Board() {
 
 history라는 다른 배열에 이전의 squares 배열을 저장하고, 새로운 상태 변수로 저장할 것입니다. history 배열은 첫 번째 동작부터 마지막 동작까지의 모든 보드 상태를 나타내며, 다음과 같은 형식을 가지고 있습니다:
 
-```javascript
+```jsx showLineNumbers
 [
   // 첫 번째 동작 전
   [null, null, null, null, null, null, null, null, null],
@@ -889,7 +895,6 @@ history라는 다른 배열에 이전의 squares 배열을 저장하고, 새로�
   // ...
 ]
 ```
-
 
 ### 게임 기록 저장하기
 
@@ -922,7 +927,7 @@ export default function Game() {
 
 게임의 다음 플레이어와 동작 기록을 추적하기 위해 Game 컴포넌트에 상태를 추가합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -933,7 +938,7 @@ export default function Game() {
 
 현재 동작에 대한 squares를 렌더링하기 위해 history에서 가장 최근의 squares 배열을 읽어와야 합니다. 이를 위해 useState는 필요하지 않습니다. 렌더링 중에 계산할 정보가 이미 충분히 있기 때문입니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -943,7 +948,7 @@ export default function Game() {
 
 이제 Game 컴포넌트 내부에 handlePlay라는 함수를 생성합니다. 이 함수는 Board 컴포넌트에서 호출되어 게임을 업데이트할 것입니다. xIsNext, currentSquares 및 handlePlay을 props로 Board 컴포넌트에 전달하세요:
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -964,7 +969,7 @@ export default function Game() {
 
 Board 컴포넌트가 전달받은 props에 의해 완전히 제어되도록 만들어 봅시다. Board 컴포넌트를 세 개의 props를 받도록 변경합니다: xIsNext, squares, 그리고 새로운 onPlay 함수입니다. 그리고 Board 함수 내부에서 useState를 호출하는 첫 두 줄을 제거합니다:
 
-```javascript
+```jsx showLineNumbers
 function Board({ xIsNext, squares, onPlay }) {
   function handleClick(i) {
     //...
@@ -975,7 +980,7 @@ function Board({ xIsNext, squares, onPlay }) {
 
 이제 Board 컴포넌트 내의 handleClick에서 setSquares와 setXIsNext 호출을 삭제하고, 대신에 사용자가 square를 클릭할 때 업데이트된 squares 배열을 전달하기 위해 새로운 onPlay 함수를 호출하도록 변경합니다:
 
-```javascript
+```jsx showLineNumbers
 function Board({ xIsNext, squares, onPlay }) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
@@ -999,7 +1004,7 @@ handlePlay 함수는 호출될 때 Game 컴포넌트의 상태를 업데이트�
 
 행하던 것과 마찬가지로 xIsNext를 토글해야 합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   //...
   function handlePlay(nextSquares) {
@@ -1027,13 +1032,13 @@ export default function Game() {
 
 이미 상태에서 이력 움직임 배열을 가지고 있으므로, 이제 이를 React 요소의 배열로 변환해야 합니다. JavaScript에서 배열을 다른 배열로 변환하기 위해 배열 map 메서드를 사용할 수 있습니다:
 
-```javascript
+```jsx showLineNumbers
 [1, 2, 3].map((x) => x * 2) // [2, 4, 6]
 ```
 
 map을 사용하여 이력의 움직임을 화면에 표시되는 버튼을 나타내는 React 요소의 배열로 변환하고, 과거의 움직임으로 "이동"할 수 있는 버튼 목록을 표시해 보겠습니다. Game 컴포넌트에서 history를 map으로 순회해 보겠습니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -1087,21 +1092,20 @@ tic-tac-toe 게임의 이력에서 각 움직임에 대해 `<li>` 요소에 `<bu
 현재 게임에서 발생한 움직임 목록이 표시되는 동시에 개발자 도구 콘솔에 오류가 표시될 것입니다. 이제 "key" 오류가 무엇을 의미하는지 알아보겠습니다.
 
 
-
 ### 키 선택하기
 
 리스트를 렌더링할 때, React는 각 렌더링된 항목에 대한 일부 정보를 저장합니다. 리스트를 업데이트할 때 React는 변경된 내용을 판단해야 합니다. 항목이 추가되었을 수도 있고, 제거되었을 수도 있으며, 재정렬되거나 업데이트될 수도 있습니다.
 
 다음과 같이 변화하는 상황을 상상해보세요.
 
-```javascript
+```jsx showLineNumbers
 <li>Alexa: 7개의 할 일 남음</li>
 <li>Ben: 5개의 할 일 남음</li>
 ```
 
 에서
 
-```javascript
+```jsx showLineNumbers
 <li>Ben: 9개의 할 일 남음</li>
 <li>Claudia: 8개의 할 일 남음</li>
 <li>Alexa: 5개의 할 일 남음</li>
@@ -1109,7 +1113,7 @@ tic-tac-toe 게임의 이력에서 각 움직임에 대해 `<li>` 요소에 `<bu
 
 갱신된 카운트 외에도, 이를 읽는 사람은 아마도 Alexa와 Ben의 순서를 바꾸고, Alexa와 Ben 사이에 Claudia를 삽입했다고 할 것입니다. 그러나 React는 컴퓨터 프로그램이며, 의도한 바를 알 수 없으므로, 각 리스트 항목을 형제 항목과 구별하기 위해 각 항목에 key 속성을 지정해야 합니다. 데이터가 데이터베이스에서 가져온 것이라면, Alexa, Ben, Claudia의 데이터베이스 ID를 키로 사용할 수 있을 것입니다.
 
-```javascript
+```jsx showLineNumbers
 <li key={user.id}>
   {user.name}: {user.taskCount}개의 할 일 남음
 </li>
@@ -1124,14 +1128,13 @@ tic-tac-toe 게임의 이력에서 각 움직임에 대해 `<li>` 요소에 `<bu
 동적인 리스트를 구축할 때는 적절한 키를 할당하는 것이 강력히 권장됩니다. 적절한 키가 없다면 데이터를 재구성하여 적용하는 것이 좋습니다.
 
 키가 지정되지 않으면, React는 오류를 보고하고 기본적으로 배열 인덱스를 키로 사용합니다. 배열 인덱스를 키로 사용하는 것은 리스트 항목의 재정렬이나 항목의 삽입/제거 시 문제가 발생할 수 있습니다. `key={i}`와 같이 명시적으로 키를 전달하면 오류가 사라지지만, 배열 인덱스와 동일한 문제가 발생하며 대부분의 경우 권장되지 않습니다.
-
 ### 시간 여행 구현하기
 
 틱택토 게임의 기록에서 각 과거의 수는 고유한 ID를 가지고 있습니다. 이것은 수의 연속적인 번호입니다. 수는 결코 재정렬되거나 삭제되거나 중간에 삽입되지 않기 때문에, 수 인덱스를 키로 사용해도 안전합니다.
 
 Game 함수에서는 키를 `<li key={move}>`로 추가할 수 있으며, 렌더링된 게임을 다시로드하면 React의 "key" 오류가 사라져야 합니다:
 
-```javascript
+```jsx showLineNumbers
 const moves = history.map((squares, move) => {
   //...
   return (
@@ -1147,7 +1150,7 @@ const moves = history.map((squares, move) => {
 
 jumpTo 함수를 구현하기 전에 사용자가 현재 어떤 단계를 보고 있는지를 추적할 수 있도록 Game 컴포넌트에서 새로운 상태 변수인 currentMove를 정의해야 합니다. 기본값은 0으로 설정합니다:
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -1159,7 +1162,7 @@ export default function Game() {
 
 다음으로, Game 내부의 jumpTo 함수를 업데이트하여 currentMove를 업데이트해야 합니다. 또한, currentMove를 변경할 숫자가 짝수인 경우 xIsNext를 true로 설정해야 합니다.
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   // ...
   function jumpTo(nextMove) {
@@ -1175,7 +1178,7 @@ export default function Game() {
 - "과거로 돌아가"고 그 지점에서 새로운 수를 만든 다음에는 그 지점까지의 이력만 유지하려 합니다. nextSquares를 history의 모든 항목(... spread 구문) 뒤에 추가하는 대신, history.slice(0, currentMove + 1)에서 모든 항목 뒤에 추가하여 이전 이력의 그 부분만 유지합니다.
 - 수를 만들 때마다 currentMove를 최신 이력 항목을 가리키도록 업데이트해야 합니다.
 
-```javascript
+```jsx showLineNumbers
 function handlePlay(nextSquares) {
   const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
   setHistory(nextHistory);
@@ -1186,7 +1189,7 @@ function handlePlay(nextSquares) {
 
 마지막으로, Game 컴포넌트를 수정하여 항상 마지막 이동을 렌더링하는 대신 현재 선택된 이동을 렌더링하도록 변경합니다.
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -1200,15 +1203,13 @@ export default function Game() {
 게임의 이력에서 어떤 단계를 클릭하면 틱택토 보드가 해당 단계가 발생한 이후의 보드를 표시하도록 즉시 업데이트될 것입니다.
 
 [![Edit wandering-bush-8ykigd](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/wandering-bush-8ykigd?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
-
-
 ### 최종 코드 정리
 
 코드를 매우 주의 깊게 살펴보면 currentMove가 짝수일 때 `xIsNext === true`이고, currentMove가 홀수일 때 `xIsNext === false`임을 알 수 있습니다. 다시 말해, currentMove의 값만 알고 있다면 항상 xIsNext가 어떻게 되어야 하는지 알 수 있습니다.
 
 따라서 두 변수를 모두 상태로 저장할 필요가 없습니다. 실제로 중복된 상태는 항상 피하려고 해야 합니다. 상태에 저장하는 내용을 단순화하는 것은 버그를 줄이고 코드를 이해하기 쉽게 만듭니다. Game 컴포넌트를 수정하여 별도의 상태 변수로 xIsNext를 저장하지 않고 currentMove를 기반으로 값을 계산하도록 변경해보세요.
 
-```javascript
+```jsx showLineNumbers
 export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);

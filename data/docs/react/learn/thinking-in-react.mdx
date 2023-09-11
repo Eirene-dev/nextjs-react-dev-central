@@ -1,0 +1,230 @@
+---
+title: 리액트로 생각하기
+date: '2023-02-06'
+summary: 리액트를 사용하여 컴포넌트 기반의 검색 가능한 제품 데이터 테이블을 만드는 방법을 소개합니다.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+리액트로 인해 당신이 바라보는 디자인과 빌드하는 앱에 대한 생각이 변경될 수 있습니다. 리액트로 사용자 인터페이스를 구축할 때, 먼저 컴포넌트라고 하는 조각들로 나누게 됩니다. 그런 다음, 각 컴포넌트의 다른 시각적 상태를 설명합니다. 마지막으로, 데이터가 컴포넌트를 통해 흐르도록 컴포넌트를 연결합니다. 이 튜토리얼에서는 리액트를 사용하여 검색 가능한 제품 데이터 테이블을 구축하는 과정을 안내해 드리겠습니다.
+
+## Mockup으로 시작하기
+
+JSON API와 디자이너로부터의 Mockup이 이미 있다고 가정해 보겠습니다.
+
+JSON API는 다음과 같은 데이터를 반환합니다:
+```json
+[
+  { category: "과일", price: "$1", stocked: true, name: "사과" },
+  { category: "과일", price: "$1", stocked: true, name: "드래곤프루트" },
+  { category: "과일", price: "$2", stocked: false, name: "패션프루트" },
+  { category: "채소", price: "$2", stocked: true, name: "시금치" },
+  { category: "채소", price: "$4", stocked: false, name: "호박" },
+  { category: "채소", price: "$1", stocked: true, name: "콩나물" }
+]
+```
+Mockup은 다음과 같습니다:
+
+![](https://react.dev/images/docs/s_thinking-in-react_ui.png)
+
+리액트로 UI를 구현하기 위해 일반적으로 다음 다섯 가지 단계를 따릅니다.
+
+## 1단계: 컴포넌트 계층으로 UI 분할하기
+
+먼저 모형에서 모든 컴포넌트와 하위 컴포넌트 주위에 상자를 그리고 이름을 지정하는 것부터 시작하세요. 디자이너와 함께 작업한다면, 그들은 이미 디자인 도구에서 이러한 컴포넌트에 이름을 지정했을 수 있습니다. 그들에게 물어보세요!
+
+배경에 따라 디자인을 컴포넌트로 분할하는 방법을 다르게 생각할 수 있습니다:
+
+* **프로그래밍** - 새로운 함수 또는 객체를 생성해야 할지를 결정하는 데 사용하는 동일한 기법을 사용합니다. 그 중 하나는 단일 책임 원칙으로, 이는 컴포넌트가 이상적으로는 한 가지 일만 해야 한다는 것입니다. 컴포넌트가 점점 커지면 작은 하위 컴포넌트로 분해해야 합니다.
+* **CSS** - 클래스 선택자를 만들어야 할 대상을 고려합니다. (하지만 컴포넌트는 약간 덜 상세합니다.)
+* **디자인** - 디자인의 레이어를 어떻게 구성할지 고려합니다.
+
+JSON이 잘 구조화되어 있다면, UI의 컴포넌트 구조와 자연스럽게 매핑되는 경우가 많습니다. 이는 UI와 데이터 모델이 종종 동일한 정보 아키텍처를 가지기 때문입니다. UI를 컴포넌트로 분리하고, 각 컴포넌트가 데이터 모델의 한 부분과 일치하도록 분리하세요.
+
+이 화면에는 다음과 같은 다섯 개의 컴포넌트가 있습니다:  
+![](https://react.dev/images/docs/s_thinking-in-react_ui_outline.png)
+
+- `FilterableProductTable` (회색)은 전체 앱을 포함합니다.
+- `SearchBar` (파랑)은 사용자 입력을 받습니다.
+- `ProductTable` (라벤더)은 사용자 입력에 따라 목록을 표시하고 필터링합니다.
+- `ProductCategoryRow` (녹색)은 각 카테고리에 대한 제목을 표시합니다.
+- `ProductRow` (노랑)은 각 제품에 대한 행을 표시합니다.
+
+ProductTable (라벤더)을 살펴보면, 테이블 헤더 ("Name"과 "Price" 라벨 포함)가 별도의 컴포넌트가 아닙니다. 이는 개인의 취향에 따라 다를 수 있으며, 둘 중 어느 방식으로 해도 상관 없습니다. 이 예제에서는 Product
+
+Table의 일부로 처리되며, ProductTable의 목록 내에 나타나기 때문입니다. 그러나 이 헤더가 복잡해진다면 (예: 정렬 기능 추가), 이를 자체적인 ProductTableHeader 컴포넌트로 이동할 수 있습니다.
+
+이제 모형에서 컴포넌트를 식별했으므로, 계층 구조로 정렬하세요. 모형에서 다른 컴포넌트 내에 나타나는 컴포넌트는 계층 구조에서 자식으로 나타나야 합니다:
+
+- `FilterableProductTable`
+    - `SearchBar`
+    - `ProductTable`
+          - `ProductCategoryRow`
+          - `ProductRow`
+
+## 2단계: React로 정적 버전 구축하기
+
+이제 컴포넌트 계층 구조가 준비되었으므로 앱을 구현할 차례입니다. 가장 직관적인 접근 방식은 아직 상호작용을 추가하지 않고 데이터 모델로부터 UI를 렌더링하는 버전을 먼저 구축하는 것입니다! 정적 버전을 먼저 구축하고 나중에 상호작용을 추가하는 것이 종종 더 쉽습니다. 정적 버전을 구축하기 위해서는 많은 타이핑이 필요하지만 생각은 필요하지 않지만, 상호작용을 추가하기 위해서는 생각이 많이 필요하지만 타이핑은 그렇게 많이 필요하지 않습니다.
+
+데이터 모델을 렌더링하는 정적 버전의 앱을 구축하기 위해, 다른 컴포넌트를 재사용하고 props를 사용하여 데이터를 전달하는 컴포넌트를 구축해야 합니다. Props는 부모에서 자식으로 데이터를 전달하는 방법입니다. (상태(state) 개념에 익숙하다면, 이 정적 버전을 구축하는 데 상태를 전혀 사용하지 마세요. 상태는 상호작용(즉, 시간이 지남에 따라 변하는 데이터)에만 사용됩니다. 이것은 앱의 정적 버전이기 때문에 필요하지 않습니다.)
+
+상향식(top-down)으로 구축하는 방법은 계층 구조 상단부터 컴포넌트를 구축하는 것입니다(예: FilterableProductTable). 하향식(bottom-up)으로 작업하는 방법은 하위 컴포넌트부터 작업하는 것입니다(예: ProductRow). 더 단순한 예제에서는 일반적으로 상향식으로 작업하는 것이 더 쉽지만, 큰 프로젝트에서는 하향식으로 작업하는 것이 더 쉽습니다.
+
+[![Edit weathered-breeze-18nfmd](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/weathered-breeze-18nfmd?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+(만약 이 코드가 어렵게 보인다면, 먼저 빠른 시작(Quick Start)을 따라해보세요!)
+
+컴포넌트를 구축한 후에는 데이터 모델을 렌더링하는 재사용 가능한 컴포넌트 라이브러리가 생깁니다. 이는 정적인 앱이기 때문에 컴포넌트는 JSX만 반환합니다. 계층 구조의 맨 위에 있는 컴포넌트(FilterableProductTable)는 데이터 모델을 props로 받습니다. 이것은 일방향 데이터 흐름이라고 불리며, 데이터는 트리의 하단에 있는 컴포넌트로부터 맨 위의 컴포넌트로 흐릅니다.
+
+> 주의사항
+현재 단계에서는 어떤 상태 값도 사용하면 안됩니다. 그건 다음 단계에서 사용합니다!
+
+
+## 3단계: UI 상태의 최소한이지만 완전한 표현 찾기
+
+UI를 대화식으로 만들려면 사용자가 기반이 되는 데이터 모델을 변경할 수 있어야 합니다. 이를 위해 상태(state)를 사용할 것입니다.
+
+상태(state)는 앱이 기억해야 하는 최소한의 변경 데이터 집합으로 생각할 수 있습니다. 상태를 구조화하는 가장 중요한 원칙은 DRY(Don't Repeat Yourself)를 유지하는 것입니다. 앱이 필요로 하는 상태의 절대 최소한의 표현을 찾고, 나머지는 필요할 때 계산하도록 합니다. 예를 들어, 쇼핑 목록을 만드는 경우, 항목들을 배열로 상태에 저장할 수 있습니다. 목록에 있는 항목의 수를 표시하려면 항목 수를 또 다른 상태 값으로 저장하지 말고, 대신 배열의 길이를 읽어와서 사용하세요.
+
+이 예제 애플리케이션의 모든 데이터 조각들을 생각해 봅시다:
+
+- 원래의 제품 목록
+- 사용자가 입력한 검색 텍스트
+- 체크박스의 값
+- 필터링된 제품 목록
+
+이 중 어느 것들이 상태일까요? 상태가 아닌 것을 식별해 봅시다:
+
+- 시간이 지나도 값이 변경되지 않나요? 그렇다면, 그것은 상태가 아닙니다.
+- 부모로부터 props를 통해 전달받나요? 그렇다면, 그것은 상태가 아닙니다.
+- 컴포넌트 내에서 기존의 상태나 props를 기반으로 계산할 수 있나요? 그렇다면, 그것은 분명히 상태가 아닙니다!
+
+남은 것들은 아마도 상태일 것입니다.
+
+한 번 더 하나씩 살펴봅시다:
+
+- 원래의 제품 목록은 props로 전달되기 때문에 상태가 아닙니다.
+- 검색 텍스트는 시간이 지나면서 변경되고 어떤 것에서도 계산될 수 없기 때문에 상태인 것 같습니다.
+- 체크박스의 값은 시간이 지나면서 변경되고 어떤 것에서도 계산될 수 없기 때문에 상태인 것 같습니다.
+- 필터링된 제품 목록은 원래의 제품 목록을 가져와서 검색 텍스트와 체크박스의 값에 따라 필터링하여 계산될 수 있기 때문에 상태가 아닙니다.
+
+이렇게 하면 검색 텍스트와 체크박스의 값만 이 상태입니다! 잘했어요!
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **Props vs State**</summary>
+
+React에서 "모델" 데이터는 두 가지 유형이 있습니다: props와 state. 이 두 가지는 매우 다릅니다:
+
+- Props는 함수에 전달되는 인수와 같습니다. 부모 컴포넌트가 자식 컴포넌트에 데이터를 전달하고 외관을 사용자 정의할 수 있게 합니다. 예를 들어, Form 컴포넌트가 Button 컴포넌트에 color props를 전달할 수 있습니다.
+- State는 컴포넌트의 메모리와 같습니다. 컴포넌트가 일부 정보를 추적하고 상호작용에 대한 응답으로 정보를 변경할 수 있게 합니다. 예를 들어, Button 컴포넌트가 isHovered라는 상태를 추적할 수 있습니다.
+Props와 state는 다르지만 함께 작동합니다. 부모 컴포넌트는 종종 일부 정보를 상태로 유지하고, 이를 하위 컴포넌트에 props로 전달합니다. 처음에는 아직도 둘 사이의 차이가 모호하게 느껴질 수 있습니다. 그러나 실제로 확실하게 이해하려면 약간의 연습이 필요합니다!
+</details>
+
+## 4단계: 상태(state)가 어디에 위치해야 할지 식별하기
+
+앱의 최소한의 상태 데이터를 식별한 후, 이 상태를 변경하거나 소유하는 책임이 있는 컴포넌트를 식별해야 합니다. 기억하세요: React는 부모 컴포넌트에서 자식 컴포넌트로 데이터를 내려보내는 단방향 데이터 흐름을 사용합니다. 어떤 컴포넌트가 어떤 상태를 소유해야 하는지 바로 알기는 어려울 수 있습니다. 이 개념이 처음이라면 이 단계를 따라가면서 찾아낼 수 있습니다!
+
+앱의 각 상태 조각에 대해 다음을 수행합니다:
+
+1. 해당 상태를 기반으로 렌더링하는 모든 컴포넌트를 식별합니다.
+1. 최상위 부모 컴포넌트를 찾아봅니다. 이는 계층 구조 상에서 그들 모두의 상위에 위치한 컴포넌트입니다.
+1. 상태가 위치해야 할 곳을 결정합니다:
+1. 일반적으로 상태를 공통 부모 컴포넌트에 직접 넣을 수 있습니다.
+1. 또는 공통 부모 컴포넌트 위의 어떤 컴포넌트에도 상태를 넣을 수 있습니다.
+1. 상태를 소유할 만한 컴포넌트를 찾을 수 없다면, 상태를 유지하기 위해 새로운 컴포넌트를 만들고 공통 부모 컴포넌트 위의 어느 곳이든 추가합니다.
+1. 이전 단계에서 이 애플리케이션에서 두 가지 상태를 찾았습니다: 검색 입력 텍스트와 체크박스의 값입니다. 이 예제에서는 항상 함께 표시되므로 동일한 위치에 넣는 것이 타당합니다.
+
+이제 다음 전략을 따라 진행해 봅시다:
+
+1. 상태를 사용하는 컴포넌트를 식별합니다:
+1. ProductTable은 그 상태(검색 텍스트와 체크박스 값)에 따라 제품 목록을 필터링해야 합니다.
+1. SearchBar는 그 상태(검색 텍스트와 체크박스 값)를 표시해야 합니다.
+1. 공통 부모를 찾습니다: 두 컴포넌트가 공유하는 첫 번째 부모 컴포넌트는 FilterableProductTable입니다.
+1. 상태가 위치해야 할 곳을 결정합니다: 필터 텍스트와 체크박스의 상태 값은 FilterableProductTable에 유지합니다.
+1. 그래서 상태 값은 FilterableProductTable에 위치합니다.
+
+`useState()` Hook을 사용하여 컴포넌트에 상태를 추가하세요. Hook은 React에 "hook into" 할 수 있는 특별한 함수입니다. FilterableProductTable의 상단에 두 개의 상태 변수를 추가하고 초기 상태를 지정하세요:
+```jsx showLineNumbers
+function FilterableProductTable({ products }) {
+  const [filterText, setFilterText] = useState('');
+  const [inStockOnly, setInStockOnly] = useState(false);
+```
+그런 다음 filterText와 inStockOnly를 props로 ProductTable 및 SearchBar에 전달하세요:
+
+```jsx showLineNumbers
+<div>
+  <SearchBar 
+    filterText={filterText} 
+    inStockOnly={inStockOnly} />
+  <ProductTable 
+    products={products}
+    filterText={filterText}
+    inStockOnly={inStockOnly} />
+</div>
+```
+이제 애플리케이션이 어떻게 작동하는지 확인할 수 있습니다. 코드 상에서 filterText 초기 값을 useState('')에서 useState('fruit')로 변경해보세요. 검색 입력 텍스트와 테이블이 업데이트되는 것을 확인할 수 있습니다.
+
+[![Edit gallant-bassi-4p46zu](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/gallant-bassi-4p46zu?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+
+
+주목하세요. 현재 양식을 편집해도 작동하지 않습니다. 위의 샌드박스에는 다음과 같은 콘솔 오류가 있습니다.
+
+```bash
+You provided a `value` prop to a form field without an `onChange` handler. 
+This will render a read-only field.
+```
+위의 샌드박스에서 ProductTable과 SearchBar는 filterText와 inStockOnly props를 읽어서 테이블, 입력 필드 및 체크박스를 렌더링합니다. 예를 들어, SearchBar가 입력 필드의 값을 채우는 방법은 다음과 같습니다.
+```jsx showLineNumbers
+function SearchBar({ filterText, inStockOnly }) {
+  return (
+    <form>
+      <input 
+        type="text" 
+        value={filterText} 
+        placeholder="Search..."/>
+```
+그러나 아직 사용자의 입력과 같은 작업에 대응하는 코드를 추가하지 않았습니다. 이것이 마지막 단계가 될 것입니다.
+
+## 5단계: 역 데이터 흐름 추가
+
+현재 앱은 계층 구조를 따라 props와 state가 올바르게 전달되어 렌더링됩니다. 그러나 사용자 입력에 따라 상태를 변경하기 위해 데이터가 반대로 흐를 수 있어야 합니다. 계층 구조의 깊은 곳에 있는 양식 컴포넌트는 FilterableProductTable에서 상태를 업데이트해야 합니다.
+
+React는 이러한 데이터 흐름을 명시적으로 지원하지만, 양방향 데이터 바인딩보다 조금 더 많은 타이핑이 필요합니다. 위의 예시에서 입력란을 입력하거나 체크박스를 선택하려고 하면 React가 입력을 무시하는 것을 볼 수 있습니다. 이는 의도적입니다. `<input value={filterText} />`와 같이 작성하면, 입력의 값 속성을 항상 FilterableProductTable에서 전달된 filterText 상태와 동일하게 설정한 것입니다. filterText 상태가 변경되지 않으므로 입력이 변경되지 않습니다.
+
+사용자가 양식 입력을 변경할 때마다 상태가 해당 변경을 반영하도록 만들고 싶습니다. 상태는 FilterableProductTable이 소유하므로 setFilterText와 setInStockOnly를 호출할 수 있는 것은 FilterableProductTable뿐입니다. SearchBar가 FilterableProductTable의 상태를 업데이트할 수 있도록 하려면 이러한 함수를 SearchBar로 전달해야 합니다.
+
+```jsx showLineNumbers
+function FilterableProductTable({ products }) {
+  const [filterText, setFilterText] = useState('');
+  const [inStockOnly, setInStockOnly] = useState(false);
+
+  return (
+    <div>
+      <SearchBar 
+        filterText={filterText} 
+        inStockOnly={inStockOnly}
+        onFilterTextChange={setFilterText}
+        onInStockOnlyChange={setInStockOnly} />
+```
+
+SearchBar 내부에서 onChange 이벤트 핸들러를 추가하고 부모 상태를 업데이트합니다.
+
+```jsx showLineNumbers
+<input 
+  type="text" 
+  value={filterText} 
+  placeholder="Search..." 
+  onChange={(e) => onFilterTextChange(e.target.value)} />
+```
+
+이제 앱이 완벽하게 작동합니다!
+
+[![Edit cranky-allen-w337n9](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/cranky-allen-w337n9?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+Adding Interactivity 섹션에서 이벤트 처리와 상태 업데이트에 대해 모두 배울 수 있습니다.
+
+
+

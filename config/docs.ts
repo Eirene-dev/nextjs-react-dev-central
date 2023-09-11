@@ -45,7 +45,7 @@ export const docsConfig: DocsConfig = {
             {
               title: 'React로 생각하기',
               href: '/docs/react/learn/thinking-in-react',
-              disabled: true,
+              disabled: false,
             },
           ],
         },
