@@ -3,6 +3,7 @@
 import { docsConfig } from '@/config/docs'
 import { DocsSidebarNav } from '@/components/sidebar-nav'
 import { useState } from 'react'
+import { Icons } from '@/components/icons'
 
 interface DocsLayoutProps {
   children: React.ReactNode
@@ -25,8 +26,9 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
 
   return (
     <div className="flex-1 md:grid md:grid-cols-[190px_1fr] md:gap-6 lg:grid-cols-[200px_1fr] lg:gap-10">
-      <button className="md:hidden" onClick={onToggleNav}>
-        문서 목차
+      <button className="flex items-center bg-gray-100 md:hidden" onClick={onToggleNav}>
+          {navShow ? <Icons.leftClose className="align-middle" /> : <Icons.leftOpen className="align-middle" />}
+          <span className="ml-2">{navShow ? "목차 닫기" : "문서 목차"}</span>
       </button>
       <aside
         style={{ display: navShow ? 'block' : 'none' }}
