@@ -7,6 +7,8 @@ import { SidebarNavItem } from 'types'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
+import { ChevronRight, ChevronDown, Plus, Minus, ChevronsRight } from 'lucide-react'
+
 export interface DocsSidebarNavProps {
   items: SidebarNavItem[]
   onClose?: () => void
@@ -39,7 +41,11 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
               className="px-0 py-1 text-sm font-medium rounded-md cursor-pointer"
               onClick={() => handleToggle(item.title)}
             >
-              #
+              {expanded.includes(item.title) ? (
+                <ChevronDown size={18} strokeWidth={1} />
+              ) : (
+                <ChevronRight size={18} strokeWidth={1} />
+              )}
             </button>
             {item.href ? (
               <Link
@@ -91,7 +97,11 @@ export function DocsSidebarNavItems({
                   className="px-1 py-1 text-sm font-medium rounded-md cursor-pointer"
                   onClick={() => handleToggle(item.title)}
                 >
-                  +
+                  {expanded.includes(item.title) ? (
+                    <Minus size={13} strokeWidth={1} />
+                  ) : (
+                    <Plus size={13} strokeWidth={1} />
+                  )}
                 </button>
                 {item.href ? (
                   <Link
@@ -103,7 +113,7 @@ export function DocsSidebarNavItems({
                     rel={item.external ? 'noreferrer' : ''}
                     onClick={onClose}
                   >
-                    ({item.title})
+                    ( {item.title} )
                   </Link>
                 ) : (
                   <span className="flex items-center p-1 text-sm rounded-md">[ {item.title} ]</span>
@@ -126,21 +136,21 @@ export function DocsSidebarNavItems({
           <Link
             key={index}
             href={item.href}
-            className={cn('flex px-2 w-full items-center rounded-md p-2 hover:underline', {
+            className={cn('flex px-3 w-full items-center rounded-md p-2 hover:underline', {
               'bg-muted': pathname === item.href,
             })}
             target={item.external ? '_blank' : ''}
             rel={item.external ? 'noreferrer' : ''}
             onClick={onClose}
           >
-            - {item.title}
+            <ChevronsRight size={12} strokeWidth={1} /> {item.title}
           </Link>
         ) : (
           <span
             key={index}
             className="flex items-center w-full p-2 rounded-md cursor-not-allowed opacity-60"
           >
-            - {item.title}
+            <ChevronsRight size={12} strokeWidth={1} /> {item.title}
           </span>
         )
       })}
