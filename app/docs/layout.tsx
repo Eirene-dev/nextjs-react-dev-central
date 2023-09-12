@@ -27,8 +27,12 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
   return (
     <div className="flex-1 md:grid md:grid-cols-[190px_1fr] md:gap-6 lg:grid-cols-[200px_1fr] lg:gap-10">
       <button className="flex items-center bg-gray-100 md:hidden" onClick={onToggleNav}>
-          {navShow ? <Icons.leftClose className="align-middle" /> : <Icons.leftOpen className="align-middle" />}
-          <span className="ml-2">{navShow ? "목차 닫기" : "문서 목차"}</span>
+        {navShow ? (
+          <Icons.leftClose className="align-middle" />
+        ) : (
+          <Icons.leftOpen className="align-middle" />
+        )}
+        <span className="ml-2">{navShow ? '목차 닫기' : '문서 목차'}</span>
       </button>
       <aside
         style={{ display: navShow ? 'block' : 'none' }}

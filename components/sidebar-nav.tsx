@@ -98,7 +98,7 @@ export function DocsSidebarNavItems({
             })}
             target={item.external ? '_blank' : ''}
             rel={item.external ? 'noreferrer' : ''}
-            onClick={onClose}  // 여기에 onClose 함수를 추가합니다.
+            onClick={onClose} // 여기에 onClose 함수를 추가합니다.
           >
             - {item.title}
           </Link>
