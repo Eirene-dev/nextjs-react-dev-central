@@ -1,0 +1,172 @@
+---
+title: 컴포넌트간 State 공유
+date: '2023-06-04'
+summary: 이 글에서는 React 애플리케이션에서 컴포넌트 간 상태 공유를 위해 상태를 공통 부모 컴포넌트로 "위로 올리는" 방법을 다룹니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+때로는 두 컴포넌트의 상태가 항상 함께 변경되기를 원할 때가 있습니다. 이를 위해 두 컴포넌트에서 상태를 제거하고, 가장 가까운 공통 부모 컴포넌트로 이동시킨 다음, props를 통해 컴포넌트에 전달합니다. 이것을 상태를 "위로 올리는" 것이라고 하며, React 코드를 작성할 때 가장 흔한 작업 중 하나입니다.
+
+배울 내용
+
+- 상태를 "위로 올려서" 컴포넌트 간에 공유하는 방법
+- 제어 컴포넌트와 비제어 컴포넌트에 대해 알아봅니다.
+
+## 예시를 통한 상태를 위로 올리기
+
+이 예시에서 부모인 Accordion 컴포넌트는 두 개의 별도 패널을 Panel합니다:
+
+- Accordion
+  - Panel
+  - Panel
+
+각 Panel 컴포넌트는 콘텐츠가 표시되는지 여부를 결정하는 isActive라는 부울 상태를 가지고 있습니다.
+
+각 패널의 "Show" 버튼을 눌러보세요:
+
+[![Edit beautiful-fire-9edh28](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/beautiful-fire-9edh28?fontsize=14&hidenavigation=1&theme=dark)
+
+
+
+한 패널의 버튼을 눌렀을 때 다른 패널에는 영향을 주지 않는 것을 알 수 있습니다. 패널은 독립적입니다.
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_child.png&w=640&q=75" alt="React Sharing Data" width={320} />
+    <p style={{ margin: 0 }}>처음에는 각 Panel의 isActive 상태가 false이므로, 두 패널 모두 축소된 상태로 나타납니다.</p>
+  </div>
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_child_clicked.png&w=640&q=75" alt="React Sharing Data" width={320} />
+    <p style={{ margin: 0 }}>Panel 버튼을 클릭하면 해당 Panel의 isActive 상태만 업데이트됩니다. 다른 Panel의 isActive 상태는 변경되지 않습니다.</p>
+  </div>
+</div>
+
+
+**하지만 이제 한 번에 하나의 패널만 확장되도록 변경하고 싶다고 가정해 봅시다.** 이 디자인에서는 두 번째 패널을 확장하면 첫 번째 패널이 축소되어야 합니다. 이를 어떻게 해야 할까요?
+
+이러한 두 패널을 조율하기 위해 상태를 "위로 올려" 공통 부모 컴포넌트로 이동해야 합니다. 이를 위해 다음 세 단계를 따릅니다:
+
+1. **자식 컴포넌트에서 상태를 제거**합니다.
+2. **공통 부모에서 하드코딩된 데이터를 전달**합니다.
+3. **공통 부모에 상태를 추가**하고 이벤트 핸들러와 함께 하위 컴포넌트에 전달합니다.
+
+이렇게 하면 Accordion 컴포넌트가 두 개의 패널을 조율하고 한 번에 하나만 확장하게 됩니다.
+
+### 단계 1: 자식 컴포넌트에서 상태 제거
+
+Panel의 isActive를 부모 컴포넌트에게 제어권을 넘깁니다. 즉, 부모 컴포넌트는 isActive를 Panel에게 props로 전달합니다. 먼저 Panel 컴포넌트에서 다음 줄을 **제거**합니다:
+
+```javascript
+const [isActive, setIsActive] = useState(false);
+```
+
+그리고 isActive를 Panel의 props 목록에 추가합니다:
+
+```javascript
+function Panel({ title, children, isActive }) {
+```
+
+이제 Panel의 부모 컴포넌트는 isActive를 props로 전달하여 isActive를 제어할 수 있습니다. 반대로, Panel 컴포넌트는 이제 isActive의 값을 직접 제어할 수 없습니다. isActive의 값은 이제 부모 컴포넌트에 달렸습니다!
+
+### 단계 2: 공통 부모로부터 하드코딩된 데이터 전달
+
+상태를 위로 올리려면 조율하려는 두 자식 컴포넌트의 가장 가까운 공통 부모 컴포넌트를 찾아야 합니다:
+
+- Accordion (가장 가까운 공통 부모)
+  - Panel
+  - Panel
+
+이 예시에서는 Accordion 컴포넌트가 해당됩니다. Accordion 컴포넌트는 두 패널을 모두 제어할 수 있으므로, 현재 활성화된 패널에 대한 isActive의 하드코딩된 값을 두 패널에 전달합니다(예: true):
+
+[![Edit nervous-orla-xftw4c](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/nervous-orla-xftw4c?fontsize=14&hidenavigation=1&theme=dark)
+
+.
+Accordion 컴포넌트에서 하드코딩된 isActive 값을 수정해보고, 화면에서 결과를 확인해보세요.
+
+
+### 단계 3: 공통 부모에 상태 추가
+
+상태를 위로 올리면서 상태의 성격이 변경될 수 있습니다.
+
+이 경우에는 한 번에 하나의 패널만 활성화되어야 합니다. 이는 Accordion 공통 부모 컴포넌트가 현재 활성화된 패널의 인덱스를 추적해야 함을 의미합니다. 불리언 값 대신에 상태 변수의 일부로서 활성 패널의 인덱스로 사용할 수 있습니다:
+
+
+```javascript
+const [activeIndex, setActiveIndex] = useState(0);
+```
+
+activeIndex가 0일 때는 첫 번째 패널이 활성화되고, 1일 때는 두 번째 패널이 활성화됩니다.
+
+Panel의 "Show" 버튼을 클릭하여 Accordion에서 활성 인덱스를 변경해야 합니다. Panel은 직접 activeIndex 상태를 설정할 수 없습니다. 왜냐하면 activeIndex는 Accordion 내부에 정의되어 있기 때문입니다. Panel 컴포넌트가 부모의 상태를 변경할 수 있도록 부모가 이
+
+벤트 핸들러를 전달해야 합니다. [이벤트 핸들러를 props로 전달하는 방법](https://react.dev/learn/responding-to-events#passing-event-handlers-as-props)을 사용하여 다음과 같이 Accordion 컴포넌트 내부에서 Panel 컴포넌트에 전달합니다:
+
+```javascript
+<>
+  <Panel
+    isActive={activeIndex === 0}
+    onShow={() => setActiveIndex(0)}
+  >
+    ...
+  </Panel>
+  <Panel
+    isActive={activeIndex === 1}
+    onShow={() => setActiveIndex(1)}
+  >
+    ...
+  </Panel>
+</>
+```
+
+Panel 내부의 `<button>`은 이제 onShow prop을 클릭 이벤트 핸들러로 사용합니다:
+
+[![Edit upbeat-satoshi-4wsn52](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/upbeat-satoshi-4wsn52?fontsize=14&hidenavigation=1&theme=dark)
+
+이로써 상태를 위로 올리는 작업이 완료되었습니다! 상태를 공통 부모 컴포넌트로 이동함으로써 두 패널을 조율할 수 있게 되었습니다. 두 개의 "보이기" 버튼 중 하나를 클릭하여 활성 인덱스를 변경할 수 있습니다. 두 개의 "보이기" 플래그 대신에 활성 인덱스를 사용하면 한 번에 하나의 패널만 활성화되도록 보장할 수 있습니다. 그리고 하위 컴포넌트로 이벤트 핸들러를 전달하여 하위 컴포넌트가 상위 컴포넌트의 상태를 변경할 수 있게 했습니다.
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_parent.png&w=640&q=75" alt="React Sharing Data" width="320" height="auto"/>
+    <p style={{ margin: 0 }}>초기에 Accordion의 activeIndex 값은 0이므로 첫 번째 Panel은 isActive 값이 true로 설정됩니다.</p>
+  </div>
+  <div>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_parent_clicked.png&w=640&q=75" alt="React Sharing Data" width="320" height="auto"/>
+    <p style={{ margin: 0 }}>Accordion의 activeIndex 상태가 1로 변경되면 두 번째 Panel은 isActive 값이 true로 설정됩니다.</p>
+  </div>
+</div>
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **제어 컴포넌트와 비제어 컴포넌트**</summary>
+
+로컬 상태를 가진 컴포넌트를 "비제어(uncontrolled)" 컴포넌트라고 부르는 것은 일반적입니다. 예를 들어, isActive 상태 변수를 가진 원래 Panel 컴포넌트는 부모가 패널이 활성화되어 있는지 여부에 영향을 줄 수 없으므로 비제어 컴포넌트입니다.
+
+반면에, 중요한 정보가 로컬 상태가 아니라 props에 의해 결정되는 경우 컴포넌트를 "제어(controlled)" 컴포넌트라고 할 수 있습니다. 이는 부모 컴포넌트가 해당 컴포넌트의 동작을 완전히 지정할 수 있게 합니다. isActive prop을 사용하는 최종 Panel 컴포넌트는 Accordion 컴포넌트에 의해 제어됩니다.
+
+비제어 컴포넌트는 구성이 덜 필요하기 때문에 부모 컴포넌트 내에서 사용하기 쉽습니다. 그러나 여러 컴포넌트를 함께 조율하려는 경우에는 제어 컴포넌트가 훨씬 유연합니다. 제어 컴포넌트는 최대한 유연하지만, 부모 컴포넌트가 props로 완전히 구성해주어야 합니다.
+
+실제로, "제어"와 "비제어"는 엄격한 기술적인 용어는 아닙니다. 각 컴포넌트는 일반적으로 로컬 상태와 props를 혼합해서 사용합니다. 그러나 이는 컴포넌트의 설계 방식과 제공하는 기능에 대해 이야기하는 유용한 방법입니다.
+
+컴포넌트를 작성할 때, 어떤 정보가 props(을 통해)로 제어되어야 하는지, 어떤 정보가 비제어 상태(로컬 상태)로 제어되어야 하는지를 고려해야 합니다. 하지만 언제든지 생각을 변경하고 리팩토링할 수 있습니다.
+</details>
+
+
+
+## 각 상태에 대한 단일 소스(컴포넌트)
+
+React 애플리케이션에서는 많은 컴포넌트가 자체적인 상태를 가집니다. 어떤 상태는 입력과 같은 리프 컴포넌트 근처에 "거주"할 수 있습니다. 다른 상태는 앱의 상위 부분에 더 "거주"할 수 있습니다. 예를 들어, 클라이언트 측 라우팅 라이브러리는 보통 현재 경로를 React 상태에 저장하고, 이를 props로 전달하여 구현됩니다!
+
+**고유한 각 상태에 대해 해당 상태를 "소유"하는 컴포넌트를 선택합니다.** 이 원칙은 [“단일 진실의 원천(single source of truth)”](https://en.wikipedia.org/wiki/Single_source_of_truth)이라고도 알려져 있습니다. 모든 상태가 한 곳에 존재해야 한다는 의미는 아니지만, 각 상태의 정보를 보유하는 특정 컴포넌트가 있어야 합니다. 상태를 공유하기 위해 컴포넌트 간에 공유 상태를 복제하는 대신, 공유 상태를 공통 부모 컴포넌트로 올리고 필요한 하위 컴포넌트에 전달합니다.
+
+앱을 개발하면서 상태의 "소유자"를 찾는 과정에서 상태를 하위로 이동시키거나 다시 상위로 올리는 경우가 있을 수 있습니다. 이 모두 프로세스의 일부입니다!
+
+더 많은 컴포넌트와 함께 실제로 어떻게 느껴지는지 확인하려면 [React로 생각하기](https://react.dev/learn/thinking-in-react)를 읽어보세요.
+
+## 요약
+
+- 두 개의 컴포넌트를 조율하려면 상태를 공통 부모 컴포넌트로 이동합니다.
+- 그런 다음 공통 부모 컴포넌트를 통해 정보를 하위 컴포넌트로 props로 전달합니다.
+- 마지막으로 이벤트 핸들러를 전달하여 자식 컴포넌트가 부모의 상태를 변경할 수 있도록 합니다.
+- 컴포넌트를 "제어" 컴포넌트(Props로 제어됨) 또는 "비제어" 컴포넌트(로컬 상태로 제어됨)로 고려하는 것이 유용합니다.
+

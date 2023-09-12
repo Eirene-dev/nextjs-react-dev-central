@@ -1,7 +1,7 @@
 ---
 title: 조건부 렌더링
 date: '2023-04-07'
-summary: XXX
+summary: 이 글은 React에서 조건부 렌더링을 다루는 다양한 방법을 설명하고, 각 방법의 장단점을 소개합니다.
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
@@ -98,7 +98,7 @@ return (
 
 <details className="bg-gray-100 p-2 rounded-md">
   <summary>자세히 알아보기: **두 예제가 완전히 동일한가요?**</summary>
-  
+
 객체 지향 프로그래밍 배경이 있다면 위의 두 예제가 미묘하게 다르다고 가정할 수 있습니다. 왜냐하면 둘 중 하나가 `<li>`의 두 가지 다른 "인스턴스"를 만들 수 있기 때문입니다. 그러나 JSX 요소는 내부 상태를 가지지 않고 실제 DOM 노드가 아닌 가벼운 설명(청사진)입니다. 따라서 이러한 두 예제는 완전히 동일합니다. [상태 보존과 재설정](https://react.dev/learn/preserving-and-resetting-state)에서 이 작동 방식에 대해 자세히 설명합니다.
 </details>
 

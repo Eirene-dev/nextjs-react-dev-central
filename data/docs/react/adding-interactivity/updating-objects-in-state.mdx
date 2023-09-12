@@ -1,0 +1,326 @@
+---
+title: State에서 객체 업데이트
+date: '2023-05-07'
+summary: React에서 객체를 상태로 사용할 때, 객체를 직접 변이시키지 말고 항상 새로운 객체를 생성하여 상태로 설정해야 합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+상태(state)는 객체를 포함하여 모든 종류의 JavaScript 값을 저장할 수 있습니다. 그러나 React 상태에 있는 객체를 직접 변경해서는 안됩니다. 대신, 객체를 업데이트할 때는 새로운 객체를 생성하거나 기존 객체의 사본을 만들고, 그 사본을 상태로 설정해야 합니다.
+
+다음 내용을 배우게 됩니다
+
+- React 상태에서 객체를 올바르게 업데이트하는 방법
+- 객체를 변경하지 않고 중첩된 객체를 업데이트하는 방법
+- 불변성이란 무엇이며, 어떻게 깨지 않게 할 것인지
+- Immer를 사용하여 객체 복사를 간소화하는 방법
+
+## 무엇이 변이인가요?
+
+상태에는 숫자, 문자열, 불리언과 같은 모든 종류의 JavaScript 값들을 저장할 수 있습니다.
+
+```jsx
+const [x, setX] = useState(0);
+```
+
+지금까지 숫자, 문자열, 불리언과 같은 값들을 다루었습니다. 이러한 종류의 JavaScript 값은 "불변"이라고 하며, 변경할 수 없거나 "읽기 전용"입니다. 값을 교체하기 위해 재렌더링을 트리거할 수 있습니다.
+
+```jsx
+setX(5);
+```
+
+x 상태가 0에서 5로 변경되었지만, 숫자 0 자체는 변경되지 않았습니다. JavaScript에서 기본 제공하는 원시값인 숫자, 문자열, 불리언과 같은 값들은 변경할 수 없습니다.
+
+이제 객체를 생각해보세요.
+
+```jsx
+const [position, setPosition] = useState({ x: 0, y: 0 });
+```
+
+기술적으로 객체 자체의 내용을 변경하는 것은 가능합니다. **이를 "변이(mutation)"**이라고 합니다.
+
+```jsx
+position.x = 5;
+```
+
+그러나 React 상태에 있는 객체는 기술적으로 변경 가능하지만, 그들을 숫자, 불리언, 문자열과 같이 **읽기 전용인 것처럼 취급해야 합니다.** 객체를 변경하는 대신 항상 새로운 객체로 대체해야 합니다.
+
+### 상태를 읽기 전용으로 취급하기
+
+즉, 상태에 저장한 JavaScript 객체를 **읽기 전용으로 취급해야 합니다.**
+
+이 예제는 현재 포인터 위치를 나타내기 위해 상태에 객체를 저장합니다. 레드 닷은 미리보기 영역에 터치하거나 커서를 이동시킬 때 움직이는 것이 목표입니다. 그러나 닷은 초기 위치에 그대로 있습니다.
+
+[![Edit proud-dawn-gwbwpr](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/proud-dawn-gwbwpr?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+문제는 다음 코드 부분에 있습니다.
+
+```jsx
+onPointerMove={e => {
+  position.x = e.clientX;
+  position.y = e.clientY;
+}}
+```
+
+이 코드는 [이전 렌더링](https://react.dev/learn/state-as-a-snapshot#rendering-takes-a-snapshot-in-time)에서 position에 할당된 객체를 수정합니다. 그러나 상태 설정 함수를 사용하지 않고 객체를 변경하면 React는 해당 객체가 변경되었다는 사실을 알 수 없습니다. 따라서 React는 어떠한 변화도 일어나지 않습니다. 이미 식사를 한 후에 주문을 변경하려는 것과 같습니다. 상태를 변이시키는 것은 몇 가지 경우에 동작할 수 있지만 권장하지 않습니다. 렌더링 내에서 액세스할 수 있는 상태 값을 읽기 전용으로 취급해야 합니다.
+
+이 경우 실제로 [재렌더링을 트리거](https://react.dev/learn/state-as-a-snapshot#setting-state-triggers-renders)하기 위해 **새로운 객체를 생성하고 해당 객체를 상태 설정 함수에 전달**해야 합니다.
+
+```jsx
+onPointerMove={e => {
+  setPosition({
+    x: e.clientX,
+    y: e.clientY
+  });
+}}
+```
+
+setPosition을 사용하여 React에게 다음을 알립니다.
+
+- position을 이 새로운 객체로 대체하고
+- 이 컴포넌트를 다시 렌더링하라고 요청합니다.
+
+이제 빨간 닷이 미리보기 영역에서 터치하거나 커서를 올리면 포인터를 따라 움직임을 확인할 수 있습니다.
+
+[![Edit epic-kalam-zyozg3](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/epic-kalam-zyozg3?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **로컬 변이는 괜찮습니다.**</summary>
+
+
+다음과 같은 코드는 상태 내에 있는 기존 객체를 수정하므로 문제가 됩니다.
+
+```jsx
+position.x = e.clientX;
+position.y = e.clientY;
+```
+
+하지만 다음과 같은 코드는 새로 생성한 객체를 변이시키는 것이므로 **전혀 문제가 없습니다**.
+
+```jsx
+const nextPosition = {};
+nextPosition.x = e.clientX;
+nextPosition.y = e.clientY;
+setPosition(nextPosition);
+```
+
+사실, 다음과 같이 작성한 것과 완전히 동일합니다.
+
+```jsx
+setPosition({
+  x: e.clientX,
+  y: e.clientY
+});
+```
+
+변이는 이미 존재하는 상태 객체를 변경할 때만 문제가 됩니다. 방금 생성한 객체를 변이시키는 것은 다른 코드에서 이 객체를 참조하지 않았기 때문에 괜찮습니다. 이 객체에 변경사항이 적용되는 것이 이 객체에 의존하는 다른 부분에 영향을 미치지 않습니다. 이것을 "로컬 변이(local mutation)"라고 합니다. 실제로 렌더링 중에도 로컬 변이를 수행할 수 있습니다. 매우 편리하고 완전히 허용되는 방법입니다!
+</details>
+
+## 스프레드 구문을 사용하여 객체 복사하기
+
+이전 예제에서 position 객체는 항상 현재 커서 위치에서 새로 생성됩니다. 그러나 종종 기존 데이터를 새로 생성하는 객체에 포함시키고 싶을 수 있습니다. 예를 들어, 하나의 필드만 업데이트하고 다른 모든 필드의 이전 값을 유지하고 싶을 수 있습니다.
+
+이 입력 필드는 작동하지 않습니다. onChange 핸들러가 상태를 변이시킵니다.
+
+[![Edit peaceful-thunder-65nfcr](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/peaceful-thunder-65nfcr?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+예를 들어, 다음 코드는 이전 렌더링에서 상태를 변이시킵니다.
+
+```jsx
+person.firstName = e.target.value;
+```
+
+원하는 동작을 얻기 위해선 실제로 **새로운 객체를 생성하고 setPerson에 전달해야** 합니다. 그러나 여기서는 **기존 데이터를 복사**하여 새로운 객체에 포함시켜야 합니다. 왜냐하면 하나의 필드만 변경되었기 때문입니다.
+
+```jsx
+setPerson({
+  firstName: e.target.value, // 입력 필드에서 새로운 이름
+  lastName: person.lastName,
+  email: person.email
+});
+```
+
+`... `객체 펼침 구문을 사용하여 각 속성을 복사하지 않아도 됩니다.
+
+```jsx
+setPerson({
+  ...person, // 기존 필드 복사
+  firstName: e.target.value // 하지만 이 필드만 변경
+});
+```
+
+이제 양식이 작동합니다!
+
+각 입력 필드에 대해 별도의 상태 변수를 선언하지 않았음에 유의하세요. 대형 양식의 경우 모든 데이터를 객체에 그룹화하여 유지하는 것이 매우 편리합니다. 단지 올바르게 업데이트하기만 하면 됩니다!
+
+[![Edit goofy-ellis-j99jb6](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/goofy-ellis-j99jb6?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+`...` 스프레드 구문은 "얕은(shallow)" 복사입니다. 한 단계까지만 복사되지만 빠릅니다. 중첩된 속성을 업데이트하려면 스프레드 구문을 여러 번 사용해야 합니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **하나의 이벤트 핸들러로 여러 필드 업데이트하기**</summary>
+
+
+`[` 와 `]` 중괄호를 사용하여 동적인 이름의 속성을 지정할 수도 있습니다. 다음은 세 개의 다른 이벤트 핸들러 대신 하나의 이벤트 핸들러를 사용한 동일한 예제입니다.
+
+[![Edit wizardly-drake-g2lnrt](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/wizardly-drake-g2lnrt?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+여기서 `e.target.name`은 `<input>` DOM 요소에 지정된 name 속성을 참조합니다.
+</details>
+
+### 중첩된 객체 업데이트하기
+
+다음과 같은 중첩된 객체 구조를 고려해 보겠습니다.
+
+```jsx
+const [person, setPerson] = useState({
+  name: 'Niki de Saint Phalle',
+ 
+
+ artwork: {
+    title: 'Blue Nana',
+    city: 'Hamburg',
+    image: 'https://i.imgur.com/Sd1AgUOm.jpg',
+  }
+});
+```
+
+person.artwork.city를 업데이트하려면 변이로 수행하는 방법이 명확합니다.
+
+```jsx
+person.artwork.city = 'New Delhi';
+```
+
+그러나 React에서는 상태를 불변으로 취급합니다! city를 변경하려면 먼저 이전 데이터를 포함한 새로운 artwork 객체를 생성한 다음, 새로운 artwork를 가리키는 새로운 person 객체를 생성해야 합니다.
+
+```jsx
+const nextArtwork = { ...person.artwork, city: 'New Delhi' };
+const nextPerson = { ...person, artwork: nextArtwork };
+setPerson(nextPerson);
+```
+
+또는, 단일 함수 호출로 작성된 경우:
+
+```jsx
+setPerson({
+  ...person, // 기타 필드 복사
+  artwork: { // 하지만 artwork를
+    ...person.artwork, // 동일한 것으로 대체
+    city: 'New Delhi' // 단지 New Delhi로!
+  }
+});
+```
+
+이렇게 조금 장황해질 수 있지만 대부분의 경우 잘 작동합니다.
+
+[![Edit cool-jasper-geo3mo](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/cool-jasper-geo3mo?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **객체는 실제로 중첩되지 않습니다.***</summary>
+
+
+다음과 같은 객체는 코드에서 "중첩"되어 있는 것처럼 보입니다.
+
+```jsx
+let obj = {
+  name: 'Niki de Saint Phalle',
+  artwork: {
+    title: 'Blue Nana',
+    city: 'Hamburg',
+    image: 'https://i.imgur.com/Sd1AgUOm.jpg',
+  }
+};
+```
+
+그러나 "중첩"은 객체의 동작 방식을 잘못 이해한 것입니다. 코드가 실행될 때 "중첩"된 객체는 실제로 존재하지 않습니다. 다른 두 개의 다른 객체를 보고 있는 것입니다.
+
+```jsx
+let obj1 = {
+  title: 'Blue Nana',
+  city: 'Hamburg',
+  image: 'https://i.imgur.com/Sd1AgUOm.jpg',
+};
+
+let obj2 = {
+  name: 'Niki de Saint Phalle',
+  artwork: obj1
+};
+```
+
+obj1 객체는 obj2 객체 안에 "내부에 있는" 것이 아닙니다. 예를 들어, obj3도 obj1을 "가리킬" 수 있습니다.
+
+```jsx
+let obj1 = {
+  title: 'Blue Nana',
+  city: 'Hamburg',
+  image: 'https://i.imgur.com/Sd1AgUOm.jpg',
+};
+
+let obj2 = {
+  name: 'Niki de Saint Phalle',
+  artwork: obj1
+};
+
+let obj3 = {
+  name: 'Copycat',
+  artwork: obj1
+};
+```
+
+`obj3.artwork.city`를 변이시키면 `obj2.artwork.city`와 `obj1.city`에 영향을 미칩니다. 이는 `obj3.artwork`, `obj2.artwork`, `obj1`이 동일한 객체를 가리키기 때문입니다. 이것은 객체를 "중첩"되었다고 생각할 때 볼 수 없는 것입니다. 대신, 이들은 속성을 통해 서로를 "가리키는" 별개의 객체입니다.
+</details>
+
+### Immer를 사용하여 간결한 업데이트 로직 작성하기
+
+상태가 깊게 중첩되어 있는 경우, [평면화(flattening)](https://react.dev/learn/choosing-the-state-structure#avoid-deeply-nested-state)를 고려해볼 수 있습니다. 그러나 상태 구조를 변경하지 않고 원하는 경우 중첩된 스프레드를 위한 단축 방법을 선호할 수 있습니다. [Immer](https://github.com/immerjs/use-immer)는 편리하고 변이 문법을 사용하고 필요한 복사본을 생성하는 작업을 처리해주는 인기 있는 라이브러리입니다. Immer를 사용하면 작성하는 코드가 규칙을 어긴 것처럼 보이고 객체를 변이시키는 것처럼 보이지만, 이전 상태를 덮어쓰지 않습니다!
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **Immer는 어떻게 동작하는가?**</summary>
+
+Immer에서 제공하는 draft는 "기록"하는 특수한 종류의 객체입니다. draft를 자유롭게 변이시킬 수 있는 이유입니다! 내부적으로 Immer는 draft에서 변경된 부분을 찾아내고, 편집한 내용을 포함하는 완전히 새로운 객체를 생성합니다.
+</details>
+
+Immer를 사용해보려면 다음을 수행하세요:
+
+1. `npm install use-immer`를 실행하여 의존성으로 Immer를 추가합니다.
+2. 그런 다음 `import { useState } from 'react'`를 `import { useImmer } from 'use-immer'`로 바꿉니다.
+
+다음은 위의 예제를 Immer로 변환한 것입니다:
+
+[![Edit vigilant-wood-vr01ks](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/vigilant-wood-vr01ks?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
+
+
+이벤트 핸들러가 훨씬 간결해진 것을 알 수 있습니다. useState와 useImmer를 원하는대로 혼합하여 단일 컴포넌트에서 사용할 수 있습니다. Immer는 상태의 중첩 여부와 객체 복사가 반복적으로 발생하는 경우 업데이트 핸들러를 간결하게 유지하는 훌륭한 방법입니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **React에서 상태를 변이시키지 않는 것이 권장되는 이유는 무엇인가요?**</summary>
+
+다음과 같은 몇 가지 이유가 있습니다:
+
+- **디버깅:** state를 변이시키지 않고 console.log를 사용하면 이전 로그가 최신 상태 변경으로 덮어씌워지지 않습니다. 따라서 렌더 사이에 상태가 어떻게 변경되었는지 명확하게 확인할 수 있습니다.
+- **최적화:** React의 일반적인 [최적화 전략](https://react.dev/reference/react/memo)은 이전 props나 state가 다음과 동일한 경우 작업을 건너뛰는 것에 의존합니다. state를 변이시키지 않으면 변경 사항이 있는지 확인하는 작업이 매우 빠릅니다. prevObj === obj라면 내부에 변경된 내용이 없을 것입니다.
+- **새로운 기능:** 우리가 개발 중인 새로운 React 기능은 상태가 [스냅샷으로 취급](https://react.dev/learn/state-as-a-snapshot)되도록 필요로 합니다. 과거 버전의 상태를 변이시키면 새로운 기능을 사용할 수 없을 수 있습니다.
+- **요구 사항 변경:** 상태를 변이시키지 않는다면 실행 취소/다시 실행 구현, 변경 내용의 이력 표시, 양식을 이전 값으로 재설정하는 것과 같은 애플리케이션 기능을 쉽게 구현할 수 있습니다. 이는 메모리에 상태의 이전 사본을 유지하고, 적절한 경우 재사용할 수 있기 때문입니다. 변이적인 접근 방식으로 시작하면 이러한 기능을 나중에 추가하기가 어려울 수 있습니다.
+- **구현이 간단해집니다:** React는 변이에 의존하지 않기 때문에 객체를 특별하게 처리할 필요가 없습니다. 속성을 빼앗거나 항상 프록시로 감싸거나 초기화 시 추가 작업을 할 필요가 없습니다. 이것은 React가 성능이나 정확성과 관련된 문제 없이 어떤 크기의 객체든 상태로 사용할 수 있는 이유입니다.
+
+실제로 React에서 상태를 변이시키는 것은 종종 "먹히기는" 하지만, 이러한 접근 방식을 고려하여 개발된 새로운 React 기능을 사용할 수 있도록 강력히 권장하지 않습니다. 나중에 이에 대해 기여하게 될 다른 사람들, 아마도 미래의 자신조차도 이를 감사히 받을 것입니다!
+</details>
+
+## 요약
+
+- React에서는 모든 상태를 불변으로 취급합니다.
+- 객체를 상태에 저장할 때, 객체를 변이시키면 렌더링이 트리거되지 않고 이전 렌더링 "스냅샷"의 상태가 변경됩니다.
+- 객체를 변이시키는 대신 새로운 버전의 객체를 생성하고 상태를 해당 객체로 설정하여 재렌더링을 트리거해야 합니다.
+- `{...obj, something: 'newValue'}` 객체 스프레드 구문을 사용하여 객체의 사본을 생성할 수 있습니다.
+- 스프레드 구문은 "얕은(shallow)" 복사이며, 한 단계까지만 복사됩니다.
+- 중첩된 객체를 업데이트하려면 해당 위치에서부터 모든 사본을 생성해야 합니다.
+- 반복적인 복사 코드를 줄이려면 Immer를 사용하세요.
+
