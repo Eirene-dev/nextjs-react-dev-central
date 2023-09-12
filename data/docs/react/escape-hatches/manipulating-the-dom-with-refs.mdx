@@ -1,10 +1,240 @@
 ---
 title: 'Refs: DOM 조작'
 date: '2023-07-03'
-summary: XXX
+summary: React에서는 refs를 사용하여 DOM 노드에 액세스하고 조작하는 방법을 설명하는 문서입니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## XXX
-ss
+
+React는 렌더링 출력과 일치하도록 자동으로 [DOM](https://developer.mozilla.org/ko/docs/Web/API/Document_Object_Model/Introduction)을 업데이트하므로 컴포넌트에서는 자주 DOM을 조작할 필요가 없습니다. 그러나 때로는 React가 관리하는 DOM 요소에 액세스해야 할 수도 있습니다. 예를 들어, 노드에 초점을 맞추거나 스크롤하거나 크기와 위치를 측정해야 할 수 있습니다. React에서 이러한 작업을 수행하는 내장된 방법은 없으므로 DOM 노드를 얻기 위해 ref가 필요합니다.
+
+다음을 배우게 됩니다.
+
+- `ref` 속성을 사용하여 React에서 관리하는 DOM 노드에 액세스하는 방법
+- `ref` JSX 속성과 `useRef` Hook의 관계
+- 다른 컴포넌트의 DOM 노드에 액세스하는 방법
+- React가 관리하는 DOM을 수정하는 경우의 안전한 경우
+
+## 노드에 대한 `ref` 얻기
+
+React에서 관리하는 DOM 노드에 액세스하려면 먼저 `useRef` Hook을 가져와야 합니다.
+
+```jsx
+import { useRef } from 'react';
+```
+
+그런 다음 컴포넌트 내에서 ref를 선언하기 위해 useRef를 사용합니다.
+
+```jsx
+const myRef = useRef(null);
+```
+
+마지막으로, ref를 ref 속성으로 JSX 태그에 전달합니다.
+
+```jsx
+<div ref={myRef}>
+```
+
+`useRef` Hook은 current라는 단일 속성을 가진 객체를 반환합니다. 처음에는 `myRef.current`가 `null`일 것입니다. React가 이 `<div>`에 대한 DOM 노드를 생성할 때, React는 이 노드에 대한 참조를 `myRef.current`에 넣습니다. 그런 다음 [이벤트 핸들러](https://react.dev/learn/responding-to-events)에서 이 DOM 노드에 액세스하고 해당 DOM 노드에 정의된 내장 [브라우저 API](https://developer.mozilla.org/ko/docs/Web/API/Element)를 사용할 수 있습니다.
+
+```javascript
+// 아래와 같이 브라우저 API를 사용할 수 있습니다.
+myRef.current.scrollIntoView();
+```
+
+### 예시: 텍스트 입력란에 초점 맞추기
+
+이 예시에서는 버튼을 클릭하면 입력란에 초점이 맞춰집니다.
+
+이를 구현하기 위해 다음 단계를 따릅니다:
+
+[![Edit jolly-marco-lmop3g](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/jolly-marco-lmop3g?fontsize=14&hidenavigation=1&theme=dark)
+
+
+1. `useRef` Hook을 사용하여 `inputRef`를 선언합니다.
+2. `<input ref={inputRef}>`에 전달합니다. 이렇게 하면 React가 **이 `<input>`의 DOM 노드를 `inputRef.current`에 넣도록 지시합니다.**
+3. `handleClick` 함수에서 `inputRef.current`에서 입력 DOM 노드를 읽고 `inputRef.current.focus()`를 호출하여 포커스를 줍니다.
+4. `onClick`과 함께 `handleClick` 이벤트 핸들러를 `<button>`에 전달합니다.
+
+DOM 조작은 ref의 가장 일반적인 사용 사례입니다. `useRef` Hook은 타이머 ID와 같은 React 밖의 다른 것들을 저장하는 데에도 사용될 수 있습니다. 상태와 마찬가지로 `ref`는 렌더링 사이에 유지됩니다. Ref는 설정할 때 재렌더링을 트리거하지 않는 상태 변수와 같습니다. `ref`에 대해서는 [Refs로 값 참조](https://react.dev/learn/referencing-values-with-refs)에서 자세히 알아볼 수 있습니다.
+
+### 예시: 요소로 스크롤하기
+
+컴포넌트에는 하나 이상의 `ref`를 가질 수 있습니다. 이 예시에서는 세 개의 이미지가 있는 캐러셀이 있습니다. 각 버튼은 해당 DOM 노드에서 브라우저의 [scrollIntoView()](https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView) 메서드를 호출하여 이미지를 가운데로 맞춥니다.
+
+[![Edit intelligent-dubinsky-yy0w5y](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/intelligent-dubinsky-yy0w5y?fontsize=14&hidenavigation=1&theme=dark)
+
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **`ref` 콜백을 사용하여 ref 목록 관리하기**</summary>
+
+
+위의 예시들에서는 미리 정의된 개수의 `ref`가 있습니다. 그러나 때로는 목록의 각 항목에 대한 `ref`가 필요하고 얼마나 많은 항목이 있는지 모르는 경우가 있습니다. 다음과 같은 코드는 작동하지 않을 것입니다.
+
+```jsx
+<ul>
+  {items.map((item) => {
+    // 작동하지 않습니다!
+    const ref = useRef(null);
+    return <li ref={ref} />;
+  })}
+</ul>
+```
+
+이는 **Hooks는 컴포넌트의 최상위 수준에서만 호출해야 한다는 것** 때문입니다. 루프, 조건 또는 `map()` 호출 내부에서 `useRef`를 호출할 수 없습니다.
+
+이 문제를 해결하기 위한 한 가지 방법은 부모 요소의 단일 `ref`를 가져온 다음 [querySelectorAll](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll)과 같은 DOM 조작 메서드를 사용하여 해당 요소의 개별 자식 노드를 "찾는" 것입니다. 그러나 이것은 부분적이고 DOM 구조가 변경되면 작동하지 않을 수 있습니다.
+
+다른 해결책은 **`ref` 콜백을 전달하는 것**입니다. 이를 [`ref` 콜백](https://react.dev/reference/react-dom/components/common#ref-callback)이라고 합니다. React는 ref 콜백을 호출할 때 ref를 설정할 DOM 노드와 함께 호출하며, 삭제할 때는 null을 전달합니다. 이를 통해 자체적인 배열이나 [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)을 유지하고 인덱스 또는 어떤 ID 유형으로든 ref에 액세스할 수 있습니다.
+
+다음 예제는 긴 목록에서 임의의 노드로 스크롤하는 방법을 보여줍니다.
+
+[![Edit bold-taussig-1dwe75](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/bold-taussig-1dwe75?fontsize=14&hidenavigation=1&theme=dark)
+
+
+이 예제에서 itemsRef는 단일 DOM 노드를 보유하지 않습니다. 대신 item ID와 DOM 노드 사이의 [Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)를 보유합니다. (Refs는 [모든 값](https://react.dev/learn/referencing-values-with-refs)을 보유할 수 있습니다!) 목록 항목의 각 ref 콜백은 Map을 업데이트하는 데 주의합니다.
+
+```javascript
+<li
+  key={cat.id}
+  ref={node => {
+    const map = getMap();
+    if (node) {
+      // Map에 추가
+      map.set(cat.id, node);
+    } else {
+      // Map에서 제거
+      map.delete(cat.id);
+    }
+  }}
+>
+```
+
+이렇게 하면 이후에 Map에서 개별 DOM 노드를 읽을 수 있습니다.
+
+</details>
+
+## 다른 컴포넌트의 DOM 노드에 액세스하기
+
+React에서 `<input />`과 같은 브라우저 요소를 출력하는 내장 컴포넌트에 ref를 넣으면 React가 해당 ref의 current 속성을 해당 DOM 노드에 설정합니다. 그러나 `<MyInput />`과 같이 **자체 컴포넌트**에 ref를 넣으면 기본적으로 null을 받게 됩니다. 다음 예제에서 이를 보여줍니다. 버튼을 클릭해도 입력란에 초점이 맞춰지지 않는 것을 확인하세요.
+
+[![Edit pensive-bose-jkc8ol](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/pensive-bose-jkc8ol?fontsize=14&hidenavigation=1&theme=dark)
+
+
+문제를 인지할 수 있도록 React는 콘솔에 오류를 출력합니다.
+
+```bash
+ConsoleWarning: Function components cannot be given refs. 
+Attempts to access this ref will fail. 
+Did you mean to use React.forwardRef()?
+```
+
+이것은 기본적으로 React가 컴포넌트가 다른 컴포넌트의 DOM 노드에 액세스할 수 없게 막기 때문에 발생합니다. 심지어 자신의 자식들에게도 마찬가지입니다. 이것은 의도된 동작입니다. Refs는 피해야 할 이스케이프 헤치입니다. 다른 컴포넌트의 DOM 노드를 수동으로 조작하는 것은 코드를 더 취약하게 만듭니다.
+
+대신 DOM 노드를 노출하려는 컴포넌트는 해당 동작에 **알려야 합니다.** 컴포넌트는 `ref`를 하위 요소로 전달하여 "ref를 전달(forward)"하도록 지정할 수 있습니다. 다음은 `MyInput`이 `forwardRef` API를 사용하는 방법입니다.
+
+```javascript
+const MyInput = forwardRef((props, ref) => {
+  return <input {...props} ref={ref} />;
+});
+```
+
+작동 방식은 다음과 같습니다.
+
+1. `<MyInput ref={inputRef} />`는 해당 DOM 노드를 `inputRef.current`에 넣도록 React에 지시합니다. 그러나 기본적으로는 MyInput이 그렇게 하도록 **옵트인(opt-in)**하지 않습니다.
+2. `MyInput` 컴포넌트는 `forwardRef`를 사용하여 선언됩니다. 이렇게 하면 상위 `ref` 인자 뒤에 있는 `inputRef`와 같은 두 번째 `ref` 인자를 받을 수 있습니다.
+3. `MyInput`은 자체 `ref`를 내부의 `<input>`에 전달합니다.
+
+이제 버튼을 클릭하여 입력란에 초점을 맞출 수 있습니다.
+
+[![Edit dazzling-hill-u5odpc](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/dazzling-hill-u5odpc?fontsize=14&hidenavigation=1&theme=dark)
+
+
+디자인 시스템에서는 버튼, 입력란 등과 같은 하위 컴포넌트가 DOM 노드로 `ref`를 전달하는 것이 일반적인 패턴입니다. 반면, 폼, 목록 또는 페이지 섹션과 같은 상위 컴포넌트는 일반적으로 DOM 노드를 노출하지 않고 DOM 구조에 의존성을 갖지 않도록 합니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **명령형 핸들을 사용하여 API 하위 집합 노출하기**</summary>
+
+
+위의 예제에서 MyInput은 원래의 DOM 입력 요소를 노출합니다. 이렇게 하면 상위 컴포넌트에서 해당 요소에 대해 `focus()`를 호출할 수 있습니다. 그러나 이것은 상위 컴포넌트가 다른 작업(예: CSS 스타일 변경)을 수행할 수 있게 하기도 합니다. 드물게는 노출되는 기능을 제한해야 할 수도 있습니다. `useImperativeHandle`을 사용하여 이를 수행할 수 있습니다.
+
+[![Edit dreamy-matsumoto-m7kflm](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/dreamy-matsumoto-m7kflm?fontsize=14&hidenavigation=1&theme=dark)
+
+
+여기에서 `MyInput` 내부의 `realInputRef`는 실제 입력 DOM 노드를 보유합니다. 그러나 `useImperativeHandle`은 ref의 값으로 상위 컴포넌트에 대한 사용자 지정 객체를 제공하도록 React에 지시합니다. 따라서 Form 컴포넌트 내의 inputRef.current은 포커스 메서드만을 갖습니다. 이 경우 ref "핸들(handle)"은 DOM 노드가 아닌 `useImperativeHandle` 호출 내에서 생성한 사용자 지정 객체입니다.
+</details>
+
+## React가 ref를 연결하는 시점
+
+React에서 각 업데이트는 [두 단계](https://react.dev/learn/render-and-commit#step-3-react-commits-changes-to-the-dom)로 분할됩니다.
+
+- 렌더링 단계에서 React는 화면에 표시할 내용을 결정하기 위해 컴포넌트를 호출합니다.
+- 커밋 단계에서 React는 DOM에 변경 사항을 적용합니다.
+
+일반적으로 렌더링 중에 ref에 액세스하는 것은 바람직하지 않습니다. DOM 노드를 보유하는 ref에도 해당됩니다. 첫 번째 렌더링에서는 DOM 노드가 아직 생성되지 않았으므로 `ref.current`는 null일 것입니다. 그리고 업데이트의 렌더링 중에는 DOM 노드가 아직 업데이트되지 않았습니다. 따라서 이를 읽는 것은 너무 이르게 됩니다.
+
+React는 커밋 중에 `ref.current`를 설정합니다. DOM을 업데이트하기 전에 React는 해당 `ref.current` 값을 null로 설정합니다. DOM을 업데이트한 후에는 즉시 해당 값을 해당 DOM 노드로 설정합니다.
+
+**보통 ref는 이벤트 핸들러에서 액세스합니다.** `ref`로 무언가를 수행하려면 특정 이벤트가 없는 경우에도 Effect가 필요할 수 있습니다. 이에 대해 다음 페이지에서 설명하겠습니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기:**flushSync를 사용하여 상태 업데이트를 동기적으로 플러시하기**</summary>
+
+
+다음과 같은 코드를 고려해보십시오. 새로운 할 일을 추가하고 목록의 마지막 자식으로 화면을 스크롤합니다. 어떤 이유에서인지 항상 마지막에 추가된 할 일 직전의 할 일로 스크롤됩니다.
+
+[![Edit snowy-field-tghu1m](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/snowy-field-tghu1m?fontsize=14&hidenavigation=1&theme=dark)
+
+
+문제는 다음 두 줄에 있습니다.
+
+```javascript
+setTodos([ ...todos, newTodo]);
+listRef.current.lastChild.scrollIntoView();
+```
+
+React에서 [상태 업데이트는 큐에 쌓입니다.](https://react.dev/learn/queueing-a-series-of-state-updates) 일반적으로 이는 원하는 동작입니다. 그러나 여기에서는 `setTodos`가 DOM을 즉시 업데이트하지 않기 때문에 문제가 발생합니다. 따라서 목록을 마지막 요소로 스크롤할 때 목록이 아직 추가되지 않은 상태입니다. 이로 인해 스크롤이 항상 한 항목 뒤쳐져 보이게 됩니다.
+
+이 문제를 해결하려면 React에 DOM을 동기적으로 업데이트("플러시")하도록 지시할 수 있습니다. 이를 위해 `react-dom`에서 `flushSync`를 가져오고 상태 업데이트를 flushSync 호출로 둘러싸십시오.
+
+```javascript
+flushSync(() => {
+  setTodos([ ...todos, newTodo]);
+});
+listRef.current.lastChild.scrollIntoView();
+```
+
+이렇게 하면 `flushSync`로 둘러싼 코드가 실행된 직후에 React에 동기적으로 DOM을 업데이트하도록 지시합니다. 결과적으로 스크롤할 때 마지막 할 일은 이미 DOM에 있을 것입니다.
+
+[![Edit amazing-meitner-21t7x2](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/amazing-meitner-21t7x2?fontsize=14&hidenavigation=1&theme=dark)
+
+</details>
+
+
+## refs를 사용한 DOM 조작의 모범 사례
+
+refs는 이스케이프 헤치입니다. "React 밖으로 나가야 할 때에만 사용해야"합니다. 포커스, 스크롤 위치 관리 또는 React가 제공하지 않는 브라우저 API를 호출하는 것과 같이 파괴적이지 않은 작업에만 사용해야 합니다. 포커스와 스크롤링과 같은 비파괴적 작업을 준수한다면 문제가 발생하지 않을 것입니다. 그러나 DOM을 수동으로 **수정**하려고 시도하면 React가 수행 중인 변경 사항과 충돌할 수 있습니다.
+
+이 문제를 설명하기 위해 이 예제에는 환영 메시지와 두 개의 버튼이 포함되어 있습니다. 첫 번째 버튼은 조건부 렌더링과 상태를 사용하여 해당 버튼의 존재 여부를 전환하는 것과 같이 React에서 일반적으로 수행하는 방식대로 동작합니다. 두 번째 버튼은 React의 제어를 벗어난 곳에서 DOM에서 [remove() DOM API](https://developer.mozilla.org/en-US/docs/Web/API/Element/remove)를 사용하여 강제로 제거합니다.
+
+"setState로 토글"을 여러 번 눌러보세요. 메시지가 사라지고 나타날 것입니다. 그런 다음 "DOM에서 제거"를 누릅니다. 이렇게 하면 DOM에서 강제로 제거됩니다. 마지막으로 "setState로 토글"을 누르세요.
+
+[![Edit staging-shadow-l1hzhx](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/staging-shadow-l1hzhx?fontsize=14&hidenavigation=1&theme=dark)
+
+
+DOM 요소를 수동으로 제거한 후 setState를 사용하여 다시 표시하려고 하면 충돌이 발생합니다. 이는 DOM을 변경하고 React가 올바르게 관리하는 방법을 알지 못하기 때문입니다.
+
+**React가 관리하는 DOM 노드를 변경하지 않도록 피하세요.** React가 관리하는 요소에서 DOM을 수정하거나 자식 요소를 추가하거나 제거하는 것은 일관되지 않은 시각적 결과나 위와 같은 충돌을 초래할 수 있습니다.
+
+그러나 이는 전혀 할 수 없다는 의미는 아닙니다. 주의가 필요합니다. **React가 업데이트할 이유가 없는 DOM 부분을 안전하게 수정할 수 있습니다.** 예를 들어, JSX에서 항상 비어있는 `<div>`가 있다면 React는 해당 자식 목록을 변경할 이유가 없을 것입니다. 따라서 거기에 수동으로 요소를 추가하거나 제거하는 것은 안전합니다.
+
+## 요약
+
+- refs는 일반적인 개념이지만 대부분 DOM 요소를 보유하는 데 사용됩니다.
+- ref를 사용하여 DOM 노드를 `myRef.current`에 넣도록 React에 지시합니다. `<div ref={myRef}>`와 같이 전달합니다.
+- 포커스, 스크롤링 또는 DOM 요소의 측정과 같은 비파괴적 작업과 같은 작업에 대해 주로 ref를 사용합니다.
+- 기본적으로 컴포넌트는 자체 DOM 노드를 노출하지 않습니다. 특정 노드로 `ref`를 전달하려면 `forwardRef`를 사용하여 옵트인해야 합니다.
+- React가 관리하는 DOM 노드를 변경하지 않습니다.
+- React가 관리하는 DOM 노드를 변경하는 경우에는 React가 업데이트할 이유가 없는 부분을 수정하세요.
+- DOM 노드를 수정하는 작업에는 주의하세요. 이는 코드를 취약하게 만들 수 있습니다.

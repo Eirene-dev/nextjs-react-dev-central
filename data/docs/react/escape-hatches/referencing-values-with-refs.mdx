@@ -1,10 +1,157 @@
 ---
 title: 'Refs: 값 참조'
 date: '2023-07-02'
-summary: XXX
+summary: Ref는 React 컴포넌트에서 렌더링과 무관한 정보를 저장하는데 사용되며, 이 문서에서는 ref의 활용과 주의사항에 대해 설명하고 있습니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## XXX
-ss
+
+컴포넌트가 "기억"해야 할 정보가 있지만 해당 정보로 인해 [새로운 렌더링](https://react.dev/learn/render-and-commit)이 발생하고 싶지 않을 때는 ref를 사용할 수 있습니다.
+
+다음 내용을 배우게 됩니다.
+
+- 컴포넌트에 ref를 추가하는 방법
+- ref 값을 업데이트하는 방법
+- ref와 상태(state)의 차이점
+- 안전하게 ref를 사용하는 방법
+
+## 컴포넌트에 ref 추가하기
+
+React에서 useRef Hook을 가져와서 컴포넌트에 ref를 추가할 수 있습니다:
+
+```javascript
+import { useRef } from 'react';
+```
+
+컴포넌트 내부에서 useRef Hook을 호출하고 참조할 초기 값을 유일한 인수로 전달합니다. 예를 들어, 값 0에 대한 ref를 생성하는 방법은 다음과 같습니다:
+
+```javascript
+const ref = useRef(0);
+```
+
+useRef는 다음과 같은 객체를 반환합니다:
+
+```javascript
+{ 
+  current: 0 // useRef에 전달한 값
+}
+```
+
+ref의 현재 값을 ref.current 속성을 통해 액세스할 수 있습니다. 이 값은 의도적으로 가변적입니다. 즉, 읽기와 쓰기 모두 가능합니다. 이는 React가 추적하지 않는 컴포넌트의 "비밀 포켓"과 같습니다. (이로 인해 React의 일방향 데이터 흐름에서 "탈출구"로 작용합니다. 아래에서 자세히 알아보겠습니다!)
+
+여기서 버튼은 클릭할 때마다 ref.current 값을 증가시킵니다:
+
+[![Edit upbeat-blackburn-lle79h](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/upbeat-blackburn-lle79h?fontsize=14&hidenavigation=1&theme=dark)
+
+
+ref는 숫자를 가리키지만 [상태(state)](https://react.dev/learn/state-a-components-memory)와 같이 문자열, 객체, 함수 등 모든 유형을 가리킬 수 있습니다. 그러나 ref는 state와 달리 읽기와 수정이 가능한 일반적인 JavaScript 객체입니다.
+
+**컴포넌트는 증가할 때마다 다시 렌더링되지 않습니다.** state와 마찬가지로 ref는 React에 의해 재렌더링 사이에 유지됩니다. 그러나 state를 설정하면 컴포넌트가 재렌더링됩니다. 반면, ref를 변경하면 재렌더링되지 않습니다!
+
+## 예제: 스톱워치 만들기
+
+ref와 상태(state)를 단일 컴포넌트에서 함께 사용할 수 있습니다. 예를 들어, 사용자가 버튼을 눌러 시작하거나 중지할 수 있는 스톱워치를 만들어 보겠습니다. 사용자가 "시작" 버튼을 누른 후 경과한 시간을 표시하기 위해 "시작" 버튼이 눌린 시간과 현재 시간을 추적해야 합니다. **이 정보는 렌더링에 사용되므로 상태(state)에 유지할 것입니다:**
+
+```javascript
+const [startTime, setStartTime] = useState(null);
+const [now, setNow] = useState(null);
+```
+
+사용자가 "시작" 버튼을 누르면 10밀리초마다 시간을 업데이트하기 위해 [setInterval](https://developer.mozilla.org/docs/Web/API/setInterval)을 사용할 것입니다:
+
+[![Edit xenodochial-galois-k3msuz](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/xenodochial-galois-k3msuz?fontsize=14&hidenavigation=1&theme=dark)
+
+
+"중지" 버튼이 눌렸을 때는 기존의 간격을 취소하여 now 상태 변수를 업데이트하지 않도록 해야 합니다. 이를 위해 [clearInterval](https://developer.mozilla.org/en-US/docs/Web/API/clearInterval)을 호출해야 하지만 사용자가 "시작"을 누를 때 이전에 setInterval 호출에서 반환된 간격 ID를 지정해야 합니다. 간격 ID를 어딘가에 유지해야 합니다. **간격 ID는 렌더링에 사용되지 않으므로 ref에 유지할 수 있습니다:**
+
+[![Edit exciting-hertz-9trm60](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/exciting-hertz-9trm60?fontsize=14&hidenavigation=1&theme=dark)
+
+
+정보가 렌더링에 사용되는 경우 상태(state)에 유지하고, 이벤트 처리기에서만 필요하며 변경되어도 재렌더링이 필요하지 않은 경우에는 ref를 사용하는 것이 더 효율적일 수 있습니다.
+
+
+## ref와 상태(state)의 차이점
+
+아마도 ref가 상태(state)보다 "엄격하지 않다"는 생각이 드실지 모르겠습니다. 상태(state)를 변경하는 대신에 언제든지 값을 수정할 수 있기 때문입니다. 그러나 대부분의 경우 상태(state)를 사용하는 것이 좋습니다. ref는 종종 필요하지 않은 "탈출구"입니다. 상태(state)와 ref의 비교 방법은 다음과 같습니다.
+
+| ref | state |
+| --- | --- |
+| `useRef(initialValue)`은 `{ current: initialValue }`을 반환합니다. | `useState(initialValue)`은 상태 변수의 현재 값과 상태 설정 함수`([value, setValue])`를 반환합니다. |
+| 변경시 재렌더링을 트리거하지 않습니다. | 변경시 재렌더링을 트리거합니다. |
+| 가변적입니다. 렌더링 프로세스 외부에서 `current`의 값을 수정하고 업데이트할 수 있습니다. | "불변적"입니다. 상태 변수를 수정하려면 상태 설정 함수를 사용하여 상태 변수를 수정하여 재렌더링을 예약해야 합니다. |
+| 렌더링 중에는 `current` 값을 읽거나 쓰지 않아야 합니다. | 언제든지 상태를 읽을 수 있습니다. 그러나 각 렌더링에는 자체적인 상태의 [스냅샷](https://react.dev/learn/state-as-a-snapshot)이 있으며 변경되지 않습니다. |
+
+다음은 상태(state)를 사용하여 구현된 카운터 버튼 예제입니다:
+
+[![Edit silly-easley-05cvxs](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silly-easley-05cvxs?fontsize=14&hidenavigation=1&theme=dark)
+
+
+카운트 값이 표시되므로 상태(state) 값을 사용하는 것이 의미가 있습니다. `count` 값이 `setCount()`를 사용하여 설정될 때마다 React는 컴포넌트를 다시 렌더링하고 화면이 새로운 `count`를 반영합니다.
+
+이를 ref로 구현하려고 하면 React가 컴포넌트를 다시 렌더링하지 않으므로 count가 변경되지 않아 텍스트가 업데이트되지 않습니다. 다음 버튼을 클릭해도 **텍스트가 업데이트되지 않는 것**을 확인하세요:
+
+[![Edit serene-violet-t8jjlm](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/serene-violet-t8jjlm?fontsize=14&hidenavigation=1&theme=dark)
+
+
+이는 렌더링 중 ref.current를 읽는 것이 신뢰할 수 없는 코드를 만든다는 이유입니다. 이 경우에는 상태(state)를 사용하세요.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **useRef는 내부에서 어떻게 작동할까요?**</summary>
+
+
+`useState`와 `useRef`는 모두 React에서 제공되지만, 원칙적으로 useState 위에 useRef를 구현할 수 있습니다. React 내부에서 `useRef`가 다음과 같이 구현된 것처럼 생각할 수 있습니다:
+
+```javascript
+// React 내부에서
+function useRef(initialValue) {
+  const [ref, unused] = useState({ current: initialValue });
+  return ref;
+}
+```
+
+첫 번째 렌더링에서 `useRef`는 `{ current: initialValue }`를 반환합니다. 이 객체는 React에 의해 저장되므로 다음 렌더링에서 동일한 객체가 반환됩니다. 여기서 상태 설정 함수는 이 예제에서 사용되지 않습니다. `useRef`는 항상 동일한 객체를 반환해야 하기 때문에 필요하지 않습니다!
+
+React는 실제로 대부분의 경우에 useRef를 제공합니다. 그러나 ref를 사용하기 전용 상태 변수로 생각할 수 있습니다. 객체 지향 프로그래밍에 익숙하다면 `ref`가 인스턴스 필드를 생각나게 할 수 있습니다. 하지만 `this.something` 대신 `somethingRef.current`와 같이 작성합니다.
+</details>
+
+## ref를 사용해야 할 때
+
+일반적으로 컴포넌트가 React를 벗어나서 외부 API(일반적으로 컴포넌트의 외관에 영향을 주지 않는 브라우저 API)와 통신해야 할 때 `ref`를 사용합니다. 다음은 몇 가지 이러한 드물게 발생하는 상황입니다.
+
+- [timeout ID](https://developer.mozilla.org/docs/Web/API/setTimeout) 저장
+- [DOM 요소](https://developer.mozilla.org/docs/Web/API/Element) 저장 및 조작 ([다음 페이지](https://react.dev/learn/manipulating-the-dom-with-refs)에서 다룹니다)
+- JSX를 계산하는 데 필요하지 않은 다른 객체 저장
+
+컴포넌트가 일부 값을 저장해야하지만 렌더링 로직에 영향을 주지 않는 경우 `ref`를 선택하세요.
+
+## `ref`를 사용하는 데 대한 모범 사례
+
+다음 원칙을 따르면 컴포넌트가 예측 가능해집니다.
+
+- **`ref`를 탈출구로 취급하세요.** `ref`는 외부 시스템이나 브라우저 API와 작업할 때 유용합니다. 애플리케이션 로직과 데이터 흐름의 대부분이 `ref`에 의존한다면 접근 방식을 재검토하는 것이 좋습니다.
+- **렌더링 중에 `ref.current`를 읽거나 쓰지 마세요.** 렌더링 중에 필요한 정보가 있는 경우 상태(state)를 사용하세요. React는 `ref.current`가 언제 변경되는지를 모르기 때문에 렌더링 중에 읽는 것만으로도 컴포넌트의 동작을 예측하기 어렵게 만듭니다. (첫 번째 렌더링 중에만 `ref.current = new Thing()`과 같은 코드를 사용하는 경우는 예외입니다. 이 코드는 처음 렌더링 중에 `ref`를 한 번만 설정합니다.)
+
+React 상태의 제한 사항은 `ref`에는 적용되지 않습니다. 예를 들어, 상태는 [각 렌더링에 대한 스냅샷](https://react.dev/learn/state-as-a-snapshot)처럼 작동하고 [동기적으로 업데이트되지 않습니다.](https://react.dev/learn/queueing-a-series-of-state-updates) 하지만 `ref`의 현재 값을 변경하면 즉시 변경됩니다.
+
+```javascript
+ref.current = 5;
+console.log(ref.current); // 5
+```
+
+이는 `ref` 자체가 일반적인 JavaScript 객체이기 때문에 JavaScript 객체처럼 작동하기 때문입니다.
+
+또한 `ref`와 관련된 객체를 변경할 때 [변경을 피해야 하는](https://react.dev/learn/updating-objects-in-state) 걱정할 필요가 없습니다. 렌더링에 사용되지 않는 객체를 변경하는 경우 React는 `ref`나 그 내용물에 대해 신경쓰지 않습니다.
+
+## ref와 DOM
+
+ref를 모든 값에 사용할 수 있지만, 가장 일반적인 사용 사례는 DOM 요소에 대한 접근입니다. 예를 들어, 입력란에 프로그래밍 방식으로 초점을 맞추려는 경우에 유용합니다. JSX의 `ref` 속성에 ref를 전달하면 React가 해당하는 DOM 요소를 `myRef.current`에 넣습니다. 이에 대해 자세히 알아보려면 [DOM을 사용한 조작](https://react.dev/learn/manipulating-the-dom-with-refs)을 읽어보세요.
+
+## 요약
+
+- `ref`는 렌더링에 사용되지 않는 값을 보유하기 위한 탈출구입니다. 자주 사용하지는 않습니다.
+- `ref`는 현재 값을 읽거나 설정할 수 있는 단일 속성인 current를 가진 일반적인 JavaScript 객체입니다.
+- `useRef`를 호출하여 React에게 `ref`를 제공하도록 요청할 수 있습니다.
+- 상태(state)와 마찬가지로 ref를 사용하면 컴포넌트 간에 재렌더링 사이에 정보를 유지할 수 있습니다.
+- 하지만 상태(state)와는 달리 `ref`의 `current` 값을 설정해도 재렌더링이 트리거되지 않습니다.
+- 렌더링 중에는 `ref.curren`를 읽거나 쓰지 마세요. 이로 인해 컴포넌트의 동작이 예측하기 어려워집니다.

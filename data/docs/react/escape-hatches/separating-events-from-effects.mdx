@@ -1,10 +1,477 @@
 ---
 title: 'Effect: Event를 분리'
 date: '2023-07-07'
-summary: XXX
+summary: React에서 이벤트 핸들러와 효과(Effect)의 차이를 설명하고, 언제 어떤 것을 선택해야 하는지, 이펙트 코드 일부를 반응형으로 만들지 않는 방법, 그리고 이펙트를 사용하여 최신 프롭과 상태를 읽는 방법에 대해 다룹니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## XXX
-ss
+
+이벤트 핸들러는 동일한 상호작용을 반복적으로 수행할 때만 다시 실행됩니다. 이와 달리 이펙트는 프롭이나 상태 변수와 같은 값이 마지막 렌더링 때와 다른 경우에 다시 동기화됩니다. 때로는 이 두 가지 동작을 혼합하고 싶을 수도 있습니다. 즉, 특정 값에 대해서는 이펙트가 다시 실행되어야 하지만 다른 값에 대해서는 그렇지 않아야 할 때입니다. 이 페이지에서는 이를 수행하는 방법에 대해 알려드리겠습니다.
+
+배울 내용
+
+-   이벤트 핸들러와 이펙트 중 어떤 것을 선택해야 하는지
+-   이펙트는 반응형이고 이벤트 핸들러는 그렇지 않은 이유
+-   이펙트 코드의 일부를 반응형으로 만들지 않으려면 어떻게 해야 하는지
+-   이벤트 이펙트가 무엇이고 이펙트에서 이를 추출하는 방법
+-   이펙트를 사용하여 최신 프롭과 상태를 읽는 방법
+
+## 이벤트 핸들러와 이펙트 중 어떤 것을 선택해야 할까요?
+
+먼저, 이벤트 핸들러와 이펙트의 차이점을 다시 알아보겠습니다.
+
+채팅방 컴포넌트를 구현하려고 한다고 가정해봅시다. 요구 사항은 다음과 같습니다.
+
+1.  컴포넌트는 선택한 채팅방에 자동으로 연결되어야 합니다.
+2.  "전송" 버튼을 클릭할 때 메시지를 채팅에 전송해야 합니다.
+
+이미 이러한 기능에 대한 코드를 구현했지만 이를 어디에 둘지 확신이 없습니다. 이벤트 핸들러와 이펙트 중 어느 것을 사용해야 할까요? 이 질문에 대답하기 위해 항상 [코드가 실행되어야 하는 이유](https://react.dev/learn/synchronizing-with-effects#what-are-effects-and-how-are-they-different-from-events)를 고려해야 합니다.
+
+### 이벤트 핸들러는 특정 상호작용에 응답하여 실행됩니다.
+
+사용자의 관점에서 메시지를 전송하는 것은 특정 "전송" 버튼을 클릭했기 때문에 발생해야 합니다. 사용자가 다른 시간이나 다른 이
+
+유로 메시지를 전송하면 매우 불만스러울 것입니다. 따라서 메시지 전송은 이벤트 핸들러로 처리해야 합니다. 이벤트 핸들러를 사용하여 특정 상호작용을 처리할 수 있습니다.
+
+```jsx
+function ChatRoom({ roomId }) {
+  const [message, setMessage] = useState('');
+  // ...
+  function handleSendClick() {
+    sendMessage(message);
+  }
+  // ...
+  return (
+    <>
+      <input value={message} onChange={e => setMessage(e.target.value)} />
+      <button onClick={handleSendClick}>Send</button>;
+    </>
+  );
+}
+```
+
+이벤트 핸들러를 사용하면 sendMessage(message)이 버튼을 클릭한 경우에만 실행될 것임을 확신할 수 있습니다.
+
+### 이펙트는 동기화가 필요할 때마다 실행됩니다.
+
+컴포넌트가 채팅방과 연결되어 있어야 한다는 이유는 특정 상호작용 때문이 아닙니다. 사용자가 어떤 이유로 채팅방 화면으로 이동했는지, 그 이유나 방법은 중요하지 않습니다. 사용자가 채팅방을 보고 있고 상호작용할 수 있는 상태라면, 컴포넌트는 선택한 채팅 서버에 연결되어 있어야 합니다. 앱의 초기 화면이 채팅방 컴포넌트인 경우라면 사용자가 아무 상호작용도 수행하지 않은 상태에서도 연결해야 합니다. 이것이 이펙트인 이유입니다.
+
+```jsx
+function ChatRoom({ roomId }) {
+  // ...
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.connect();
+    return () => {
+      connection.disconnect();
+    };
+  }, [roomId]);
+  // ...
+}
+```
+
+이 코드를 사용하면 사용자의 특정 상호작용과 관계없이 현재 선택된 채팅 서버에 항상 활성 연결이 유지됨을 확신할 수 있습니다. 앱을 처음 실행했을 때, 다른 방을 선택했을 때, 다른 화면으로 이동했다가 다시 돌아와도 컴포넌트가 현재 선택된 방과 동기화되고 필요할 때마다 다시 연결하도록 이펙트가 처리합니다.
+
+[![Edit wonderful-galileo-nk4w67](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/wonderful-galileo-nk4w67?fontsize=14&hidenavigation=1&theme=dark)
+
+
+## 반응형 값과 반응형 로직
+
+직관적으로 이벤트 핸들러는 "수동적으로" 트리거됩니다. 예를 들어 버튼을 클릭하는 등의 상호작용에 의해서만 다시 실행됩니다. 이펙트는 반면 "자동적"으로 실행되며 동기화가 필요한 만큼 자주 실행됩니다.
+
+더 정확하게 생각할 수 있는 방법이 있습니다.
+
+컴포넌트의 본문에서 선언된 프롭, 상태 및 변수는 반응형 값이라고 합니다. 이 예에서는 serverUrl은 반응형 값이 아니지만 roomId와 message는 반응형 값입니다. 이러한 반응형 값은 렌더링 데이터 흐름에 참여합니다.
+
+```jsx
+const serverUrl = 'https://localhost:1234';
+
+function ChatRoom({ roomId }) {
+  const [message, setMessage] = useState('');
+
+  // ...
+}
+```
+
+이와 같은 반응형 값은 다시 렌더링으로 인해 변경될 수 있습니다. 예를 들어 사용자가 메시지를 편집하거나 드롭다운에서 다른 roomId을 선택할 수 있습니다. 이벤트 핸들러와 이펙트는 변경 사항에 다르게 반응합니다.
+
+-   **이벤트 핸들러 내의 로직은 반응형이 아닙니다.** 사용자가 동일한 상호작용(예: 클릭)을 다시 수행하지 않는 한 다시 실행되지 않습니다. 이벤트 핸들러는 변경 사항에 "반응"하지 않고 반응형 값들을 읽을 수 있습니다.
+-   **이펙트 내의 로직은 반응형입니다.** 이펙트가 반응형 값을 읽는 경우, [의존성으로 지정해야 합니다.](https://react.dev/learn/lifecycle-of-reactive-effects#effects-react-to-reactive-values) 그런 다음, 재렌더링으로 인해 해당 값이 변경되면 React는 새 값으로 이펙트의 로직을 다시 실행합니다.
+
+이전 예제를 다시 살펴보면 이 차이점을 설명하는 데 도움이 됩니다.
+
+### 이벤트 핸들러 내의 로직은 반응형이 아닙니다.
+
+다음 코드 라인을 살펴보십시오. 이 로직은 반응형으로 처리해야 할까요 아니면 그렇지 않아야 할까요?
+
+```jsx
+    // ...
+    sendMessage(message);
+    // ...
+```
+
+사용자의 관점에서 메시지가 변경되었다고 해서 반드시 메시지를 전송하려는 것은 아닙니다. 이는 사용자가 입력 중이라는 의미입니다. 즉, 메시지를 전송하는 로직은 반응형이 아니어야 합니다. 반응형 값이 변경될 때마다 다시 실행되어서는 안 됩니다. 따라서 이 로직은 이벤트 핸들러에 속합니다.
+
+```jsx
+  function handleSendClick() {
+    sendMessage(message);
+  }
+```
+
+이벤트 핸들러는 반응형이 아니므로 sendMessage(message)은 사용자가 Send 버튼을 클릭할 때만 실행됩니다.
+
+### 이펙트 내의 로직은 반응형입니다.
+
+이제 다음 코드로 돌아가 봅시다.
+
+```jsx
+    // ...
+    const connection = createConnection(serverUrl, roomId);
+    connection.connect();
+    // ...
+```
+
+사용자의 관점에서 roomId가 변경되면 다른 방에 연결하려는 것을 의미합니다. 다시 말해, 방에 연결하는 로직은 반응형이어야 합니다. 이 코드 라인이 반응형 값을 "따라잡아가"고, 값이 다르면 다시 실행되어야 합니다. 따라서 이 코드는 이펙트에 속합니다.
+
+```jsx
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.connect();
+    return () => {
+      connection.disconnect()
+    };
+  }, [roomId]);
+```
+
+이펙트는 반응형이므로 createConnection(serverUrl, roomId) 및 connection.connect()는 roomId의 각 다른 값마다 실행됩니다. 이펙트는 채팅 연결을 현재 선택된 방과 동기화시킵니다.
+
+## 이펙트에서 반응형이 아닌 로직 추출하기
+
+반응형 로직과 비반응형 로직을 혼합하려고 할 때는 더 복잡해집니다.
+
+예를 들어, 사용자가 채팅에 연결되었을 때 알림을 표시하고 싶다고 가정해봅시다. 알림을 올바른 색상으로 표시하려면 프롭에서 현재 테마(어둡거나 밝음)를 읽어야 합니다.
+
+```jsx
+function ChatRoom({ roomId, theme }) {
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.on('connected', () => {
+      showNotification('Connected!', theme);
+    });
+    connection.connect();
+    // ...
+```
+
+그러나 theme은 반응형 값입니다(다시 렌더링을 통해 변경될 수 있음) 그리고 [이펙트에서 읽는 모든 반응형 값은 의존성으로 선언해야 합니다.](https://react.dev/learn/lifecycle-of-reactive-effects#react-verifies-that-you-specified-every-reactive-value-as-a-dependency) 따라서 Effect의 의존성으로 theme을 지정해야 합니다.
+
+```jsx
+function ChatRoom({ roomId, theme }) {
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.on('connected', () => {
+      showNotification('Connected!', theme);
+    });
+    connection.connect();
+    return () => {
+      connection.disconnect()
+    };
+  }, [roomId, theme]); // ✅ 모든 의존성이 선언되었습니다.
+  // ...
+```
+
+이제 문제가 있는 사용자 경험을 이 예시를 통해 찾아볼 수 있습니다.
+
+[![Edit friendly-banach-vxw9h1](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/friendly-banach-vxw9h1?fontsize=14&hidenavigation=1&theme=dark)
+
+
+roomId가 변경되면 채팅이 예상대로 다시 연결됩니다. 그러나 theme도 의존성으로 지정되어 있으므로 어두운 테마와 밝은 테마 사이를 전환할 때마다 채팅이 다시 연결됩니다. 그렇지 않은 것이 좋습니다!
+
+다시 말해, 다음 라인은 반응형이 아니어야 합니다. 이펙트 내부에 있지만 (반응형인) 이펙트에서 실행되는 것이 아니기 때문입니다.
+
+```jsx
+      // ...
+      showNotification('Connected!', theme);
+      // ...
+```
+
+비반응형 로직을 반응형 이펙트로부터 분리할 수 있는 방법이 필요합니다.
+
+### 이펙트 이벤트 선언하기
+
+> 작성 중입니다.
+
+이 섹션은 아직 안정 버전의 React에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
+
+비반응형 로직을 이펙트에서 분리하기 위해 [useEffectEvent](https://react.dev/reference/react/experimental_useEffectEvent)라는 특별한 훅을 사용할 수 있습니다.
+
+```jsx
+import { useEffect, useEffectEvent } from 'react';
+
+function ChatRoom({ roomId, theme }) {
+  const onConnected = useEffectEvent(() => {
+    showNotification('Connected!', theme);
+  });
+  // ...
+```
+
+여기서 onConnected는 이펙트 이벤트라고 부릅니다. 이벤트 핸들러와 매우 유사한 동작을 수행합니다. 내부의 로직은 반응형이 아니며 항상 최신의 프롭과 상태 값을 "볼" 수 있습니다.
+
+이제 이벤트 핸들러에서 onConnected 이펙트 이벤트를 호출할 수 있습니다.
+
+```jsx
+function ChatRoom({ roomId, theme }) {
+  const onConnected = useEffectEvent(() => {
+    showNotification('Connected!', theme);
+  });
+
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.on('connected', () => {
+      onConnected();
+    });
+    connection.connect();
+    return () => connection.disconnect();
+  }, [roomId]); // ✅ 모든 의존성이 선언되었습니다.
+  // ...
+```
+
+이로써 문제가 해결되었습니다. onConnected을 이펙트의 의존성 목록에서 제거해야 한다는 점에 유의하세요. **이펙트 이벤트는 반응형이 아니므로 의존성 목록에 포함시키지 않아야 합니다.**
+
+새로운 동작이 예상대로 작동하는지 확인해 보세요:
+
+[![Edit unruffled-smoke-bd0s8d](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/unruffled-smoke-bd0s8d?fontsize=14&hidenavigation=1&theme=dark)
+
+
+이펙트 이벤트는 이벤트 핸들러와 매우 유사하다고 생각할 수 있습니다. 주요한 차이점은 이벤트 핸들러는 사용자 상호작용에 응답하여 실행되는 반면, 이펙트 이벤트는 이펙트에서 호출되기 때문에 사용자의 반응형 이펙트와 무관한 코드와의 연결을 끊을 수 있다는 점입니다.
+
+### 이펙트 이벤트를 사용하여 최신 프롭과 상태 읽기
+
+> 작성 중입니다.
+
+이 섹션은 아직 안정 버전의 React에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
+
+이펙트 이벤트를 사용하면 종속성 린터를 억제하려는 유혹에 빠질 수 있는 많은 패턴을 수정할 수 있습니다.
+
+예를 들어, 페이지 방문을 기록하는 이펙트가 있다고 가정해 보겠습니다.
+
+```jsx
+function Page() {
+  useEffect(() => {
+    logVisit();
+  }, []);
+  // ...
+}
+```
+
+나중에 사이트에 여러 경로를 추가합니다. 이제 Page 컴포넌트는 현재 경로를 나타내는 url 프롭을 받습니다. logVisit 호출에 url을 전달하려고 하지만 종속성 린터가 경고를 표시합니다.
+
+```jsx
+function Page({ url }) {
+  useEffect(() => {
+    logVisit(url);
+    // 🔴 React Hook useEffect has a missing dependency: 'url'
+  }, []); 
+  // ...
+}
+```
+
+코드가 수행되는 방식을 생각해 보세요. 각 URL은 별도의 방문을 기록해야 합니다. 즉, url마다 별도의 방문을 기록해야 합니다. 이 경우, 종속성 린터를 따르는 것이 의미가 있으며 url을 의존성으로 추가하는 것이 맞습니다.
+
+```jsx
+function Page({ url }) {
+  useEffect(() => {
+    logVisit(url);
+    // ✅ 모든 의존성이 선언되었습니다.
+  }, [url]); 
+  // ...
+}
+```
+
+이제 페이지 방문과 함께 쇼핑 카트에 있는 항목 수도 포함하고 싶다고 가정해 보겠습니다.
+
+```jsx
+function Page({ url }) {
+  const { items } = useContext(ShoppingCartContext);
+  const numberOfItems = items.length;
+
+  useEffect(() => {
+    logVisit(url, numberOfItems);
+    // 🔴 React Hook useEffect has a missing dependency: 'numberOfItems'
+  }, [url]); 
+  // ...
+}
+```
+
+이펙트 내에서 numberOfItems를 사용했으므로 린터가 종속성으로 추가할 것을 요구합니다. 그러나 logVisit 호출이 numberOfItems에 대해 반응적이기를 원하지 않습니다. 사용자가 무언가를 쇼핑 카트에 담고 numberOfItems가 변경되는 것은 사용자가 페이지를 다시 방문했다는 의미가 아닙니다. 다시 말해서 페이지 방문은 어떤 의미에서는 "이벤트"입니다. 시간 상의 특정한 순간에 발생합니다.
+
+코드를 두 부분으로 나누어 봅시다.
+
+```jsx
+function Page({ url }) {
+  const { items } = useContext(ShoppingCartContext);
+  const numberOfItems = items.length;
+
+  const onVisit = useEffectEvent(visitedUrl => {
+    logVisit(visitedUrl, numberOfItems);
+  });
+
+  useEffect(() => {
+    onVisit(url);
+  }, [url]); // ✅ 모든 의존성이 선언되었습니다.
+  // ...
+}
+```
+
+여기서 onVisit은 이펙트 이벤트입니다. 내부의 코드는 반응형이 아닙니다. 따라서 numberOfItems(또는 다른 반응형 값)을 사용할 때 주변 코드가 변경되지 않는다는 걱정 없이 사용할 수 있습니다.
+
+반면, 이펙트 자체는 반응형 상태를 유지합니다. 이펙트 내부의 코드는 url 프롭을 사용하므로 이펙트는 다른 url로 다시 렌더링될 때마다 다시 실행됩니다. 이에 따라 onVisit 이펙트 이벤트가 호출됩니다.
+
+따라서 url의 변경 사항마다 logVisit가 호출되고 항상 최신 numberOfItems를 읽습니다. 그러나 numberOfItems가 독자적으로 변경된다고 해서 코드가 다시 실행되지는 않습니다.
+
+### 참고
+
+인수 없이 onVisit()를 호출하고 내부에서 url을 읽을 수 있는지 궁금할 수 있습니다.
+
+```jsx
+  const onVisit = useEffectEvent(() => {
+    logVisit(url, numberOfItems);
+  });
+
+  useEffect(() => {
+    onVisit();
+  }, [url]);
+```
+
+작동할 수는 있지만, url을 명시적으로 이펙트 이벤트에 전달하는 것이 좋습니다. **url을 이펙트 이벤트에 인수로 전달함으로써 사용자 관점에서 다른 url을 가진 페이지 방문이 별개의 "이벤트"로 간주된다는 것을 명시합니다.** visitedUrl은 발생한 "이벤트"의 일부입니다.
+
+```jsx
+  const onVisit = useEffectEvent(visitedUrl => {
+    logVisit(visitedUrl, numberOfItems);
+  });
+
+  useEffect(() => {
+    onVisit(url);
+  }, [url]);
+```
+
+이펙트 이벤트 내에서 url은 최신 url에 해당하며 이미 변경된 경우도 있을 수 있지만, visitedUrl은 이펙트(및 해당 onVisit 호출)가 실행된 초기의 url에 해당합니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **종속성 린터를 억제하는 것은 괜찮을까요?**</summary>
+
+
+기존 코드베이스에서 종속성 린터가 다음과 같이 억제된 경우를 때때로 볼 수 있습니다.
+
+```jsx
+function Page({ url }) {
+  const { items } = useContext(ShoppingCartContext);
+  const numberOfItems = items.length;
+
+  useEffect(() => {
+    logVisit(url, numberOfItems);
+    // 🔴 다음과 같이 종속성 린터를 억제하는 것을 피하세요:
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url]);
+  // ...
+}
+```
+
+이런 경우 종속성 린터가 문제를 경고하지 않게 됩니다. 이펙트가 코드 변경 시 새로운 반응형 종속성에 "반응"해야 하는 경우 React는 그에 대해 경고하지 않게 됩니다. 앞의 예에서 url을 의존성에 추가하려는 경우에 대해 React가 알려준 것과 같은 알림을 향후 편집에서 이펙트에 대해 받지 못하게 됩니다. 이는 버그를 야기할 수 있습니다.
+
+종속성 린터를 억제하는 것에 의한 혼란스러운 버그 예를 살펴보겠습니다. 이 예에서 handleMove 함수는 도트가 커서를 따라가야 할지 여부를 결정하기 위해 현재의 canMove 상태 변수 값을 읽습니다. 그러나 handleMove 내부에서 항상 canMove이 true입니다.
+
+왜 그럴까요?
+
+[![Edit agitated-smoke-mk2e2e](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/agitated-smoke-mk2e2e?fontsize=14&hidenavigation=1&theme=dark)
+
+
+이 코드의 문제점은 종속성 린터를 억제하는 것입니다. 억제를 제거하면 handleMove 함수에 의존해야 한다는 것을 알 수 있습니다. 이는 의미가 있습니다. handleMove는 컴포넌트 본문에서 선언되므로 반응형 값입니다. 모든 반응형 값은 종속성으로 지정되거나 시간이 지남에 따라 구식으로 될 수 있습니다!
+
+원래 코드의 작성자는 이펙트가 어떤 반응형 값에도 의존하지 않는다고 "거짓말"을 한 것입니다. 이는 React가 canMove이 변경된 후에 이펙트를 다시 동기화하지 않았기 때문에 handleMove이벤트에 첨부된 handleMove 함수가 초기 렌더링 중에 생성된 handleMove 함수일 것입니다. 초기 렌더링 시에 canMove가 true이기 때문입니다.
+
+**린터를 억제하지 않으면 구식 값으로 인해 문제가 발생하지 않습니다.**
+
+[![Edit stupefied-bell-7km5vz](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/stupefied-bell-7km5vz?fontsize=14&hidenavigation=1&theme=dark)
+
+
+useEffectEvent를 사용하면 linter에 "거짓말"을 하지 않아도 되며 코드가 예상대로 작동합니다.
+
+이는 useEffectEvent가 반응형 코드와 분리된 비반응형 "조각"임을 의미합니다. 이펙트에 사용되는 이펙트 이벤트와 함께 사용해야 합니다.
+</details>
+
+### 이펙트 이벤트의 제한 사항
+
+
+이 섹션은 아직 안정 버전의 React에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
+
+이펙트 이벤트는 다음과 같은 제한 사항이 있습니다:
+
+- **이펙트 내에서만 호출합니다.**
+- **다른 컴포넌트나 훅에 전달하지 마세요.**
+
+예를 들어, 다음과 같이 이펙트 이벤트를 선언하고 전달하지 마세요.
+
+```jsx
+function Timer() {
+  const [count, setCount] = useState(0);
+
+  const onTick = useEffectEvent(() => {
+    setCount(count + 1);
+  });
+
+  useTimer(onTick, 1000); // 🔴 피하세요: 이펙트 이벤트 전달
+
+  return <h1>{count}</h1>
+}
+
+function useTimer(callback, delay) {
+  useEffect(() => {
+    const id = setInterval(() => {
+      callback();
+    }, delay);
+    return () => {
+      clearInterval(id);
+    };
+  }, [delay, callback]); // "callback"를 종속성으로 명시해야 합니다.
+}
+```
+
+대신 항상 이펙트를 사용하는 곳과 함께 이펙트 이벤트를 직접 선언하세요.
+
+```jsx
+function Timer() {
+  const [count, setCount] = useState(0);
+  useTimer(() => {
+    setCount(count + 1);
+  }, 1000);
+  return <h1>{count}</h1>
+}
+
+function useTimer(callback, delay) {
+  const onTick = useEffectEvent(() => {
+    callback();
+  });
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      onTick(); // ✅ 좋습니다: 이펙트 내에서 로컬로만 호출됨
+    }, delay);
+    return () => {
+      clearInterval(id);
+    };
+  }, [delay]); // "onTick" (이펙트 이벤트)를 종속성으로 명시할 필요 없음
+}
+```
+
+이펙트 이벤트는 이펙트 코드를 사용하는 곳과 함께 선언되어야 합니다.
+
+## 요약
+
+- 이벤트 핸들러는 특정 상호작용에 응답하여 실행됩니다.
+- 이펙트는 동기화가 필요한 경우마다 실행됩니다.
+- 이벤트 핸들러 내부의 로직은 반응형이 아닙니다.
+- 이펙트 내부의 로직은 반응형입니다.
+- 반응형 로직을 반응하지 않는 코드에서 분리하기 위해 이펙트 이벤트를 추출할 수 있습니다.
+- 이펙트 이벤트는 이펙트 내에서만 호출합니다.
+- 이펙트 이벤트를 다른 컴포넌트나 훅에 전달하지 마세요.

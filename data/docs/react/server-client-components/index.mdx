@@ -1,8 +1,598 @@
 ---
 title: React 서버/클라이언트 컴포넌트
 date: '2023-08-01'
-summary: XXX
+summary: 이 글은 Next.js를 사용하여 서버 컴포넌트와 클라이언트 컴포넌트의 차이와 사용 사례, 그리고 권장하는 패턴에 대해 설명합니다.
 ---
 
-## XXX
-sss
+
+Next.js로 애플리케이션을 만들려면, 서버 컴포넌트(Server Components) 같은 React의 새로운 기능에 익숙해지는 것이 도움이 됩니다. 이 페이지에서는 서버 컴포넌트와 클라이언트 컴포넌트(Client Components)의 차이, 언제 사용해야 하는지, 그리고 추천하는 패턴에 대해 설명합니다.
+
+## 서버 컴포넌트
+
+서버 컴포넌트와 클라이언트 컴포넌트를 사용하면 개발자들이 클라이언트와 서버를 모두 활용하는 애플리케이션을 만들 수 있습니다. 이것은 클라이언트-사이드 앱의 풍부한 상호작용성과 기존 서버 렌더링의 향상된 성능을 결합합니다.
+
+### 서버 컴포넌트 관점으로 생각하기
+
+React가 UI를 만드는 방식에 대한 우리의 사고방식을 바꾼 것처럼, React 서버 컴포넌트는 서버와 클라이언트를 활용하는 하이브리드 애플리케이션을 만드는 새로운 정신 모델을 도입합니다.
+
+전체 애플리케이션을 클라이언트-사이드에서 React가 렌더링하는 것(예: Single-Page Applications) 대신에, React는 이제 컴포넌트의 목적에 따라 컴포넌트를 어디에서 렌더링할지 선택할 수 있는 유연성을 제공합니다.
+
+예를 들어, 애플리케이션의 페이지를 고려해보세요:
+![](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fthinking-in-server-components.png&w=1920&q=75&dpl=dpl_D4726rk6wdCs74kxNnsr65c23vKe)
+
+페이지를 더 작은 컴포넌트로 분리하면, 대부분의 컴포넌트는 비상호작용적이며 서버 컴포넌트로 서버에서 렌더링될 수 있음을 알게 될 것입니다. 작은 상호작용 UI에 대해서는 클라이언트 컴포넌트를 사용하여 조금씩 추가할 수 있습니다. 이것은 Next.js의 서버 우선 접근법과 일치합니다.
+
+### 왜 서버 컴포넌트인가?
+
+그러면, 왜 서버 컴포넌트인지, 클라이언트 컴포넌트보다 이들을 사용하는 장점이 무엇인지 고민할 수 있습니다.
+
+서버 컴포넌트는 개발자들이 서버 인프라를 더 잘 활용하도록 돕습니다. 예를 들어, 데이터를 가져오는 작업을 서버로 이동시키고, 클라이언트 자바스크립트 번들 크기에 영향을 미치는 큰 의존성을 서버에 유지함으로써 성능이 향상됩니다. 서버 컴포넌트를 사용하면, React 애플리케이션 작성이 PHP나 Ruby on Rails와 유사하게 느껴지지만, React와 컴포넌트 모델을 이용한 UI 템플릿의 힘과 유연성을 가지게 됩니다.
+
+서버 컴포넌트를 사용하면 초기 페이지 로드가 빨라지고 클라이언트 측 자바스크립트 번들 크기가 줄어듭니다. 기본 클라이언트 측 런타임은 캐시 가능하고 크기가 예측 가능하며, 애플리케이션의 성장에 따라 증가하지 않습니다. 추가적인 자바스크립트는 애플리케이션에서 클라이언트 컴포넌트를 통한 클라이언트 측 상호작용이 사용될 때만 추가됩니다.
+
+Next.js로 라우트가 로드될 때, 초기 HTML은 서버에서 렌더링됩니다. 이 HTML은 브라우저에서 점진적으로 향상되어, 클라이언트가 애플리케이션을 인수하고 상호작용을 추가할 수 있도록 합니다. 이는 비동기적으로 Next.js와 React 클라이언트 측 런타임을 로드함으로써 이루어집니다.
+
+서버 컴포넌트로의 전환을 쉽게 하기 위해, App Router 내의 모든 컴포넌트는 기본적으로 서버 컴포넌트입니다. 이는 특별한 파일과 colocated 컴포넌트를 포함합니다. 이를 통해 당신은 추가적인 작업 없이 그들을 자동으로 채택할 수 있으며, 기본적으로 뛰어난 성능을 얻을 수 있습니다. 또한, `use client` 지시문을 사용하여 클라이언트 컴포넌트에 선택적으로 참여할 수도 있습니다.
+
+## 클라이언트 컴포넌트
+
+클라이언트 컴포넌트는 애플리케이션에 클라이언트 측 상호 작용을 추가할 수 있게 해줍니다. Next.js에서는 이들이 서버에서 사전 렌더링되고 클라이언트에서 가공(hydrated)됩니다. 페이지 라우터의 컴포넌트가 항상 작동하던 방식처럼 클라이언트 컴포넌트를 생각하실 수 있습니다.
+
+### "use client" 지시문
+
+`"use client"` 지시문은 서버와 클라이언트 컴포넌트 모듈 그래프 사이의 경계를 선언하는 규칙입니다.
+
+app/counter.js
+```
+'use client'
+ 
+import { useState } from 'react'
+ 
+export default function Counter() {
+  const [count, setCount] = useState(0)
+ 
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  )
+}
+```
+
+![](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fuse-client-directive.png&w=1920&q=75&dpl=dpl_D4726rk6wdCs74kxNnsr65c23vKe)
+
+`"use client"`는 서버 전용 코드와 클라이언트 코드 사이에 위치합니다. 파일의 최상단, import 구문 위에 배치되어 서버 전용 부분에서 클라이언트 부분으로의 경계를 정의하는 절단점을 정의합니다. "use client"가 파일에 정의되면 그 안으로 import되는 모든 기타 모듈들, 자식 컴포넌트를 포함하여, 클라이언트 번들의 일부로 간주됩니다.
+
+서버 컴포넌트가 기본이기 때문에, `"use client"` 지시문으로 시작하는 모듈에서 정의되거나 import되지 않는 한 모든 컴포넌트는 서버 컴포넌트 모듈 그래프의 일부입니다.
+
+> 알아두면 좋은 점:
+> 
+> * 서버 컴포넌트 모듈 그래프의 컴포넌트는 서버에서만 렌더링될 것임이 보장됩니다.
+> * 클라이언트 컴포넌트 모듈 그래프의 컴포넌트는 주로 클라이언트에서 렌더링되지만, Next.js를 사용하면 서버에서 사전 렌더링되고 클라이언트에서 가공될 수도 있습니다.
+> * "use client" 지시문은 import 전에 파일의 최상단에서 정의되어야 합니다.
+> * "use client"를 모든 파일에 정의할 필요는 없습니다. 클라이언트 모듈 경계는 한 번만, "진입점(entry point)"에서, 정의해주면 그 안으로 import된 모든 모듈이 클라이언트 컴포넌트로 간주됩니다.
+
+## 언제 서버 컴포넌트와 클라이언트 컴포넌트를 사용해야 할까요?
+
+서버 컴포넌트와 클라이언트 컴포넌트 사이의 결정을 단순화하기 위해, 클라이언트 컴포넌트에 대한 사용 사례가 있을 때까지 서버 컴포넌트(앱 디렉토리의 기본값)를 사용하는 것을 권장합니다.
+
+이 표는 서버 컴포넌트와 클라이언트 컴포넌트의 다양한 사용 사례를 요약합니다:
+
+무엇을 해야 할까요? | 서버 컴포넌트 | 클라이언트 컴포넌트
+---|---|---
+데이터를 가져오기 | ✔️ | 
+백엔드 자원에 직접 접근 | ✔️ | 
+서버에 민감한 정보(접근 토큰, API 키 등)를 유지 | ✔️ | 
+서버에 큰 의존성을 유지 / 클라이언트-사이드 자바스크립트를 축소 | ✔️ | 
+상호작용성과 이벤트 리스너(onClick(), onChange() 등)를 추가 | | ✔️
+상태와 생명주기 효과(useState(), useReducer(), useEffect() 등)를 사용 | | ✔️
+브라우저 전용 API를 사용 | | ✔️
+상태, 효과, 또는 브라우저 전용 API에 의존하는 사용자 정의 훅을 사용 | | ✔️
+React 클래스 컴포넌트를 사용 | | ✔️
+
+
+## 패턴
+### 클라이언트 컴포넌트를 리프 노드로 이동하기
+
+응용 프로그램의 성능을 향상시키기 위해, 가능한한 컴포넌트 트리의 리프 노드로 클라이언트 컴포넌트를 이동하는 것을 추천합니다.
+
+예를 들어, 상태를 사용하는 상호작용형 검색 바와 정적 요소(로고, 링크 등)가 있는 레이아웃이 있을 수 있습니다.
+
+전체 레이아웃을 클라이언트 컴포넌트로 만들지 않고, 상호 작용하는 로직을 클라이언트 컴포넌트(예: `<SearchBar />`)로 이동하고 레이아웃을 서버 컴포넌트로 유지하십시오. 이렇게 하면 레이아웃의 모든 컴포넌트 자바스크립트를 클라이언트에 보낼 필요가 없습니다.
+
+app/layout.js
+```jsx
+// SearchBar는 클라이언트 컴포넌트입니다
+import SearchBar from './searchbar'
+// Logo는 서버 컴포넌트입니다
+import Logo from './logo'
+ 
+// Layout는 기본적으로 서버 컴포넌트입니다
+export default function Layout({ children }) {
+  return (
+    <>
+      <nav>
+        <Logo />
+        <SearchBar />
+      </nav>
+      <main>{children}</main>
+    </>
+  )
+}
+```
+
+### 클라이언트와 서버 컴포넌트 결합하기
+
+서버와 클라이언트 컴포넌트는 동일한 컴포넌트 트리에서 결합될 수 있습니다.
+
+백그라운드에서, React는 렌더링을 다음과 같이 처리합니다:
+
+- 서버에서, React는 클라이언트에 결과를 보내기 전에 모든 서버 컴포넌트를 렌더링합니다.
+    - 이에는 클라이언트 컴포넌트 내에 중첩된 서버 컴포넌트도 포함됩니다.
+    - 이 단계에서 발생하는 클라이언트 컴포넌트는 건너뜁니다.
+- 클라이언트에서, React는 클라이언트 컴포넌트를 렌더링하고 서버 컴포넌트의 렌더링 결과를 삽입하며, 서버와 클라이언트에서 수행된 작업을 병합합니다.
+    - 클라이언트 컴포넌트 내에 중첩된 서버 컴포넌트가 있을 경우, 그들의 렌더링된 콘텐츠는 클라이언트 컴포넌트 내에 올바르게 배치될 것입니다.
+
+> 알아두세요: Next.js에서는 초기 페이지 로드 중에, 위의 단계에서 서버 컴포넌트의 렌더링 결과와 클라이언트 컴포넌트 모두가 HTML로 서버에서 사전 렌더링되어 초기 페이지 로드를 더 빠르게 합니다.
+
+### 클라이언트 컴포넌트 내부에 서버 컴포넌트 중첩하기
+
+위에서 개요를 설명한 렌더링 흐름에 따라, 클라이언트 컴포넌트로 서버 컴포넌트를 가져오는 방법에는 제한이 있습니다. 이런 접근 방식은 추가적인 서버 라운드 트립이 필요하기 때문입니다.
+
+#### 지원되지 않는 패턴: 클라이언트 컴포넌트로 서버 컴포넌트 가져오기
+
+다음과 같은 패턴은 지원되지 않습니다. 클라이언트 컴포넌트로 서버 컴포넌트를 가져올 수 없습니다:
+
+app/example-client-component.js
+```jsx
+'use client'
+ 
+// 이 패턴은 작동하지 않습니다!
+// 클라이언트 컴포넌트로 서버 컴포넌트를 가져올 수 없습니다.
+import ExampleServerComponent from './example-server-component'
+ 
+export default function ExampleClientComponent({ children }) {
+  const [count, setCount] = useState(0)
+ 
+  return (
+    <>
+      <button onClick={() => setCount(count + 1)}>{count}</button>
+ 
+      <ExampleServerComponent />
+    </>
+  )
+}
+```
+
+#### 권장되는 패턴: 서버 컴포넌트를 프로퍼티로서 클라이언트 컴포넌트에 전달하기
+
+대신 클라이언트 컴포넌트를 설계할 때, 서버 컴포넌트를 위한 "슬롯"을 표시하기 위해 React props를 사용할 수 있습니다.
+
+서버 컴포넌트는 서버에서 렌더링되고, 클라이언트 컴포넌트가 클라이언트에서 렌더링될 때, "슬롯"은 서버 컴포넌트의 렌더링 결과로 채워집니다.
+
+일반적인 패턴은 "슬롯"을 만들기 위해 React의 children prop을 사용하는 것입니다. `<ExampleClientComponent>`를 리팩토링하여 일반적인 children prop을 받아들이고, `<ExampleServerComponent>`의 import와 명시적인 중첩을 부모 컴포넌트로 이동할 수 있습니다.
+
+app/example-client-component.js
+```jsx
+'use client'
+ 
+import { useState } from 'react'
+ 
+export default function ExampleClientComponent({ children }) {
+  const [count, setCount] = useState(0)
+ 
+  return (
+    <>
+      <button onClick={() => setCount(count + 1)}>{count}</button>
+ 
+      {children}
+    </>
+  )
+}
+```
+
+이제, `<ExampleClientComponent>`는 어떤 children인지 알지 못합니다. children이 결국 서버 컴포넌트의 결과로 채워질 것이라는 것을 모릅니다.
+
+ExampleClientComponent가 가지는 유일한 책임은 어떤 children이 되었든 그것이 배치될 위치를 결정하는 것입니다.
+
+부모 서버 컴포넌트에서는 `<ExampleClientComponent>`와 `<ExampleServerComponent>` 모두를 import하고 `<ExampleServerComponent>`를 `<ExampleClientComponent>`의 자식으로 전달할 수 있습니다:
+
+app/page.js
+```jsx
+// 이 패턴은 작동합니다:
+// 서버 컴포넌트를 클라이언트 컴포넌트의 자식이나 prop으로 전달할 수 있습니다.
+import ExampleClientComponent from './example-client-component'
+import ExampleServerComponent from './example-server-component'
+ 
+// Next.js의 페이지들은 기본적으로 서버 컴포넌트입니다
+export default function Page() {
+  return (
+    <ExampleClientComponent>
+      <ExampleServerComponent />
+    </ExampleClientComponent>
+  )
+}
+```
+
+이 접근 방식을 사용하면, `<ExampleClientComponent>`와 `<ExampleServerComponent>`의 렌더링이 분리되어 독립적으로 렌더링될 수 있습니다 - 서버 컴포넌트는 클라이언트 컴포넌트보다 먼저 서버에서 렌더링되는 것과 일치합니다.
+
+> 알아두세요
+> 
+> - 이 패턴은 이미 children prop을 사용하여 레이아웃과 페이지에 적용되므로 추가적인 래퍼 컴포넌트를 생성할 필요가 없습니다.
+> - React 컴포넌트 (JSX)를 다른 컴포넌트에 전달하는 것은 새로운 개념이 아니며, 항상 React 구성 모델의 일부였습니다.
+> - 이 결합 전략은 프로퍼티를 받는 컴포넌트가 프로퍼티가 무엇인지에 대한 지식이 없기 때문에 서버와 클라이언트 컴포넌트에서 모두 작동합니다. 그것은 전달된 것이 배치되어야 할 위치에만 책임이 있습니다.
+> - 이를 통해 전달된 프로퍼티는 독립적으로 렌더링될 수 있으며, 이 경우 서버에서 잘 렌더링되며, 클라이언트 컴포넌트가 클라이언트에서 렌더링되기 훨씬 전에 이루어집니다.
+> - 이와 같은 "컨텐츠를 끌어올리는" 전략은 이미 부모 컴포넌트에서 상태 변경이 import된 중첩된 자식 컴포넌트를 다시 렌더링하는 것을 피하기 위해 사용되었습니다.
+> - 당신은 children prop에만 국한되지 않습니다. JSX를 전달하기 위해 어떤 prop이라도 사용할 수 있습니다.
+
+### 서버에서 클라이언트 컴포넌트로의 Props 전달 (직렬화)
+
+서버에서 클라이언트 컴포넌트로 전달되는 Props는 직렬화 가능해야 합니다. 이는 함수나 Date 객체 등과 같은 값들이 직접적으로 클라이언트 컴포넌트로 전달될 수 없음을 의미합니다.
+
+### 네트워크 경계는 어디에 있나요?
+
+App Router에서, 네트워크 경계는 서버 컴포넌트와 클라이언트 컴포넌트 사이에 있습니다. 이는 페이지에서의 경계인 getStaticProps/getServerSideProps와 페이지 컴포넌트 사이의 경계와는 다릅니다. 서버 컴포넌트 내에서 가져온 데이터는 클라이언트 컴포넌트로 전달되지 않는 한 네트워크 경계를 넘지 않기 때문에 직렬화할 필요가 없습니다. 서버 컴포넌트를 이용한 데이터 fetching에 대해 더 알아봅시다.
+
+### 클라이언트 컴포넌트에서 서버 전용 코드 제외하기 (Poisoning)
+
+JavaScript 모듈은 서버와 클라이언트 컴포넌트 모두에서 공유될 수 있기 때문에, 서버에서만 실행하려고 했던 코드가 클라이언트로 침투하는 것이 가능합니다.
+
+예를 들어, 아래의 데이터 fetching 함수를 보세요:
+
+lib/data.js
+```jsx
+export async function getData() {
+  const res = await fetch('https://external-service.com/data', {
+    headers: {
+      authorization: process.env.API_KEY,
+    },
+  })
+ 
+  return res.json()
+}
+```
+
+처음 보았을 때, getData는 서버와 클라이언트 모두에서 작동하는 것처럼 보입니다. 하지만 환경 변수 API_KEY가 NEXT_PUBLIC으로 시작하지 않기 때문에, 이것은 서버에서만 접근 가능한 비공개 변수입니다. Next.js는 보안 정보 유출을 방지하기 위해 클라이언트 코드에서 비공개 환경 변수를 빈 문자열로 대체합니다.
+
+그 결과, getData()는 클라이언트에서 import하고 실행할 수 있지만 예상대로 작동하지 않습니다. 변수를 공개하면 함수가 클라이언트에서 작동하게 되지만, 민감한 정보가 유출됩니다.
+
+따라서 이 함수는 오직 서버에서만 실행될 것이라는 의도로 작성되었습니다.
+
+### "서버 전용" 패키지
+
+이런 종류의 서버 코드의 의도하지 않은 클라이언트 사용을 방지하기 위해, 우리는 'server-only' 패키지를 사용하여 다른 개발자들이 이런 모듈을 실수로 클라이언트 컴포넌트에 import하게 되면 빌드 시간 오류를 발생시킬 수 있습니다.
+
+'server-only'를 사용하려면, 먼저 패키지를 설치하세요:
+
+```
+npm install server-only
+```
+
+그리고 서버 전용 코드를 포함하는 모듈에 패키지를 import하세요:
+
+lib/data.js
+```jsx
+import 'server-only'
+ 
+export async function getData() {
+  const res = await fetch('https://external-service.com/data', {
+    headers: {
+      authorization: process.env.API_KEY,
+    },
+  })
+ 
+  return res.json()
+}
+```
+
+이제, getData()를 import하는 어떤 클라이언트 컴포넌트라도 이 모듈은 오직 서버에서만 사용할 수 있다는 것을 설명하는 빌드 시간 오류를 받게 됩니다.
+
+해당 패키지인 'client-only'는 클라이언트 전용 코드를 포함하는 모듈을 표시하는 데 사용할 수 있습니다 – 예를 들어, window 객체에 접근하는 코드 등입니다.
+
+
+### 데이터 가져오기
+
+클라이언트 컴포넌트에서 데이터를 가져올 수는 있지만, 클라이언트에서 데이터를 가져오는 특별한 이유가 없다면 서버 컴포넌트에서 데이터를 가져오는 것을 권장합니다. 데이터 가져오기를 서버로 이동시키면 성능과 사용자 경험이 향상됩니다.
+
+### 서드파티 패키지
+
+서버 컴포넌트가 새로운 것이기 때문에, 생태계 내의 서드파티 패키지는 `useState`, `useEffect`, `createContext`와 같은 클라이언트 전용 기능을 사용하는 컴포넌트에 "use client" 지시어를 추가하기 시작했습니다.
+
+현재로서는, npm 패키지의 많은 컴포넌트들이 클라이언트 전용 기능을 사용하지만 아직 "use client" 지시어가 없습니다. 이러한 서드파티 컴포넌트들은 "use client" 지시어가 있는 자신의 클라이언트 컴포넌트 내에서 예상대로 작동하지만, 서버 컴포넌트 내에서는 작동하지 않을 것입니다.
+
+예를 들어, 가상의 `acme-carousel` 패키지를 설치했다고 가정하고, 이 패키지에는 `<Carousel />` 컴포넌트가 있습니다. 이 컴포넌트는 `useState`를 사용하지만 아직 "use client" 지시어가 없습니다.
+
+클라이언트 컴포넌트 내에서 `<Carousel />`를 사용하면 예상대로 작동합니다:
+
+app/gallery.js
+```jsx
+'use client'
+ 
+import { useState } from 'react'
+import { Carousel } from 'acme-carousel'
+ 
+export default function Gallery() {
+  let [isOpen, setIsOpen] = useState(false)
+ 
+  return (
+    <div>
+      <button onClick={() => setIsOpen(true)}>
+        View pictures
+      </button>
+ 
+      {/*  Carousel is used within a Client Component, 
+        so it works */}
+      {isOpen && <Carousel />}
+    </div>
+  )
+}
+```
+
+하지만, 서버 컴포넌트 내에서 직접 사용하려고 하면 오류가 발생합니다:
+
+app/page.js
+```jsx
+import { Carousel } from 'acme-carousel'
+ 
+export default function Page() {
+  return (
+    <div>
+      <p>View pictures</p>
+ 
+      {/*  Error: 
+      `useState` can not be used within Server Components */}
+      <Carousel />
+    </div>
+  )
+}
+```
+
+이는 Next.js가 `<Carousel />`이 클라이언트 전용 기능을 사용하고 있다는 것을 알지 못하기 때문입니다.
+
+이를 수정하기 위해, 클라이언트 전용 기능에 의존하는 서드파티 컴포넌트를 자신의 클라이언트 컴포넌트 내에서 감쌀 수 있습니다:
+
+app/carousel.js
+```jsx
+'use client'
+ 
+import { Carousel } from 'acme-carousel'
+ 
+export default Carousel
+```
+
+이제, 서버 컴포넌트 내에서 직접 `<Carousel />`를 사용할 수 있습니다:
+
+app/page.js
+```jsx
+import Carousel from './carousel'
+ 
+export default function Page() {
+  return (
+    <div>
+      <p>View pictures</p>
+ 
+      {/*  Works, 
+        since Carousel is a Client Component */}
+      <Carousel />
+    </div>
+  )
+}
+```
+
+우리는 당신이 대부분의 서드파티 컴포넌트를 감쌀 필요는 없을 것이라고 생각합니다, 왜냐하면 이 컴포넌트들을 클라이언트 컴포넌트 내에서 사용할 가능성이 높기 때문입니다. 하지만, 한 가지 예외는 프로바이더 컴포넌트인데, 이는 React 상태와 컨텍스트에 의존하며, 일반적으로 애플리케이션의 루트에서 필요합니다. 아래에서 서드파티 컨텍스트 프로바이더에 대해 더 알아보세요.
+
+#### 라이브러리 개발자
+
+비슷한 방식으로, 다른 개발자들에게 사용될 패키지를 만드는 라이브러리 개발자들은 "use client" 지시어를 사용하여 패키지의 클라이언트 진입점을 표시할 수 있습니다. 이를 통해 패키지의 사용자들은 패키지 컴포넌트를 감싸는 경계를 만들지 않고도 그들의 서버 컴포넌트에 직접 패키지 컴포넌트를 import 할 수 있습니다.
+
+당신은 트리 깊숙한 곳에서 'use client'를 사용하여 패키지를 최적화할 수 있습니다. 이를 통해 import된 모듈들이 서버 컴포넌트 모듈 그래프의 일부가 될 수 있습니다.
+
+일부 번들러들은 "use client" 지시어를 제거할 수 있다는 점에 유의해야 합니다. React Wrap Balancer와 Vercel Analytics 저장소에서 "use client" 지시어를 포함시키는 방법에 대한 esbuild 설정 예제를 찾을 수 있습니다.
+
+
+## Context
+
+대부분의 React 애플리케이션은 createContext를 통한 직접적인 방법이나 서드파티 라이브러리에서 가져온 프로바이더 컴포넌트를 통한 간접적인 방법으로 컴포넌트 간에 데이터를 공유하기 위해 컨텍스트를 사용합니다.
+
+Next.js 13에서는 클라이언트 컴포넌트 내에서 컨텍스트가 완전히 지원되지만, 서버 컴포넌트 내에서는 컨텍스트를 직접 생성하거나 사용할 수 없습니다. 이는 서버 컴포넌트가 상호 작용이 없으므로 React 상태가 없고, 컨텍스트는 주로 어떤 React 상태가 업데이트된 후에 트리 깊은 곳에 있는 상호 작용이 있는 컴포넌트를 다시 렌더링하는 데 사용되기 때문입니다.
+
+서버 컴포넌트 간에 데이터를 공유하는 대안에 대해 논의하겠지만, 먼저 클라이언트 컴포넌트 내에서 컨텍스트를 사용하는 방법에 대해 살펴보겠습니다.
+
+### 클라이언트 컴포넌트에서 컨텍스트 사용하기
+
+모든 컨텍스트 API는 클라이언트 컴포넌트 내에서 완벽하게 지원됩니다:
+
+app/sidebar.js
+```jsx
+'use client'
+ 
+import { 
+  createContext, 
+  useContext, 
+  useState 
+} from 'react'
+ 
+const SidebarContext = createContext()
+ 
+export function Sidebar() {
+  const [isOpen, setIsOpen] = useState()
+ 
+  return (
+    <SidebarContext.Provider value={{ isOpen }}>
+      <SidebarNav />
+    </SidebarContext.Provider>
+  )
+}
+ 
+function SidebarNav() {
+  let { isOpen } = useContext(SidebarContext)
+ 
+  return (
+    <div>
+      <p>Home</p>
+ 
+      {isOpen && <Subnav />}
+    </div>
+  )
+}
+```
+
+그러나, 컨텍스트 제공자는 일반적으로 현재 테마와 같은 전역 관련 내용을 공유하기 위해 애플리케이션의 루트 근처에 렌더링됩니다. 서버 컴포넌트에서는 컨텍스트가 지원되지 않으므로, 애플리케이션의 루트에서 컨텍스트를 생성하려고 하면 오류가 발생합니다:
+
+app/layout.js
+```jsx
+import { createContext } from 'react'
+ 
+//  createContext is not supported in Server Components
+export const ThemeContext = createContext({})
+ 
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <ThemeContext.Provider value="dark">
+          {children}
+        </ThemeContext.Provider>
+      </body>
+    </html>
+  )
+}
+```
+
+이 문제를 해결하기 위해, 클라이언트 컴포넌트 내에서 컨텍스트를 생성하고 그 제공자를 렌더링하십시오:
+
+app/theme-provider.js
+```jsx
+'use client'
+ 
+import { createContext } from 'react'
+ 
+export const ThemeContext = createContext({})
+ 
+export default function ThemeProvider({ children }) {
+  return <ThemeContext.Provider value="dark">{children}</ThemeContext.Provider>
+}
+```
+
+이제 클라이언트 컴포넌트로 표시된 제공자를 서버 컴포넌트가 직접 렌더링할 수 있습니다:
+
+app/layout.js
+```jsx
+import ThemeProvider from './theme-provider'
+ 
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+제공자가 루트에 렌더링되면, 애플리케이션의 모든 다른 클라이언트 컴포넌트는 이 컨텍스트를 사용할 수 있습니다.
+
+> 참고: 제공자는 가능한 한 트리의 깊은 곳에 렌더링해야 합니다. `ThemeProvider`가 전체 `<html>` 문서가 아닌 `{children}`만 감싸고 있음에 주목하십시오. 이렇게 하면 Next.js가 서버 컴포넌트의 정적 부분을 최적화하는 데 더 쉽습니다.
+
+### 서버 컴포넌트에서 서드파티 컨텍스트 제공자 렌더링하기
+
+서드파티 npm 패키지는 종종 애플리케이션의 루트 근처에 렌더링해야 하는 제공자를 포함합니다. 이러한 제공자가 "use client" 지시문을 포함하고 있다면, 서버 컴포넌트 내에서 직접 렌더링할 수 있습니다. 그러나, 서버 컴포넌트가 새롭기 때문에 많은 서드파티 제공자들이 아직 지시문을 추가하지 않았을 것입니다.
+
+"use client"를 가지고 있지 않은 서드파티 제공자를 렌더링하려고 하면 오류가 발생합니다:
+
+app/layout.js
+```jsx
+import { ThemeProvider } from 'acme-theme'
+ 
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {/*  Error: 
+          `createContext` can't be used in Server Components */}
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+이 문제를 해결하기 위해, 서드파티 제공자를 자신의 클라이언트 컴포넌트로 감싸세요:
+
+app/providers.js
+```jsx
+'use client'
+ 
+import { ThemeProvider } from 'acme-theme'
+import { AuthProvider } from 'acme-auth'
+ 
+export function Providers({ children }) {
+  return (
+    <ThemeProvider>
+      <AuthProvider>{children}</AuthProvider>
+    </ThemeProvider>
+  )
+}
+```
+
+이제, 루트 레이아웃 내에서 `<Providers />`를 직접 가져와서 렌더링할 수 있습니다.
+
+app/layout.js
+```jsx
+import { Providers } from './providers'
+ 
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+제공자가 루트에 렌더링되면, 이 라이브러리의 모든 컴포넌트와 후크는 자신의 클라이언트 컴포넌트 내에서 예상대로 작동할 것입니다.
+
+서드파티 라이브러리가 클라이언트 코드에 "use client"를추가하면, 래퍼 클라이언트 컴포넌트를 제거할 수 있습니다.
+
+### 서버 컴포넌트 간의 데이터 공유
+
+서버 컴포넌트는 상호작용이 없고 따라서 React 상태를 읽지 않으므로, 데이터를 공유하기 위해 React 컨텍스트가 필요하지 않습니다. 대신, 여러 서버 컴포넌트가 접근해야 하는 공통 데이터에 대해 자바스크립트 패턴을 사용할 수 있습니다. 예를 들어, 모듈은 여러 컴포넌트 간에 데이터베이스 연결을 공유하는 데 사용될 수 있습니다:
+
+utils/database.js
+```jsx
+export const db = new DatabaseConnection()
+```
+
+app/users/layout.js
+```jsx
+import { db } from '@utils/database'
+ 
+export async function UsersLayout() {
+  let users = await db.query()
+  // ...
+}
+```
+
+app/users/[id]/page.js
+```jsx
+import { db } from '@utils/database'
+ 
+export async function DashboardPage() {
+  let user = await db.query()
+  // ...
+}
+```
+
+위의 예에서, 레이아웃과 페이지 모두 데이터베이스 쿼리를 수행해야 합니다. 이들 각 컴포넌트는 @utils/database 모듈을 import함으로써 데이터베이스에 대한 접근을 공유합니다. 이 자바스크립트 패턴은 전역 싱글톤이라고 합니다.
+
+### 서버 컴포넌트 간의 fetch 요청 공유
+
+데이터를 가져올 때, 페이지나 레이아웃과 그 자식 컴포넌트 사이에서 fetch의 결과를 공유하려고 할 수 있습니다. 이는 컴포넌트 간에 불필요한 연결을 만들고, 컴포넌트 사이에서 프로퍼티를 왕래하게 만들 수 있습니다.
+
+대신에, 데이터를 소비하는 컴포넌트와 함께 데이터를 가져오는 것을 권장합니다. fetch 요청은 서버 컴포넌트에서 자동으로 중복 제거되므로, 각 루트 세그먼트는 중복 요청에 대해 걱정할 필요 없이 필요한 데이터를 정확히 요청할 수 있습니다. Next.js는 fetch 캐시에서 같은 값을 읽습니다.
