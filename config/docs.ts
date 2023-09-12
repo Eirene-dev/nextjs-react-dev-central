@@ -4,10 +4,12 @@ export const docsConfig: DocsConfig = {
   sidebarNav: [
     {
       title: 'Getting Started',
+      href: '/docs',
       items: [
         {
           title: '개발 가이드 문서 개요',
-          href: '/docs',
+          href: '/getting-started',
+          disabled: true,
         },
         {
           title: 'Next.js 기초',
@@ -23,9 +25,11 @@ export const docsConfig: DocsConfig = {
     },
     {
       title: 'React',
+      href: '/docs/react',
       items: [
         {
           title: 'React 시작하기',
+          href: '/docs/react/learn',
           items: [
             {
               title: 'React 개요',
@@ -51,6 +55,7 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: '설치 및 환경 설정',
+          href: '/docs/react/installation',
           items: [
             {
               title: '신규 프로젝트 생성',
@@ -81,6 +86,7 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: 'UI 구축하기',
+          href: '/docs/react/describing-the-ui',
           items: [
             {
               title: '첫 번째 컴포넌트',
@@ -126,6 +132,7 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: '상호작용성 추가하기',
+          href: '/docs/react/adding-interactivity',
           items: [
             {
               title: '이벤트에 응답하기',
@@ -166,6 +173,7 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: 'State 관리',
+          href: '/docs/react/managing-state',
           items: [
             {
               title: '사용자 입력 State 처리',
@@ -206,6 +214,7 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: '고급 기법',
+          href: '/docs/react/escape-hatches',
           items: [
             {
               title: 'Refs: 값 참조',
@@ -258,37 +267,45 @@ export const docsConfig: DocsConfig = {
     },
     {
       title: 'Next.js',
+      href: '/docs/nextjs',
       items: [
         {
           title: 'Introduction',
-          href: '/docs/react',
+          href: '/docs/nextjs',
+          disabled: true,
         },
       ],
     },
     {
       title: 'TypeScript',
+      href: '/docs/typescript',
       items: [
         {
           title: 'Introduction',
-          href: '/docs/react',
+          href: '/docs/typescript',
+          disabled: true,
         },
       ],
     },
     {
       title: 'JavaScript',
+      href: '/docs/javascript',
       items: [
         {
           title: 'Introduction',
-          href: '/docs/react',
+          href: '/docs/javascript',
+          disabled: true,
         },
       ],
     },
     {
       title: 'CSS',
+      href: '/docs/css',
       items: [
         {
           title: 'Introduction',
-          href: '/docs/react',
+          href: '/docs/css',
+          disabled: true,
         },
       ],
     },

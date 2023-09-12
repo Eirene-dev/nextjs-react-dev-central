@@ -34,12 +34,29 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
     <div className="w-full">
       {items.map((item, index) => (
         <div key={index} className={cn('pb-3')}>
-          <button
-            className="px-2 py-1 mb-1 text-sm font-medium rounded-md cursor-pointer"
-            onClick={() => handleToggle(item.title)}
-          >
-            [ {item.title} ]
-          </button>
+          <div className="flex items-center">
+            <button
+              className="px-0 py-1 text-sm font-medium rounded-md cursor-pointer"
+              onClick={() => handleToggle(item.title)}
+            >
+              #
+            </button>
+            {item.href ? (
+              <Link
+                href={item.href}
+                className={cn('text-sm flex items-center rounded-md p-2 hover:underline', {
+                  'bg-muted': pathname === item.href,
+                })}
+                target={item.external ? '_blank' : ''}
+                rel={item.external ? 'noreferrer' : ''}
+                onClick={onClose}
+              >
+                [ {item.title} ]
+              </Link>
+            ) : (
+              <span className="flex items-center p-2 text-sm rounded-md">[ {item.title} ]</span>
+            )}
+          </div>
 
           {expanded.includes(item.title) && item.items ? (
             <DocsSidebarNavItems
@@ -69,13 +86,29 @@ export function DocsSidebarNavItems({
         if (item.items) {
           return (
             <div key={index} className="pb-2">
-              <button
-                className="px-2 py-1 mb-1 text-sm font-medium rounded-md cursor-pointer"
-                onClick={() => handleToggle(item.title)}
-              >
-                + {item.title}
-              </button>
-
+              <div className="flex items-center">
+                <button
+                  className="px-1 py-1 text-sm font-medium rounded-md cursor-pointer"
+                  onClick={() => handleToggle(item.title)}
+                >
+                  +
+                </button>
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    className={cn('text-sm flex items-center rounded-md p-1 hover:underline', {
+                      'bg-muted': pathname === item.href,
+                    })}
+                    target={item.external ? '_blank' : ''}
+                    rel={item.external ? 'noreferrer' : ''}
+                    onClick={onClose}
+                  >
+                    ({item.title})
+                  </Link>
+                ) : (
+                  <span className="flex items-center p-1 text-sm rounded-md">[ {item.title} ]</span>
+                )}
+              </div>
               {expanded.includes(item.title) && item.items ? (
                 <DocsSidebarNavItems
                   items={item.items}
@@ -93,12 +126,12 @@ export function DocsSidebarNavItems({
           <Link
             key={index}
             href={item.href}
-            className={cn('flex w-full items-center rounded-md p-2 hover:underline', {
+            className={cn('flex px-2 w-full items-center rounded-md p-2 hover:underline', {
               'bg-muted': pathname === item.href,
             })}
             target={item.external ? '_blank' : ''}
             rel={item.external ? 'noreferrer' : ''}
-            onClick={onClose} // 여기에 onClose 함수를 추가합니다.
+            onClick={onClose}
           >
             - {item.title}
           </Link>
