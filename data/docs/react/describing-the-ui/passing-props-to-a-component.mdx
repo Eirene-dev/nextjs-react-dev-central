@@ -87,15 +87,16 @@ function Avatar(props) {
 <Callout type="warning">
 props를 선언할 때 `(` 와 `)` 사이에 있는 `{`와 `}` 중괄호 쌍을 놓치지 마세요.
 
-```jsx showLineNumbers
-function Avatar({ person, size }) {
+```jsx
+function Avatar(
+    { person, size }) {
   // ...
 }
 ```
 
 이 구문은 [해체 할당](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_fields_from_objects_passed_as_a_function_parameter)이라고 하며, 함수 매개변수에서 속성을 읽는 것과 동일합니다.
 
-```jsx showLineNumbers
+```jsx
 function Avatar(props) {
   let person = props.person;
   let size = props.size;

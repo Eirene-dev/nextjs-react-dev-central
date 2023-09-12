@@ -55,8 +55,8 @@ handleClick 함수를 정의하고 `<button>`에 [속성(props)으로 전달](ht
 
 
 
-<Callout type="warning">
-**주의사항**
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>주의사항: **이벤트 핸들러에 전달하는 함수는 호출되는 것이 아니라 전달해야 함**</summary>
 
 이벤트 핸들러에 전달하는 함수는 호출되는 것이 아니라 전달되어야 합니다. 예를 들어:
 
@@ -95,7 +95,7 @@ handleClick 함수를 정의하고 `<button>`에 [속성(props)으로 전달](ht
 - `<button onClick={() => alert('...')}>`는 `() => alert('...')` 함수를 전달합니다.
 
 [화살표 함수에 대해 자세히 알아보세요.](https://javascript.info/arrow-functions-basics)
-</Callout>
+</details>
 
 
 ### 이벤트 핸들러에서 props 읽기
