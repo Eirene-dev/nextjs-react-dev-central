@@ -23,12 +23,17 @@ export const docsConfig: DocsConfig = {
             {
               title: 'React에서 Next.js로',
               href: '/docs/getting-started/nextjs-foundation/from-react-to-nextjs',
-              disabled: true,
+              disabled: false,
             },
             {
               title: 'Next.js 동작 방식',
               href: '/docs/getting-started/nextjs-foundation/how-nextjs-works',
-              disabled: true,
+              disabled: false,
+            },
+            {
+              title: 'v13.4(\'23.05): 앱 라우터',
+              href: '/docs/getting-started/nextjs-foundation/app-router',
+              disabled: false,
             },
           ],
         },

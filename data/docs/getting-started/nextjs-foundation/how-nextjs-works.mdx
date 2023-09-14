@@ -1,8 +1,229 @@
 ---
 title: Next.js 동작 방식
 date: '2023-01-01 01:04'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: 개발 환경에서 운영 환경으로 전환하는 과정, Next.js의 컴파일링, 미니파이, 번들링, 코드 스플리팅 같은 핵심 컴파일러 기술들을 소개하고, 어떻게 클라이언트와 서버 간에 렌더링이 이루어지는지, 그리고 네트워크의 다양한 구성 요소와 그들의 역할에 대해 설명합니다.
 ---
 
-## 작성 예정
-작성 예정
+<TOCInline toc={props.toc} asDisclosure />
+
+## 소개
+
+Next.js의 고급 기능을 배우기 전에 Next.js가 어떻게 작동하는지 기본을 이해하는 것이 도움이 됩니다.
+
+이 과정의 시작에서 React가 애플리케이션을 구축하고 구조화하는 방법에 대해 상대적으로 의견이 없다는 것에 대해 이야기했습니다 - React로 애플리케이션을 구축하는 여러 가지 방법이 있습니다. Next.js는 애플리케이션을 구조화하는 프레임워크와 개발 과정과 최종 애플리케이션을 더 빠르게 만드는 최적화를 제공합니다.
+
+다음 섹션에서는 이러한 다양한 단계 동안 애플리케이션 코드에 어떤 일이 발생하는지 살펴보겠습니다:
+
+<div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+<Card>
+#### 실행 환경, 코드가 <span className="text-red-600 font-bold">어디에서</span> 실행되는지: <span className="font-semibold bg-yellow-100">개발 환경(Development)[^1]</span> vs. <span className="font-semibold bg-yellow-100">운영 환경(Production)[^2]</span>
+</Card>
+[^1]: "개발 환경"은 개발자가 코드를 작성하고 테스트하는 초기 단계를 나타냅니다.
+[^2]: "운영 환경"은 실제 사용자들에게 제공되는 환경이며, 최적화 및 안정성이 중요합니다.
+<Card>
+#### 실행 시기, 코드가 <span className="text-red-600 font-bold">언제</span> 실행 되는지: <span className="font-semibold bg-yellow-100">빌드 타임(Build Time</span>) vs. <span className="font-semibold bg-yellow-100">런타임(Runtime)</span>
+</Card>
+<Card>
+#### <span className="text-red-600 font-bold">렌더링이 어디에서 </span> 발생하는가: <span className="font-semibold bg-yellow-100">클라이언트(Client)</span> vs. <span className="font-semibold bg-yellow-100">서버(Server)</span>
+</Card>
+</div>
+
+이제 이러한 개념에 대해 더 깊이 들어가 Next.js가 무슨 일을 하는지 알아보겠습니다.
+
+## 개발 환경에서 운영 환경으로
+
+환경은 여러분의 코드가 실행되는 맥락으로 생각할 수 있습니다.
+
+개발 중에는 애플리케이션을 로컬 기기에서 구축하고 실행합니다. 운영 환경으로 전환하는 것은 애플리케이션을 배포하고 사용자가 사용할 준비를 하는 과정입니다.
+
+### 이것이 Next.js에 어떻게 적용되는가
+Next.js는 애플리케이션의 개발 및 운영 단계 모두에 대한 기능을 제공합니다. 예를 들면:
+
+- **개발 단계**에서 Next.js는 개발자와 그들의 애플리케이션 구축 경험을 최적화합니다. 이는 개발자 경험을 향상시키기 위한 기능들, 내장된 TypeScript와 ESLint 통합, Fast Refresh 등과 함께 제공됩니다.
+- **운영 단계**에서 Next.js는 최종 사용자 및 애플리케이션 사용 경험에 최적화됩니다. 이는 코드를 더 빠르고 접근 가능하게 변환하는 것을 목표로 합니다.
+
+각 환경은 다른 고려 사항과 목표를 가지므로 애플리케이션을 개발에서 운영으로 옮기기 위해 수행해야 할 많은 작업이 있습니다. 
+예를 들어, 애플리케이션 코드는 <span className="text-blue-600 font-bold">컴파일, 번들링, 최소화, 코드 분할</span>이 필요합니다.
+
+### Next.js 컴파일러
+Next.js는 <span className="text-blue-600 font-bold">코드 변환(code transformations )</span>과 기본 인프라의 대부분을 처리하여 애플리케이션을 운영 환경으로 쉽게 전환할 수 있게 합니다.
+
+이는 Next.js가 Rust라는 저수준 프로그래밍 언어로 작성된 컴파일러와 SWC, 즉 <span className="font-semibold bg-yellow-100">컴파일, 최소화, 번들</span>링 등을 위해 사용될 수 있는 플랫폼을 갖고 있기 때문에 가능합니다.
+
+
+## 컴파일(Compiling) 이란 무엇인가?
+개발자들은 JSX, TypeScript, 최신 버전의 JavaScript와 같은 개발자 친화적인 언어로 코드를 작성합니다. 이러한 언어들은 개발자의 효율성과 확신을 향상시키지만, 브라우저가 이해할 수 있기 전에 JavaScript로 컴파일되어야 합니다.
+
+컴파일은 <span className="font-semibold bg-yellow-100">하나의 언어로 작성된 코드를 다른 언어 또는 해당 언어의 다른 버전으로 출력하는 과정</span>을 의미합니다.
+![Compiling](https://nextjs.org/static/images/learn/foundations/compiling.png)
+
+Next.js에서는 코드를 편집하는 동안 개발 단계에서 컴파일이 발생하며, 애플리케이션을 운영 환경에 준비하기 위한 빌드 단계의 일부로도 컴파일이 이루어집니다.
+
+## 미니파이(Minifying)란 무엇인가?
+개발자들은 인간이 읽기 편한 형태로 코드를 작성합니다. 이 코드는 주석, 공백, 들여쓰기 및 여러 줄과 같이 코드 실행에 필요하지 않은 추가 정보를 포함할 수 있습니다.
+
+![Minifying](https://nextjs.org/static/images/learn/foundations/minifying.png)
+
+미니파이는 <span className="font-semibold bg-yellow-100">코드의 기능을 변경하지 않고 불필요한 코드 포맷 및 주석을 제거하는 과정</span>을 말합니다. 
+목표는 <span className="font-bold underline">파일 크기를 줄여 애플리케이션의 성능을 향상</span>시키는 것입니다.
+
+Next.js에서는 운영 환경을 위해 JavaScript와 CSS 파일이 자동으로 미니파이됩니다.
+
+## 번들링(Bundling)이란 무엇인가?
+개발자들은 애플리케이션을 모듈, 컴포넌트, 함수로 분할하여 애플리케이션의 더 큰 부분을 구축하는 데 사용합니다. 이러한 내부 모듈을 내보내거나 가져오는 것, 그리고 외부의 제3자 패키지를 사용하는 것은 파일 종속성의 복잡한 연결망을 만듭니다.
+
+![Bundling](https://nextjs.org/static/images/learn/foundations/bundling.png)
+
+번들링은 <span className="font-semibold bg-yellow-100">이 종속성의 연결망을 해결하고 파일(또는 모듈)을 브라우저에 최적화된 번들로 합치는 (또는 ‘패키징하는’) 과정</span>입니다. 
+이 과정의 목표는 <span className="font-bold underline">사용자가 웹 페이지를 방문할 때 파일 요청 수를 줄이는 것</span>입니다.
+
+## 코드 스플리팅(Code Splitting)이란 무엇인가?
+개발자들은 보통 애플리케이션을 여러 페이지로 나누어서 다른 URL에서 접근할 수 있게 합니다. 이러한 각 페이지는 애플리케이션으로의 고유한 진입점이 됩니다.
+
+코드 스플리팅은 <span className="font-semibold bg-yellow-100">애플리케이션의 번들을 각 진입점에 필요한 더 작은 청크로 나누는 과정</span>입니다. 
+목표는 <span className="font-bold underline">해당 페이지를 실행하는 데 필요한 코드만 로드함으로써 애플리케이션의 초기 로드 시간을 개선</span>하는 것입니다.
+
+![Code Splitting](https://nextjs.org/static/images/learn/foundations/code-splitting.png)
+
+Next.js는 코드 스플리팅에 대한 내장 지원을 제공합니다. `pages/` 디렉토리 내의 각 파일은 빌드 단계에서 자동으로 자체 JavaScript 번들로 코드 스플리팅됩니다.
+
+<Callout>
+더 나아가:
+
+- 페이지 간에 공유되는 코드는 또한 다른 번들로 분리되어 나중에 같은 코드를 다시 다운로드하는 것을 피합니다.
+- 초기 페이지 로드 후, Next.js는 사용자가 탐색할 가능성이 있는 다른 페이지의 코드를 <span className="text-blue-600 font-bold">사전 로딩(Pre-Loading)</span>[^3]할 수 있습니다.
+- <span className="text-blue-600 font-bold">동적 임포트(Dynamic imports[^4] = Lazy Loading[^5])</span>는 초기에 로드되는 코드를 수동으로 분리하는 또 다른 방법입니다.
+
+[^3]: "사전 로딩(Pre-loading)"은 필요하기 전에 미리 데이터나 리소스를 로딩함으로써 대기 시간을 줄이려는 의도를 나타냅니다.
+[^4]: "동적 임포트(Dynamic imports)"는 코드를 실행하는 도중에 필요한 모듈을 불러오는 기술입니다.
+[^5]: "지연 로딩(Lazy Loading)"은 웹 페이지나 애플리케이션의 특정 부분(이미지, 스크립트, 다른 컨텐츠 등)을 초기 로딩 시점에 로드하지 않고, 그것이 실제로 필요할 때까지 대기시켜 뒀다가 로드하는 기술입니다. 
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **동적 임포트과 지연 로딩**</summary>
+
+Next.js는 웹 애플리케이션 개발 프레임워크로, 리액트를 기반으로 합니다. Next.js에서 동적 임포트와 Lazy Loading은 사용자 경험을 최적화하기 위한 핵심 기능 중 하나입니다. 이 두 기능은 서로 밀접하게 연관되어 있으며, Next.js에서 특히 효과적으로 작동합니다.
+
+1. **동적 임포트(Dynamic imports)**: 
+    - Next.js에서는 `import()` 구문을 사용하여 특정 컴포넌트나 라이브러리를 동적으로 임포트할 수 있습니다. 
+    - 이를 사용하면 초기 페이지 로드에 필요하지 않은 컴포넌트나 코드 조각을 나중에 로드할 수 있습니다.
+    - 예를 들어, 사용자가 버튼을 클릭했을 때만 보여지는 모달 창 컴포넌트는 동적 임포트를 통해 필요할 때만 가져올 수 있습니다.
+
+    ```jsx
+    const DynamicModal = dynamic(() => import('../components/Modal'))
+    ```
+
+2. **지연 로딩(Lazy Loading)**: 
+    - Next.js는 페이지나 이미지 등의 컨텐츠에 대한 지연 로딩을 지원합니다.
+    - 예를 들어, `next/image`는 이미지의 지연 로딩을 지원합니다. 이를 통해 사용자가 스크롤하여 이미지가 화면에 나타나기 직전에 로드하게 할 수 있습니다.
+    - 또한, Next.js의 자동 코드 분할 기능은 각 페이지의 JavaScript 번들을 자동으로 최적화하여, 필요한 페이지만 초기에 로드되게 합니다. 다른 페이지는 사용자가 해당 페이지에 접근할 때 로드됩니다.
+
+**관계**:
+- 동적 임포트와 지연 로딩 모두 초기 로딩 시간을 줄이기 위한 목적으로 사용됩니다. 
+- 동적 임포트는 코드나 컴포넌트 수준에서 필요한 부분만 로드하는 반면, 지연 로딩은 더 넓은 범위(예: 이미지, 페이지 등)에서 사용됩니다.
+- Next.js에서는 이 두 기능이 서로 보완적으로 작동하여, 웹 애플리케이션의 성능과 사용자 경험을 크게 향상시킬 수 있습니다. 
+
+결론적으로, Next.js는 동적 임포트와 지연 로딩을 활용하여 효과적인 리소스 관리와 빠른 페이지 로딩을 제공하며, 이를 통해 사용자에게 더 나은 웹 경험을 제공합니다.
+</details>
+</Callout>
+
+## 빌드 시간과 런타임
+<span className="text-blue-600 font-bold">빌드 시간(또는 빌드 단계)</span>은 <span className="font-semibold bg-yellow-100">애플리케이션 코드를 운영 환경에 최적화된 형태로 준비하는 일련의 단계</span>를 의미합니다.
+
+애플리케이션을 빌드할 때, Next.js는 코드를 운영 환경에 최적화된 파일로 변환하여 서버에 배포하고 사용자가 사용할 준비를 합니다. 이 파일들에는 다음이 포함됩니다:
+
+- 정적으로 생성된 페이지를 위한 HTML 파일들
+- 서버에서 페이지를 렌더링하기 위한 JavaScript 코드
+- 클라이언트에서 페이지를 상호작용하게 만드는 JavaScript 코드
+- CSS 파일들
+
+<span className="text-blue-600 font-bold">런타임(또는 요청 시간)</span>은 <span className="font-semibold bg-yellow-100">애플리케이션이 빌드 및 배포된 후 사용자의 요청에 응답하여 애플리케이션이 실행되는 시간</span>을 나타냅니다.
+
+
+## 클라이언트와 서버
+웹 애플리케이션의 맥락에서 <span className="text-blue-600 font-bold">클라이언트</span>는 <span className="font-semibold bg-yellow-100">사용자의 장치에 있는 브라우저</span>를 가리키며, 이 브라우저는 애플리케이션 코드를 위한 요청을 서버에 전송합니다. 그리고 서버로부터 받은 응답을 사용자가 상호작용할 수 있는 인터페이스로 변환합니다.
+![Client and Server](https://nextjs.org/static/images/learn/foundations/client-server.png)
+
+<span className="text-blue-600 font-bold">서버</span>는 <span className="font-semibold bg-yellow-100">애플리케이션 코드를 저장하는 데이터 센터의 컴퓨터</span>를 의미하며, 클라이언트로부터의 요청을 받고, 계산을 수행한 후 적절한 응답을 되돌려줍니다.
+
+
+
+
+
+## 렌더링이란?
+<span className="font-semibold bg-yellow-100">React에서 작성한 코드를 UI의 HTML 표현으로 변환</span>하는 불가피한 작업 단위가 있습니다. 이 과정을 <span className="text-blue-600 font-bold">렌더링</span>이라고 합니다.
+
+<span className="font-bold underline">렌더링은 서버나 클라이언트에서 발생</span>할 수 있습니다. 
+<span className="font-semibold bg-yellow-100">빌드 시간에 미리 일어나거나</span> <span className="text-red-600 font-bold">런타임의 모든 요청에 대해 발생</span>할 수 있습니다.
+
+Next.js에서는 세 가지 렌더링 방법을 사용할 수 있습니다.
+
+<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+<Card><span className="font-bold">서버 사이드 렌더링</span></Card>
+<Card><span className="font-bold">정적 사이트 생성</span></Card>
+<Card><span className="font-bold">클라이언트 사이드 렌더링</span></Card>
+
+</div>
+
+
+### 사전 렌더링 (Pre-Rendering)
+서버 사이드 렌더링과 정적 사이트 생성은 외부 데이터의 추출 및 React 컴포넌트를 HTML로 변환하는 과정이 클라이언트에게 결과가 전송되기 전에 발생하기 때문에 사전 렌더링이라고도 합니다.
+
+### 클라이언트 사이드 렌더링 vs 사전 렌더링
+표준 React 애플리케이션에서는 브라우저가 서버로부터 빈 HTML 셸을 받고 UI를 구성하기 위한 JavaScript 지침을 받습니다. 이를 클라이언트 사이드 렌더링이라고 합니다.
+![Client-side Rendering](https://nextjs.org/static/images/learn/foundations/client-side-rendering.png)
+
+<Callout type="warning">
+참고: Next.js 애플리케이션에서 특정 컴포넌트에 대해 클라이언트 사이드 렌더링을 사용하기로 선택할 수 있습니다.
+</Callout>
+
+반대로, Next.js는 모든 페이지를 기본적으로 사전 렌더링합니다. 사전 렌더링은 HTML이 사용자의 장치에서 모든 JavaScript에 의해 생성되는 대신 서버에서 미리 생성된다는 것을 의미합니다.
+![Pre-rendering](https://nextjs.org/static/images/learn/foundations/pre-rendering.png)
+
+### 서버 사이드 렌더링
+서버 사이드 렌더링에서는 페이지의 HTML이 각 요청에 대해 서버에서 생성됩니다. 생성된 HTML, JSON 데이터 및 페이지를 대화식으로 만드는 JavaScript 지침이 클라이언트로 전송됩니다.
+
+<Callout type="warning">
+참고: React 18 및 Next Next.js 13.4는 React 서버/클라이언트 컴포넌트를 도입합니다.
+</Callout>
+
+### 정적 사이트 생성
+정적 사이트 생성에서는 HTML이 서버에서 생성되지만, 런타임에 서버가 없습니다. 대신 내용은 애플리케이션을 배포할 때 빌드 시간에 한 번 생성되고, HTML은 CDN에 저장되어 각 요청에 대해 재사용됩니다.
+
+<Callout type="warning">
+참고: 전체 사이트를 다시 빌드하지 않고도 데이터가 변경된 후 정적 페이지를 생성하거나 업데이트하기 위해 증분 정적 재생성을 사용할 수 있습니다.
+</Callout>
+
+<span className="font-bold bg-yellow-100">Next.js의 아름다움은 페이지별로 가장 적합한 렌더링 방법을 선택할 수 있다는 것</span>입니다. 
+
+## 네트워크란 무엇인가?
+네트워크에 배포되면 애플리케이션 코드가 어디에 저장되고 실행되는지 알고 있으면 도움이 됩니다. 네트워크를 자원을 공유할 수 있는 연결된 컴퓨터(또는 서버)로 생각할 수 있습니다. Next.js 애플리케이션의 경우 애플리케이션 코드는 원본 서버, 콘텐츠 전송 네트워크(CDN), 그리고 엣지(Edge)에 배포될 수 있습니다. 각각이 무엇인지 알아보겠습니다.
+
+### 원본 서버
+앞서 논의한 것처럼 <span className="font-bold underline">서버는 애플리케이션 코드의 원래 버전을 저장하고 실행하는 주 컴퓨터</span>를 나타냅니다.
+
+<span className="text-blue-600 font-bold">원본</span>이라는 용어를 사용하여 CDN 서버와 엣지 서버와 같은 애플리케이션 코드가 배포될 수 있는 다른 위치의 서버와 구분합니다.
+
+원본 서버가 요청을 받으면 응답을 보내기 전에 어느 정도 계산을 수행합니다. 이 계산 결과는 CDN(콘텐츠 전송 네트워크)으로 이동할 수 있습니다.
+
+### 콘텐츠 전송 네트워크 (CDN)
+<span className="text-blue-600 font-bold">CDN</span>은 <span className="font-bold underline">세계 각지의 여러 위치에 정적 콘텐츠(HTML 및 이미지 파일과 같은)를 저장</span>하며, 클라이언트와 원본 서버 사이에 위치합니다. 
+<span className="font-semibold bg-yellow-100">새로운 요청이 들어오면 사용자에게 가장 가까운 CDN 위치가 캐시된 결과로 응답</span>할 수 있습니다.
+![CDNs](https://nextjs.org/static/images/learn/foundations/cdn.png)
+
+이로 인해 원본에 대한 부하가 줄어들고, 응답은 사용자에게 지리적으로 더 가까운 위치에서 오기 때문에 사용자에게 더 빠릅니다.
+
+Next.js에서는 사전 렌더링이 미리 수행될 수 있기 때문에, CDN은 작업의 정적 결과를 저장하는데 적합합니다.
+
+### 엣지 (The Edge)
+<span className="text-blue-600 font-bold">엣지</span>는 <span className="font-semibold bg-yellow-100">네트워크의 외곽(또는 엣지)에 가장 가까운 일반화된 개념</span>입니다. 
+CDN은 네트워크의 외곽에 정적 콘텐츠를 저장하기 때문에 "엣지"의 일부로 간주될 수 있습니다.
+
+CDN과 마찬가지로 엣지 서버는 세계 각지의 여러 위치에 분포되어 있습니다. 그러나 정적 콘텐츠를 저장하는 CDN과 달리 일부 엣지 서버는 작은 코드 조각을 실행할 수 있습니다.
+
+이는 <span className="font-bold underline">캐싱 및 코드 실행이 사용자에게 더 가까운 엣지에서 수행될 수 있음</span>을 의미합니다.
+
+클라이언트 사이드나 서버 사이드에서 전통적으로 수행되던 일부 작업을 엣지로 이동함으로써, 클라이언트에 전송된 코드의 양을 줄이고, 사용자의 요청의 일부가 원본 서버까지 전달될 필요가 없기 때문에 애플리케이션을 더 높은 성능으로 만들 수 있습니다.
+
+<span className="font-bold bg-yellow-100">Next.js에서는 Middleware와 곧 React Server Components를 사용하여 엣지에서 코드를 실행</span>할 수 있습니다.
+

@@ -1,0 +1,344 @@
+---
+title: "Next.js 13.4: 앱 라우터 공식화"
+date: '2023-01-01 01:05'
+summary: Next.js 13.4 릴리즈에서는 앱 라우터를 공식화하며, 설정 없이 파일시스템을 API로 사용하고, 모든 것이 함수 기반의 자바스크립트로 제공되며, 자동 서버 렌더링 및 코드 분할 기능을 포함하고 있습니다."
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## Next.js 13.4 (2023년 5월 4일) 버전 릴리즈
+Next.js 13.4는 App Router의 안정성을 표시하는 기본적인 릴리즈입니다:
+
+- App Router (안정 버전):
+
+  - React 서버 컴포넌트
+  - 중첩된 라우트 & 레이아웃
+  - 간소화된 데이터 가져오기
+  - 스트리밍 & 서스펜스
+  - 내장 SEO 지원
+
+- Turbopack (베타): 개선된 안정성과 함께 더 빠른 로컬 개발 서버
+- Server Actions (알파): 클라이언트 자바스크립트 없이 서버에서 데이터 변경하기
+
+13.4의 릴리즈와 함께, 이제 App Router를 운영 환경에 채택하기 시작할 수 있습니다.
+
+```bash
+npm i next@latest react@latest react-dom@latest eslint-config-next@latest
+```
+
+## Next.js 앱 라우터(App Router)
+2016년에 React 애플리케이션을 서버에서 렌더링하기 위한 쉬운 방법을 제공하기 위해 Next.js를 출시했으며, 더 다양하고 개인화된 글로벌 웹을 만드는 것을 목표로 했습니다.
+
+최초의 발표 게시물에서 Next.js의 설계 원칙 중 일부를 공유했습니다:
+
+- 설정 없음. 파일시스템을 API로 사용
+- 오직 자바스크립트만. 모든 것은 함수입니다.
+- 자동 서버 렌더링 및 코드 스플리팅
+- 데이터 가져오기는 개발자의 몫입니다.
+
+Next.js는 이제 6살이 되었습니다. 우리의 원래 설계 원칙은 그대로 유지되었고, Next.js가 더 많은 개발자와 회사들에 의해 채택되면서 이러한 원칙들을 더 잘 달성하기 위해 프레임워크의 기본적인 업그레이드 작업을 진행하고 있습니다.
+
+
+### 설정 없음. 파일시스템을 API로 사용
+파일 시스템 기반의 라우팅은 Next.js의 핵심 기능이었습니다. 
+
+<Callout type="danger">
+pages/about.js
+```jsx 
+// 페이지 라우터
+ 
+import React from 'react';
+export default () => <h1>회사 소개</h1>;
+```
+
+추가로 설정할 것은 없었습니다. `pages/` 내부에 파일을 넣으면 Next.js 라우터가 나머지를 처리합니다. 이 간단한 라우팅 방식을 여전히 좋아합니다. 
+</Callout>
+
+<span className="text-red-600 font-bold">그러나 프레임워크의 사용이 늘어남에 따라 개발자들이 그것으로 구축하려는 인터페이스 유형도 늘어났습니다.</span>
+
+개발자들은 레이아웃을 정의하고 UI의 일부를 레이아웃으로 중첩하며 로딩 및 오류 상태를 정의하는 데 있어 더 많은 유연성을 제공하는 것을 요구했습니다. 
+이는 기존의 Next.js 라우터에 쉽게 도입하기 어려웠습니다.
+
+
+프레임워크의 모든 부분은 라우터를 중심으로 설계되어야 합니다. 페이지 전환, 데이터 가져오기, 캐싱, 데이터 변경 및 재검증, 스트리밍, 스타일링 콘텐츠 등이 있습니다.
+
+스트리밍과 호환되게 하고, 레이아웃에 대한 향상된 지원 요청을 해결하기 위해, 앱 라우터가 출시 되었습니다.
+
+<Callout type="warning">
+앱라우터의 레이아웃과 페이지는 이렇게 되었습니다.
+
+app/layout.js
+```jsx
+// 새로운: 앱 라우터 ✨
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+app/page.js
+```jsx
+export default function Page() {
+  return <h1>안녕, Next.js!</h1>;
+}
+```
+</Callout>
+
+여기서 더 중요한 것은 당신이 보는 것이 아니라 보이지 않는 것입니다. 이 새 라우터는 React 서버 컴포넌트와 Suspense의 기반 위에 완전히 다른 아키텍처로 구축되었습니다.
+
+이 기반은 React 원시 요소를 확장하기 위해 처음 개발된 Next.js 특정 API를 제거할 수 있게 해주었습니다. 예를 들면, 전역 공유 레이아웃을 커스터마이즈하기 위해 `_app` 파일을 사용할 필요가 없습니다.
+
+<Callout type="danger">
+pages/_app.js
+```jsx
+// 페이지 라우터
+ 
+// 이 "글로벌 레이아웃"은 모든 라우트를 감싼다. 다른 레이아웃 컴포넌트를
+// 구성할 방법이 없으며, 이 파일에서 전역 데이터를 가져올 수 없습니다.
+export default function MyApp({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+```
+
+<span className="text-red-600 font-bold">페이지 라우터를 사용하면 레이아웃을 구성할 수 없었고, 데이터 가져오기는 컴포넌트와 공유할 수 없었습니다.</span> 
+</Callout>
+
+<Callout type="warning">
+<span className="text-blue-600 font-bold">새로운 앱 라우터를 사용하면 이제 지원됩니다.</span>
+
+app/layout.js
+```jsx
+// 새로운: 앱 라우터 ✨
+// 루트 레이아웃은 전체 애플리케이션을 위해 공유됩니다.
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+app/dashboard/layout.js
+```jsx
+// 레이아웃은 중첩되고 구성될 수 있습니다.
+export default function DashboardLayout({ children }) {
+  return (
+    <section>
+      <h1>대시보드</h1>
+      {children}
+    </section>
+  );
+}
+```
+</Callout>
+
+<Callout type="danger">
+페이지 라우터를 사용하면, `_document`를 사용하여 서버로부터 초기 페이로드를 커스터마이즈했습니다.
+
+pages/_document.js
+```jsx
+// 페이지 라우터
+ 
+// 이 파일은 서버 요청에 대해 <html> 및 <body> 태그를 커스터마이즈할 수 있게 해주며,
+// HTML 요소를 작성하는 대신 프레임워크 특정 기능을 추가합니다.
+import { Html, Head, Main, NextScript } from 'next/document';
+ 
+export default function Document() {
+  return (
+    <Html>
+      <Head />
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+}
+```
+</Callout>
+
+<Callout type="warning">
+<span className="text-blue-600 font-bold">앱 라우터를 사용하면 Next.js에서 `<Html>`, `<Head>`, 및 `<Body>`를 가져올 필요가 없습니다. 대신에 React를 사용</span>하면 됩니다.
+
+app/layout.js
+```jsx 
+// 새로운: 앱 라우터 ✨
+// 루트 레이아웃은 전체 애플리케이션을 위해 공유됩니다.
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+</Callout>
+
+새로운 파일 시스템 라우터를 구축하는 기회는 라우팅 시스템과 관련된 많은 기타 기능 요청을 해결할 적절한 시기였습니다. 예를 들면:
+
+- 이전에는 <span className="text-red-600 font-bold">`_app.js`에서 외부 npm 패키지(컴포넌트 라이브러리와 같은)의 글로벌 스타일시트만 가져올 수 있었습니다.</span> 이는 개발자 경험에 있어서 이상적이지 않았습니다. 앱 라우터를 사용하면 어떤 컴포넌트에서든 CSS 파일을 가져오고(그리고 공유)할 수 있습니다.
+- 이전에는 <span className="text-red-600 font-bold">Next.js에서 서버 사이드 렌더링으로 전환(`getServerSideProps`을 통해)하는 것</span>은 <span className="font-bold underline">전체 페이지가 Hydration이될 때까지 애플리케이션과 상호 작용하는 것이 차단</span>되었다는 것을 의미했습니다. <span className="text-blue-600 font-bold">앱 라우터로, 우리는 React Suspense와 깊게 통합</span>되도록 아키텍처를 리팩터링하여 <span className="font-semibold bg-yellow-100">페이지의 일부만을 선택적으로 Hydrate할 수 있습니다.</span> 이로 인해 UI의 다른 컴포넌트가 상호 작용 가능하도록 차단되지 않습니다. 콘텐츠는 서버에서 즉시 스트리밍될 수 있어 페이지의 perceived 로딩 성능이 향상됩니다.
+
+라우터는 Next.js 작동을 만드는 핵심입니다. 그러나 그것은 라우터 자체에 대한 것이 아니라 데이터 가져오기와 같은 프레임워크의 나머지 부분과 어떻게 통합되는지에 관한 것입니다.
+
+### 오직 자바스크립트. 모든 것은 함수다
+
+Next.js와 React 개발자들은 JavaScript와 TypeScript 코드를 작성하고 애플리케이션 컴포넌트를 합성하고 싶어합니다. 원래 게시물에서:
+
+pages/index.js
+
+```jsx
+import React from 'react';
+import Head from 'next/head';
+ 
+export default () => (
+  <div>
+    <Head>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </Head>
+    <h1>안녕. 나는 모바일에 최적화되어 있어!</h1>
+  </div>
+);
+```
+
+이 컴포넌트는 애플리케이션 어디에서든 재사용하고 합성할 수 있는 로직을 캡슐화합니다. 파일 시스템 라우팅과 결합하여, JavaScript와 HTML을 작성하는 것처럼 느끼는 React 애플리케이션을 만드는 쉬운 방법을 제시합니다.
+
+<Callout type="danger">
+예를 들어, 어떤 데이터를 가져오고 싶다면, Next.js의 원래 버전은 이렇게 보였습니다:
+
+pages/index.js
+```jsx
+import React from 'react';
+import 'isomorphic-fetch';
+ 
+export default class extends React.Component {
+  static async getInitialProps() {
+    const res = await fetch('https://api.company.com/user/123');
+    const data = await res.json();
+    return { username: data.profile.username };
+  }
+}
+```
+</Callout>
+
+사용량이 늘어나고 프레임워크가 성숙함에 따라, 우리는 데이터 가져오기를 위한 새로운 패턴을 탐구했습니다.
+
+`getInitialProps`는 서버와 클라이언트 모두에서 실행되었습니다. 이 API는 React 컴포넌트를 확장하여, `Promise`를 생성하고 결과를 컴포넌트의 `props`로 전달할 수 있게 해주었습니다.
+
+<Callout type="danger">
+`getInitialProps`는 여전히 작동하지만, 그 후로 고객의 피드백을 기반으로 다음 세대의 데이터 가져오기 API인 `getServerSideProps`와 `getStaticProps`에 대해 개선해 나갔습니다.
+
+pages/index.js
+```jsx
+// 루트의 정적 버전을 생성합니다.
+export async function getStaticProps(context) {
+  return { props: {} };
+}
+// 또는 루트를 동적으로 서버 렌더링합니다.
+export async function getServerSideProps(context) {
+  return { props: {} };
+}
+```
+</Callout>
+
+이러한 API는 코드가 클라이언트인지 서버인지 명확히 하였으며, Next.js 애플리케이션을 자동으로 정적으로 최적화되게 했습니다. 게다가, 이는 정적 내보내기를 가능하게 해서 서버를 지원하지 않는 곳(e.g. AWS S3 버킷)에 Next.js를 배포할 수 있게 했습니다.
+
+그러나 이것은 “순수한 자바스크립트”가 아니었고, 우리는 원래의 디자인 원칙에 더욱 충실하게 지키고 싶었습니다.
+
+Next.js가 만들어진 이후, 우리는 Meta의 React 핵심 팀과 긴밀히 협력하여 React 원시 요소 위에 프레임워크 기능을 구축하였습니다. 우리의 파트너쉽은 React 핵심 팀의 연구 및 개발 노력과 결합하여, Next.js가 React 아키텍처의 최신 버전을 포함하여 우리의 목표를 달성할 수 있는 기회를 제공하였습니다.
+
+<Callout type="warning">
+App Router를 사용하면, 익숙한 `async`와 `await` 구문을 사용하여 데이터를 가져옵니다. 새로 배워야 할 API는 없습니다. 기본적으로 모든 컴포넌트는 React 서버 컴포넌트이므로 데이터 가져오기는 서버에서 안전하게 발생합니다. 예를 들면:
+
+app/page.js
+```jsx
+export default async function Page() {
+  const res = await fetch('https://api.example.com/...');
+  // 반환 값은 직렬화되지 *않습니다*
+  // Date, Map, Set 등을 사용할 수 있습니다.
+  const data = res.json();
+ 
+  return '...';
+}
+```
+
+중요하게도, "데이터 가져오기는 개발자에게 달려있다”라는 원칙이 실현되었습니다. 데이터를 가져와 어떤 컴포넌트든 합성할 수 있습니다. 그리고 첫 번째 파티 컴포넌트뿐만 아니라 서버 컴포넌트 생태계 내의 어떤 컴포넌트든, 서버에서 완전히 실행되도록 설계된 Twitter embed `react-tweet`과 같은 컴포넌트도 포함됩니다.
+
+app/page.js
+```jsx
+import { Tweet } from 'react-tweet';
+ 
+export default async function Page() {
+  return <Tweet id="790942692909916160" />;
+}
+```
+
+라우터는 React Suspense와 통합되어 있으므로, 콘텐츠의 일부가 로딩되는 동안 대체 콘텐츠를 더 부드럽게 표시하고 원하는대로 콘텐츠를 점진적으로 표시할 수 있습니다.
+
+app/page.js
+```jsx
+import { Suspense } from 'react';
+import { PostFeed, Weather } from './components';
+ 
+export default function Page() {
+  return (
+    <section>
+      <Suspense fallback={<p>피드 로딩 중...</p>}>
+        <PostFeed />
+      </Suspense>
+      <Suspense fallback={<p>날씨 로딩 중...</p>}>
+        <Weather />
+      </Suspense>
+    </section>
+  );
+}
+```
+
+게다가, 라우터는 페이지 탐색을 전환으로 표시하므로, 루트 전환을 중단할 수 있습니다.
+
+</Callout>
+
+### 자동 서버 렌더링 및 코드 분할
+
+Next.js를 개발할 때, 개발자들이 React 애플리케이션을 실행하기 위해 webpack, babel 및 기타 도구를 수동으로 설정하는 것이 일반적이었습니다. 서버 렌더링이나 코드 분할과 같은 추가 최적화를 사용자 정의 솔루션에 종종 구현하지 않았습니다. Next.js 및 다른 React 프레임워크는 이러한 모범 사례를 구현하고 강제하기 위한 추상화 계층을 만들었습니다.
+
+라우트 기반 코드 분할은 `pages/` 디렉터리 내의 각 파일이 자체 JavaScript 번들로 코드 분할되어, 파일 시스템을 줄이고 초기 페이지 로드 성능을 향상시켰습니다.
+
+이것은 서버에서 렌더링된 애플리케이션뿐만 아니라 Next.js를 사용한 싱글 페이지 애플리케이션에도 유익했으며, 후자는 종종 애플리케이션 시작 시 단일 큰 JavaScript 번들을 로드했습니다. 그러나 컴포넌트 수준의 코드 분할을 구현하려면, 개발자들은 컴포넌트를 동적으로 가져오기 위해 `next/dynamic`을 사용해야 했습니다.
+
+<Callout type="danger">
+app/page.tsx
+```jsx
+import dynamic from 'next/dynamic';
+ 
+const DynamicHeader = dynamic(() => import('../components/header'), {
+  loading: () => <p>로딩 중...</p>,
+});
+ 
+export default function Home() {
+  return <DynamicHeader />;
+}
+```
+</Callout>
+
+<Callout type="warning">
+App Router를 사용하면, 서버 컴포넌트는 브라우저용 JavaScript 번들에 포함되지 않습니다. 클라이언트 컴포넌트는 기본적으로 자동으로 코드 분할됩니다 (Next.js에서 webpack 또는 Turbopack 중 하나로). 게다가, 전체 라우터 아키텍처가 스트리밍 및 Suspense를 지원하므로 서버에서 클라이언트로 UI의 일부를 점진적으로 전송할 수 있습니다.
+
+예를 들어, 조건부 로직으로 전체 코드 경로를 코드 분할할 수 있습니다. 이 예에서는 로그아웃 사용자에게 대시보드의 클라이언트 측 JavaScript를 로드할 필요가 없습니다.
+
+app/layout.tsx
+```jsx
+import { getUser } from './auth';
+import { Dashboard, Landing } from './components';
+ 
+export default async function Layout() {
+  const isLoggedIn = await getUser();
+  return isLoggedIn ? <Dashboard /> : <Landing />;
+}
+```
+</Callout>
+
