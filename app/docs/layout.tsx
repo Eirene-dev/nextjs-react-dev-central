@@ -25,7 +25,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
   }
 
   return (
-    <div className="flex-1 md:grid md:grid-cols-[190px_1fr] md:gap-6 lg:grid-cols-[200px_1fr] lg:gap-10">
+    <div className="flex-1 md:grid md:grid-cols-[200px_1fr] md:gap-2 lg:grid-cols-[180px_1fr] lg:gap-4">
       <button className="flex items-center bg-gray-100 md:hidden" onClick={onToggleNav}>
         {navShow ? (
           <Icons.leftClose className="align-middle" />

@@ -28,8 +28,8 @@ export default function Main({ posts }) {
 
   return (
     <>
-      <section className="pt-6 pb-8 space-y-6 md:pb-12 md:pt-10 lg:py-32">
-        <div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
+      <section className="pt-6 pb-6 space-y-2 md:pb-12 md:pt-10 lg:py-16">
+        <div className="container flex max-w-[84rem] flex-col items-center gap-4 text-center">
           <Link
             href={siteConfig.links.twitter}
             className="rounded-2xl bg-gray-200 dark:bg-transparent px-4 py-1.5 text-sm font-medium"
@@ -71,8 +71,8 @@ export default function Main({ posts }) {
           </p>
         </div>
       </section>
-      <section id="blog" className="container items-center py-8 md:py-12 lg:py-24">
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
+      <section id="blog" className="container items-center py-8 md:py-12 lg:py-16">
+        <div className="mx-auto flex max-w-[84rem] flex-col items-center justify-center gap-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             블로그 태그
           </h2>
@@ -104,7 +104,7 @@ export default function Main({ posts }) {
         id="features"
         className="container flex max-w-[64rem] flex-col items-center gap-4 px-4 py-8 text-center bg-slate-50 dark:bg-transparent"
       >
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+        <div className="mx-auto flex max-w-[84rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             개발 가이드 문서
           </h2>
@@ -205,8 +205,8 @@ export default function Main({ posts }) {
           </p>
         </div>
       </section>
-      <section id="open-source" className="container py-8 md:py-12 lg:py-24">
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
+      <section id="open-source" className="container py-8 md:py-12 lg:py-16">
+        <div className="mx-auto flex max-w-[84rem] flex-col items-center justify-center gap-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             단계별 오픈소스 예제
           </h2>

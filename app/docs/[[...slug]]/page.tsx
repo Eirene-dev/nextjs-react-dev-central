@@ -129,7 +129,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
         </div>
       ) : (
         <>
-          <main className="relative py-6 lg:gap-10 lg:py-10 xl:grid xl:grid-cols-[1fr_180px]">
+          <main className="relative py-6 lg:gap-10 lg:py-10 xl:grid xl:grid-cols-[1fr_140px]">
             <div className="w-full min-w-0 mx-auto">
               <script
                 type="application/ld+json"
