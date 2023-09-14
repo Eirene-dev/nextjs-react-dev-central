@@ -31,7 +31,6 @@ import {
   User,
   X,
   ShieldAlert,
-  ShieldQuestion,
   Info,
   type Icon as LucideIcon,
 } from 'lucide-react'
