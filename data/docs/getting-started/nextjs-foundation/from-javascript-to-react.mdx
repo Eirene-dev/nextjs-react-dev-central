@@ -3,6 +3,876 @@ title: JavaScript에서 React로
 date: '2023-01-01 01:02'
 summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
 ---
+<TOCInline toc={props.toc} asDisclosure toHeading={3} />
 
-## 작성 예정
-작성 예정
+## 개요
+### 사용자 인터페이스 렌더링
+React가 어떻게 작동하는지 이해하려면, 먼저 브라우저가 코드를 해석하여 상호 작용하는 사용자 인터페이스(UI)를 생성하는 방법에 대한 기본적인 이해가 필요합니다.
+
+사용자가 웹 페이지를 방문하면 서버는 다음과 같은 형태의 HTML 파일을 브라우저로 반환합니다:
+![React Screenshot](https://nextjs.org/static/images/learn/foundations/html-to-dom.png)
+
+브라우저는 그 후 HTML을 읽고 문서 객체 모델(DOM: Document Object Model)을 구성합니다.
+
+### DOM이란 무엇인가?
+DOM 메서드와 프로그래밍 언어, 예를 들면 JavaScript,를 사용하여 사용자 이벤트를 수신하고 사용자 인터페이스의 특정 요소를 선택, 추가, 업데이트, 삭제함으로써 DOM을 조작할 수 있습니다. DOM 조작을 통해 특정 요소만을 대상으로 하는 것이 아니라 그들의 스타일과 내용도 변경할 수 있습니다.
+![React Screenshot](https://nextjs.org/static/images/learn/foundations/dom-to-ui.png)
+
+
+## JavaScript를 사용하여 UI 업데이트하기
+
+### JavaScript와 DOM 메소드를 사용하여 UI 업데이트하기
+프로젝트에 `h1` 태그를 추가하여 JavaScript와 DOM 메소드를 어떻게 사용하는지 살펴봅시다.
+
+코드 에디터를 열고 새로운 `index.html` 파일을 생성합니다. HTML 파일 안에 다음의 코드를 추가합니다:
+```html showLineNumbers
+<!-- index.html -->
+<html>
+  <body>
+    <div></div>
+  </body>
+</html>
+```
+다음으로 div에 고유한 id를 부여하여 나중에 타겟팅 할 수 있게 합니다.
+```html {4} showLineNumbers
+<!-- index.html -->
+<html>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
+```
+
+HTML 파일 내에서 JavaScript를 작성하려면 script 태그를 추가합니다:
+```html {5} showLineNumbers
+<!-- index.html -->
+<html>
+  <body>
+    <div id="app"></div>
+    <script type="text/javascript"></script>
+  </body>
+</html>
+```
+
+이제 script 태그 내에서 `getElementById()`라는 DOM 메소드를 사용하여 `id`로 `<div>` 요소를 선택할 수 있습니다:
+```html {7} showLineNumbers
+<!-- index.html -->
+<html>
+  <body>
+    <div id="app"></div>
+
+    <script type="text/javascript">
+      const app = document.getElementById('app');
+    </script>
+  </body>
+</html>
+```
+
+DOM 메소드를 계속 사용하여 새로운 `<h1>` 요소를 생성할 수 있습니다:
+```html {10-19} showLineNumbers
+<!-- index.html -->
+<html>
+  <body>
+    <div id="app"></div>
+
+    <script type="text/javascript">
+      // 'app' id로 div 요소 선택하기
+      const app = document.getElementById('app');
+
+      // 새로운 H1 요소 생성하기
+      const header = document.createElement('h1');
+
+      // H1 요소에 대한 새 텍스트 노드 생성하기
+      const headerContent = document.createTextNode(
+        'Develop. Preview. Ship. 🚀',
+      );
+
+      // 텍스트를 H1 요소에 추가하기
+      header.appendChild(headerContent);
+
+      // H1 요소를 div 안에 위치시키기
+      app.appendChild(header);
+    </script>
+  </body>
+</html>
+```
+
+모든 것이 제대로 작동하는지 확인하려면 원하는 브라우저 안에서 HTML 파일을 엽니다. 'Develop. Preview. Ship. 🚀'라는 글이 적힌 `h1` 태그를 볼 수 있어야 합니다.
+
+### HTML vs DOM
+브라우저 개발자 도구에서 DOM 요소를 살펴보면, DOM이 `<h1> `요소를 포함한다는 것을 알 수 있습니다. 페이지의 DOM은 작성한 원본 HTML 파일, 즉 소스 코드와 다릅니다.
+![React Screenshot](https://nextjs.org/static/images/learn/foundations/source-code.png)
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **브라우저의 개발자 도구에서 DOM 요소를 살펴보는 방법**</summary>
+
+브라우저의 개발자 도구에서 DOM 요소를 살펴보는 방법은 아래와 같습니다. 대표적인 브라우저인 Google Chrome을 기준으로 설명하겠습니다:
+
+1. **브라우저를 열기**: 원하는 웹 페이지를 Google Chrome 브라우저에서 엽니다.
+
+2. **개발자 도구 열기**: 다음 중 하나의 방법을 선택하여 개발자 도구를 엽니다:
+   - **방법 1**: 페이지의 어느 곳이나 마우스 오른쪽 버튼을 클릭한 후 '검사'를 선택합니다.
+   - **방법 2**: 키보드에서 `Ctrl + Shift + I` (Windows/Linux) 또는 `Cmd + Option + I` (Mac)를 동시에 누릅니다.
+   - **방법 3**: 브라우저의 메뉴에서 `더보기` -> `도구 더보기` -> `개발자 도구`를 선택합니다.
+
+3. **Elements 탭 사용**: 개발자 도구가 열리면, 상단의 탭 중에서 "Elements" (또는 '요소') 탭이 선택되어 있는지 확인합니다. 이 탭에서는 웹 페이지의 DOM 구조와 스타일을 살펴볼 수 있습니다.
+
+4. **DOM 요소 검색 및 수정**:
+   - 특정 요소를 선택하면, 해당 요소의 HTML과 CSS 스타일을 오른쪽 패널에서 확인할 수 있습니다.
+   - 마우스로 원하는 DOM 요소를 클릭하여 선택하거나, 페이지에서 특정 부분을 선택하려면 왼쪽 상단의 화살표 아이콘을 클릭하고 페이지의 해당 부분을 클릭합니다.
+
+5. **변경 사항 확인**: DOM 요소를 직접 수정하여 페이지에서 어떻게 보이는지 확인할 수 있습니다. 하지만 이 변경사항은 임시적이며 페이지를 새로고침하면 원래대로 돌아갑니다.
+
+이러한 방법을 통해 웹 페이지의 DOM 구조와 스타일을 실시간으로 확인하고 조작할 수 있습니다. 이는 웹 개발 및 디버깅 시 매우 유용한 도구입니다.
+</details>
+
+이는 HTML이 초기 페이지 콘텐츠를 나타내기 때문이며, DOM은 작성한 JavaScript 코드에 의해 변경된 업데이트된 페이지 콘텐츠를 나타냅니다.
+
+순수한 JavaScript로 DOM을 업데이트하는 것은 매우 강력하지만 장황할 수 있습니다. 어떤 텍스트와 함께 `<h1>` 요소를 추가하기 위해 모든 코드를 작성했습니다:
+```html showLineNumbers
+<!-- index.html -->
+<script type="text/javascript">
+  const app = document.getElementById('app');
+  const header = document.createElement('h1');
+  const headerContent 
+    = document.createTextNode('Develop. Preview. Ship. 🚀');
+  header.appendChild(headerContent);
+  app.appendChild(header);
+</script>
+```
+앱 또는 팀의 규모가 커지면 이런 방식으로 애플리케이션을 구축하는 것이 점점 더 어려워질 수 있습니다.
+
+이 접근법을 사용하면 개발자들은 컴퓨터에게 어떻게 작동해야 하는지 지시하는 데 많은 시간을 보냅니다. 하지만 원하는 것을 보여주는 것을 설명하고 컴퓨터가 DOM을 어떻게 업데이트할지 파악하게 하는 것이 좋지 않을까요?
+
+## 명령형 vs 선언형 프로그래밍
+위의 코드는 **명령형 프로그래밍**의 좋은 예입니다. 사용자 인터페이스가 어떻게 업데이트되어야 하는지 단계를 작성하고 있습니다. 그러나 사용자 인터페이스를 구축할 때, **선언형 접근 방식**이 종종 선호되는데, 이는 개발 과정을 가속화할 수 있기 때문입니다. DOM 메소드를 작성하는 대신 개발자들이 원하는 것을 보여줄 수 있도록 선언하는 것이 도움이 될 것입니다 (이 경우, 어떤 텍스트가 있는 h1 태그).
+
+다시 말해, <span className="text-blue-600 font-bold">명령형 프로그래밍[^1]</span>은 피자를 만드는 방법에 대한 단계별 지시사항을 제공하는 것과 같습니다. <span className="text-blue-600 font-bold">선언형 프로그래밍[^2]</span>은 피자를 만드는 데 필요한 단계에 대해 걱정하지 않고 피자를 주문하는 것과 같습니다. 🍕
+
+[^1]: 명령형 프로그래밍은 컴퓨터에게 어떤 작업을 수행하기 위한 명령의 순서와 방법을 직접 지시하는 프로그래밍 방식입니다. 즉, "어떻게" 작업을 수행할 것인지에 중점을 둡니다. 이러한 방식은 프로그래머가 단계별로 정확한 명령을 제공해야 하며, 알고리즘의 구체적인 절차와 로직을 상세히 기술합니다.
+[^2]: 선언형 프로그래밍은 어떤 작업을 수행하기 위해 "어떻게" 수행할 것인지가 아니라 "무엇"을 수행할 것인지에 중점을 둔 프로그래밍 패러다임입니다. 프로그래머는 원하는 결과를 선언하고, 그 방법을 어떻게 달성할 것인지에 대한 구체적인 절차를 명시하지 않습니다. 이러한 방식은 고수준의 추상화를 제공하며, 로직의 명령보다는 원하는 결과의 표현에 더 집중합니다.
+
+<span className="font-semibold bg-yellow-100">사용자 인터페이스를 구축하는 데 도움을 주는 유명한 선언형 라이브러리는 **React**입니다.</span>
+
+### React: 선언형 UI 라이브러리
+개발자로서, 사용자 인터페이스에 무슨 일이 일어나야 하는지 React에게 알려줄 수 있고, React는 당신을 대신하여 DOM을 어떻게 업데이트할지 단계를 파악합니다.
+
+## React 시작하기
+
+프로젝트에서 React를 사용하기 위해서는, [unpkg.com](unpkg.com)이라는 외부 웹사이트에서 두 개의 React 스크립트를 불러올 수 있습니다:
+
+- react는 React의 핵심 라이브러리입니다.
+- `react-dom`은 DOM과 함께 React를 사용할 수 있게 해주는 DOM-specific 메서드를 제공합니다.
+
+```html {6-11} showLineNumbers
+<!-- index.html -->
+<html>
+  <body>
+    <div id="app"></div>
+
+    <script 
+      src="https://unpkg.com/react@17/umd/react.development.js"
+    ></script>
+    <script 
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+    ></script>
+
+    <script type="text/javascript">
+      const app = document.getElementById('app');
+    </script>
+  </body>
+</html>
+```
+
+일반 JavaScript로 직접 DOM을 조작하는 대신, `react-dom`에서 제공하는 `ReactDOM.render()` 메서드를 사용하여 `#app` 요소 안에 `<h1>` 제목을 렌더링하도록 React에 지시할 수 있습니다.
+
+```html {14, 15} showLineNumbers
+<!-- index.html -->
+<html>
+  <body>
+    <div id="app"></div>
+
+    <script 
+      src="https://unpkg.com/react@17/umd/react.development.js"
+    ></script>
+    <script 
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+    ></script>
+
+    <script type="text/javascript">
+      const app = document.getElementById('app');
+      ReactDOM.render(<h1>Develop. Preview. Ship. 🚀</h1>, app);
+    </script>
+  </body>
+</html>
+```
+
+하지만 이 코드를 브라우저에서 실행하려고 하면 문법 오류가 발생합니다:
+![React Screenshot](https://nextjs.org/static/images/learn/foundations/error.png)
+
+`<h1>...</h1>`는 유효한 Javascript가 아닙니다. 이 코드 조각은 JSX입니다.
+
+### JSX란?
+
+JSX는 사용자 인터페이스를 익숙한 HTML과 비슷한 구문으로 설명할 수 있도록 JavaScript의 구문 확장입니다. JSX의 장점은 세 가지 JSX 규칙을 따르는 것 외에도 HTML 및 JavaScript 외에 새로운 기호나 구문을 배울 필요가 없다는 것입니다.
+
+브라우저는 기본적으로 JSX를 이해하지 못하기 때문에, JSX 코드를 일반적인 JavaScript로 변환하기 위해 Babel과 같은 JavaScript 컴파일러가 필요합니다.
+
+### 프로젝트에 Babel 추가하기
+
+프로젝트에 Babel을 추가하기 위해서는, 아래의 스크립트를 index.html 파일에 복사 및 붙여넣기 하십시오:
+
+```javascript showLineNumbers
+<script src="https://unpkg.com/@babel/standalone/babel.min.js">
+</script>
+```
+
+게다가 Babel에게 어떤 코드를 변환할지 알려주기 위해 스크립트 유형을 `type=text/jsx`로 변경해야 합니다.
+
+```javascript {13} showLineNumbers
+<html>
+  <body>
+    <div id="app"></div>
+    <script 
+      src="https://unpkg.com/react@17/umd/react.development.js"
+    ></script>
+    <script 
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+    ></script>
+    <!-- Babel 스크립트 -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js">
+    </script>
+    <script type="text/jsx">
+      const app = document.getElementById('app');
+      ReactDOM.render(<h1>Develop. Preview. Ship. 🚀</h1>, app);
+    </script>
+  </body>
+</html>
+```
+
+그런 다음 브라우저에서 코드를 실행하여 올바르게 작동하는지 확인할 수 있습니다.
+
+방금 작성한 선언형 React 코드를 비교하면:
+```javascript {2-3} showLineNumbers
+<script type="text/jsx">
+  const app = document.getElementById("app")
+  ReactDOM.render(<h1>Develop. Preview. Ship. 🚀</h1>, app)
+</script>
+```
+이전 섹션에서 작성한 명령형 JavaScript 코드와:
+
+```javascript {2-7} showLineNumbers
+<script type="text/javascript">
+  const app = document.getElementById('app');
+  const header = document.createElement('h1');
+  const headerContent 
+    = document.createTextNode('Develop. Preview. Ship. 🚀');
+  header.appendChild(headerContent);
+  app.appendChild(header);
+</script>
+```
+React를 사용하면 많은 반복 코드를 줄일 수 있습니다.
+
+그리고 이것이 바로 React가 하는 일입니다. 이는 대신 작업을 수행하는 코드의 재사용 가능한 스니펫을 포함하는 라이브러리입니다. 이 경우, UI를 업데이트합니다.
+
+> 참고: React를 사용하기 시작할 때 UI를 어떻게 업데이트하는지 정확히 알 필요는 없습니다. 하지만 더 자세히 알고 싶다면, React 문서의 [UI 트리](https://react.dev/learn/preserving-and-resetting-state#the-ui-tree) 및 [react-dom/server](https://react.dev/reference/react-dom/server) 섹션을 확인해보세요.
+
+
+### React를 위한 필수 JavaScript 항목
+JavaScript와 React를 동시에 학습할 수 있지만, JavaScript에 익숙하면 React 학습 과정이 더 쉬워집니다.
+
+- 함수(Functions)와 화살표 함수(Arrow Functions)
+- 객체(Objects)
+- 배열(Arrays) 및 배열 메서드(Array methods)
+- 구조 분해(Destructuring)
+- 템플릿 리터럴(Template literals)
+- 삼항 연산자(Ternary Operators)
+- ES 모듈(ES Modules) 및 Import / Export 구문
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **필수 JavaScript 항목별 사용 목적 및 예제 코드**</summary>
+
+1. **함수(Functions)와 화살표 함수(Arrow Functions)**
+   
+   **사용 목적:** 코드를 묶어 이름을 붙이고 재사용하게 해줍니다. 화살표 함수는 간결한 함수 표현을 제공합니다.
+
+   **코드 예:**
+   ```javascript
+   // 일반 함수
+   function greet(name) {
+     return "Hello, " + name;
+   }
+   
+   // 화살표 함수
+   const greetArrow = (name) => "Hello, " + name;
+   ```
+
+2. **객체(Objects)**
+
+   **사용 목적:** 다양한 값과 속성을 그룹화하여 나타낼 때 사용합니다.
+
+   **코드 예:**
+   ```javascript
+   const person = {
+     name: "John",
+     age: 30,
+     profession: "Engineer"
+   };
+   ```
+
+3. **배열(Arrays) 및 배열 메서드(Array methods)**
+
+   **사용 목적:** 같은 타입의 여러 값들을 목록으로 나타낼 때 사용합니다. 배열 메서드들은 배열에 대한 다양한 작업을 수행합니다.
+
+   **코드 예:**
+   ```javascript
+   const fruits = ["apple", "banana", "cherry"];
+   const uppercasedFruits = fruits.map(fruit => fruit.toUpperCase());
+   ```
+
+4. **구조 분해(Destructuring)**
+
+   **사용 목적:** 객체나 배열의 속성이나 항목을 간편하게 추출할 수 있습니다.
+
+   **코드 예:**
+   ```javascript
+   const person = { name: "Anna", age: 28 };
+   const { name, age } = person;
+   ```
+
+5. **템플릿 리터럴(Template literals)**
+
+   **사용 목적:** 문자열을 더 간결하고 가독성 좋게 작성하게 해줍니다.
+
+   **코드 예:**
+   ```javascript
+   const name = "Sara";
+   const greeting = `Hello, ${name}!`;
+   ```
+
+6. **삼항 연산자(Ternary Operators)**
+
+   **사용 목적:** 간단한 조건문을 더 간결하게 표현할 수 있습니다.
+
+   **코드 예:**
+   ```javascript
+   const age = 18;
+   const isAdult = age >= 18 ? "Yes" : "No";
+   ```
+
+7. **ES 모듈(ES Modules) 및 Import / Export 구문**
+
+   **사용 목적:** 코드를 모듈화하여 재사용성과 유지 관리성을 향상시키기 위해 사용합니다.
+
+   **코드 예:**
+   ```javascript
+   // module.js
+   export const greet = (name) => `Hello, ${name}`;
+
+   // app.js
+   import { greet } from './module.js';
+   console.log(greet("John"));
+   ```
+
+이러한 각 기능들은 JavaScript 및 프론트엔드 개발에서 중요한 역할을 합니다.
+</details>
+
+
+## React 핵심 개념
+React로 응용 프로그램을 구축하기 시작하기 위해 익혀야 할 React의 세 가지 핵심 개념이 있습니다. 
+
+1. 컴포넌트(Components)
+2. 속성(Props)
+3. 상태(State)
+
+
+### 1. 컴포넌트(Components): 컴포넌트로 UI 구축하기
+사용자 인터페이스는 컴포넌트라고 하는 더 작은 빌딩 블록으로 분해될 수 있습니다.
+
+컴포넌트를 이용하면 독립적이고 재사용 가능한 코드 스니펫을 구축할 수 있습니다. 컴포넌트를 레고 블록처럼 생각한다면, 이 개별 블록들을 가져와 더 큰 구조체를 형성하는 데 사용할 수 있습니다. UI의 일부를 업데이트해야 하는 경우 특정 컴포넌트나 블록을 업데이트할 수 있습니다.
+![LEGO bricks](https://nextjs.org/static/images/learn/foundations/components.png)
+
+이러한 모듈성은 코드가 성장함에 따라 더욱 유지 관리하기 쉬워집니다. 왜냐하면 우리의 애플리케이션의 나머지 부분에 영향을 주지 않고 컴포넌트를 쉽게 추가, 업데이트, 삭제할 수 있기 때문입니다.
+
+<span className="font-semibold bg-yellow-100">React 컴포넌트의 좋은 점은 그것들이 단순히 자바스크립트라는 것입니다.</span> 자바스크립트 관점에서 React 컴포넌트를 어떻게 작성하는지 살펴봅시다:
+
+#### 컴포넌트 생성하기
+React에서, 컴포넌트는 함수입니다. 스크립트 태그 안에 `header`라는 함수를 작성하세요:
+```jsx {4, 5} showLineNumbers
+<script type="text/jsx">
+  const app = document.getElementById("app")
+
+  function header() {
+  }
+
+  ReactDOM.render(<h1>Develop. Preview. Ship. 🚀</h1>, app)
+</script>
+```
+<span className="font-bold underline">컴포넌트는 UI 요소를 반환하는 함수</span>입니다. 함수의 반환문 안에서 JSX를 작성할 수 있습니다:
+```jsx {5} showLineNumbers
+<script type="text/jsx">
+  const app = document.getElementById("app")
+
+  function header() {
+     return (<h1>Develop. Preview. Ship. 🚀</h1>)
+   }
+
+  ReactDOM.render(, app)
+</script>
+```
+
+이 컴포넌트를 DOM에 렌더링하려면, `ReactDOM.render()` 메서드의 첫 번째 인자로 전달할 수 있습니다:
+```jsx {9} showLineNumbers
+<script type="text/jsx">
+
+  const app = document.getElementById("app")
+
+  function header() {
+     return (<h1>Develop. Preview. Ship. 🚀</h1>)
+   }
+
+   ReactDOM.render(header, app)
+</script>
+```
+그런데, 잠깐만요. 위의 코드를 브라우저에서 실행하려고 하면 에러가 발생합니다. 이를 동작하게 만들려면 두 가지 작업을 해야 합니다:
+
+첫째, React 컴포넌트는 일반 HTML 및 자바스크립트와 구별하기 위해 <span className="font-bold underline">대문자로 시작</span>해야 합니다.
+```jsx {1, 6} showLineNumbers
+function Header() {
+  return <h1>Develop. Preview. Ship. 🚀</h1>;
+}
+
+// React 컴포넌트의 첫 글자를 대문자로 시작
+ReactDOM.render(Header, app);
+```
+
+둘째, 일반 HTML 태그처럼 각 <span className="font-bold underline">꺽쇠 괄호 `<>`를 사용하여 React 컴포넌트를 사용</span>합니다.
+```jsx {5} showLineNumbers
+function Header() {
+  return <h1>Develop. Preview. Ship. 🚀</h1>;
+}
+
+ReactDOM.render(<Header />, app);
+```
+
+#### 컴포넌트 중첩하기
+응용 프로그램은 보통 하나의 컴포넌트보다 더 많은 컨텐츠를 포함합니다. 일반 HTML 요소처럼 React 컴포넌트를 서로 중첩할 수 있습니다.
+
+예제에서 `HomePage`라는 새로운 컴포넌트를 생성하세요:
+```jsx {4-6} showLineNumbers
+function Header() {
+  return <h1>Develop. Preview. Ship. 🚀</h1>;
+}
+function HomePage() {
+  return <div></div>;
+}
+
+ReactDOM.render(<Header />, app);
+```
+그런 다음 새로운 `<HomePage>` 컴포넌트 내에 `<Header>` 컴포넌트를 중첩하세요:
+```jsx {7-10} showLineNumbers
+function Header() {
+  return <h1>Develop. Preview. Ship. 🚀</h1>;
+}
+
+function HomePage() {
+  return (
+    <div>
+      {/* Header 컴포넌트를 중첩합니다 */}
+      <Header />
+    </div>
+  );
+}
+
+ReactDOM.render(<Header />, app);
+```
+
+#### 컴포넌트 트리
+이렇게 React 컴포넌트를 중첩하여 컴포넌트 트리를 형성할 수 있습니다.
+![컴포넌트 트리](https://nextjs.org/static/images/learn/foundations/component-tree.png)
+
+예를 들어, 최상위 `HomePage` 컴포넌트는 `Header`, `Article`, 그리고 `Footer` 컴포넌트를 포함할 수 있습니다. 그리고 각 컴포넌트는 차례로 자신의 자식 컴포넌트들을 포함할 수 있습니다. 예를 들면, `Header` 컴포넌트는 `Logo`, `Title` 및 `Navigation` 컴포넌트를 포함할 수 있습니다.
+
+
+### 2. 속성(Props): Props를 이용한 데이터 표시
+
+지금까지 만약 `<Header />` 컴포넌트를 재사용하면 동일한 내용이 두 번 표시됩니다.
+```jsx {8, 9} showLineNumbers
+function Header() {
+  return <h1>Develop. Preview. Ship. 🚀</h1>;
+}
+
+function HomePage() {
+  return (
+    <div>
+      <Header />
+      <Header />
+    </div>
+  );
+}
+```
+하지만 다른 텍스트를 전달하거나 외부 소스에서 데이터를 가져오기 때문에 정보를 사전에 알 수 없다면 어떻게 해야할까요?
+
+일반적인 HTML 요소는 요소의 동작을 변경하는 정보의 일부를 전달하는데 사용할 수 있는 속성을 가지고 있습니다. 예를 들면, `<img>` 요소의 src 속성을 변경하면 표시되는 이미지가 변경됩니다. `<a>` 태그의 href 속성을 변경하면 링크의 목적지가 변경됩니다.
+
+![Props](https://nextjs.org/static/images/learn/foundations/props.png)
+
+비슷한 방식으로, <span className="font-bold underline">React 컴포넌트에 정보의 일부를 속성으로 전달</span>할 수 있습니다. 이것들을 <span className="text-blue-600 font-bold">props</span>라고 합니다.
+
+JavaScript 함수와 유사하게, 컴포넌트는 스크린에 렌더링될 때 컴포넌트의 동작이나 보이는 것을 변경하는 사용자 정의 인수(또는 props)를 수용할 수 있도록 설계될 수 있습니다. 그런 다음 이러한 props를 부모 컴포넌트에서 자식 컴포넌트로 전달할 수 있습니다.
+
+> 참고: React에서는 데이터가 컴포넌트 트리를 통해 아래로 흐릅니다. 이것은 단방향 데이터 흐름으로 불립니다. 상태는 다음 섹션에서 논의될 것이며, 부모에서 자식 컴포넌트로 props로 전달될 수 있습니다.
+
+#### props 사용하기
+HTML 속성을 전달하는 것처럼 HomePage 컴포넌트에서는 Header 컴포넌트에 사용자 정의 title prop를 전달할 수 있습니다. :
+
+```jsx {8} showLineNumbers
+// function Header() {
+//   return <h1>Develop. Preview. Ship. 🚀</h1>
+// }
+
+function HomePage() {
+  return (
+    <div>
+      <Header title="React 💙" />
+    </div>
+  );
+}
+
+// ReactDOM.render(<HomePage />, app)
+```
+
+그리고 Header, 자식 컴포넌트는 그 props를 첫 번째 함수 매개변수로 받을 수 있습니다:
+```jsx {1} showLineNumbers
+function Header(props) {
+//   return <h1>Develop. Preview. Ship. 🚀</h1>
+// }
+
+// function HomePage() {
+//   return (
+//     <div>
+//       <Header title="React 💙" />
+//     </div>
+//   )
+// }
+
+// ReactDOM.render(<HomePage />, app)
+```
+props를 `console.log()`로 출력하면, title 속성을 가진 객체임을 확인할 수 있습니다.
+```jsx {2} showLineNumbers
+function Header(props) {
+    console.log(props) // { title: "React 💙" }
+//   return <h1>React 💙</h1>
+// }
+
+// function HomePage() {
+//   return (
+//     <div>
+//       <Header title="React 💙" />
+//     </div>
+//   )
+// }
+
+// ReactDOM.render(<HomePage />, app)
+```
+props가 객체이기 때문에 함수 매개변수 내에서 props의 값을 명시적으로 이름 지정하기 위해 객체 디스트럭쳐링을 사용할 수 있습니다:
+```jsx {1} showLineNumbers
+function Header({ title }) {
+    console.log(title) // "React 💙"
+//  return <h1>React 💙</h1>
+// }
+
+// function HomePage() {
+//   return (
+//     <div>
+//       <Header title="React 💙" />
+//     </div>
+//   )
+// }
+
+// ReactDOM.render(<HomePage />, app)
+```
+그런 다음 `<h1>` 태그의 내용을 title 변수로 대체할 수 있습니다.
+```jsx {3} showLineNumbers
+function Header({ title }) {
+  console.log(title);
+  return <h1>title</h1>;
+}
+```
+브라우저에서 프로젝트를 열면 실제 단어 "title"이 표시됩니다. 이는 React가 DOM에 일반 텍스트 문자열을 렌더링하려고 한다고 생각하기 때문입니다.
+
+이것이 <span className="font-bold underline">JavaScript 변수라는 것을 React에 알려줄 방법이 필요</span>합니다.
+
+#### JSX에서 변수 사용하기
+<span className="text-blue-600 font-bold">정의한 변수를 사용</span>하려면, <span className="font-semibold bg-yellow-100">JSX 마크업 내에서 직접 일반 JavaScript를 작성할 수 있게 해주는 특별한 JSX 구문인 중괄호 `{}`를 사용</span>할 수 있습니다.
+```jsx {3} showLineNumbers
+// function Header({title}) {
+//  console.log(title)
+return <h1>{title}</h1>;
+// }
+```
+중괄호를 "JSX land"에 있을 때 "JavaScript land"로 들어가는 방법으로 생각할 수 있습니다. 
+<span className="font-bold underline">중괄호 안에는 어떠한 JavaScript 표현식(단일 값으로 평가되는 것)도 추가</span>할 수 있습니다. 예를 들면:
+
+- 점 표기법을 사용한 객체 속성:
+```jsx {2} showLineNumbers
+function Header(props) {
+  return <h1>{props.title}</h1>;
+}
+```
+
+- 템플릿 리터럴을 사용한 문자열 병합:
+```jsx {2} showLineNumbers
+function Header({ title }) {
+  return <h1>{`Hello, ${title}`}</h1>;
+}
+```
+
+- 즉석에서 JavaScript 함수 호출:
+```jsx {2} showLineNumbers
+function Header({ title }) {
+  return <h1>{getTitle(title)}</h1>;
+}
+
+function getTitle(text) {
+  return `Hello, ${text}`;
+}
+```
+- 삼항 연산자를 사용한 조건부 렌더링:
+```jsx {2} showLineNumbers
+function Header({ title }) {
+  return <h1>{title ? title : 'React'}</h1>;
+}
+```
+> 참고: `{}`로 둘러싸인 것 내부에 일반적인 if 문을 사용할 수 없습니다. 대신 삼항 연산자나 `&&` 연산자와 같은 JavaScript 표현식을 사용할 수 있습니다.
+
+#### defaultProps 사용하기
+props를 전달받지 않았을 때 기본 값을 설정하려면 `defaultProps`를 사용할 수 있습니다. 
+컴포넌트를 작성할 때 이를 통해 <span className="font-bold underline">특정 props에 대한 기본값을 설정</span>할 수 있습니다. 예를 들면:
+```jsx {5-7} showLineNumbers
+function Header({ title }) {
+  return <h1>{title}</h1>;
+}
+
+Header.defaultProps = {
+  title: 'React'
+};
+```
+이렇게 하면 `title` prop이 전달되지 않았을 때 기본값으로 'React'가 사용됩니다.
+
+#### 부모에서 여러 props 전달하기
+하나 이상의 props를 자식 컴포넌트에 전달할 수 있습니다.
+```jsx {4, 9} showLineNumbers
+function HomePage() {
+  return (
+    <div>
+      <Header title="React 💙" subtitle="Awesome Framework" />
+    </div>
+  );
+}
+
+function Header({ title, subtitle }) {
+  return (
+    <div>
+      <h1>{title}</h1>
+      <h2>{subtitle}</h2>
+    </div>
+  );
+}
+```
+#### 자식 props
+React에서 컴포넌트는 children 이라는 특별한 prop도 수신합니다. 이것은 컴포넌트의 열린 및 닫힌 태그 사이에 있는 모든 내용을 참조합니다.
+
+예를 들어:
+```jsx {5, 11} showLineNumbers
+function HomePage() {
+  return (
+    <div>
+      <Header>
+        <h1>React 💙</h1>
+      </Header>
+    </div>
+  );
+}
+
+function Header({ children }) {
+  return (
+    <div>
+      {children}
+    </div>
+  );
+}
+```
+이렇게 하면 `Header` 컴포넌트는 자식 컴포넌트, 즉 `<h1>React 💙</h1>`를 출력합니다.
+
+이러한 방식으로, 컴포넌트는 자식 요소를 포함하여 더 다양한 컨텐츠를 전달받을 수 있습니다.
+
+
+### 3. 상태(state): 상태를 활용한 상호작용 추가하기
+
+React를 통해 상태와 이벤트 핸들러로 상호 작용하는 방법을 살펴봅시다.
+
+예를 들어, `HomePage` 컴포넌트 안에 '좋아요' 버튼을 만들어 보겠습니다. 먼저 `return()` 문장 안에 버튼 요소를 추가하세요:
+```jsx {13} showLineNumbers
+function HomePage() {
+  const names = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
+
+  return (
+    <div>
+      <Header title="Develop. Preview. Ship. 🚀" />
+      <ul>
+        {names.map((name) => (
+          <li key={name}>{name}</li>
+        ))}
+      </ul>
+
+      <button>좋아요</button>
+    </div>
+  );
+}
+```
+#### 이벤트 감지하기
+버튼이 클릭되었을 때 어떤 동작을 수행하게 하려면 `onClick` 이벤트를 사용할 수 있습니다.
+```jsx {6} showLineNumbers
+function HomePage() {
+  // ...
+  return (
+    <div>
+      {/* ... */}
+      <button onClick={}>좋아요</button>
+    </div>
+  );
+}
+```
+<span className="font-semibold bg-yellow-100">React에서는 이벤트 이름이 camelCased</span>입니다. 
+`onClick` 이벤트는 사용자 상호작용에 대응하기 위해 사용할 수 있는 많은 이벤트 중 하나입니다. 예를 들어, 입력 필드의 경우 `onChange`를, 폼의 경우 `onSubmit`을 사용할 수 있습니다.
+
+#### 이벤트 처리하기
+이벤트가 트리거될 때마다 "처리"하는 함수를 정의할 수 있습니다. return 문장 전에 `handleClick()`이라는 함수를 만듭니다:
+```jsx {4-6} showLineNumbers
+function HomePage() {
+  // ...
+
+  function handleClick() {
+    console.log("좋아요 개수 증가")
+  }
+
+  return (
+    <div>
+      {/* ... */}
+      <button onClick={}>좋아요</button>
+    </div>
+  );
+}
+```
+그런 다음 `onClick` 이벤트가 트리거 될 때 `handleClick` 함수를 호출할 수 있습니다:
+```jsx {10} showLineNumbers
+function HomePage() {
+  // ...
+  function handleClick() {
+    console.log('좋아요 개수 증가');
+  }
+
+  return (
+    <div>
+      {/* ... */}
+      <button onClick={handleClick}>좋아요</button>
+    </div>
+  );
+}
+```
+#### 상태와 Hooks
+React에는 hooks라는 일련의 함수들이 있습니다. Hooks는 컴포넌트에 추가 로직, 예를 들면 상태,를 추가하는 것을 가능하게 합니다. 상태는 시간이 지남에 따라 변경되는 UI의 모든 정보로, 주로 사용자 상호작용에 의해 트리거됩니다.
+
+![State](https://nextjs.org/static/images/learn/foundations/state.png)
+
+`useState()`는 React hook을 사용하여 상태를 관리하는 것으로, 좋아요 버튼이 클릭된 횟수를 저장하고 증가시키기 위해 상태를 사용할 수 있습니다.
+```jsx {2} showLineNumbers
+function HomePage() {
+  React.useState();
+}
+```
+`useState()`는 배열을 반환하며, 배열 비구조화를 사용하여 컴포넌트 내에서 이 배열의 값을 접근하고 사용할 수 있습니다:
+```jsx {2} showLineNumbers
+function HomePage() {
+  const [] = React.useState();
+
+  // ...
+}
+```
+<span className="text-blue-600 font-bold">배열의 첫 번째 항목</span>은 <span className="font-semibold bg-yellow-100">상태 값</span>이며, 원하는 이름을 지정할 수 있습니다. 설명적인 이름을 사용하는 것이 좋습니다:
+```jsx {2} showLineNumbers
+function HomePage() {
+  const [likes] = React.useState();
+
+  // ...
+}
+```
+<span className="text-blue-600 font-bold">배열의 두 번째 항목</span>은 <span className="font-semibold bg-yellow-100">값을 업데이트하는 함수</span>입니다. 업데이트 함수의 이름은 어떤 것이든 될 수 있지만, 상태 변수 이름 앞에 set을 붙이는 것이 일반적입니다:
+```jsx {2} showLineNumbers
+function HomePage() {
+  const [likes, setLikes] = React.useState();
+
+  // ...
+}
+```
+또한 좋아요 <span className="font-semibold bg-yellow-100">상태의 초기값을 0으로 추가</span>할 기회를 얻을 수 있습니다:
+```jsx {2} showLineNumbers
+function HomePage() {
+  const [likes, setLikes] = React.useState(0);
+}
+```
+그런 다음 컴포넌트 내에서 상태 변수를 사용하여 초기 상태가 작동하는지 확인할 수 있습니다:
+```jsx {7} showLineNumbers
+function HomePage() {
+  // ...
+  const [likes, setLikes] = React.useState(0);
+
+  return (
+    // ...
+    <button onClick={handleClick}>좋아요({likes})</button>
+  );
+}
+```
+마지막으로, `HomePage` 컴포넌트에서 상태 업데이터 함수인 `setLikes`를 호출할 수 있습니다. 이전에 정의한 `handleClick()` 함수 내에 추가합시다:
+```jsx {6} showLineNumbers
+function HomePage() {
+  // ...
+  const [likes, setLikes] = React.useState(0);
+
+  function handleClick() {
+    setLikes(likes + 1);
+  }
+
+  return (
+    <div>
+      {/* ... */}
+      <button onClick={handleClick}>좋아요 ({likes})</button>
+    </div>
+  );
+}
+```
+버튼을 클릭하면 `handleClick` 함수가 호출되며, `setLikes` 상태 업데이터 함수가 현재 `likes + 1`의 단일 인수와 함께 호출됩니다.
+
+> 참고: 컴포넌트에 첫 번째 함수 매개변수로 전달되는 props와 달리, 상태는 컴포넌트 내에서 초기화되고 저장됩니다. 상태 정보를 자식 컴포넌트에 props로 전달할 수 있지만, 상태를 업데이트하는 로직은 상태가 처음 생성된 컴포넌트 내에 유지되어야 합니다.
+
+#### 상태 관리하기
+이것은 상태에 대한 소개만이었으며, React 애플리케이션에서 상태와 데이터 흐름을 관리하는 방법에 대해 더 배울 수 있습니다. 더 자세히 알아보려면 React 문서의 상호작용 추가 및 상태 관리 섹션을 참조하는 것이 좋습니다.
+
+## React 계속 학습하기
+방금 여러분은 React의 세 가지 핵심 개념인 컴포넌트, props, 그리고 상태를 소개받았습니다. 이러한 기본적인 내용을 확실히 이해하면 React 애플리케이션을 구축하는 데 도움이 될 것입니다. 자신감을 더 얻게 되면, 다음 React 주제들도 확인해 보세요:
+
+- React가 렌더링을 처리하는 방법 및 refs의 사용법
+- 상태 관리 방법
+- 깊게 중첩된 데이터에 대한 context 사용법
+- `useEffect()`와 같은 React API hooks 사용법
+
+### React 리소스
+여러 해 동안 개발자들이 React를 배우기 위해 많은 강좌, 동영상, 글이 만들어졌습니다. 학습 스타일에 따라 추천하는 리소스를 선택하는 것은 어렵지만, React Documentation은 여러분이 주제를 연습할 수 있도록 대화형 모래상자를 포함하고 있어 매우 유용한 참고 자료입니다.
+
+React를 배울 때 가장 좋은 방법은 직접 만들어 보는 것입니다. `<script>`를 사용하고 지금까지 배운 내용을 활용해 기존 웹사이트에 작은 컴포넌트를 추가함으로써 React를 점진적으로 적용해 볼 수 있습니다. 그러나 많은 개발자들이 React가 제공하는 사용자 및 개발자 경험이 충분히 가치 있어서 바로 전체 프론트엔드 프로젝트를 React로 작성하기로 결정하게 됩니다.
+
+### React에서 Next.js로
+React는 UI 구축에 뛰어나지만, 해당 UI를 완전히 기능하는 확장 가능한 애플리케이션으로 독립적으로 구축하는 데는 일정한 작업이 필요합니다. 좋은 소식은 Next.js가 설정과 구성의 대부분을 처리하며 React 애플리케이션을 구축하는 데 도움이 되는 추가 기능을 갖추고 있다는 것입니다.
+
+다음으로, React에서 Next.js로 예제를 이전하고, Next.js가 어떻게 작동하는지, 그리고 여러분이 좀 더 고급 Next.js 기능을 배울 수 있도록 웹 개발 개념을 소개할 것입니다.
