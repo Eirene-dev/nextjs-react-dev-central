@@ -7,19 +7,107 @@ export const docsConfig: DocsConfig = {
       href: '/docs',
       items: [
         {
-          title: '개발 가이드 문서 개요',
-          href: '/getting-started',
-          disabled: true,
-        },
-        {
           title: 'Next.js 기초',
           href: '/docs/getting-started/nextjs-foundation',
-          disabled: true,
+          items: [
+            {
+              title: 'Next.js 개요',
+              href: '/docs/getting-started/nextjs-foundation/about-nextjs',
+              disabled: false,
+            },
+            {
+              title: 'JavaScript에서 React로',
+              href: '/docs/getting-started/nextjs-foundation/from-javascript-to-react',
+              disabled: false,
+            },
+            {
+              title: 'React에서 Next.js로',
+              href: '/docs/getting-started/nextjs-foundation/from-react-to-nextjs',
+              disabled: false,
+            },
+            {
+              title: 'Next.js 동작 방식',
+              href: '/docs/getting-started/nextjs-foundation/how-nextjs-works',
+              disabled: false,
+            },
+          ],
         },
         {
           title: 'Next.js 첫번째 앱 만들기',
           href: '/docs/getting-started/nextjs-first-app',
-          disabled: true,
+          items: [
+            {
+              title: 'Next.js 앱 생성',
+              href: '/docs/getting-started/nextjs-first-app/create-nextjs-app',
+              disabled: false,
+            },
+            {
+              title: '페이지 간 이동',
+              href: '/docs/getting-started/nextjs-first-app/navigate-between-pages',
+              disabled: false,
+            },
+            {
+              title: '메타데이터/Assets/CSS',
+              href: '/docs/getting-started/nextjs-first-app/assets-metadata-css',
+              disabled: false,
+            },
+            {
+              title: '데이터 가져오기',
+              href: '/docs/getting-started/nextjs-first-app/data-fetching',
+              disabled: false,
+            },
+            {
+              title: '동적 라우팅',
+              href: '/docs/getting-started/nextjs-first-app/dynamic-routes',
+              disabled: false,
+            },
+            {
+              title: 'API 라우팅',
+              href: '/docs/getting-started/nextjs-first-app/api-routes',
+              disabled: false,
+            },
+            {
+              title: 'Next.js 앱 배포하기',
+              href: '/docs/getting-started/nextjs-first-app/deploying-nextjs-app',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: '검색 엔진 최적화',
+          href: '/docs/getting-started/seo',
+          items: [
+            {
+              title: 'SEO 소개',
+              href: '/docs/getting-started/seo/introduction-to-seo',
+              disabled: false,
+            },
+            {
+              title: '크롤링 및 색인화',
+              href: '/docs/getting-started/seo/crawling-and-indexing',
+              disabled: false,
+            },
+            {
+              title: '렌더링 및 랭킹',
+              href: '/docs/getting-started/seo/rendering-and-ranking',
+              disabled: false,
+            },
+            {
+              title: '웹 성능 & 코어 웹 바이탈',
+              href: '/docs/getting-started/seo/web-performance',
+              disabled: false,
+            },
+            {
+              title: '코어 웹 바이탈 개선',
+              href: '/docs/getting-started/seo/improve',
+              disabled: false,
+            },
+            {
+              title: '코어 웹 바이탈 모니터링',
+              href: '/docs/getting-started/seo/monitor',
+              disabled: false,
+            },
+          ],
         },
       ],
     },

@@ -38,7 +38,7 @@ export async function generateMetadata({
   if (params.slug) {
     slug = decodeURI(params.slug.join('/'))
   } else {
-    slug = 'overview'
+    slug = '/'
   }
   const post = allDocs.find((p) => p.slug === slug)
   const authorList = post?.authors || ['default']
@@ -92,7 +92,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
   if (params.slug) {
     slug = decodeURI(params.slug.join('/'))
   } else {
-    slug = 'overview'
+    slug = 'getting-started'
   }
   const sortedPosts = sortPosts(allDocs) as Doc[]
   const postIndex = sortedPosts.findIndex((p) => p.slug === slug)

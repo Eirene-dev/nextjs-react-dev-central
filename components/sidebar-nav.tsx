@@ -57,7 +57,7 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
                 rel={item.external ? 'noreferrer' : ''}
                 onClick={onClose}
               >
-                [ {item.title} ]
+                <span className="font-semibold text-pink-600">{item.title}</span>
               </Link>
             ) : (
               <span className="flex items-center p-2 text-sm rounded-md">[ {item.title} ]</span>
@@ -94,7 +94,7 @@ export function DocsSidebarNavItems({
             <div key={index} className="pb-2">
               <div className="flex items-center">
                 <button
-                  className="px-1 py-1 text-sm font-medium rounded-md cursor-pointer"
+                  className="px-2 py-1 text-sm font-medium rounded-md cursor-pointer"
                   onClick={() => handleToggle(item.title)}
                 >
                   {expanded.includes(item.title) ? (
@@ -113,7 +113,7 @@ export function DocsSidebarNavItems({
                     rel={item.external ? 'noreferrer' : ''}
                     onClick={onClose}
                   >
-                    ( {item.title} )
+                    <span className="font-semibold text-pink-400">{item.title} </span>
                   </Link>
                 ) : (
                   <span className="flex items-center p-1 text-sm rounded-md">[ {item.title} ]</span>
@@ -136,21 +136,21 @@ export function DocsSidebarNavItems({
           <Link
             key={index}
             href={item.href}
-            className={cn('flex px-3 w-full items-center rounded-md p-2 hover:underline', {
+            className={cn('flex items-center w-full p-2 pl-4 rounded-md hover:underline', {
               'bg-muted': pathname === item.href,
             })}
             target={item.external ? '_blank' : ''}
             rel={item.external ? 'noreferrer' : ''}
             onClick={onClose}
           >
-            <ChevronsRight size={12} strokeWidth={1} /> {item.title}
+            <ChevronsRight size={12} strokeWidth={1} className="mr-2" /> {item.title}
           </Link>
         ) : (
           <span
             key={index}
-            className="flex items-center w-full p-2 rounded-md cursor-not-allowed opacity-60"
+            className="flex items-center w-full p-2 pl-4 rounded-md cursor-not-allowed opacity-60"
           >
-            <ChevronsRight size={12} strokeWidth={1} /> {item.title}
+            <ChevronsRight size={12} strokeWidth={1} className="mr-2" /> {item.title}
           </span>
         )
       })}
