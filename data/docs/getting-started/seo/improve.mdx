@@ -1,10 +1,306 @@
 ---
 title: 코어 웹 바이탈 개선
 date: '2023-01-01 03:05'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: Lighthouse 도구를 통한 웹 성능 척도와 이미지, 폰트, 스크립트 등의 최적화 방법 및 예제를 중점적으로 다룹니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+## 핵심 웹 척도 개선 개요
+
+<span className="font-semibold bg-yellow-100">Next.js 기능을 활용하여 예제의 핵심 웹 척도를 어떻게 개선</span>할 수 있는지 살펴보겠습니다.
+
+이 장에서는 다음 내용을 학습합니다:
+
+- Lighthouse가 무엇인지와 이를 어떻게 사용하는지.
+- `next/image`를 사용하여 이미지를 자동으로 최적화하는 방법.
+- 라이브러리와 컴포넌트를 동적으로 가져와 초기 JS 번들 크기를 줄이는 방법.
+- 서드파티 스크립트에 미리 연결하는 방법.
+- Next.js가 기본적으로 웹 폰트 로딩을 어떻게 최적화하는지.
+- 모든 서드파티 스크립트의 로딩을 최적화하는 방법.
+
+## Lighthouse 소개
+앞서 본 바와 같이 핵심 웹 척도는 <span className="font-bold underline">로딩 성능(Largest Contentful Paint 가장 큰 내용적인 그림), 상호 작용(First Input Delay 첫 입력 지연), 시각적 안정성(Cumulative Layout Shift 누적 레이아웃 이동)의 사용자 경험 측면</span>에 중점을 둡니다.
+
+
+이 장에서는 Lighthouse라는 시뮬레이트된 환경을 사용하여 핵심 웹 척도를 어떻게 측정하는지에 집중하겠습니다.
+
+<Callout type="warning">
+참고: 이 장에서는 크롬 개발자 도구를 사용하겠습니다. 그러나 Lighthouse를 실행하는 여러 방법이 있습니다.
+</Callout>
+
+Lighthouse는 제공된 URL에서 일련의 검사를 실행합니다. 이러한 검사를 기반으로 페이지의 성능을 어떻게 했는지에 대한 보고서를 생성합니다. 개선이 필요한 영역이 있다면, 보고서는 개선 방법에 대한 통찰력을 제공합니다.
+
+Lighthouse 보고서의 두 가지 예제를 통해 핵심 웹 척도가 건강한 사이트와 그렇지 않은 사이트의 차이를 살펴보겠습니다.
+
+### 최적화된 예제
+Lighthouse가 어떻게 작동하는지 예제를 보려면 홈페이지 [https://nextjs.org](https://nextjs.org)을 사용하겠습니다.
+
+1. 크롬을 엽니다.
+2. 시크릿 창에서 [https://nextjs.org](https://nextjs.org)로 이동합니다.
+3. 개발자 도구를 열고 **Lighthouse** 탭을 클릭합니다.
+4. **보고서 생성**을 클릭합니다.
+
+이제 60초 미만의 시간 동안 보고서를 실행해야 합니다.
+<Callout type="danger">
+참고: 보고서는 항상 시크릿 창에서 실행해야 합니다. 왜냐하면 서드파티 플러그인이 보고서에 영향을 미치기 때문입니다.
+</Callout>
+
+게다가 광고 차단 프로그램은 스크립트 로딩을 차단할 수 있어 완전한 검사를 제공하지 않습니다. 성능을 측정하기 위해 깨끗한 프로파일을 설정하는 것을 고려하세요.
+
+보고서 예제:
+![Lighthouse example](https://nextjs.org/static/images/learn/seo/lighthouse.png)
+
+### 최적화되지 않은 예제
+이 튜토리얼을 위해 어떠한 최적화도 없이 애플리케이션을 생성했습니다.
+
+### 프로젝트 설정
+이것은 기본적으로 최적화되지 않은 애플리케이션으로, 방문자가 두 가지 작업을 할 수 있게 해줍니다: 국가를 검색하여 인구를 검색하고 팝업 모달을 읽기 위해 버튼을 클릭합니다. 이 애플리케이션은 서드파티 라이브러리의 사용을 피할 수 없는 대규모 애플리케이션에서 작업하는 현실을 모방하기 위해 만들어졌습니다.
+
+### 시작 코드 다운로드
+```bash
+npx create-next-app@latest nextjs-lighthouse \
+--use-npm \
+--example "https://github.com/vercel/next-learn/tree/main/seo"
+```
+
+### 프로덕션 빌드 실행
+Lighthouse에서 정확한 보고서를 얻기 위해 항상 프로덕션 빌드로 애플리케이션을 테스트해야 합니다. 프로덕션 빌드를 실행하려면 프로젝트 디렉토리로 이동합니다:
+
+```bash
+cd nextjs-lighthouse
+```
+`next build`를 실행하여 애플리케이션을 빌드하고 `next start`를 실행하여 서버를 프로덕션 모드로 시작합니다.
+
+```bash
+npm run build && npm run start
+```
+크롬 개발자 도구로 Lighthouse 보고서를 실행해봅시다. 보고서가 완료되면 사이트를 최적화하고 척도를 개선하기 시작합시다.
+
+
+## 이미지 컴포넌트와 자동 이미지 최적화
+### 최적화되지 않은 이미지
+일반 HTML을 사용하여 우리의 히어로 이미지를 다음과 같이 추가했습니다:
+```html
+<img src="large-image.jpg" alt="Large Image" />
+```
+그러나, 이것은 우리가 수동으로 몇 가지 것들을 최적화해야 한다는 것을 의미합니다:
+
+- 이미지가 다른 화면 크기에서 반응형으로 표시되는지 확인.
+- 서드파티 도구나 라이브러리로 이미지 최적화.
+- 뷰포트에 진입할 때 이미지를 지연 로딩.
+
+### Image 컴포넌트
+<span className="font-semibold bg-yellow-100">Next는 이러한 최적화를 자동으로 처리할 수 있는 Image 컴포넌트를 제공</span>합니다.
+
+`next/image`는 현대 웹을 위해 진화된 HTML img 요소의 확장입니다.
+
+즉, 브라우저가 지원하는 경우 WebP와 같은 현대 포맷에서 이미지의 크기를 조정하고, 최적화하고, 제공하는 것이 `next/image`를 사용하여 자동으로 수행될 수 있습니다.
+
+이 컴포넌트는 더 작은 뷰포트를 가진 장치에 큰 이미지를 제공하지 않고 Next.js가 미래의 이미지 포맷을 채택하고 그 이미지를 지원하는 브라우저에 제공하도록 합니다.
+
+자동 이미지 최적화는 모든 이미지 소스에서 작동합니다. 이미지가 CMS와 같은 외부 데이터 소스에서 호스팅되더라도 여전히 최적화될 수 있습니다.
+
+### 자동 이미지 최적화는 어떻게 작동하나요?
+#### 요청에 따른 최적화
+Next.js는 이미지를 빌드 시간에 최적화하는 대신 사용자가 요청할 때 이미지를 최적화합니다. 정적 사이트 생성기와 정적-only 솔루션과 달리, 빌드 시간은 10개의 이미지를 제공하든 1000만 개의 이미지를 제공하든 증가하지 않습니다.
+
+#### 지연 로딩된 이미지
+이미지는 기본적으로 지연 로딩됩니다. 뷰포트 밖에 있는 이미지로 인해 페이지 속도가 저하되지 않습니다. 이미지는 보이는 곳에서만 로드됩니다.
+
+#### CLS 피하기
+이미지는 누적 레이아웃 이동(CLS)을 피하기 위해 항상 렌더링됩니다.
+
+### Image 컴포넌트 사용하기
+`next/image`를 사용하여 앱을 업데이트하여 히어로 이미지를 표시해봅시다. height와 width 속성은 소스 이미지와 동일한 종횡비를 갖는 원하는 렌더링 크기여야 합니다.
+
+pages/index.js 파일을 열고 파일의 시작 부분에 'next/image'에서 Image를 가져오는 것을 추가합니다:
+```jsx
+import Image from 'next/image';
+```
+그런 다음 히어로 이미지를 Image 컴포넌트로 교체합니다:
+```jsx
+// 이전
+<img src="large-image.jpg" alt="Large Image" />
+
+// 이후
+<Image src="/large-image.jpg" alt="Large Image" width={3048} height={2024} />
+```
+Footer에도 이미지가 있습니다. 이것도 교체해봅시다:
+```jsx
+// 이전
+<img src="/vercel.svg" alt="Vercel Logo" />
+
+// 이후
+<Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+```
+
+마지막으로 크롬 개발자 도구에서 다른 Lighthouse 보고서를 실행하고 결과를 비교합니다.
+
+## 동적 임포트
+이번 레슨에서는 서드파티 라이브러리로부터 초기 페이지 로드 시 로드되는 자바스크립트의 양을 줄입니다.
+
+Next.js는 자바스크립트에 대한 ES2020 동적 `import()`를 지원합니다. 이를 통해 자바스크립트 모듈을 동적으로 가져와서 사용할 수 있습니다. 이들은 서버 사이드 렌더링(SSR)과도 함께 동작합니다.
+
+동적 임포트를 코드를 관리할 수 있는 청크로 나누는 또 다른 방법으로 생각해보세요.
+
+`pages/index.js` 파일을 열고, 우리가 파일 아래에서 동적으로 임포트할 예정이므로 파일 시작 부분의 다음 두 가지 임포트를 제거합니다.
+```jsx
+import Fuse from 'fuse.js';
+import _ from 'lodash';
+```
+지금은 다음 코드도 제거하려고 합니다:
+
+```jsx
+const fuse = new Fuse(countries, {
+  keys: ['name'],
+  threshold: 0.3,
+});
+```
+이 코드를 제거한 후, 동적으로 임포트된 라이브러리를 사용하여 검색 입력을 설정하겠습니다.
+
+입력 값을 다음 코드로 교체할 수 있습니다:
+```jsx
+<input
+  type="text"
+  placeholder="Country search..."
+  className={styles.input}
+  onChange={async (e) => {
+    const { value } = e.currentTarget;
+    // 동적으로 라이브러리 로드
+    const Fuse = (await import('fuse.js')).default;
+    const _ = (await import('lodash')).default;
+
+    const fuse = new Fuse(countries, {
+      keys: ['name'],
+      threshold: 0.3,
+    });
+
+    const searchResult = fuse.search(value).map((result) => result.item);
+
+    const updatedResults = searchResult.length ? searchResult : countries;
+    setResults(updatedResults);
+
+    // 가짜 분석 히트
+    console.info({
+      searchedAt: _.now(),
+    });
+  }}
+/>
+```
+동적 임포트를 사용함으로써, 이는 페이지 로드 시 "사용하지 않는 자바스크립트 제거" 문제를 해결합니다. 이는 또한 우리의 상호작용 시간(Time to Interactive, TTI)을 개선하는데 도움을 주며, 이는 First Input Delay (FID)를 개선하는데 도움을 줍니다.
+
+크롬 개발자 도구에서 다른 Lighthouse 보고서를 실행하여 우리의 진행 상황을 확인해보겠습니다.
+
+
+## 컴포넌트의 동적 임포트
+다음으로, 초기 페이지 로드시 필요하지 않은 React 컴포넌트에 주목해봅시다.
+
+React 컴포넌트 또한 동적 임포트를 사용하여 가져올 수 있지만, 이 경우에는 다른 React 컴포넌트처럼 작동하도록 보장하기 위해 next/dynamic과 함께 사용합니다.
+
+Hello World 코드 샘플이 포함된 모달의 로딩을 지연시키기 위해 이 방법을 사용하겠습니다. 이렇게 함으로써 초기 페이지 로드에서 두 개의 서드파티 라이브러리를 추가로 제거합니다.
+
+pages/index.js 파일을 열고, 파일의 시작 부분에 next/dynamic에서 dynamic을 가져오도록 추가합니다:
+```jsx
+import dynamic from 'next/dynamic';
+```
+이 라인도 제거해야 합니다:
+```jsx
+import CodeSampleModal from '../components/CodeSampleModal';
+```
+이제 다음을 파일의 시작 부분에 추가함으로써 동적 컴포넌트로 가져올 수 있습니다:
+```jsx
+const CodeSampleModal = dynamic(() => 
+    import('../components/CodeSampleModal'), {
+  ssr: false,
+});
+```
+CodeSampleModal은 ../components/CodeSampleModal에서 반환되는 기본 컴포넌트가 됩니다. 일반 React 컴포넌트처럼 작동하며, 평소처럼 props를 전달할 수 있습니다.
+
+이 컴포넌트가 서버에서 필요하지 않기 때문에 ssr: false를 사용하여 비활성화했습니다.
+
+다음으로, 사용자가 필요로 할 때까지 이 컴포넌트의 로딩을 지연시키고 싶습니다. 이를 위해 모달이 열려야 하는지 확인하는 조건부로 컴포넌트를 감쌀 수 있습니다.
+
+CodeSampleModal 컴포넌트를 다음과 같이 감싸주세요:
+```jsx
+{
+  isModalOpen && (
+    <CodeSampleModal
+      isOpen={isModalOpen}
+      closeModal={() => setIsModalOpen(false)}
+    />
+  );
+}
+```
+이제 isModalOpen이 처음으로 true로 전환될 때 필요한 JavaScript가 요청됩니다.
+
+이런 최적화를 통해 웹사이트의 성능 지표가 향상되어야 합니다. 크롬 개발자 도구에서 다른 Lighthouse 보고서를 실행하여 확인해보세요.
+
+두 가지 최적화 제안사항이 남아 있습니다:
+
+- <span className="font-bold underline">HTTP2 사용하기</span>: 이 문제를 해결하기 위해 HTTP2를 지원하는 곳(예: Vercel)에 배포할 수 있습니다.
+- <span className="font-bold underline">이미지 요소에는 명시적인 너비와 높이가 없습니다</span>: 이것은 실제로 lighthouse의 버그이며 사이트 성능에 영향을 주지 않습니다.
+
+## 폰트 최적화
+데스크톱용 웹 페이지의 82%가 웹 폰트를 사용합니다. 사용자 정의 폰트는 브랜딩, 디자인 및 브라우저/장치 간 일관성을 위해 중요합니다. 그러나 웹 폰트를 사용하는 것은 성능을 희생해서는 안 됩니다.
+
+<span className="font-semibold bg-yellow-100">Next.js는 내장된 웹폰트 자동 최적화</span>를 가지고 있습니다. 기본적으로, Next.js는 빌드 시간에 폰트 CSS를 자동으로 인라인 처리하여 폰트 선언을 가져오기 위한 추가 여행을 제거합니다. 이로 인해 First Contentful Paint (FCP) 및 Largest Contentful Paint (LCP)가 개선됩니다.
+
+예를 들어, Next.js가 폰트를 최적화하기 전과 후입니다.
+
+최적화 전에는 추가 네트워크 요청이 필요합니다:
+```jsx
+<link 
+  href="https://fonts.googleapis.com/css2?family=Inter" 
+  rel="stylesheet" 
+/>
+```
+최적화 후, Next.js는 폰트 CSS를 인라인 처리해줍니다:
+```jsx
+<style data-href="https://fonts.googleapis.com/css2?family=Inter">
+  @font-face{font-family:'Inter';font-style:normal.....
+</style>
+```
+
+## 서드파티 스크립트 최적화
+많은 응용 프로그램들이 분석, 광고, 고객 지원 위젯과 같은 다양한 유형의 기능을 포함하기 위해 서드파티 JavaScript에 의존합니다.
+그러나, <span className="text-red-600 font-bold">서드파티가 제공한 코드를 너무 일찍 불러오면 페이지 컨텐츠의 렌더링을 지연시키고 사용자 성능에 영향</span>을 줄 수 있습니다.
+
+<span className="font-semibold bg-yellow-100">Next.js는 최적화된 로딩을 위한 내장된 Script 컴포넌트를 제공</span>하며, 개발자에게 <span className="font-bold underline">언제 가져오고 실행할지 결정할 옵션</span>을 제공합니다.
+
+### Script 컴포넌트 사용
+일반 HTML을 사용하여, 외부 스크립트는 수동으로 next/head에 추가되어야 합니다:
+```jsx
+import Head from 'next/head';
+
+function IndexPage() {
+  return (
+    <div>
+      <Head>
+        <script 
+          src="https://www.googletagmanager.com/gtag/js?id=123" 
+        />
+      </Head>
+    </div>
+  );
+}
+```
+Next.js의 Script 컴포넌트를 사용하면 next/head를 사용할 필요 없이 컴포넌트 어디에서나 추가할 수 있습니다:
+```jsx
+import Script from 'next/script';
+
+function IndexPage() {
+  return (
+    <div>
+      <Script
+        strategy="afterInteractive"
+        src="https://www.googletagmanager.com/gtag/js?id=123"
+      />
+    </div>
+  );
+}
+```
+Script 컴포넌트는 최적의 로딩을 위해 스크립트를 가져오고 실행할 시기를 결정할 수 있게 하는 전략 속성을 도입했습니다. 
+가장 큰 컨텐츠 그림(LCP)에 부정적인 영향을 주지 않기 위해 대부분의 서드파티 스크립트는 페이지의 모든 내용이 로딩된 후에 
+즉, 페이지가 상호 작용 가능해진 직후 `(strategy="afterInteractive")` 또는 브라우저가 유휴 상태일 때 `(strategy="lazyOnload")`
+로드를 지연시켜야 합니다.

@@ -1,10 +1,145 @@
 ---
 title: 웹 성능 & 코어 웹 바이탈
 date: '2023-01-01 03:04'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: Google이 웹 사용자 경험을 측정하기 위해 제시한 핵심 웹 척도(LCP, FID, CLS)에 대한 개념, SEO와 UX에 미치는 영향, 그리고 Lighthouse의 척도 가중치에 관한 정보를 제공합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+## 웹 성능 & 핵심 웹 척도 개요
+
+<span className="text-blue-600 font-bold">웹 척도(Web Vitals)</span>는 
+<span className="font-semibold bg-yellow-100">Google이 웹에서 최종 사용자 페이지 경험을 측정하기 위해 제공하는 통합 지침 및 지표</span>의 선도적인 이니셔티브입니다.
+
+핵심 웹 척도는 웹 척도의 하위 집합이며 현재는 <span className="font-bold underline">로딩</span>, 
+<span className="font-bold underline">상호 작용</span> 및 <span className="font-bold underline">시각적 안정성</span>을 측정하는 세 가지 지표로 구성되어 있습니다.
+
+<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+<Card>
+### <span className="text-red-600 font-bold">LCP</span>: Largest Contentful Paint
+가장 큰 내용적인 그림
+</Card>
+<Card>
+### <span className="text-red-600 font-bold">FID</span>: First Input Delay
+첫 입력 지연
+</Card>
+<Card>
+### <span className="text-red-600 font-bold">CLS</span>: Cumulative Layout Shift
+누적 레이아웃 이동
+</Card>
+
+</div>
+
+이 세 지표에서 높은 점수를 얻으면 사용자에게 더 부드러운 웹사이트 경험을 제공할 수 있습니다.
+
+핵심 웹 척도 각 지표에서 점수가 낮은 웹사이트는 Google이 <span className="font-bold underline">검색 알고리즘의 순위 요인으로 핵심 웹 척도를 사용</span>하기 시작함에 따라 검색 엔진 순위에 영향을 줄 수 있습니다. 나쁜 척도는 웹 트래픽 및 비즈니스에 영향을 줄 수 있습니다.
+
+이 강의에서는 다음과 같은 내용을 배울 수 있습니다:
+
+- 핵심 웹 척도에 대한 간략한 배경.
+- 핵심 웹 척도의 SEO 및 UX 영향과 웹사이트에 미치는 영향.
+- 개발 과정에서 핵심 웹 척도에 관심을 가져야 하는 이유와 측정 방법.
+- Next.js를 사용하여 핵심 웹 척도를 향상시키고 변화를 모니터링하는 방법.
+
+## 핵심 웹 척도 (Web Vitals)
+
+이 강의에서는 다양한 지표들, 핵심 웹 척도가 SEO에 미치는 영향, 그리고 사용자 경험에 대한 중요성을 살펴볼 것입니다.
+
+핵심 웹 척도를 측정할 때 세 가지 다른 값이 있습니다: "<span className="text-blue-600 font-bold">Good(좋음)</span>", "<span className="font-bold underline">Need Improvement(개선 필요)</span>", "<span className="text-red-600 font-bold">Poor(나쁨)</span>". 이러한 값은 측정되는 척도에 따라 다릅니다.
+
+![Web Vitals](https://nextjs.org/static/images/learn/seo/vitals-light.png)
+
+핵심 웹 척도에는 두 가지 방법으로 접근할 수 있습니다:
+
+1. <span className="font-bold underline">각 지표에서 최대 점수를 얻으려고 노력합니다.</span> 완벽을 추구하는 것은 훌륭하지만, 많은 의존성이 있는 큰 웹사이트에서는 까다로울 수 있습니다.
+2. <span className="font-bold underline">귀하의 산업에서 경쟁자와 벤치마킹합니다.</span> Google 검색에서 모든 최적화된 웹사이트와 경쟁하는 것이 아니라 귀하의 목표 키워드를 위한 순위를 매기는 다른 웹사이트와 경쟁합니다.
+
+### 가장 큰 내용적인 그림 (LCP)
+![LCP](https://nextjs.org/_next/image?url=%2Fstatic%2Fimages%2Flearn%2Fseo%2Flcp.png&w=750&q=75&dpl=dpl_GcA5mjAFVmTrkgsidGoRTEoi8Rxw)
+
+LCP 지표는 <span className="font-semibold bg-yellow-100">페이지의 로딩 성능</span>을 살펴봅니다. 
+LCP는 <span className="font-bold underline">페이지 내에서 가장 큰 요소가 화면에 나타나는 데 걸리는 시간</span>을 측정합니다. 
+이것은 페이지의 주요 부분을 차지하는 <span className="text-red-600 font-bold">큰 텍스트 블록</span>, <span className="text-red-600 font-bold">비디오</span> 또는 <span className="text-red-600 font-bold">이미지</span>일 수 있습니다.
+
+<Callout type="warning">
+참고: 이것은 페이지가 로딩을 시작할 때 첫 번째 요소가 화면에 렌더링되는 시간을 측정하는 첫 번째 내용 그림(FCP)이 아닙니다.
+</Callout>
+
+DOM이 렌더링될 때 페이지의 가장 큰 요소는 변경될 수 있습니다. 가장 큰 이미지나 요소가 화면에 표시될 때까지 가장 큰 내용적인 그림은 계속 카운트되지 않습니다.
+
+<details className="bg-gray-100 p-2 rounded-md">
+  <summary>자세히 알아보기: **페이지 가장 큰 요소가 변경 되는 사례**</summary>
+
+**가장 큰 내용적인 그림 (LCP) 관련 예시**
+
+- 예시 1: 지연 로딩 이미지
+
+웹 페이지에서 여러 이미지가 로드되고 있고, 이 중에 하나는 특히 큰 배너 이미지입니다. 이 이미지는 페이지 상단에 위치하고 있지만, 개발자는 페이지 로드 속도를 향상시키기 위해 '지연 로딩(lazy loading)'을 적용했습니다.
+
+이 경우, 사용자가 페이지를 처음 방문하면 작은 이미지나 텍스트가 먼저 로딩됩니다. 그러나 사용자가 스크롤을 하지 않아도 배너 이미지가 화면 상단에 나타나야 하므로, 이 큰 배너 이미지가 로딩되기 전까지 LCP는 완료되지 않습니다. 따라서, 가장 큰 이미지나 요소가 화면에 표시될 때까지 LCP의 타이밍은 계속 진행됩니다.
+
+- 예시 2: 웹폰트의 로딩
+
+웹 페이지에서 큰 텍스트 제목이 있는데, 이 텍스트는 특별한 웹폰트를 사용하도록 디자인되었습니다. 웹폰트는 외부 서버에서 로딩되며, 때때로 이 로딩이 지연될 수 있습니다.
+
+초기에는 브라우저의 기본 폰트로 텍스트가 표시되다가, 웹폰트가 로드되면 텍스트의 모양이 바뀔 수 있습니다. 이 변경되는 시점에서 LCP는 해당 텍스트 블록을 "가장 큰 내용적인 그림"으로 간주할 수 있고, 웹폰트 로딩이 완료될 때까지 LCP의 측정이 계속됩니다.
+
+이러한 예시들은 LCP가 웹 페이지의 "가장 큰" 요소가 렌더링되는 시점을 측정한다는 것을 보여줍니다. 그리고 "가장 큰" 요소는 초기 로딩 시점에서 다른 요소로 대체될 수 있습니다.
+
+</details>
+
+
+### 첫 입력 지연 (FID)
+FID 지표는 <span className="font-semibold bg-yellow-100">웹 페이지와 상호 작용하는 최종 사용자의 경험에 대한 인식</span>입니다. 입력 상자 내부를 클릭하는데 아무런 반응이 없다면 – 이러한 상호 작용과 반응성의 사이트에 대한 큰 입력 지연으로 인한 좌절감을 상상해보십시오.
+
+![FID](https://nextjs.org/static/images/learn/seo/fid.png)
+
+FID는 실제 사용자 데이터가 필요하며 실험실에서 측정할 수 없습니다(예: Google Lighthouse). 
+그러나 <span className="text-blue-600 font-bold">Total Blocking Time (TBT)</span> 지표는 실<span className="font-semibold bg-yellow-100">험실에서 측정 가능</span>하며 상호 작용에 영향을 미치는 문제를 포착합니다.
+
+### 누적 레이아웃 이동 (CLS)
+
+CLS 지표는 <span className="font-semibold bg-yellow-100">사이트의 전반적인 레이아웃 안정성을 측정</span>합니다. 페이지가 로드될 때 예기치 않게 레이아웃이 이동하면 사용자의 실수나 방해가 발생할 수 있습니다.
+
+누적 레이아웃 이동(CLS)은 요소가 DOM에 의해 처음 렌더링된 후 이동되었을 때 발생합니다. 여기에서는 버튼이 텍스트 블록 뒤에 화면에 렌더링되어 블록이 아래로 이동했습니다. 충격과 거리의 조합이 CLS를 계산할 때 고려됩니다.
+
+![CLS](https://nextjs.org/static/images/learn/seo/cls.png)
+
+화면에 새로운 요소가 렌더링될 때 위치가 변경된 요소는 CLS에 영향을 줍니다.
+
+![CLS2](https://nextjs.org/static/images/learn/seo/cls-example.png)
+요소의 개별 레이아웃 이동 점수는 예기치 않은 움직임이 발생할 경우에만 CLS로 계산됩니다. 
+
+DOM에 새로운 요소가 추가되거나 기존 요소의 크기가 변경되면 로드된 요소가 위치를 유지하는 경우 레이아웃 이동으로 계산되지 않습니다.
+
+## SEO 영향
+Google 검색 엔진의 주요 목적은 사용자에게 최상의 결과를 제공하는 동시에 지역화와 오타를 고려하는 것입니다. 모든 경우에 Google은 사용자에게 빠르고 부드러운 결과와 훌륭한 웹사이트 경험을 제공하는 것을 중요시합니다.
+
+2018년부터 모바일 장치에서의 [웹 페이지 속도](https://developer.chrome.com/blog/search-ads-speed/)가 순위 요인이었습니다. 그러나 Google 검색 알고리즘이 순위 결정의 일부로 사용하는 구체적인 성능 지표가 무엇인지 명확하지 않았습니다.
+
+이것은 2021년 6월에 변경되었는데, Google이 성능을 분석하고 최적화하기 위한 [구체적인 지표와 범위](https://developers.google.com/search/blog/2021/04/more-details-page-experience?hl=ko)를 제공하였습니다.
+![SEO Impact](https://nextjs.org/static/images/learn/seo/page-experience.png)
+
+### Lighthouse (v6) Vitals에 대한 가중치
+세 가지 지표는 반드시 동등하게 평가되지 않습니다. [Lighthouse](https://developer.chrome.com/docs/lighthouse/overview/)에서는 핵심 웹 척도 각각에 다른 가중치가 부여됩니다:
+
+- <span className="font-bold underline">Largest Contentful Paint</span> <span className="font-semibold bg-yellow-100">가장 큰 내용적인 그림</span>: 25%
+- <span className="font-bold underline">Total Blocking Time</span> <span className="font-semibold bg-yellow-100">전체 차단 시간</span>*: 25%
+- <span className="font-bold underline">First Contentful Paint</span> <span className="font-semibold bg-yellow-100">첫 번째 내용 그림</span>: 15%
+- <span className="font-bold underline">Speed Index</span> <span className="font-semibold bg-yellow-100">속도 지수</span>: 15%
+- <span className="font-bold underline">Time to Interactive</span> <span className="font-semibold bg-yellow-100">상호 작용 시간</span>: 15%
+- <span className="font-bold underline">Cumulative Layout Shift</span> <span className="font-semibold bg-yellow-100">누적 레이아웃 이동</span>: 5%
+
+*이것은 FID 첫 입력 지연과 유사합니다.
+
+<Callout type="warning">
+참고: 모든 핵심 웹 척도가 좋은 범위에 있는 모든 페이지에 대한 Google 순위 영향은 개별 핵심 웹 척도 점수와 관계없이 동일할 것입니다.
+</Callout>
+
+### UX 영향
+핵심 웹 척도 주위의 대부분의 대화는 주로 SEO에 중점을 둡니다.
+
+핵심 웹 척도가 페이지 경험과 검색 순위의 개선을 측정하고 추진하기 위한 이니셔티브로 설계되었다는 것은 사실이지만, 이러한 변화로부터 최종적으로 혜택을 받는 것은 사용자들입니다.
+
+핵심 웹 척도는 최상의 페이지 경험을 추구하는 데 도움이 됩니다. 2012년 [아마존에서 수행한 연구](https://www.fastcompany.com/1825005/how-one-second-could-cost-amazon-16-billion-sales)에 따르면, 로드 시간이 1초 증가하면 회사에 16억 달러의 비용이 발생할 수 있습니다. 이러한 연구는 훌륭한 페이지 경험과 빠른 웹사이트의 중요성을 보여주며, 이러한 것들은 핵심 웹 척도가 도움을 줍니다.

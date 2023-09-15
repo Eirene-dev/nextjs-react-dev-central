@@ -100,17 +100,17 @@ export const docsConfig: DocsConfig = {
             {
               title: '웹 성능 & 코어 웹 바이탈',
               href: '/docs/getting-started/seo/web-performance',
-              disabled: true,
+              disabled: false,
             },
             {
               title: '코어 웹 바이탈 개선',
               href: '/docs/getting-started/seo/improve',
-              disabled: true,
+              disabled: false,
             },
             {
               title: '코어 웹 바이탈 모니터링',
               href: '/docs/getting-started/seo/monitor',
-              disabled: true,
+              disabled: false,
             },
           ],
         },
