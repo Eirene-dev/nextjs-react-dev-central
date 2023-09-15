@@ -42,7 +42,7 @@ Next.js는 이제 6살이 되었습니다. 우리의 원래 설계 원칙은 그
 ### 설정 없음. 파일시스템을 API로 사용
 파일 시스템 기반의 라우팅은 Next.js의 핵심 기능이었습니다. 
 
-<Callout type="danger" icon="Page Router">
+<Callout type="page" icon="Page Router">
 pages/about.js
 ```jsx 
 // 페이지 라우터
@@ -64,7 +64,7 @@ export default () => <h1>회사 소개</h1>;
 
 스트리밍과 호환되게 하고, 레이아웃에 대한 향상된 지원 요청을 해결하기 위해, 앱 라우터가 출시 되었습니다.
 
-<Callout type="warning" icon="App Router">
+<Callout type="app" icon="App Router">
 앱라우터의 레이아웃과 페이지는 이렇게 되었습니다.
 
 app/layout.js
@@ -91,7 +91,7 @@ export default function Page() {
 
 이 기반은 React 원시 요소를 확장하기 위해 처음 개발된 Next.js 특정 API를 제거할 수 있게 해주었습니다. 예를 들면, 전역 공유 레이아웃을 커스터마이즈하기 위해 `_app` 파일을 사용할 필요가 없습니다.
 
-<Callout type="danger" icon="Page Router">
+<Callout type="page" icon="Page Router">
 pages/_app.js
 ```jsx
 // 페이지 라우터
@@ -106,7 +106,7 @@ export default function MyApp({ Component, pageProps }) {
 <span className="text-red-600 font-bold">페이지 라우터를 사용하면 레이아웃을 구성할 수 없었고, 데이터 가져오기는 컴포넌트와 공유할 수 없었습니다.</span> 
 </Callout>
 
-<Callout type="warning" icon="App Router">
+<Callout type="app" icon="App Router">
 <span className="text-blue-600 font-bold">새로운 앱 라우터를 사용하면 이제 지원됩니다.</span>
 
 app/layout.js
@@ -136,7 +136,7 @@ export default function DashboardLayout({ children }) {
 ```
 </Callout>
 
-<Callout type="danger" icon="Page Router">
+<Callout type="page" icon="Page Router">
 페이지 라우터를 사용하면, `_document`를 사용하여 서버로부터 초기 페이로드를 커스터마이즈했습니다.
 
 pages/_document.js
@@ -161,7 +161,7 @@ export default function Document() {
 ```
 </Callout>
 
-<Callout type="warning" icon="App Router">
+<Callout type="app" icon="App Router">
 <span className="text-blue-600 font-bold">앱 라우터를 사용하면 Next.js에서 `<Html>`, `<Head>`, 및 `<Body>`를 가져올 필요가 없습니다. 대신에 React를 사용</span>하면 됩니다.
 
 app/layout.js
@@ -207,7 +207,7 @@ export default () => (
 
 이 컴포넌트는 애플리케이션 어디에서든 재사용하고 합성할 수 있는 로직을 캡슐화합니다. 파일 시스템 라우팅과 결합하여, JavaScript와 HTML을 작성하는 것처럼 느끼는 React 애플리케이션을 만드는 쉬운 방법을 제시합니다.
 
-<Callout type="danger" icon="Page Router">
+<Callout type="page" icon="Page Router">
 예를 들어, 어떤 데이터를 가져오고 싶다면, Next.js의 원래 버전은 이렇게 보였습니다:
 
 pages/index.js
@@ -229,7 +229,7 @@ export default class extends React.Component {
 
 `getInitialProps`는 서버와 클라이언트 모두에서 실행되었습니다. 이 API는 React 컴포넌트를 확장하여, `Promise`를 생성하고 결과를 컴포넌트의 `props`로 전달할 수 있게 해주었습니다.
 
-<Callout type="danger" icon="Page Router">
+<Callout type="page" icon="Page Router">
 `getInitialProps`는 여전히 작동하지만, 그 후로 고객의 피드백을 기반으로 다음 세대의 데이터 가져오기 API인 `getServerSideProps`와 `getStaticProps`에 대해 개선해 나갔습니다.
 
 pages/index.js
@@ -251,7 +251,7 @@ export async function getServerSideProps(context) {
 
 Next.js가 만들어진 이후, 우리는 Meta의 React 핵심 팀과 긴밀히 협력하여 React 원시 요소 위에 프레임워크 기능을 구축하였습니다. 우리의 파트너쉽은 React 핵심 팀의 연구 및 개발 노력과 결합하여, Next.js가 React 아키텍처의 최신 버전을 포함하여 우리의 목표를 달성할 수 있는 기회를 제공하였습니다.
 
-<Callout type="warning" icon="App Router">
+<Callout type="app" icon="App Router">
 App Router를 사용하면, 익숙한 `async`와 `await` 구문을 사용하여 데이터를 가져옵니다. 새로 배워야 할 API는 없습니다. 기본적으로 모든 컴포넌트는 React 서버 컴포넌트이므로 데이터 가져오기는 서버에서 안전하게 발생합니다. 예를 들면:
 
 app/page.js
@@ -310,7 +310,7 @@ Next.js를 개발할 때, 개발자들이 React 애플리케이션을 실행하�
 
 이것은 서버에서 렌더링된 애플리케이션뿐만 아니라 Next.js를 사용한 싱글 페이지 애플리케이션에도 유익했으며, 후자는 종종 애플리케이션 시작 시 단일 큰 JavaScript 번들을 로드했습니다. 그러나 컴포넌트 수준의 코드 분할을 구현하려면, 개발자들은 컴포넌트를 동적으로 가져오기 위해 `next/dynamic`을 사용해야 했습니다.
 
-<Callout type="danger" icon="Page Router">
+<Callout type="page" icon="Page Router">
 app/page.tsx
 ```jsx
 import dynamic from 'next/dynamic';
@@ -325,7 +325,7 @@ export default function Home() {
 ```
 </Callout>
 
-<Callout type="warning" icon="App Router">
+<Callout type="app" icon="App Router">
 App Router를 사용하면, 서버 컴포넌트는 브라우저용 JavaScript 번들에 포함되지 않습니다. 클라이언트 컴포넌트는 기본적으로 자동으로 코드 분할됩니다 (Next.js에서 webpack 또는 Turbopack 중 하나로). 게다가, 전체 라우터 아키텍처가 스트리밍 및 Suspense를 지원하므로 서버에서 클라이언트로 UI의 일부를 점진적으로 전송할 수 있습니다.
 
 예를 들어, 조건부 로직으로 전체 코드 경로를 코드 분할할 수 있습니다. 이 예에서는 로그아웃 사용자에게 대시보드의 클라이언트 측 JavaScript를 로드할 필요가 없습니다.
