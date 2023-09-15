@@ -85,17 +85,17 @@ export const docsConfig: DocsConfig = {
             {
               title: 'SEO 소개',
               href: '/docs/getting-started/seo/introduction-to-seo',
-              disabled: true,
+              disabled: false,
             },
             {
               title: '크롤링 및 색인화',
               href: '/docs/getting-started/seo/crawling-and-indexing',
-              disabled: true,
+              disabled: false,
             },
             {
               title: '렌더링 및 랭킹',
               href: '/docs/getting-started/seo/rendering-and-ranking',
-              disabled: true,
+              disabled: false,
             },
             {
               title: '웹 성능 & 코어 웹 바이탈',
