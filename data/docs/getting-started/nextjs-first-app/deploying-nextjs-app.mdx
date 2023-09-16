@@ -1,8 +1,157 @@
 ---
 title: Next.js 앱 배포하기
 date: '2023-01-01 02:07'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: Next.js 앱을 개발하고 GitHub에 푸시한 후, Vercel 플랫폼을 이용해 쉽게 배포하고, 다양한 Vercel 기능과 호스팅 옵션을 탐색한 뒤, 앱을 공유합니다.
 ---
 
-## 작성 예정
-작성 예정
+<TOCInline toc={props.toc} asDisclosure />
+
+## Next.js 앱 배포하기
+
+이 기본 수업의 마지막 부분에서는 Next.js 앱을 프로덕션 환경에 배포할 것입니다.
+
+Next.js의 창시자들이 만든 플랫폼인 Vercel에 Next.js를 배포하는 방법을 배우게 됩니다. 또한 다른 배포 옵션에 대해서도 이야기하겠습니다.
+
+선수 조건: 이 수업을 위해서는 GitHub 계정이 필요합니다.
+
+이 수업에서 배울 내용:
+이 수업에서는 다음을 배울 수 있습니다:
+
+- Vercel에 Next.js 앱을 배포하는 방법.
+- DPS 워크플로우: 개발(Develop), 미리보기(Preview), 배포(Ship).
+- 자신의 호스팅 제공 업체에 Next.js 앱을 배포하는 방법.
+
+## GitHub에 푸시하기
+배포하기 전에 아직 GitHub에 Next.js 앱을 푸시하지 않았다면 푸시하도록 합시다. 이렇게하면 배포가 더 쉬워집니다.
+
+- 개인 GitHub 계정에서 `nextjs-blog`이라는 새 저장소를 생성합니다.
+- 저장소는 공개 또는 비공개일 수 있습니다. README나 다른 파일로 초기화할 필요는 없습니다.
+- 저장소 설정에 도움이 필요하면 GitHub의 이 가이드를 확인하세요.
+그런 다음:
+
+- 아직 Next.js 앱의 로컬 git 저장소를 초기화하지 않았다면 지금 초기화합니다.
+- Next.js 앱을 GitHub 저장소에 푸시합니다.
+GitHub에 푸시하려면 다음 명령어를 실행하면 됩니다 ( `<username>`을 GitHub 사용자 이름으로 바꾸세요):
+```bash
+git remote add origin \
+https://github.com/<username>/nextjs-blog.git
+git push -u origin main
+```
+
+GitHub 저장소가 준비되면 다음 페이지로 계속하세요.
+
+## Vercel에 배포하기
+Next.js를 프로덕션에 배포하는 가장 쉬운 방법은 Next.js의 창시자들이 개발한 Vercel 플랫폼을 사용하는 것입니다.
+
+Vercel은 headless 콘텐츠, 커머스, 또는 데이터베이스와 통합하기 위해 만들어진 정적 및 하이브리드 애플리케이션용 서버리스 플랫폼입니다. 우리는 프론트엔드 팀이 성능이 기본인 매력적인 사용자 경험을 개발하고, 미리보기하고, 배포하는 것을 쉽게 도와줍니다. 신용카드 없이 무료로 사용해 볼 수 있습니다.
+
+### Vercel 계정 생성하기
+먼저, https://vercel.com/signup로 이동하여 Vercel 계정을 생성합니다. GitHub으로 계속하기를 선택하고 가입 과정을 진행합니다.
+
+### `nextjs-blog` 저장소 가져오기
+가입을 완료하면 Vercel에서 `nextjs-blog` 저장소를 가져옵니다. 여기에서 할 수 있습니다: https://vercel.com/import/git.
+
+GitHub용 Vercel을 설치해야 합니다. 모든 저장소에 액세스 권한을 부여할 수 있습니다.
+Vercel을 설치한 후 nextjs-blog를 가져옵니다.
+다음 설정의 기본값을 사용하면 됩니다. 변경할 필요는 없습니다. Vercel은 자동으로 Next.js 앱이 있음을 감지하고 최적의 빌드 설정을 선택합니다.
+
+- 프로젝트 이름
+- 루트 디렉토리
+- 빌드 명령어
+- 출력 디렉토리
+- 개발 명령어
+
+배포할 때, Next.js 앱이 빌드를 시작합니다. 1분 이내에 완료되어야 합니다.
+
+도움이 필요한 경우: 배포에 실패하면 항상 GitHub Discussions에서 도움을 받을 수 있습니다. 배포에 대해 더 알아보려면 문서를 참조하세요.
+
+완료되면 배포 URL을 받게 됩니다. URL 중 하나를 클릭하면 실시간으로 Next.js 시작 페이지를 볼 수 있습니다.
+
+축하합니다! 프로덕션에 Next.js 앱을 배포했습니다. 다음 페이지에서는 Vercel 및 추천 워크플로우에 대한 세부 정보를 다룰 것입니다.
+
+
+## Next.js와 Vercel
+
+Vercel은 Next.js의 창시자들에 의해 만들어졌으며 Next.js에 대한 일급 지원을 받고 있습니다. Next.js 앱을 Vercel에 배포하면 기본적으로 다음 작업이 수행됩니다:
+
+- 정적 생성(Static Generation)을 사용하는 페이지와 자산(JS, CSS, 이미지, 폰트 등)은 자동으로 Vercel Edge Network에서 빠르게 제공됩니다.
+- 서버 사이드 렌더링(Server-Side Rendering)과 API 라우트를 사용하는 페이지는 자동으로 독립된 서버리스 함수(Serverless Functions)가 됩니다. 이를 통해 페이지 렌더링과 API 요청이 무한히 확장될 수 있습니다.
+
+Vercel에는 다음과 같은 많은 기능들이 있습니다:
+
+- 사용자 정의 도메인(Custom Domains): Vercel에 배포된 후, 사용자 정의 도메인을 Next.js 앱에 할당할 수 있습니다. 여기서 문서를 확인해 보세요.
+- 환경 변수(Environment Variables): Vercel에서 환경 변수도 설정할 수 있습니다. 여기서 문서를 확인해 보세요. 그런 다음 이러한 환경 변수를 Next.js 앱에서 사용할 수 있습니다.
+- 자동 HTTPS: HTTPS는 기본적으로 활성화되어 있습니다(사용자 정의 도메인 포함) 및 추가 구성이 필요 없습니다. SSL 인증서는 자동으로 갱신됩니다.
+
+Vercel 플랫폼에 대한 자세한 정보는 Vercel 문서에서 알아볼 수 있습니다.
+
+### 모든 푸시에 대한 미리보기 배포
+아래의 단계들은 선택적입니다 — 시도해 보거나 그냥 읽어도 됩니다.
+
+Vercel에 배포한 후, 가능하다면 다음을 시도해보세요:
+
+앱에서 새 브랜치를 생성합니다.
+일부 변경 사항을 수행하고 GitHub에 푸시합니다.
+새로운 풀 리퀘스트(pull request)를 생성합니다(GitHub 도움말 페이지).
+풀 리퀘스트 페이지에서 vercel 봇에 의한 댓글을 확인할 수 있어야 합니다.
+![Vercel Button](https://nextjs.org/static/images/learn/deploying-nextjs-app/vercel-bot.png)
+
+이 댓글 내의 미리보기 URL을 클릭해 보세요. 방금 한 변경 사항을 볼 수 있어야 합니다.
+
+풀 리퀘스트를 열어두면, Vercel은 매 푸시마다 해당 브랜치에 대한 미리보기 배포를 자동으로 생성합니다. 미리보기 URL은 항상 최신의 미리보기 배포를 가리킵니다.
+
+이 미리보기 URL을 협업자와 공유하여 즉시 피드백을 받을 수 있습니다.
+
+미리보기 배포가 만족스러우면 `main`에 병합합니다. 이렇게 하면 Vercel은 자동으로 프로덕션 배포를 생성합니다.
+
+### 개발, 미리보기, 배포
+우리는 DPS라고 부르는 워크플로우를 방금 경험했습니다: 개발(Develop), 미리보기(Preview), 그리고 배포(Ship).
+
+- 개발(Develop): 우리는 Next.js에서 코드를 작성하고, 뜨거운 리로딩(hot reloading) 기능을 활용하기 위해 Next.js 개발 서버를 실행했습니다.
+- 미리보기(Preview): GitHub의 브랜치에 변경 사항을 푸시하였고, Vercel은 URL을 통해 접근 가능한 미리보기 배포를 생성하였습니다. 코드 리뷰뿐만 아니라 배포 미리보기도 가능합니다.
+- 배포(Ship): 프로덕션으로 배포하기 위해 풀 리퀘스트를 `main`에 병합했습니다.
+
+Next.js 앱을 개발할 때 이 워크플로우를 사용하는 것을 강력히 권장합니다 — 앱을 더 빠르게 반복 개발할 수 있습니다.
+
+
+## 다른 호스팅 옵션들
+Next.js는 Node.js를 지원하는 모든 호스팅 제공자에 배포될 수 있습니다.
+
+지금까지의 지시사항을 따랐다면, `package.json`에는 다음과 같은 `build`와 `start` 스크립트가 있어야 합니다:
+```json
+{
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  }
+}
+```
+자체 호스팅 제공자에서는 빌드 스크립트를 한 번 실행하여 `.next` 폴더에 프로덕션 애플리케이션을 구축합니다.
+```bash
+npm run build
+```
+빌드 후, `start` 스크립트는 정적으로 생성된 페이지와 서버 측 렌더링된 페이지, 그리고 API 라우트를 모두 지원하는 Node.js 서버를 시작합니다.
+```bash
+npm run start
+```
+
+팁: `package.json`에서 시작 스크립트를 수정하여 PORT 파라미터를 받아들일 수 있도록 다음과 같이 업데이트할 수 있습니다: `"start": "next start -p $PORT"`.
+
+그게 다입니다! Next.js 배포에 관한 질문이 있다면 GitHub Discussions에서 커뮤니티에 질문할 수 있습니다.
+
+## 마지막으로
+기본 수업을 모두 마친 것을 축하합니다! 다음은 권장하는 단계입니다:
+
+### Next.js 앱 공유하기
+이 튜토리얼에서 만든 앱을 Twitter에 공유하는 것을 권장합니다. 그렇게 한다면, 우리 팀을 @vercel에서 언급하여 우리가 확인할 수 있도록 해 주세요! 이 튜토리얼에 대한 피드백도 받아보고 싶습니다.
+
+### Next.js와 함께 TypeScript 사용하기
+TypeScript를 선호한다면, 여기에서 Next.js와 함께 TypeScript를 어떻게 사용하는지 알아볼 수 있습니다.
+
+### 다음에 배울 내용
+더 많은 정보를 얻기 위해 문서를 확인하세요. 특히, 다음 페이지들이 흥미롭게 느껴질 수 있습니다:
+
+- 데이터 가져오기(Data Fetching): 데이터 가져오기에 대해 깊이 있게 알아보세요.
+- 환경 변수(Environment Variables): 환경 변수에 대한 내장 지원에 대해 더 알아보세요.
+- 검색 엔진 최적화(Search Engine Optimization): Next.js 애플리케이션의 SEO를 최적화하는 방법을 알아보세요.

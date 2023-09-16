@@ -1,8 +1,441 @@
 ---
 title: 메타데이터/Assets/CSS
 date: '2023-01-01 02:03'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: Next.js에서 Assets 관리, 메타데이터 설정, 그리고 CSS 스타일링을 최적화하여 효율적인 웹 페이지를 구축하는 방법을 다룹니다.
 ---
 
-## 작성 예정
-작성 예정
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## Assets, 메타데이터, CSS 개요
+
+우리가 추가한 두 번째 페이지는 현재 스타일링이 적용되어 있지 않습니다. 페이지에 스타일을 주기 위해 CSS를 추가해 봅시다.
+
+Next.js는 CSS와 Sass를 기본적으로 지원합니다. 이 강좌에서는 CSS를 사용합니다.
+
+이 수업에서는 또한 이미지와 같은 정적 자산 및 `<title>` 태그와 같은 페이지 메타데이터에 대해 Next.js가 어떻게 처리하는지에 대해 설명합니다.
+
+이 수업에서 배울 내용:
+이 수업에서는 다음을 학습합니다:
+
+- Next.js에 정적 파일(이미지 등)을 추가하는 방법.
+- 각 페이지의 `<head>` 내부에 어떤 것이 들어가는지 사용자 지정하는 방법.
+- CSS 모듈을 사용하여 스타일링된 재사용 가능한 React 컴포넌트를 만드는 방법.
+- `pages/_app.js`에 전역 CSS를 추가하는 방법.
+- Next.js에서 스타일링을 위한 몇 가지 유용한 팁.
+
+사전 요구 사항
+기본 CSS 지식. 이 강좌는 Next.js 앱에 CSS를 추가하는 방법에 대해 다룰 것이지만, CSS의 기본사항은 다루지 않습니다.
+
+## Assets
+Next.js는 최상위 public 디렉토리 아래에서 이미지와 같은 정적 Asset을 제공할 수 있습니다. public 내부의 파일은 pages와 유사하게 애플리케이션의 루트에서 참조할 수 있습니다.
+
+public 디렉토리는 또한 `robots.txt`, Google 사이트 검증 및 기타 정적 자산에도 유용합니다. 더 자세히 알아보려면 정적 파일 제공에 대한 문서를 확인하세요.
+
+### 프로필 사진 다운로드
+먼저, 프로필 사진을 가져와봅시다.
+
+- `.jpg` 형식으로 프로필 사진을 다운로드합니다(또는 이 파일을 사용합니다).
+- `public` 디렉토리 내에 `images` 디렉토리를 생성합니다.
+- `public/images` 디렉토리에 사진을 `profile.jpg`로 저장합니다.
+- 이미지 크기는 `400px x 400px` 정도가 될 수 있습니다.
+- `public` s 디렉토리 바로 아래의 사용하지 않는 SVG 로고 파일을 제거할 수 있습니다.
+
+비최적화 이미지
+
+일반 HTML에서는 프로필 사진을 다음과 같이 추가하게 됩니다:
+```jsx
+<img src="/images/profile.jpg" alt="Your Name" />
+```
+그러나 이는 다음을 수동으로 처리해야 한다는 것을 의미합니다:
+
+다양한 화면 크기에서 이미지를 반응형으로 만드는 것
+제삼자 도구나 라이브러리를 사용하여 이미지 최적화하기
+뷰포트에 들어갈 때만 이미지 로드하기
+등등. 대신, Next.js는 이를 처리하기 위해 기본적으로 Image 컴포넌트를 제공합니다.
+
+### 이미지 컴포넌트와 이미지 최적화
+`next/image`는 현대 웹을 위해 진화한 HTML `<img>` 요소의 확장입니다.
+
+Next.js는 또한 기본적으로 이미지 최적화를 지원합니다. 이를 통해 브라우저가 지원하는 경우 WebP와 같은 현대 포맷에서 이미지 크기 조정, 최적화 및 제공이 가능합니다. 이렇게 하면 더 작은 뷰포트를 가진 장치에 큰 이미지를 전송하지 않아도 됩니다. 또한 Next.js는 자동으로 미래의 이미지 포맷을 채택하고 해당 포맷을 지원하는 브라우저에게 제공할 수 있습니다.
+
+자동 이미지 최적화는 어떤 이미지 소스와도 동작합니다. 이미지가 CMS와 같은 외부 데이터 소스에 의해 호스팅되더라도 여전히 최적화될 수 있습니다.
+
+### 이미지 컴포넌트 사용하기
+빌드 시간에 이미지를 최적화하는 대신, Next.js는 사용자가 요청할 때 이미지를 최적화합니다. 정적 사이트 생성기와 정적-only 솔루션과 달리, 10개의 이미지를 전송하든 1000만 개의 이미지를 전송하든 빌드 시간이 늘어나지 않습니다.
+
+이미지는 기본적으로 지연 로드됩니다. 즉, 뷰포트 외부의 이미지로 인해 페이지 속도가 저하되지 않습니다. 이미지는 뷰포트로 스크롤되면서 로드됩니다.
+
+이미지는 Google이 검색 순위에 사용하게 될 Cumulative Layout Shift와 같은 핵심 웹 지표를 피하기 위해 항상 렌더링됩니다.
+
+다음은 프로필 사진을 표시하기 위해 `next/image`를 사용한 예입니다. height와 width 속성은 소스 이미지와 동일한 가로세로 비율을 가진 원하는 렌더링 크기여야 합니다.
+
+참고: "레이아웃 연마"
+
+
+
+## 메타데이터
+페이지의 메타데이터, 예를 들면 HTML의 `<title>` 태그를 수정하고 싶다면 어떻게 해야 할까요?
+
+`<title>`은 `<head>` HTML 태그의 일부입니다. Next.js 페이지에서 `<head>` 태그를 어떻게 수정하는지 살펴봅시다.
+
+편집기에서 pages/index.js를 열고 다음 줄을 찾습니다:
+```html
+<Head>
+  <title>Create Next App</title>
+  <link rel="icon" href="/favicon.ico" />
+</Head>
+```
+소문자 `<head>` 대신 `<Head>`가 사용되었음을 주목하세요. `<Head>`는 Next.js에 내장된 React 컴포넌트입니다. 이를 통해 페이지의 `<head>`를 수정할 수 있습니다.
+
+`next/head` 모듈에서 Head 컴포넌트를 가져올 수 있습니다.
+
+first-post.js에 Head 추가
+아직 `/posts/first-post` 라우트에 `<title>`을 추가하지 않았습니다. 추가해 봅시다.
+
+`pages/posts/first-post.js` 파일을 열고 파일 시작 부분에 `next/head`에서 Head를 가져와 봅시다:
+```jsx
+import Head from 'next/head';
+```
+그런 다음, 내보낸 FirstPost 컴포넌트를 업데이트하여 Head 컴포넌트를 포함하도록 합니다. 지금은 `title` 태그만 추가합니다:
+```jsx
+export default function FirstPost() {
+  return (
+    <>
+      <Head>
+        <title>First Post</title>
+      </Head>
+      <h1>First Post</h1>
+      <h2>
+        <Link href="/">← 홈으로 돌아가기</Link>
+      </h2>
+    </>
+  );
+}
+```
+http://localhost:3000/posts/first-post에 접속해보세요. 브라우저 탭에는 이제 "First Post"라고 표시되어야 합니다. 브라우저의 개발자 도구를 사용하면 `title` 태그가 `<head>`에 추가되었음을 확인할 수 있습니다.
+
+`next/head`에 대한 더 많은 정보를 알고 싶다면, `next/head`의 API 참조를 확인하세요.
+
+`<html>` 태그를 사용자 정의하려면, 예를 들어 lang 속성을 추가하려면, `pages/_document.js` 파일을 만들어서 할 수 있습니다. 사용자 정의 문서 문서에서 더 자세히 알아보세요.
+
+
+
+## 서드파티 JavaScript
+서드파티 JavaScript란 서드파티 출처에서 추가된 스크립트를 의미합니다. 보통 서드파티 스크립트는 사이트에 처음부터 쓰여지지 않은 새로운 기능을 도입하기 위해 포함됩니다. 예로, 분석, 광고, 고객 지원 위젯과 같은 기능이 있습니다.
+
+### 서드파티 JavaScript 추가하기
+Next.js 페이지에 서드파티 스크립트를 어떻게 추가하는지 살펴봅시다.
+
+편집기에서 `pages/posts/first-post.js` 파일을 열고 다음의 줄을 찾습니다:
+
+```html
+<Head>
+  <title>First Post</title>
+</Head>
+```
+
+메타데이터 외에도 가능한 빨리 로드하고 실행되어야 하는 스크립트는 대개 페이지의 `<head>` 안에 추가됩니다. 일반 HTML `<script>` 요소를 사용하여 외부 스크립트를 다음과 같이 추가하게 됩니다:
+
+```html
+<Head>
+  <title>First Post</title>
+  <script src="https://connect.facebook.net/en_US/sdk.js" />
+</Head>
+```
+
+이 스크립트에는 Facebook의 소셜 플러그인 및 기타 기능을 도입하는 데 흔히 사용되는 Facebook SDK가 포함되어 있습니다. 이 방법이 작동하지만, 이런 식으로 스크립트를 포함하면 같은 페이지에서 가져온 다른 자바스크립트 코드와 관련하여 언제 로드될지 명확한 개념을 제공하지 않습니다. 특정 스크립트가 렌더링을 차단하고 페이지 콘텐츠의 로딩을 지연시킬 수 있으면, 이는 성능에 크게 영향을 줄 수 있습니다.
+
+### Script 컴포넌트 사용하기
+next/script는 HTML의 `<script>` 요소의 확장이며, 추가 스크립트가 언제 가져와지고 실행될지를 최적화합니다.
+
+같은 파일에서 파일의 시작 부분에 next/script에서 Script를 가져오도록 추가합니다:
+
+```jsx
+import Script from 'next/script';
+```
+
+이제 `FirstPost` 컴포넌트를 업데이트하여 `Script` 컴포넌트를 포함하도록 합니다:
+
+```jsx
+export default function FirstPost() {
+  return (
+    <>
+      <Head>
+        <title>First Post</title>
+      </Head>
+      <Script
+        src="https://connect.facebook.net/en_US/sdk.js"
+        strategy="lazyOnload"
+        onLoad={() =>
+          console.log(`스크립트가 정상적으로 로드되었으며, window.FB가 설정되었습니다.`)
+        }
+      />
+      <h1>First Post</h1>
+      <h2>
+        <Link href="/">← 홈으로 돌아가기</Link>
+      </h2>
+    </>
+  );
+}
+```
+
+Script 컴포넌트에 몇 가지 추가 속성이 정의된 것을 알 수 있습니다:
+
+- `strategy`는 서드파티 스크립트가 언제 로드되어야 하는지를 제어합니다. `lazyOnload` 값은 이 특정 스크립트를 브라우저의 유휴 시간 동안 지연 로딩하도록 Next.js에 지시합니다.
+- `onLoad`는 스크립트가 로딩을 마친 직후에 자바스크립트 코드를 실행하는 데 사용됩니다. 이 예제에서는 스크립트가 정상적으로 로드되었다는 메시지를 콘솔에 로그합니다.
+
+http://localhost:3000/posts/first-post에 접속해보세요. 브라우저의 개발자 도구를 사용하면 위의 메시지가 콘솔 패널에 로그됨을 확인할 수 있습니다. 또한, window.FB를 실행하여 스크립트가 이 전역 변수를 설정했는지 확인할 수 있습니다.
+
+참고: Facebook SDK는 어떻게 서드파티 스크립트를 성능 좋게 애플리케이션에 추가하는지 보여주기 위한 예로만 사용되었습니다. 이제 Next.js에서 서드파티 기능을 포함하는 기본 사항을 이해했으므로, 계속 진행하기 전에 FirstPost에서 Script 컴포넌트를 제거할 수 있습니다.
+
+`Script` 컴포넌트에 대해 더 알아보려면 문서를 확인하세요.
+
+## CSS 스타일링
+이제 CSS 스타일링에 대해 이야기해봅시다.
+
+보시다시피, 우리의 인덱스 페이지 (http://localhost:3000)에는 이미 몇몇 스타일이 적용되어 있습니다. 파일 구조를 살펴보면, `styles`라는 폴더가 있으며 그 안에 두 개의 CSS 파일이 있습니다: 전역 스타일시트(`globals.css`)와 CSS 모듈(`Home.module.css`).
+
+프로젝트에 해당 파일들이 없다면, 다음의 시작 코드를 여기서 다운로드 받을 수 있습니다:
+```bash
+npx create-next-app nextjs-blog \
+--use-npm \
+--example \
+"https://github.com/vercel/next-learn/\
+tree/main/basics/assets-metadata-css-starter"
+```
+
+### CSS 모듈
+CSS 모듈은 고유한 클래스 이름을 자동으로 생성하여 컴포넌트 레벨에서 CSS를 로컬로 범위 지정할 수 있게 해줍니다. 이를 통해 다른 파일에서 동일한 CSS 클래스 이름을 사용하면서도 클래스 이름 충돌에 대해 걱정할 필요가 없습니다.
+
+CSS 모듈 외에도, Next.js 애플리케이션을 다양한 방법으로 스타일링 할 수 있습니다:
+
+- `.css`와 `.scss` 파일을 가져올 수 있는 `Sass`.
+- `Tailwind CSS`와 같은 `PostCSS` 라이브러리.
+- `styled-jsx`, `styled-components`, 그리고 `emotion`과 같은 `CSS-in-JS` 라이브러리.
+
+
+## 레이아웃 컴포넌트
+먼저, 모든 페이지에서 공유할 `Layout` 컴포넌트를 만들어봅시다.
+
+- 최상위 디렉토리에 `components`라는 디렉토리를 생성합니다.
+- `components` 내부에 `layout.js`라는 파일을 다음 내용으로 생성합니다:
+```jsx
+export default function Layout({ children }) {
+  return <div>{children}</div>;
+}
+```
+
+그런 다음, `pages/posts/first-post.js`를 열고, `Layout` 컴포넌트를 가져와서 가장 바깥쪽 컴포넌트로 만듭니다:
+```jsx
+import Head from 'next/head';
+import Link from 'next/link';
+import Layout from '../../components/layout';
+
+export default function FirstPost() {
+  return (
+    <Layout>
+      <Head>
+        <title>First Post</title>
+      </Head>
+      <h1>First Post</h1>
+      <h2>
+        <Link href="/">← 홈으로 돌아가기</Link>
+      </h2>
+    </Layout>
+  );
+}
+```
+
+### CSS 추가하기
+이제 `Layout` 컴포넌트에 몇몇 스타일을 추가해봅시다. 이를 위해 React 컴포넌트에서 CSS 파일을 가져올 수 있게 해주는 CSS 모듈을 사용하겠습니다.
+
+다음 내용으로 `components/layout.module.css`라는 파일을 생성합니다:
+```css
+.container {
+  max-width: 36rem;
+  padding: 0 1rem;
+  margin: 3rem auto 6rem;
+}
+```
+
+중요: CSS 모듈을 사용하려면, CSS 파일의 이름은 `.module.css`로 끝나야 합니다.
+
+이 컨테이너 클래스를 `components/layout.js` 내부에서 사용하려면:
+
+- CSS 파일을 가져와서 이름을 부여해야 하며, `styles`와 같은 이름을 사용합니다.
+- `styles.container`를 className으로 사용합니다.
+
+`components/layout.js`를 열고 내용을 다음과 같이 바꿉니다:
+```jsx
+import styles from './layout.module.css';
+
+export default function Layout({ children }) {
+  return <div className={styles.container}>{children}</div>;
+}
+```
+
+이제 http://localhost:3000/posts/first-post로 이동하면, 텍스트가 가운데 정렬된 컨테이너 안에 있음을 확인할 수 있습니다:
+![First Post](https://nextjs.org/static/images/learn/assets-metadata-css/layout.png)
+
+### 자동으로 고유한 클래스 이름 생성
+이제 브라우저의 개발자 도구에서 HTML을 확인하면, `Layout` 컴포넌트에 의해 렌더링 된 `div`가 `layout_container__...`와 같은 클래스 이름을 가진 것을 알 수 있습니다:
+![div](https://nextjs.org/static/images/learn/assets-metadata-css/devtools.png)
+
+이것이 바로 CSS 모듈이 하는 일입니다: 자동으로 고유한 클래스 이름을 생성합니다. CSS 모듈을 사용하는 한 클래스 이름 충돌에 대해 걱정할 필요가 없습니다.
+
+더불어, Next.js의 코드 분할 기능도 CSS 모듈에 적용됩니다. 이는 각 페이지에 최소한의 CSS만 로드되도록 합니다. 이 결과로 번들 크기가 줄어듭니다.
+
+CSS 모듈은 빌드 시에 자바스크립트 번들로부터 추출되며, Next.js에 의해 자동으로 로드되는 `.css` 파일을 생성합니다.
+
+## 전역 스타일
+CSS 모듈은 컴포넌트 수준의 스타일에 유용합니다. 그러나 모든 페이지에서 로드되어야 하는 CSS가 필요한 경우 Next.js는 그러한 지원도 제공합니다.
+
+애플리케이션에 전역 CSS를 로드하려면 `pages/_app.js`라는 파일을 다음 내용으로 생성합니다:
+```jsx
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+```
+`_app.js`의 기본 내보내기는 애플리케이션의 모든 페이지를 감싸는 최상위 React 컴포넌트입니다. 페이지 간 이동할 때 상태를 유지하거나 여기서와 같이 전역 스타일을 추가하는 데 이 컴포넌트를 사용할 수 있습니다. _app.js 파일에 대한 자세한 내용을 알아보세요.
+
+### 개발 서버 재시작
+
+중요: `pages/_app.js`를 추가할 때 개발 서버를 재시작해야 합니다. 서버를 중지하려면 `Ctrl + c`를 누르고 다음을 실행합니다:
+```bash
+npm run dev
+```
+
+### 전역 CSS 추가하기
+Next.js에서는 `pages/_app.js`에서 전역 CSS 파일을 가져오면서 전역 CSS를 추가할 수 있습니다. 다른 곳에서는 전역 CSS를 가져올 수 없습니다.
+
+전역 CSS가 `pages/_app.js` 외부에서 가져올 수 없는 이유는 전역 CSS가 페이지의 모든 요소에 영향을 미치기 때문입니다.
+
+홈페이지에서 `/posts/first-post` 페이지로 이동하면 홈페이지의 전역 스타일이 `/posts/first-post`에 의도하지 않게 영향을 줍니다.
+
+전역 CSS 파일을 어디에나 둘 수 있으며 원하는 이름을 사용할 수 있습니다. 따라서 다음과 같이 해보겠습니다:
+
+- 최상위 스타일 디렉토리와 `global.css` 파일을 생성합니다.
+- 아래의 CSS를 `styles/global.css`에 추가합니다. 이 코드는 몇몇 스타일을 초기화하고 `a` 태그의 색상을 변경합니다:
+```css
+... (위의 CSS 코드)
+```
+
+마지막으로, 이전에 생성한 `pages/_app.js` 파일 내에 CSS 파일을 가져옵니다:
+
+```jsx
+// `pages/_app.js`
+import '../styles/global.css';
+
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+```
+
+이제 http://localhost:3000/posts/first-post로 접속하면 스타일이 적용된 것을 확인할 수 있습니다. `_app.js`에서 가져온 모든 스타일은 애플리케이션의 모든 페이지에 전역으로 적용됩니다.
+![First Post](https://nextjs.org/static/images/learn/assets-metadata-css/global-styles.png)
+
+작동하지 않는다면: `pages/_app.js`를 업데이트 할 때 개발 서버를 재시작했는지 확인하세요.
+
+## 레이아웃 세련되게 개선하기
+지금까지 우리는 CSS 모듈과 같은 개념을 설명하기 위해 최소한의 React 및 CSS 코드만 추가했습니다. 데이터를 가져오는 다음 수업으로 넘어가기 전에 페이지 스타일링과 코드를 개선해 봅시다.
+
+### `components/layout.module.css` 업데이트하기
+먼저, `components/layout.module.css`를 열고 그 내용을 다음과 같은 더 개선된 레이아웃 및 프로필 사진 스타일로 교체합니다:
+```css
+... (위의 CSS 코드)
+```
+
+### `styles/utils.module.css` 생성하기
+다음으로, 여러 컴포넌트에서 재사용할 수 있는 CSS 유틸리티 클래스(텍스트 스타일용) 세트를 생성합시다.
+
+다음 내용으로 `styles/utils.module.css`라는 새 CSS 파일을 추가합니다:
+
+```css
+... (위의 CSS 코드)
+```
+이 유틸리티 클래스들은 애플리케이션 전체에서 재사용할 수 있으며, `global.css` 파일에서도 유틸리티 클래스를 사용할 수 있습니다. 유틸리티 클래스는 CSS 선택자를 작성하는 방식을 의미하며 방법(예: 전역 스타일, CSS 모듈, Sass 등)은 아닙니다. 유틸리티 우선 CSS에 대해 더 알아보세요.
+
+### `components/layout.js` 업데이트하기
+세 번째로, `components/layout.js`를 열고 그 내용을 다음 코드로 교체하십시오. 여기서 Your Name을 실제 이름으로 변경합니다:
+
+```jsx
+... (위의 JSX 코드)
+```
+다음이 새로 추가된 부분입니다:
+
+- 페이지의 내용을 설명하는 데 사용되는 메타 태그들(예: `og:image`)
+- 타이틀과 이미지의 크기를 조정하는 Boolean `home` 속성
+- `home`이 `false`인 경우 하단에 "Back to home" 링크 추가
+- `next/image`를 사용하여 우선 순위 속성으로 사전 로드된 이미지 추가
+
+### `pages/index.js` 업데이트하기
+마지막으로 홈페이지를 업데이트합시다.
+
+`pages/index.js`를 열고 그 내용을 다음과 같이 교체합니다:
+
+```jsx
+... (위의 JSX 코드)
+```
+
+그런 다음 `[Your Self Introduction]`을 자신의 자기 소개로 교체합니다. 저자 프로필을 사용한 예는 다음과 같습니다:
+
+완료했습니다! 이제 개선된 레이아웃 코드를 가지고 있으며 데이터 가져오기 수업으로 넘어갈 준비가 되었습니다.
+
+이 수업을 마치기 전에, 다음 페이지에서 Next.js의 CSS 지원과 관련된 몇 가지 유용한 기술에 대해 이야기해 보겠습니다.
+
+## 스타일링 팁
+다음은 유용할 수 있는 스타일링 팁입니다.
+
+다음 섹션들을 읽어보기만 하면 됩니다. 우리 앱에 변경사항을 적용할 필요는 없습니다!
+
+### 클래스 토글을 위한 clsx 라이브러리 사용
+`clsx`는 클래스 이름을 쉽게 토글할 수 있게 해주는 간단한 라이브러리입니다. `npm install clsx` 또는 `yarn add clsx`로 설치할 수 있습니다.
+
+자세한 내용은 해당 라이브러리의 문서를 참조하시길 바랍니다. 기본 사용법은 다음과 같습니다:
+
+- `'success'` 또는 `'error'`가 될 수 있는 type을 받아들이는 Alert 컴포넌트를 생성한다고 가정해봅시다.
+- `'success'`인 경우 텍스트 색상을 초록색으로, `'error'`인 경우 빨간색으로 설정하고 싶습니다.
+
+먼저 다음과 같은 CSS 모듈 (예: alert.module.css)을 작성합니다:
+```css
+... (위의 CSS 코드)
+```
+
+그리고 `clsx`를 다음과 같이 사용합니다:
+
+```jsx
+... (위의 JSX 코드)
+```
+
+### PostCSS 설정 커스터마이징
+아무런 설정 없이 Next.js는 CSS를 PostCSS를 사용하여 컴파일합니다.
+
+PostCSS 설정을 커스터마이징하려면 최상위 폴더에 `postcss.config.js` 파일을 생성할 수 있습니다. 이는 Tailwind CSS와 같은 라이브러리를 사용할 때 유용합니다.
+
+Tailwind CSS를 추가하는 방법은 다음과 같습니다. 먼저 패키지를 설치합니다:
+```bash
+... (위의 bash 코드)
+```
+
+그리고 `postcss.config.js`를 생성합니다:
+```json
+... (위의 json 코드)
+```
+
+또한 tailwind.config.js의 content 옵션을 지정하여 컨텐츠 소스를 구성하는 것을 추천합니다:
+```json
+... (위의 json 코드)
+```
+
+사용자 정의 PostCSS 설정에 대해 자세히 알아보려면 PostCSS의 문서를 참조하십시오.
+
+Tailwind CSS를 쉽게 시작하려면 우리의 예제를 확인하세요.
+
+### Sass 사용하기
+설정 없이 Next.js는 `.scss` 및 `.sass` 확장자를 사용하여 Sass를 가져올 수 있게 합니다. CSS 모듈 및 `.module.scss` 또는 `.module.sass` 확장을 통해 컴포넌트 수준의 Sass를 사용할 수 있습니다.
+
+Next.js의 기본 Sass 지원을 사용하기 전에 sass를 설치해야 합니다:
+```bash
+... (위의 bash 코드)
+```

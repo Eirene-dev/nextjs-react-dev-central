@@ -1,8 +1,514 @@
 ---
 title: 동적 라우팅
 date: '2023-01-01 02:05'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: Next.js에서 동적 라우팅을 사용하여 외부 데이터 기반의 페이지를 생성하고 스타일링하며, 세부 사항과 최적화 방법을 학습합니다.
 ---
 
-## 작성 예정
-작성 예정
+<TOCInline toc={props.toc} asDisclosure />
+
+## 동적 라우팅
+
+우리는 블로그 데이터로 인덱스 페이지를 채웠지만, 아직 개별 블로그 페이지는 생성하지 않았습니다(원하는 결과 참조). 이러한 페이지의 URL은 블로그 데이터에 따라 달라져야 하므로 동적 라우팅을 사용해야 합니다.
+
+이 강의에서 배울 내용:
+이 강의에서는 다음 내용을 학습합니다:
+
+- `getStaticPaths`를 사용하여 동적 라우트로 페이지를 정적으로 생성하는 방법.
+- 각 블로그 포스트의 데이터를 가져오기 위해 `getStaticProps`를 작성하는 방법.
+- `remark`를 사용하여 마크다운을 렌더링하는 방법.
+- 날짜 문자열을 예쁘게 출력하는 방법.
+- 동적 라우트를 가진 페이지로 링크하는 방법.
+
+동적 라우팅에 대한 유용한 정보.
+
+## 페이지 경로가 외부 데이터에 따라 달라짐
+
+이전 강의에서는 페이지 내용이 외부 데이터에 따라 달라지는 경우를 다루었습니다. 인덱스 페이지를 렌더링하기 위해 필요한 데이터를 가져오기 위해 `getStaticProps`를 사용했습니다.
+
+이 강의에서는 각 페이지 경로가 외부 데이터에 따라 달라지는 경우에 대해 다룰 것입니다. Next.js는 경로가 외부 데이터에 따라 달라지는 페이지를 정적으로 생성할 수 있게 합니다. 이를 통해 Next.js에서 동적 URL을 활성화할 수 있습니다.
+![페이지 경로](https://nextjs.org/static/images/learn/dynamic-routes/page-path-external-data.png)
+
+### 동적 라우트로 페이지를 정적으로 생성하는 방법
+
+우리의 경우, 블로그 포스트에 대한 동적 라우트를 생성하고자 합니다:
+
+- 각 포스트는 `/posts/<id>` 경로를 가져야 하며, 여기서 `<id>`는 최상위 posts 디렉토리 아래의 마크다운 파일의 이름입니다.
+- ssg-ssr.md와 pre-rendering.md가 있으므로, 경로는 `/posts/ssg-ssr`와 `/posts/pre-rendering`이어야 합니다.
+
+### 단계 개요
+
+다음 단계를 따라 실행할 수 있습니다. 아직 변경할 필요는 없습니다 - 다음 페이지에서 모두 수행할 것입니다.
+
+먼저, pages/posts 아래에 `[id].js`라는 페이지를 생성합니다. `[`로 시작하고 `]`로 끝나는 페이지는 Next.js의 동적 라우트입니다.
+
+`pages/posts/[id].js`에서는 포스트 페이지를 렌더링하는 코드를 작성합니다 - 우리가 만든 다른 페이지처럼요.
+```jsx
+import Layout from '../../components/layout';
+
+export default function Post() {
+  return <Layout>...</Layout>;
+}
+```
+새로운 부분은 다음과 같습니다: 이 페이지에서 `getStaticPaths`라는 비동기 함수를 내보냅니다. 이 함수에서는 id의 가능한 값 목록을 반환해야 합니다.
+
+```jsx
+import Layout from '../../components/layout';
+
+export default function Post() {
+  return <Layout>...</Layout>;
+}
+
+export async function getStaticPaths() {
+  // id의 가능한 값을 반환합니다.
+}
+```
+마지막으로, 주어진 id에 대한 블로그 포스트에 필요한 데이터를 가져오기 위해 `getStaticProps`를 다시 구현해야 합니다. `getStaticProps`는 params를 받게 되며, 이 params에는 id가 포함됩니다(파일 이름이 `[id].js`이기 때문에).
+
+```jsx
+import Layout from '../../components/layout';
+
+export default function Post() {
+  return <Layout>...</Layout>;
+}
+
+export async function getStaticPaths() {
+  // id의 가능한 값을 반환합니다.
+}
+
+export async function getStaticProps({ params }) {
+  // params.id를 사용하여 블로그 포스트에 필요한 데이터를 가져옵니다.
+}
+```
+우리가 방금 얘기한 내용의 그래픽 요약은 다음과 같습니다:
+![정적으로 생성하는 방법](https://nextjs.org/static/images/learn/dynamic-routes/how-to-dynamic-routes.png)
+
+다음 페이지에서 이를 시도해 봅시다!
+
+
+## getStaticPaths 구현하기
+
+먼저 파일 설정을 해봅시다:
+
+- `pages/posts` 디렉토리 내에 `[id].js`라는 파일을 생성합니다.
+- 또한, `pages/posts` 디렉토리 내의 `first-post.js`를 삭제합니다. 이 파일은 더 이상 사용하지 않을 것입니다.
+
+그런 다음 `pages/posts/[id].js`를 편집기에서 열고 아래의 코드를 붙여넣습니다. `...` 부분은 나중에 채울 것입니다:
+```jsx
+import Layout from '../../components/layout';
+
+export default function Post() {
+  return <Layout>...</Layout>;
+}
+```
+다음으로 `lib/posts.js`를 열고 아래의 `getAllPostIds` 함수를 맨 아래에 추가합니다. 이 함수는 posts 디렉토리 내의 파일 이름 목록 (`.md` 제외)을 반환합니다:
+```jsx
+export function getAllPostIds() {
+  const fileNames = fs.readdirSync(postsDirectory);
+
+  // 다음과 같은 형태의 배열을 반환합니다:
+  // [
+  //   {
+  //     params: {
+  //       id: 'ssg-ssr'
+  //     }
+  //   },
+  //   {
+  //     params: {
+  //       id: 'pre-rendering'
+  //     }
+  //   }
+  // ]
+  return fileNames.map((fileName) => {
+    return {
+      params: {
+        id: fileName.replace(/\.md$/, ''),
+      },
+    };
+  });
+}
+```
+
+중요: 반환된 목록은 문자열의 배열이 아닙니다. 위의 주석처럼 생긴 객체의 배열이어야 합니다. 각 객체는 반드시 params 키를 가져야 하며, id 키를 포함한 객체를 포함해야 합니다(파일 이름에서 `[id]`를 사용하기 때문에). 그렇지 않으면 getStaticPaths가 실패합니다.
+
+마지막으로, getAllPostIds 함수를 가져와 getStaticPaths 내에서 사용합니다. `pages/posts/[id].js`를 열고 내보낸 Post 컴포넌트 위에 다음 코드를 복사하세요:
+```jsx
+import { getAllPostIds } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const paths = getAllPostIds();
+  return {
+    paths,
+    fallback: false,
+  };
+}
+```
+
+- `paths`는 `getAllPostIds()`에 의해 반환된 알려진 경로의 배열을 포함하며, `pages/posts/[id].js`에 의해 정의된 params를 포함합니다. `paths` 키 문서에서 더 자세히 알아보세요.
+- 지금은 `fallback: false`를 무시하세요. 나중에 그것에 대해 설명하겠습니다.
+
+거의 다 왔습니다 — 하지만 아직 `getStaticProps`를 구현해야 합니다. 다음 페이지에서 그 작업을 해봅시다!
+
+
+## `getStaticProps` 구현하기
+
+주어진 id와 함께 게시물을 렌더링하기 위해 필요한 데이터를 가져와야 합니다.
+
+이를 위해 `lib/posts.js`를 다시 열고 아래의 `getPostData` 함수를 맨 아래에 추가하세요. 이 함수는 id를 기반으로 게시물 데이터를 반환합니다:
+```jsx
+export function getPostData(id) {
+  const fullPath = path.join(postsDirectory, `${id}.md`);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+
+  // gray-matter를 사용하여 게시물 메타데이터 섹션을 파싱합니다.
+  const matterResult = matter(fileContents);
+
+  // id와 데이터를 결합합니다.
+  return {
+    id,
+    ...matterResult.data,
+  };
+}
+```
+그런 다음 `pages/posts/[id].js`를 열고 다음 줄을 교체하세요:
+```jsx
+import { getAllPostIds } from '../../lib/posts';
+다음 코드로:
+
+import { getAllPostIds, getPostData } from '../../lib/posts';
+
+export async function getStaticProps({ params }) {
+  const postData = getPostData(params.id);
+  return {
+    props: {
+      postData,
+    },
+  };
+}
+```
+게시물 페이지는 이제 `getStaticProps` 내의 getPostData 함수를 사용하여 게시물 데이터를 가져와 props로 반환합니다.
+
+이제 Post 컴포넌트를 업데이트하여 postData를 사용하도록 합시다. `pages/posts/[id].js`에서 내보낸 Post 컴포넌트를 다음 코드로 교체하세요:
+```jsx
+export default function Post({ postData }) {
+  return (
+    <Layout>
+      {postData.title}
+      <br />
+      {postData.id}
+      <br />
+      {postData.date}
+    </Layout>
+  );
+}
+```
+완료되었습니다! 다음 페이지들을 방문해 보세요:
+
+- http://localhost:3000/posts/ssg-ssr
+- http://localhost:3000/posts/pre-rendering
+
+각 페이지에 대한 블로그 데이터를 볼 수 있어야 합니다:
+![블로그 이미지](https://nextjs.org/static/images/learn/dynamic-routes/blog-data-post-page.png)
+
+좋습니다! 우리는 성공적으로 동적 경로를 생성했습니다.
+
+### 문제가 있나요?
+오류가 발생하면 파일이 올바른 코드를 가지고 있는지 확인하세요:
+
+- `pages/posts/[id].js`는 이렇게 보이야 합니다.
+- `lib/posts.js`는 이렇게 보이야 합니다.
+- (여전히 작동하지 않는 경우) 나머지 코드는 이렇게 보이야 합니다.
+
+계속해서 문제에 직면하고 있다면, GitHub Discussions에서 커뮤니티에게 자유롭게 질문하세요. 코드를 GitHub에 푸시하고 링크를 제공할 수 있다면 다른 사람들이 확인하는 데 도움이 될 것입니다.
+
+### 요약
+다시 말해서, 우리가 한 일의 그래픽 요약은 다음과 같습니다:
+![정적으로 생성하기](https://nextjs.org/static/images/learn/dynamic-routes/how-to-dynamic-routes.png)
+
+우리는 아직 블로그의 마크다운 내용을 표시하지 않았습니다. 다음 작업으로 이를 수행합시다.
+
+
+## 마크다운 렌더링
+마크다운 내용을 렌더링하기 위해 `remark` 라이브러리를 사용하겠습니다. 먼저 설치하세요:
+```bash
+npm install remark remark-html
+```
+그 다음, `lib/posts.js`를 열고 파일 상단에 다음의 import문을 추가하세요:
+```jsx
+import { remark } from 'remark';
+import html from 'remark-html';
+```
+동일한 파일 내의 `getPostData()` 함수를 수정하여 remark를 사용하도록 업데이트합니다:
+
+```jsx
+export async function getPostData(id) {
+  const fullPath = path.join(postsDirectory, `${id}.md`);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+
+  // gray-matter를 사용하여 게시물 메타데이터 섹션을 파싱합니다.
+  const matterResult = matter(fileContents);
+
+  // remark를 사용하여 마크다운을 HTML 문자열로 변환합니다.
+  const processedContent = await remark()
+    .use(html)
+    .process(matterResult.content);
+  const contentHtml = processedContent.toString();
+
+  // id와 contentHtml을 데이터와 함께 결합합니다.
+  return {
+    id,
+    contentHtml,
+    ...matterResult.data,
+  };
+}
+```
+
+중요: remark에 대한 await를 사용하기 때문에 `getPostData`에 `async` 키워드를 추가했습니다. `async/await`는 데이터를 비동기적으로 가져올 수 있게 합니다.
+
+이는 `pages/posts/[id].js`의 `getStaticProps`에서 `getPostData`를 호출할 때 `await`를 사용해야 함을 의미합니다:
+
+```jsx
+export async function getStaticProps({ params }) {
+  // "await" 키워드를 다음과 같이 추가하세요:
+  const postData = await getPostData(params.id);
+
+  return {
+    props: {
+      postData,
+    },
+  };
+}
+```
+마지막으로, `pages/posts/[id].js`에 있는 Post 컴포넌트를 업데이트하여 `dangerouslySetInnerHTML`을 사용하여 `contentHtml`을 렌더링합니다:
+```jsx
+export default function Post({ postData }) {
+  return (
+    <Layout>
+      {postData.title}
+      <br />
+      {postData.id}
+      <br />
+      {postData.date}
+      <br />
+      <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
+    </Layout>
+  );
+}
+```
+다시 아래 페이지들을 방문해보세요:
+
+- http://localhost:3000/posts/ssg-ssr
+- http://localhost:3000/posts/pre-rendering
+
+이제 블로그 내용을 볼 수 있어야 합니다:
+![블로그](https://nextjs.org/static/images/learn/dynamic-routes/markdown.png)
+
+거의 완료되었습니다! 다음으로 각 페이지를 다듬어 봅시다.
+
+
+## 포스트 페이지 다듬기
+
+### 포스트 페이지에 `title` 추가하기
+`pages/posts/[id].js`에서, 포스트 데이터를 사용하여 `title` 태그를 추가해봅시다. 파일 상단에 `next/head`를 위한 임포트를 추가하고, Post 컴포넌트를 업데이트하여 `title` 태그를 추가하세요:
+
+```jsx
+// 이 임포트를 추가하세요
+import Head from 'next/head';
+
+export default function Post({ postData }) {
+  return (
+    <Layout>
+      {/* 이 <Head> 태그를 추가하세요 */}
+      <Head>
+        <title>{postData.title}</title>
+      </Head>
+
+      {/* 기존 코드는 그대로 유지 */}
+    </Layout>
+  );
+}
+```
+
+### 날짜 형식화하기
+날짜를 형식화하기 위해 `date-fns` 라이브러리를 사용하겠습니다. 먼저 설치하세요:
+```bash
+npm install date-fns
+```
+
+그 다음, `components/date.js`라는 파일을 생성하고 아래의 Date 컴포넌트를 추가하세요:
+```jsx
+import { parseISO, format } from 'date-fns';
+
+export default function Date({ dateString }) {
+  const date = parseISO(dateString);
+  return <time dateTime={dateString}>{format(date, 'LLLL d, yyyy')}</time>;
+}
+```
+참고: date-fns 웹사이트에서 다양한 `format()` 문자열 옵션을 확인할 수 있습니다.
+
+이제 `pages/posts/[id].js`를 열고, 파일 상단에 Date 컴포넌트를 위한 임포트를 추가하고 `{postData.date}`를 대체하세요:
+
+```jsx
+// 이 임포트를 추가하세요
+import Date from '../../components/date';
+
+export default function Post({ postData }) {
+  return (
+    <Layout>
+      {/* 기존 코드는 그대로 유지 */}
+
+      {/* {postData.date}를 이렇게 대체하세요 */}
+      <Date dateString={postData.date} />
+
+      {/* 기존 코드는 그대로 유지 */}
+    </Layout>
+  );
+}
+```
+
+http://localhost:3000/posts/pre-rendering에 접속하면, 이제 "January 1, 2020"로 날짜가 표시되어야 합니다.
+
+### CSS 추가하기
+마지막으로, 이전에 추가한 `styles/utils.module.css` 파일을 사용하여 CSS를 추가해봅시다. `pages/posts/[id].js`를 열고, CSS 파일을 위한 임포트를 추가한 다음, 아래의 코드로 Post 컴포넌트를 대체하세요:
+```jsx
+// 파일 상단에 이 임포트를 추가하세요
+import utilStyles from '../../styles/utils.module.css';
+
+export default function Post({ postData }) {
+  return (
+    <Layout>
+      <Head>
+        <title>{postData.title}</title>
+      </Head>
+      <article>
+        <h1 className={utilStyles.headingXl}>{postData.title}</h1>
+        <div className={utilStyles.lightText}>
+          <Date dateString={postData.date} />
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
+      </article>
+    </Layout>
+  );
+}
+```
+http://localhost:3000/posts/pre-rendering에 접속하면, 페이지가 조금 더 나아보이게 됩니다:
+![블로그 이미지](https://nextjs.org/static/images/learn/dynamic-routes/post-page-css.png)
+
+훌륭한 작업을 해왔습니다! 다음에는 인덱스 페이지를 다듬고 마무리하겠습니다!
+
+
+## 인덱스 페이지 다듬기
+다음으로 인덱스 페이지(`pages/index.js`)를 업데이트하겠습니다. 각 포스트 페이지로의 링크를 Link 컴포넌트를 사용하여 추가해야 합니다.
+
+`pages/index.js`를 열고 파일 상단에 Link와 Date를 위한 아래의 임포트를 추가하세요:
+```jsx
+import Link from 'next/link';
+import Date from '../components/date';
+```
+같은 파일 내의 Home 컴포넌트 하단에서 li 태그를 아래와 같이 대체하세요:
+```jsx
+<li className={utilStyles.listItem} key={id}>
+  <Link href={`/posts/${id}`}>{title}</Link>
+  <br />
+  <small className={utilStyles.lightText}>
+    <Date dateString={date} />
+  </small>
+</li>
+```
+http://localhost:3000에 접속하면, 페이지에 각 기사로의 링크가 있습니다:
+![블로그](https://nextjs.org/static/images/learn/dynamic-routes/links.png)
+
+작동하지 않는다면, 코드가 위와 동일한지 확인하세요.
+
+이제 마무리되었습니다! 이 수업을 마치기 전에, 다음 페이지에서 동적 라우팅에 대한 몇 가지 팁에 대해 알아보겠습니다.
+
+## 동적 라우트 세부 사항
+동적 라우트에 대해 알아야 할 몇 가지 핵심 정보입니다.
+
+### 외부 API 또는 데이터베이스 쿼리
+`getStaticProps`와 마찬가지로, `getStaticPaths`는 어떤 데이터 소스에서든 데이터를 가져올 수 있습니다. 우리 예제에서, getStaticPaths에서 사용되는 getAllPostIds는 외부 API 엔드포인트에서 가져올 수 있습니다:
+```jsx
+export async function getAllPostIds() {
+  // 파일 시스템 대신
+  // 외부 API 엔드포인트에서 포스트 데이터를 가져옴
+  const res = await fetch('..');
+  const posts = await res.json();
+  return posts.map((post) => {
+    return {
+      params: {
+        id: post.id,
+      },
+    };
+  });
+}
+```
+
+### 개발 vs. 배포
+- 개발에서 (`npm run dev` 또는 `yarn dev`), `getStaticPaths`는 모든 요청에 실행됩니다.
+- 배포에서는, `getStaticPaths`는 빌드 시간에 실행됩니다.
+
+### Fallback
+우리가 `getStaticPaths`에서 `fallback: false`를 반환했던 것을 기억하세요. 이것은 무슨 뜻일까요?
+
+`fallback`이 `false`라면, `getStaticPaths`에 의해 반환되지 않은 모든 경로는 404 페이지를 결과로 합니다.
+
+`fallback`이 `true`라면, `getStaticProps`의 동작이 바뀝니다:
+
+getStaticPaths에서 반환된 경로는 빌드 시간에 HTML로 렌더링됩니다.
+빌드 시간에 생성되지 않은 경로는 404 페이지를 결과로 하지 않습니다. 대신, Next.js는 그러한 경로에 대한 첫 번째 요청에서 페이지의 "fallback" 버전을 제공합니다.
+백그라운드에서, Next.js는 요청된 경로를 정적으로 생성합니다. 동일한 경로에 대한 후속 요청은 빌드 시간에 미리 렌더링된 다른 페이지처럼 생성된 페이지를 제공합니다.
+fallback이 blocking이면, 새 경로는 `getStaticProps`와 함께 서버 사이드로 렌더링되고, 이후 요청에 대한 캐싱이 이루어져 경로마다 한 번만 발생합니다.
+
+이것은 우리 수업의 범위를 벗어나지만, `fallback: true`와 `fallback: 'blocking'`에 대해 더 자세히 알고 싶다면 fallback 문서를 참고하세요.
+
+### 전체 경로 포착하기
+동적 라우트는 대괄호 안에 세 개의 점 `(...)`을 추가함으로써 모든 경로를 포착하도록 확장될 수 있습니다. 예를 들면:
+
+`pages/posts/[...id].js`는 `/posts/a`와 일치하지만, `/posts/a/b`, `/posts/a/b/c` 등과도 일치합니다.
+이렇게 하면, `getStaticPaths`에서는 id 키의 값으로 배열을 반환해야 합니다:
+```jsx
+return [
+  {
+    params: {
+      // /posts/a/b/c를 정적으로 생성
+      id: ['a', 'b', 'c'],
+    },
+  },
+  //...
+];
+```
+그리고 params.id는 `getStaticProps`에서 배열이 될 것입니다:
+```jsx
+export async function getStaticProps({ params }) {
+  // params.id는 ['a', 'b', 'c']와 같을 것입니다
+}
+```
+더 알아보려면 전체 경로 포착 문서를 참고하세요.
+
+### 라우터
+Next.js 라우터에 접근하려면, `next/router`에서 `useRouter` 훅을 임포트할 수 있습니다.
+
+### 404 페이지
+사용자 정의 404
+
+ 페이지를 생성하려면 `pages/404.js`를 생성하세요. 이 파일은 빌드 시간에 정적으로 생성됩니다.
+```jsx
+// pages/404.js
+export default function Custom404() {
+  return <h1>404 - 페이지를 찾을 수 없습니다</h1>;
+}
+```
+더 자세한 내용은 오류 페이지 문서를 참고하세요.
+
+### 추가 예제들
+우리는 `getStaticProps`와 `getStaticPaths`를 설명하기 위해 여러 예제를 만들었습니다 — 더 알아보기 위해 소스 코드를 확인하세요:
+
+- 마크다운 파일을 사용한 블로그 시작 (데모)
+- 워드프레스 예제 (데모)
+- DatoCMS 예제 (데모)
+- TakeShape 예제 (데모)
+- Sanity 예제 (데모)
+
+### 끝!
+다음 수업에서는 Next.js의 API 라우트에 대해 이야기하겠습니다.
+
+
