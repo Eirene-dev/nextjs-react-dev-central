@@ -552,128 +552,123 @@ export const docsConfig: DocsConfig = {
           href: '/docs/nextjs/optimizing',
           items: [
             {
-              title: '1',
+              title: '이미지',
               href: '/docs/nextjs/optimizing/images',
               disabled: false,
             },
             {
-              title: '2',
+              title: '폰트',
               href: '/docs/nextjs/optimizing/fonts',
               disabled: false,
             },
             {
-              title: '3',
+              title: '스크립트',
               href: '/docs/nextjs/optimizing/scripts',
               disabled: false,
             },
             {
-              title: '4',
+              title: '메타데이터',
               href: '/docs/nextjs/optimizing/metadata',
               disabled: false,
             },
             {
-              title: '5',
+              title: '정적 자산',
               href: '/docs/nextjs/optimizing/static-assets',
               disabled: false,
             },
             {
-              title: '6',
+              title: '지연 로딩',
               href: '/docs/nextjs/optimizing/lazy-loading',
               disabled: false,
             },
             {
-              title: '7',
+              title: '측정/분석',
               href: '/docs/nextjs/optimizing/analytics',
               disabled: false,
             },
             {
-              title: '8',
+              title: 'OpenTelemetry',
               href: '/docs/nextjs/optimizing/open-telemetry',
               disabled: false,
             },
             {
-              title: '9',
+              title: 'Instrumentation',
               href: '/docs/nextjs/optimizing/instrumentation',
               disabled: false,
             }    
           ],
         },
         {
-          title: '환경설정',
-          href: '/docs/react/installation',
+          title: '설정하기',
+          href: '/docs/nextjs/configuring',
           items: [
             {
-              title: '1',
-              href: '/docs/nextjs/routing/defining-routes',
+              title: 'TypeScript',
+              href: '/docs/nextjs/configuring/typescript',
               disabled: false,
             },
             {
-              title: '2',
-              href: '/docs/nextjs/routing/pages-and-layouts',
+              title: 'ESLint',
+              href: '/docs/nextjs/configuring/eslint',
               disabled: false,
             },
             {
-              title: '3',
-              href: '/docs/nextjs/routing/linking-and-navigating',
+              title: '환경 변수',
+              href: '/docs/nextjs/configuring/environment-variables',
               disabled: false,
             },
             {
-              title: '4',
-              href: '/docs/nextjs/routing/route-groups',
+              title: '모듈 경로',
+              href: '/docs/nextjs/configuring/absolute-imports-and-module-aliases',
               disabled: false,
             },
             {
-              title: '5',
-              href: '/docs/nextjs/routing/dynamic-routes',
+              title: 'MDX',
+              href: '/docs/nextjs/configuring/mdx',
               disabled: false,
             },
             {
-              title: '6',
-              href: '/docs/nextjs/routing/loading-ui-and-streaming',
+              title: 'src/ 디렉터리',
+              href: '/docs/nextjs/configuring/src-directory',
               disabled: false,
             },
             {
-              title: '7',
-              href: '/docs/nextjs/routing/error-handling',
+              title: '드래프트 모드',
+              href: '/docs/nextjs/configuring/draft-mode',
               disabled: false,
             },
             {
-              title: '8',
-              href: '/docs/nextjs/routing/parallel-routes',
+              title: '콘텐츠 보안 정책',
+              href: '/docs/nextjs/configuring/content-security-policy',
               disabled: false,
             }     
           ],
         },
         {
           title: '배포',
-          href: '/docs/react/installation',
+          href: '/docs/nextjs/deploying',
           items: [
             {
-              title: '1',
-              href: '/docs/nextjs/routing/defining-routes',
+              title: 'Static Exports',
+              href: '/docs/nextjs/deploying/static-exports',
               disabled: false,
             }  
           ],
         },
         {
           title: '업그레이드',
-          href: '/docs/react/installation',
+          href: '/docs/nextjs/upgrading',
           items: [
             {
-              title: '1',
-              href: '/docs/nextjs/routing/defining-routes',
+              title: 'Codemods',
+              href: '/docs/nextjs/upgrading/codemods',
               disabled: false,
             },
             {
-              title: '2',
-              href: '/docs/nextjs/routing/pages-and-layouts',
+              title: 'AppRouter 마이그레이션',
+              href: '/docs/nextjs/upgrading/app-router-migration',
               disabled: false,
             },
-            {
-              title: '3',
-              href: '/docs/nextjs/routing/linking-and-navigating',
-              disabled: false,
-            }
           ],
         },
       ],

@@ -1,0 +1,28 @@
+---
+title: 정적 자산
+date: '2023-09-01 06:05'
+summary: Next.js는 public 디렉토리에서 이미지와 같은 정적 파일을 제공할 수 있습니다. 여기서 그 작동 방식을 알 수 있습니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 정적 자산
+Next.js는 루트 디렉토리에 있는 `public`라는 폴더 아래에서 이미지와 같은 정적 파일을 제공할 수 있습니다. `public` 내부의 파일은 기본 URL(`/`)부터 코드로 참조될 수 있습니다.
+
+예를 들어, `public` 안에 `me.png`를 추가하면, 다음 코드를 사용하여 이미지에 접근할 수 있습니다:
+
+```jsx filename="Avatar.js"
+import Image from 'next/image'
+
+export function Avatar() {
+  return <Image src="/me.png" alt="me" width="64" height="64" />
+}
+```
+
+`robots.txt`, `favicon.ico`와 같은 정적 메타데이터 파일의 경우, `app` 폴더 내의 [특별한 메타데이터 파일](/docs/app/api-reference/file-conventions/metadata)을 사용해야 합니다.
+
+> 알아두면 좋아요:
+>
+> - 디렉토리는 반드시 `public`으로 명명되어야 합니다. 이름을 변경할 수 없으며, 정적 자산을 제공하는 유일한 디렉토리입니다.
+> - [빌드 시간](/docs/app/api-reference/next-cli#build)에 `public` 디렉토리에 있는 자산만 Next.js에 의해 제공됩니다. 요청 시간에 추가된 파일은 사용할 수 없습니다. 영구 파일 저장을 위해 [AWS S3](https://aws.amazon.com/s3/)와 같은 타사 서비스를 사용하는 것을 추천합니다.
+

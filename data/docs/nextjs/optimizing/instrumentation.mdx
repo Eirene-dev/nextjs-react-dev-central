@@ -1,0 +1,56 @@
+---
+title: 계측도구(Instrumentation)
+date: '2023-09-01 06:09'
+summary: Next.js 앱에서 서버 시작 시 코드를 실행하는 계측도구 사용법을 배우십시오.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## Instrumentation
+
+만약 **프로젝트의 루트 디렉토리** (또는 `src` 폴더 내부에 있다면 그곳에서)에 `instrumentation.ts` (또는 `.js`) 파일에서 `register`라는 함수를 내보내면, 새로운 Next.js 서버 인스턴스가 부팅될 때마다 해당 함수를 호출합니다.
+
+> **알아두면 좋은 정보**
+>
+> - 이 기능은 **실험적**입니다. 이를 사용하려면, `next.config.js`에서 `experimental.instrumentationHook = true;`를 명시적으로 설정해야 합니다.
+> - `instrumentation` 파일은 프로젝트의 루트에 있어야 하며, `app` 또는 `pages` 디렉토리 내부에 있어서는 안됩니다. `src` 폴더를 사용하고 있다면, `pages`와 `app` 옆에 `src` 안에 파일을 배치하세요.
+> - 접미사를 추가하기 위해 [`pageExtensions` 설정 옵션](/docs/app/api-reference/next-config-js/pageExtensions)을 사용한다면, `instrumentation` 파일 이름도 맞게 업데이트해야 합니다.
+> - 참고로 사용할 수 있는 기본 [with-opentelemetry](https://github.com/vercel/next.js/tree/canary/examples/with-opentelemetry) 예제를 만들었습니다.
+
+`register` 함수가 배포되면, 각 환경에서 정확히 한 번씩 cold boot 때마다 호출됩니다.
+
+때로는 부작용 때문에 코드에 파일을 가져오는 것이 유용할 수 있습니다. 예를 들면, 글로벌 변수를 정의하는 파일을 가져올 수 있지만, 코드에서 가져온 파일을 명시적으로 사용하지 않을 수 있습니다. 그럼에도 불구하고 패키지가 선언한 글로벌 변수에 접근할 수 있습니다.
+
+다음 예제에서 설명하는 것처럼 `instrumentation.ts`에서 부작용이 있는 파일을 가져와서 `register` 함수에서 사용하고 싶을 수 있습니다:
+
+```ts
+import { init } from 'package-init'
+
+export function register() {
+  init()
+}
+```
+
+그러나, `register` 함수 내부에서 `import`를 사용하여 부작용이 있는 파일을 가져오는 것을 권장합니다. 다음 예제는 `register` 함수에서 `import`의 기본 사용법을 보여줍니다:
+
+```ts
+export async function register() {
+  await import('package-with-side-effect')
+}
+```
+
+이렇게 하면, 코드에서 모든 부작용을 한 곳에 모아 놓을 수 있으며, 파일을 가져오면서 생기는 의도하지 않은 결과를 피할 수 있습니다.
+
+모든 환경에서 `register`를 호출하므로, `edge`와 `nodejs` 모두 지원하지 않는 코드를 조건부로 가져와야 합니다. 현재 환경을 얻기 위해 `NEXT_RUNTIME` 환경 변수를 사용할 수 있습니다. 환경별 코드를 가져오는 방법은 다음과 같습니다:
+
+```ts
+export async function register() {
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    await import('./instrumentation-node')
+  }
+
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    await import('./instrumentation-edge')
+  }
+}
+```

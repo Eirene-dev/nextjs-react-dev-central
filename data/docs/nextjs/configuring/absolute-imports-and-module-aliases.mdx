@@ -1,0 +1,173 @@
+---
+title: 절대 경로 임포트와 모듈 경로 별칭
+date: '2023-09-01 07:04'
+summary: 일정한 임포트 경로를 재매핑할 수 있도록 모듈 경로 별칭을 구성합니다.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+## 절대 경로
+<details>
+  <summary>예시</summary>
+
+- [절대 경로 임포트와 별칭](https://github.com/vercel/next.js/tree/canary/examples/with-absolute-imports)
+
+</details>
+
+Next.js는 `tsconfig.json` 및 `jsconfig.json` 파일의 `"paths"` 및 `"baseUrl"` 옵션에 대한 내장 지원을 제공합니다.
+
+이러한 옵션을 사용하면 프로젝트 디렉터리를 절대 경로에 별칭으로 지정할 수 있어 모듈을 임포트하기 쉽게 만듭니다. 예를 들면:
+
+```tsx
+// 변경 전
+import { Button } from '../../../components/button'
+
+// 변경 후
+import { Button } from '@/components/button'
+```
+
+> **알아두면 좋아요**: `create-next-app`은 이러한 옵션을 여러분을 위해 구성하도록 요청할 것입니다.
+
+## 절대 경로 임포트
+
+`baseUrl` 구성 옵션을 사용하면 프로젝트의 루트에서 직접 임포트할 수 있습니다.
+
+이 구성의 예는 다음과 같습니다:
+
+```json filename="tsconfig.json 또는 jsconfig.json"
+{
+  "compilerOptions": {
+    "baseUrl": "."
+  }
+}
+```
+
+```tsx filename="components/button.tsx" switcher
+export default function Button() {
+  return <button>Click me</button>
+}
+```
+
+```jsx filename="components/button.js" switcher
+export default function Button() {
+  return <button>Click me</button>
+}
+```
+
+```tsx filename="app/page.tsx" switcher
+import Button from 'components/button'
+
+export default function HomePage() {
+  return (
+    <>
+      <h1>안녕하세요, 세계</h1>
+      <Button />
+    </>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.js" switcher
+import Button from 'components/button'
+
+export default function HomePage() {
+  return (
+    <>
+      <h1>안녕하세요, 세계</h1>
+      <Button />
+    </>
+  )
+}
+```
+</details>
+
+
+## 모듈 별칭
+
+`baseUrl` 경로를 구성하는 것 외에도 `"paths"` 옵션을 사용하여 모듈 경로에 "별칭"을 지정할 수 있습니다.
+
+예를 들어, 다음 구성은 `@/components/*`를 `components/*`에 매핑합니다:
+
+```json filename="tsconfig.json 또는 jsconfig.json"
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"]
+    }
+  }
+}
+```
+
+```tsx filename="components/button.tsx" switcher
+export default function Button() {
+  return <button>Click me</button>
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="components/button.js" switcher
+export default function Button() {
+  return <button>Click me</button>
+}
+```
+</details>
+
+```tsx filename="app/page.tsx" switcher
+import Button from '@/components/button'
+
+export default function HomePage() {
+  return (
+    <>
+      <h1>안녕하세요, 세계</h1>
+      <Button />
+    </>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.js" switcher
+import Button from '@/components/button'
+
+export default function HomePage() {
+  return (
+    <>
+      <h1>안녕하세요, 세계</h1>
+      <Button />
+    </>
+  )
+}
+```
+</details>
+
+각각의 `"paths"`는 `baseUrl` 위치를 기준으로 상대 경로입니다. 예를 들면:
+
+```json
+// tsconfig.json 또는 jsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": "src/",
+    "paths": {
+      "@/styles/*": ["styles/*"],
+      "@/components/*": ["components/*"]
+    }
+  }
+}
+```
+
+```jsx
+// pages/index.js
+import Button from '@/components/button'
+import '@/styles/styles.css'
+import Helper from 'utils/helper'
+
+export default function HomePage() {
+  return (
+    <Helper>
+      <h1>안녕하세요, 세계</h1>
+      <Button />
+    </Helper>
+  )
+}
+```
