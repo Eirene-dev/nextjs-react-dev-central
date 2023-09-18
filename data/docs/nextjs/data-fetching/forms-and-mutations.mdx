@@ -1,0 +1,502 @@
+---
+title: 폼과 변이
+date: '2023-09-01 02:03'
+summary: Next.js로 폼 제출과 데이터 변이를 어떻게 처리하는지 알아보세요.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+웹 애플리케이션에서 데이터를 생성하고 업데이트하기 위해 폼을 사용합니다. Next.js는 **서버 액션**을 사용하여 폼 제출 및 데이터 변이를 처리하는 강력한 방법을 제공합니다.
+
+## 서버 액션의 작동 방식
+
+서버 액션을 사용하면 API 엔드포인트를 수동으로 생성할 필요가 없습니다. 대신 컴포넌트에서 직접 호출할 수 있는 비동기 서버 함수를 정의합니다.
+
+서버 액션은 서버 컴포넌트에서 정의하거나 클라이언트 컴포넌트에서 호출할 수 있습니다. 서버 컴포넌트에서 액션을 정의하면 자바스크립트 없이 폼이 작동하도록 하여 점진적 개선을 제공합니다.
+
+`next.config.js` 파일에서 서버 액션을 활성화하세요:
+
+```js filename="next.config.js"
+module.exports = {
+  experimental: {
+    serverActions: true,
+  },
+}
+```
+
+> **알아두면 좋아요:**
+>
+> - 서버 컴포넌트에서 서버 액션을 호출하는 폼은 자바스크립트 없이도 작동할 수 있습니다.
+> - 클라이언트 컴포넌트에서 서버 액션을 호출하는 폼은 자바스크립트가 아직 로드되지 않았을 경우 제출을 큐에 넣습니다, 클라이언트 하이드레이션을 우선시합니다.
+> - 서버 액션은 사용되는 페이지나 레이아웃의 [런타임](/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes)을 상속합니다.
+> - 현재, 라우트가 서버 액션을 사용하면 [동적으로 렌더링](/docs/app/building-your-application/rendering/server-components#server-rendering-strategies)하는 것이 필요합니다.
+
+## 캐시된 데이터 재검증
+
+서버 액션은 Next.js의 [캐싱 및 재검증](/docs/app/building-your-application/caching) 아키텍처와 깊게 통합됩니다. 폼이 제출되면 서버 액션은 캐시된 데이터를 업데이트하고 변경되어야 하는 캐시 키를 재검증할 수 있습니다.
+
+기존 애플리케이션처럼 라우트 당 단일 폼에 제한되는 대신, 서버 액션을 사용하면 라우트 당 여러 액션을 갖게 됩니다. 또한 폼 제출시 브라우저를 새로고침할 필요가 없습니다. 단일 네트워크 라운드트립에서 Next.js는 업데이트된 UI와 새로운 데이터 모두를 반환할 수 있습니다.
+
+아래에서 [서버 액션으로부터의 데이터 재검증](#revalidating-data) 예제를 확인하세요.
+
+---
+## 예제
+
+### 서버 전용 폼
+
+서버 전용 폼을 생성하려면, 서버 컴포넌트에서 서버 액션을 정의하세요. 액션은 함수 상단의 `"use server"` 지시문과 함께 인라인으로 정의되거나, 파일 상단의 지시문을 포함한 별도의 파일에서 정의될 수 있습니다.
+
+```tsx filename="app/page.tsx" switcher
+export default function Page() {
+  async function create(formData: FormData) {
+    'use server'
+
+    // 데이터 변형
+    // 캐시 재검증
+  }
+
+  return <form action={create}>...</form>
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.jsx" switcher
+export default function Page() {
+  async function create(formData) {
+    'use server'
+
+    // 데이터 변형
+    // 캐시 재검증
+  }
+
+  return <form action={create}>...</form>
+}
+```
+</details>
+
+> **알아두면 좋아요**: `<form action={create}>`는 [FormData](https://developer.mozilla.org/docs/Web/API/FormData/FormData) 데이터 타입을 받습니다. 위의 예제에서 HTML의 [`form`](https://developer.mozilla.org/docs/Web/HTML/Element/form)을 통해 제출된 FormData는 서버 액션 `create`에서 접근 가능합니다.
+
+### 데이터 재검증
+
+서버 액션은 필요에 따라 [Next.js 캐시](/docs/app/building-your-application/caching)를 무효화할 수 있게 합니다. [`revalidatePath`](/docs/app/api-reference/functions/revalidatePath)를 사용하여 전체 라우트 세그먼트를 무효화할 수 있습니다:
+
+```ts filename="app/actions.ts" switcher
+'use server'
+
+import { revalidatePath } from 'next/cache'
+
+export default async function submit() {
+  await submitForm()
+  revalidatePath('/')
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/actions.js" switcher
+'use server'
+
+import { revalidatePath } from 'next/cache'
+
+export default async function submit() {
+  await submitForm()
+  revalidatePath('/')
+}
+```
+</details>
+
+또는 [`revalidateTag`](/docs/app/api-reference/functions/revalidateTag)를 사용하여 캐시 태그를 사용하여 특정 데이터 가져오기를 무효화할 수 있습니다:
+
+```ts filename="app/actions.ts" switcher
+'use server'
+
+import { revalidateTag } from 'next/cache'
+
+export default async function submit() {
+  await addPost()
+  revalidateTag('posts')
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/actions.js" switcher
+'use server'
+
+import { revalidateTag } from 'next/cache'
+
+export default async function submit() {
+  await addPost()
+  revalidateTag('posts')
+}
+```
+</details>
+
+
+### 리다이렉팅
+서버 액션의 완료 후 사용자를 다른 라우트로 리다이렉트하려면 [`redirect`](/docs/app/api-reference/functions/redirect)와 절대 또는 상대 URL을 사용할 수 있습니다:
+
+```ts filename="app/actions.ts" switcher
+'use server'
+
+import { redirect } from 'next/navigation'
+import { revalidateTag } from 'next/cache'
+
+export default async function submit() {
+  const id = await addPost()
+  revalidateTag('posts') // 캐시된 포스트 업데이트
+  redirect(`/post/${id}`) // 새로운 라우트로 이동
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/actions.js" switcher
+'use server'
+
+import { redirect } from 'next/navigation'
+import { revalidateTag } from 'next/cache'
+
+export default async function submit() {
+  const id = await addPost()
+  revalidateTag('posts') // 캐시된 포스트 업데이트
+  redirect(`/post/${id}`) // 새로운 라우트로 이동
+}
+```
+</details>
+
+### 폼 검증
+
+기본 폼 검증을 위해 `required`나 `type="email"`과 같은 HTML 검증을 사용하는 것을 권장합니다.
+
+더 고급 서버 측 검증을 위해 [zod](https://zod.dev/)와 같은 스키마 검증 라이브러리를 사용하여 파싱된 폼 데이터의 구조를 검증하세요:
+
+```tsx filename="app/actions.ts" switcher
+import { z } from 'zod'
+
+const schema = z.object({
+  // ...
+})
+
+export default async function submit(formData: FormData) {
+  const parsed = schema.parse({
+    id: formData.get('id'),
+  })
+  // ...
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/actions.js" switcher
+import { z } from 'zod'
+
+const schema = z.object({
+  // ...
+})
+
+export default async function submit(formData) {
+  const parsed = schema.parse({
+    id: formData.get('id'),
+  })
+  // ...
+}
+```
+</details>
+
+### 로딩 상태 표시
+서버에서 폼을 제출할 때 로딩 상태를 표시하기 위해 `useFormStatus` 훅을 사용하세요:
+
+```tsx filename="app/page.tsx" switcher
+'use client'
+
+import { experimental_useFormStatus as useFormStatus } from 'react-dom'
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+
+  return (
+    <button disabled={pending}>
+      {pending ? 'Submitting...' : 'Submit'}
+    </button>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.jsx" switcher
+'use client'
+
+import { experimental_useFormStatus as useFormStatus } from 'react-dom'
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+
+  return (
+    <button disabled={pending}>
+      {pending ? 'Submitting...' : 'Submit'}
+    </button>
+  )
+}
+```
+</details>
+
+> **알아두면 좋아요:**
+>
+> - 로딩 또는 오류 상태를 표시하려면 현재 클라이언트 컴포넌트를 사용해야 합니다. 서버 액션의 안정성을 위해 나아가면서 이러한 값을 검색하기 위한 서버 측 함수의 옵션을 탐색하고 있습니다.
+
+
+
+### 오류 처리
+
+서버 액션은 [직렬화 가능한 객체](https://developer.mozilla.org/docs/Glossary/Serialization)를 반환할 수도 있습니다. 예를 들어, 서버 액션이 새 항목을 생성하는 오류를 처리하고, 성공 또는 오류 메시지를 반환할 수 있습니다:
+
+```ts filename="app/actions.ts" switcher
+'use server'
+
+export async function create(formData: FormData) {
+  try {
+    await createItem(formData.get('item'))
+    revalidatePath('/')
+    return { message: 'Success!' }
+  } catch (e) {
+    return { message: '오류가 발생했습니다.' }
+  }
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/actions.js" switcher
+'use server'
+
+export async function create(formData) {
+  try {
+    await createItem(formData.get('item'))
+    revalidatePath('/')
+    return { message: 'Success!' }
+  } catch (e) {
+    return { message: '오류가 발생했습니다.' }
+  }
+}
+```
+</details>
+
+그런 다음 클라이언트 컴포넌트에서 이 값을 읽고 상태에 저장하여 컴포넌트가 서버 액션의 결과를 뷰어에게 표시하도록 할 수 있습니다.
+
+```tsx filename="app/page.tsx" switcher
+'use client'
+
+import { create } from './actions'
+import { useState } from 'react'
+
+export default function Page() {
+  const [message, setMessage] = useState<string>('')
+
+  async function onCreate(formData: FormData) {
+    const res = await create(formData)
+    setMessage(res.message)
+  }
+
+  return (
+    <form action={onCreate}>
+      <input type="text" name="item" />
+      <button type="submit">추가</button>
+      <p>{message}</p>
+    </form>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.jsx" switcher
+'use client'
+
+import { create } from './actions'
+import { useState } from 'react'
+
+export default function Page() {
+  const [message, setMessage] = useState('')
+
+  async function onCreate(formData) {
+    const res = await create(formData)
+    setMessage(res.message)
+  }
+
+  return (
+    <form action={onCreate}>
+      <input type="text" name="item" />
+      <button type="submit">추가</button>
+      <p>{message}</p>
+    </form>
+  )
+}
+```
+</details>
+
+> **알아두면 좋아요:**
+>
+> - 로딩 또는 오류 상태를 표시하려면 현재 클라이언트 컴포넌트를 사용해야 합니다. 서버 액션의 안정성을 위해 나아가면서 이러한 값을 검색하기 위한 서버 측 함수의 옵션을 탐색하고 있습니다.
+
+
+
+### 낙관적 업데이트
+
+서버 액션이 완료되기 전에 UI를 낙관적으로 업데이트하려면 `useOptimistic`를 사용하세요. 이렇게 하면 응답을 기다리는 대신 미리 UI를 업데이트할 수 있습니다.
+
+```tsx filename="app/page.tsx" switcher
+'use client'
+
+import { experimental_useOptimistic as useOptimistic } from 'react'
+import { send } from './actions'
+
+type Message = {
+  message: string
+}
+
+export function Thread({ messages }: { messages: Message[] }) {
+  const [optimisticMessages, addOptimisticMessage] 
+      = useOptimistic<Message[]>(
+    messages,
+    (state: Message[], newMessage: string) => [
+      ...state,
+      { message: newMessage },
+    ]
+  )
+
+  return (
+    <div>
+      {optimisticMessages.map((m, k) => (
+        <div key={k}>{m.message}</div>
+      ))}
+      <form
+        action={async (formData: FormData) => {
+          const message = formData.get('message')
+          addOptimisticMessage(message)
+          await send(message)
+        }}
+      >
+        <input type="text" name="message" />
+        <button type="submit">보내기</button>
+      </form>
+    </div>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.jsx" switcher
+'use client'
+
+import { experimental_useOptimistic as useOptimistic } from 'react'
+import { send } from './actions'
+
+export function Thread({ messages }) {
+  const [optimisticMessages, addOptimisticMessage] = useOptimistic(
+    messages,
+    (state, newMessage) => [...state, { message: newMessage }]
+  )
+
+  return (
+    <div>
+      {optimisticMessages.map((m) => (
+        <div>{m.message}</div>
+      ))}
+      <form
+        action={async (formData) => {
+          const message = formData.get('message')
+          addOptimisticMessage(message)
+          await send(message)
+        }}
+      >
+        <input type="text" name="message" />
+        <button type="submit">보내기</button>
+      </form>
+    </div>
+  )
+}
+```
+</details>
+
+
+
+### 쿠키 설정하기
+
+서버 액션 내에서 [`cookies`](/docs/app/api-reference/functions/cookies) 함수를 사용하여 쿠키를 설정할 수 있습니다:
+
+```ts filename="app/actions.ts" switcher
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function create() {
+  const cart = await createCart()
+  cookies().set('cartId', cart.id)
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/actions.js" switcher
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function create() {
+  const cart = await createCart()
+  cookies().set('cartId', cart.id)
+}
+```
+</details>
+
+### 쿠키 읽기
+
+서버 액션 내에서 [`cookies`](/docs/app/api-reference/functions/cookies) 함수를 사용하여 쿠키를 읽을 수 있습니다:
+
+```ts filename="app/actions.ts" switcher
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function read() {
+  const auth = cookies().get('authorization')?.value
+  // ...
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/actions.js" switcher
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function read() {
+  const auth = cookies().get('authorization')?.value
+  // ...
+}
+```
+</details>
+
+### 쿠키 삭제하기
+
+서버 액션 내에서 [`cookies`](/docs/app/api-reference/functions/cookies) 함수를 사용하여 쿠키를 삭제할 수 있습니다:
+
+```ts filename="app/actions.ts" switcher
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function delete() {
+  cookies().delete('name')
+  // ...
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/actions.js" switcher
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function delete() {
+  cookies().delete('name')
+  // ...
+}
+```
+</details>
+
+서버 액션에서 쿠키를 삭제하는 [추가 예제](/docs/app/api-reference/functions/cookies#deleting-cookies)를 참고하세요.

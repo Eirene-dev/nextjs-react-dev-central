@@ -445,73 +445,23 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: '데이터 가져오기',
-          href: '/docs/react/installation',
+          href: '/docs/nextjs/data-fetching',
           items: [
             {
-              title: '1',
-              href: '/docs/nextjs/routing/defining-routes',
+              title: '데이터 페칭/캐싱/재검증',
+              href: '/docs/nextjs/data-fetching/fetching-caching-and-revalidating',
               disabled: false,
             },
             {
-              title: '2',
-              href: '/docs/nextjs/routing/pages-and-layouts',
+              title: '데이터 페칭 패턴',
+              href: '/docs/nextjs/data-fetching/patterns',
               disabled: false,
             },
             {
-              title: '3',
-              href: '/docs/nextjs/routing/linking-and-navigating',
+              title: '폼과 변이',
+              href: '/docs/nextjs/data-fetching/forms-and-mutations',
               disabled: false,
-            },
-            {
-              title: '4',
-              href: '/docs/nextjs/routing/route-groups',
-              disabled: false,
-            },
-            {
-              title: '5',
-              href: '/docs/nextjs/routing/dynamic-routes',
-              disabled: false,
-            },
-            {
-              title: '6',
-              href: '/docs/nextjs/routing/loading-ui-and-streaming',
-              disabled: false,
-            },
-            {
-              title: '7',
-              href: '/docs/nextjs/routing/error-handling',
-              disabled: false,
-            },
-            {
-              title: '8',
-              href: '/docs/nextjs/routing/parallel-routes',
-              disabled: false,
-            },
-            {
-              title: '9',
-              href: '/docs/nextjs/routing/intercepting-routes',
-              disabled: false,
-            },
-            {
-              title: '10',
-              href: '/docs/nextjs/routing/route-handlers',
-              disabled: false,
-            },
-            {
-              title: '11',
-              href: '/docs/nextjs/routing/middleware',
-              disabled: false,
-            },
-            {
-              title: '12',
-              href: '/docs/nextjs/routing/colocation',
-              disabled: false,
-            },
-            {
-              title: '13',
-              href: '/docs/nextjs/routing/internationalization',
-              disabled: false,
-            },     
+            },  
           ],
         },
         {
