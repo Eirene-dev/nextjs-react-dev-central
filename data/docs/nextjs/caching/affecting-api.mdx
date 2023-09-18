@@ -1,0 +1,218 @@
+---
+title: 캐싱 영향 주는 APIs
+date: '2023-09-01 04:05'
+summary: Next.js의 캐싱 메커니즘 개요.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## APIs
+
+다음 표는 다양한 Next.js APIs가 캐싱에 어떻게 영향을 미치는지에 대한 개요를 제공합니다:
+
+| API                                                                     | 라우터 캐시 | 전체 라우트 캐시      | 데이터 캐시          | React 캐시 |
+| ----------------------------------------------------------------------- | ----------- | -------------------- | -------------------- | ---------- |
+| [`<Link prefetch>`](#link)                                              | 캐시       |                      |                      |            |
+| [`router.prefetch`](#routerprefetch)                                    | 캐시       |                      |                      |            |
+| [`router.refresh`](#routerrefresh)                                      | 재검증     |                      |                      |            |
+| [`fetch`](#fetch)                                                       |            |                      | 캐시                | 캐시      |
+| [`fetch` `options.cache`](#fetch-optionscache)                          |            |                      | 캐시 또는 제외      |            |
+| [`fetch` `options.next.revalidate`](#fetch-optionsnextrevalidate)       |            | 재검증               | 재검증               |            |
+| [`fetch` `options.next.tags`](#fetch-optionsnexttags-and-revalidatetag) |            | 캐시                | 캐시                |            |
+| [`revalidateTag`](#fetch-optionsnexttags-and-revalidatetag)             |            | 재검증               | 재검증               |            |
+| [`revalidatePath`](#revalidatepath)                                     |            | 재검증               | 재검증               |            |
+| [`const revalidate`](#segment-config-options)                           |            | 재검증 또는 제외    | 재검증 또는 제외    |            |
+| [`const dynamic`](#segment-config-options)                              |            | 캐시 또는 제외      | 캐시 또는 제외      |            |
+| [`cookies`](#cookies)                                                   | 재검증     | 제외                 |                      |            |
+| [`headers`, `useSearchParams`, `searchParams`](#dynamic-functions)      |            | 제외                 |                      |            |
+| [`generateStaticParams`](#generatestaticparams)                         |            | 캐시                |                      |            |
+| [`React.cache`](#react-cache-function)                                  |            |                      |                      | 캐시      |
+| [`unstable_cache`](#unstable_cache) (곧 출시 예정)                       |            |                      |                      |            |
+
+### `<Link>`
+
+기본적으로, `<Link>` 컴포넌트는 전체 라우트 캐시에서 라우트를 자동으로 사전 가져오고 React 서버 컴포넌트 페이로드를 라우터 캐시에 추가합니다.
+
+사전 가져오기를 비활성화하려면 `prefetch` prop을 `false`로 설정할 수 있습니다. 그러나 이렇게 해도 캐시는 영구적으로 건너뛰지 않으며 사용자가 라우트를 방문할 때 클라이언트 측에서 라우트 세그먼트가 계속 캐시됩니다.
+
+[`<Link>` 컴포넌트](/docs/app/api-reference/components/link)에 대한 자세한 내용을 확인하세요.
+
+### `router.prefetch`
+
+`useRouter` 훅의 `prefetch` 옵션은 라우트를 수동으로 사전 가져오는 데 사용할 수 있습니다. 이렇게하면 React 서버 컴포넌트 페이로드가 라우터 캐시에 추가됩니다.
+
+[`useRouter` 훅](/docs/app/api-reference/functions/use-router) API 참조를 확인하세요.
+
+### `router.refresh`
+
+`useRouter` 훅의 `refresh` 옵션은 라우트를 수동으로 새로 고칠 수 있습니다. 이는 라우터 캐시를 완전히 지우고 현재 라우트에 대해 서버에 새로운 요청을 합니다. `refresh`는 데이터 또는 전체 라우트 캐시에 영향을 주지 않습니다.
+
+렌더링 결과는 React 상태와 브라우저 상태를 유지하면서 클라이언트에서 조정됩니다.
+
+[`useRouter` 훅](/docs/app/api-reference/functions/use-router) API 참조를 확인하세요.
+
+### `fetch`
+
+`fetch`에서 반환된 데이터는 데이터 캐시에 자동으로 캐시됩니다.
+
+```jsx
+// 기본적으로 캐시됩니다. `force-cache`는 기본 옵션이며 생략할 수 있습니다.
+fetch(`https://...`, { cache: 'force-cache' })
+```
+
+더 많은 옵션은 [`fetch` API 참조](/docs/app/api-reference/functions/fetch)를 확인하세요.
+
+### `fetch options.cache`
+
+`cache` 옵션을 `no-store`로 설정하여 데이터 캐싱의 개별 `fetch` 요청을 선택적으로 제외할 수 있습니다:
+
+```jsx
+// 캐싱 제외
+fetch(`https://...`, { cache: 'no-store' })
+```
+
+렌더링 출력이 데이터에 의존하기 때문에, `cache: 'no-store'`를 사용하면 `fetch` 요청이 사용되는 라우트의 전체 라우트 캐시도 건너뜁니다. 즉, 요청마다 라우트가 동적으로 렌더링되지만 동일한 라우트에서 다른 캐시된 데이터 요청을 계속 사용할 수 있습니다.
+
+더 많은 옵션은 [`fetch` API 참조](/docs/app/api-reference/functions/fetch)를 확인하세요.
+
+### `fetch options.next.revalidate`
+
+`fetch`의 `next.revalidate` 옵션을 사용하여 개별 `fetch` 요청의 재검증 기간(초 단위)을 설정할 수 있습니다. 이렇게하면 데이터 캐시가 재검증되며, 차례로 전체 라우트 캐시
+
+도 재검증됩니다. 새로운 데이터가 가져와지고 서버에서 컴포넌트가 다시 렌더링됩니다.
+
+```jsx
+// 최대 1시간 후에 재검증
+fetch(`https://...`, { next: { revalidate: 3600 } })
+```
+
+더 많은 옵션은 [`fetch` API 참조](/docs/app/api-reference/functions/fetch)를 확인하세요.
+
+
+### `fetch options.next.tags` 및 `revalidateTag`
+
+Next.js는 세밀한 데이터 캐싱 및 재검증을 위한 캐시 태깅 시스템을 갖추고 있습니다.
+
+1. `fetch` 또는 `unstable_cache`를 사용할 때, 하나 이상의 태그로 캐시 항목에 태그를 지정할 수 있습니다.
+2. 그런 다음 `revalidateTag`를 호출하여 해당 태그와 연결된 캐시 항목을 제거할 수 있습니다.
+
+예를 들어, 데이터를 가져올 때 태그를 설정할 수 있습니다:
+
+```jsx
+// 태그와 함께 데이터 캐싱
+fetch(`https://...`, { next: { tags: ['a', 'b', 'c'] } })
+```
+
+그런 다음 `revalidateTag`를 호출하여 특정 태그와 관련된 캐시 항목을 재검증합니다:
+
+```jsx
+// 특정 태그를 사용하여 항목 재검증
+revalidateTag('a')
+```
+
+무엇을 하려는지에 따라 `revalidateTag`를 사용할 수 있는 두 가지 위치가 있습니다:
+
+1. [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers) - 타사 이벤트(예: 웹훅)에 응답하여 데이터를 재검증합니다. 라우트 핸들러는 특정 라우트에 연결되어 있지 않으므로 라우터 캐시는 즉시 무효화되지 않습니다.
+2. [서버 액션](/docs/app/building-your-application/data-fetching/forms-and-mutations) - 사용자 작업(예: 폼 제출) 후 데이터를 재검증합니다. 이로 인해 관련 라우트의 라우터 캐시가 무효화됩니다.
+
+### `revalidatePath`
+
+`revalidatePath`를 사용하면 특정 경로 아래의 라우트 세그먼트 데이터를 수동으로 재검증하고 **재렌더링** 할 수 있습니다. `revalidatePath` 메서드를 호출하면 데이터 캐시가 재검증되며, 차례로 전체 라우트 캐시가 무효화됩니다.
+
+```jsx
+revalidatePath('/')
+```
+
+무엇을 하려는지에 따라 `revalidatePath`를 사용할 수 있는 두 가지 위치가 있습니다:
+
+1. [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers) - 타사 이벤트(예: 웹훅)에 응답하여 데이터를 재검증합니다.
+2. [서버 액션](/docs/app/building-your-application/data-fetching/forms-and-mutations) - 사용자 상호 작용(예: 폼 제출, 버튼 클릭) 후 데이터를 재검증합니다.
+
+[`revalidatePath` API 참조](/docs/app/api-reference/functions/revalidatePath)를 확인하여 자세한 내용을 알아보세요.
+
+> **`revalidatePath`** vs. **`router.refresh`**:
+>
+> `router.refresh`를 호출하면 라우터 캐시가 지워지고 데이터 캐시 또는 전체 라우트 캐시를 무효화하지 않고 서버에서 라우트 세그먼트를 다시 렌더링합니다.
+>
+> 차이점은 `revalidatePath`가 데이터 캐시와 전체 라우트 캐시를 제거하는 반면, `router.refresh()`는 클라이언트 측 API이므로 데이터 캐시와 전체 라우트 캐시를 변경하지 않습니다.
+
+### 동적 함수
+
+`cookies`, `headers`, `useSearchParams` 및 `searchParams`는 모두 런타임 들어오는 요청 정보에 따라 달라지는 동적 함수입니다. 이를 사용하면 전체 라우트 캐시에서 라우트가 제외되며, 다시 말해 라우트는 동적으로 렌더링됩니다.
+
+#### `cookies`
+
+서버 액션에서 `cookies.set` 또는 `cookies.delete`를 사용하면 쿠키를 사용하는 라우트가 오래되지 않도록 라우터 캐시가 무효화됩니다(예: 인증 변경 반영).
+
+[`cookies`](/docs/app/api-reference/functions/cookies) API 참조를 확인하세요.
+
+### 세그먼트 구성 옵션
+
+라우트 세그먼트 구성 옵션은 라우트 세그먼트 기본값을 재정의하거나 `fetch` API를 사용할 수 없을 때(예: 데이터베이스 클라이언트 또는 타사 라이브러리) 사용할 수 있습니다.
+
+다음 라우트 세그먼트 구성 옵션은 데이터 캐시 및 전체 라우트 캐시에서 제외됩니다:
+
+- `const dynamic = 'force-dynamic'`
+- `const revalidate = 0`
+
+[라우트 세그먼트 구성](/docs/app/api-reference/file-conventions/route-segment-config) 문서에서 더 많은 옵션을 확인하세요.
+
+### `generateStaticParams`
+
+[동적 세그먼트](/docs/app/building-your-application/routing/dynamic-routes) (예: `app/blog/[slug]/page.js`)의 경우, `generateStaticParams`에 의해 제공된 경로는 빌드 시간에 Full Route Cache에 캐싱됩니다. 요청 시간에 Next.js는 처음 방문될 때 빌드 시간에 알려지지 않았던 경로도 캐싱합니다.
+
+라우트 세그먼트에서 `export const dynamicParams = false` 옵션을 사용하여 요청 시간에 캐싱을 비활성화할 수 있습니다. 이 설정 옵션을 사용할 때, `generateStaticParams`에 의해 제공된 경로만 제공되며 다른 라우트는 404 또는 일치합니다 ([catch-all routes](/docs/app/building-your-application/routing/dynamic-routes#catch-all-segments)의 경우).
+
+[`generateStaticParams` API 참조](/docs/app/api-reference/functions/generate-static-params)를 확인하여 자세한 정보를 얻으세요.
+
+### React `cache` 함수
+
+React의 `cache` 함수를 사용하면 함수의 반환 값을 메모이제이션하여 동일한 함수를 여러 번 호출하면서 한 번만 실행할 수 있습니다.
+
+`fetch` 요청은 자동으로 메모이제이션되므로 React의 `cache`에 포장할 필요가 없습니다. 그러나 `fetch` API가 적합하지 않은 경우에 데이터 요청을 수동으로 메모이제이션하기 위해 `cache`를 사용할 수 있습니다. 예를 들면, 일부 데이터베이스 클라이언트, CMS 클라이언트 또는 GraphQL 클라이언트입니다.
+
+```tsx filename="utils/get-item.ts" switcher
+import { cache } from 'react'
+import db from '@/lib/db'
+
+export const getItem = cache(async (id: string) => {
+  const item = await db.item.findUnique({ id })
+  return item
+})
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="utils/get-item.js" switcher
+import { cache } from 'react'
+import db from '@/lib/db'
+
+export const getItem = cache(async (id) => {
+  const item = await db.item.findUnique({ id })
+  return item
+})
+```
+</details>
+
+### `unstable_cache`
+
+`unstable_cache`는 `fetch` API가 적합하지 않을 때 Data Cache에 값들을 추가하기 위한 실험적 API입니다. 예를 들면, 데이터베이스 클라이언트, CMS 클라이언트 또는 GraphQL을 사용할 때입니다.
+
+```jsx
+import { unstable_cache } from 'next/cache'
+
+export default async function Page() {
+  const cachedData = await unstable_cache(
+    async () => {
+      const data = await db.query('...')
+      return data
+    },
+    ['cache-key'],
+    {
+      tags: ['a', 'b', 'c'],
+      revalidate: 10,
+    }
+  )()
+}
+```
+
+**주의**: 이 API는 개발 중이며 우리는 이를 프로덕션에서 사용하는 것을 권장하지 않습니다. 여기에 나열된 이유는 Data Cache의 미래 방향을 보여주기 위함입니다.

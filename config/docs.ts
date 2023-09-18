@@ -491,38 +491,58 @@ export const docsConfig: DocsConfig = {
           ],
         },
         {
-          title: 'Next.js에서 캐싱',
+          title: '캐싱',
           href: '/docs/nextjs/caching',
           items: [
-            { 
-              title: 'Next.js에서 캐싱',
-              href: '/docs/nextjs/caching',
+            {
+              title: 'Request 메모이제이션',
+              href: '/docs/nextjs/caching/request-memoization',
               disabled: false,
-            }
+            },
+            {
+              title: '데이터 캐시',
+              href: '/docs/nextjs/caching/data-cache',
+              disabled: false,
+            },
+            {
+              title: '전체 라우트 캐시',
+              href: '/docs/nextjs/caching/full-route-cache',
+              disabled: false,
+            },
+            {
+              title: '라우터 캐시',
+              href: '/docs/nextjs/caching/router-cache',
+              disabled: false,
+            },
+            {
+              title: '캐싱 영향 주는 APIs',
+              href: '/docs/nextjs/caching/affecting-api',
+              disabled: false,
+            },
           ],
         },
         {
           title: '스타일링',
-          href: '/docs/react/managing-state',
+          href: '/docs/nextjs/styling',
           items: [
             {
               title: '1',
-              href: '/docs/nextjs/routing/defining-routes',
+              href: '/docs/nextjs/styling/css-modules',
               disabled: false,
             },
             {
               title: '2',
-              href: '/docs/nextjs/routing/pages-and-layouts',
+              href: '/docs/nextjs/styling/tailwind-css',
               disabled: false,
             },
             {
               title: '3',
-              href: '/docs/nextjs/routing/linking-and-navigating',
+              href: '/docs/nextjs/styling/css-in-js',
               disabled: false,
             },
             {
               title: '4',
-              href: '/docs/nextjs/routing/route-groups',
+              href: '/docs/nextjs/styling/sass',
               disabled: false,
             },
           ],
