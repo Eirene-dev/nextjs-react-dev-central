@@ -1,0 +1,284 @@
+---
+title: 페이지와 레이아웃
+date: '2023-09-01 01:02'
+summary: App Router를 이용하여 첫 번째 페이지와 공유 레이아웃을 생성하세요.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+> [라우팅 기본사항](/docs/app/building-your-application/routing)과 [라우트 정의하기](/docs/app/building-your-application/routing/defining-routes) 페이지를 먼저 읽는 것을 권장합니다.
+
+Next.js 13의 App Router는 [페이지](#pages), [공유 레이아웃](#layouts), 그리고 [템플릿](#templates)을 쉽게 생성할 수 있는 새로운 파일 규칙을 도입했습니다. 이 페이지는 Next.js 애플리케이션에서 이 특별한 파일들을 어떻게 사용하는지 안내해 드리겠습니다.
+
+## 페이지
+
+페이지는 라우트에 **고유한** UI입니다. `page.js` 파일에서 컴포넌트를 내보내서 페이지를 정의할 수 있습니다. 중첩된 폴더를 사용하여 [라우트를 정의](/docs/app/building-your-application/routing/defining-routes)하고 `page.js` 파일을 사용하여 라우트를 공개적으로 접근 가능하게 만들 수 있습니다.
+
+`app` 디렉토리 내에 `page.js` 파일을 추가하여 첫 번째 페이지를 만들어보세요:
+
+![page.js 특별한 파일](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fpage-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
+
+```jsx filename="app/page.tsx"
+// `app/page.tsx`는 `/` URL에 대한 UI입니다
+export default function Page() {
+  return <h1>안녕, 홈 페이지!</h1>
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.js"
+// `app/page.js`는 `/` URL에 대한 UI입니다
+export default function Page() {
+  return <h1>안녕, 홈 페이지!</h1>
+}
+```
+</details>
+
+```tsx filename="app/dashboard/page.tsx"
+// `app/dashboard/page.tsx`는 `/dashboard` URL에 대한 UI입니다
+export default function Page() {
+  return <h1>안녕, 대시보드 페이지!</h1>
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/dashboard/page.js" switcher
+// `app/dashboard/page.js`는 `/dashboard` URL에 대한 UI입니다
+export default function Page() {
+  return <h1>안녕, 대시보드 페이지!</h1>
+}
+```
+</details>
+
+<Callout>
+**알아두기**:
+
+- 페이지는 항상 [라우트 서브트리](/docs/app/building-your-application/routing#terminology)의 [말단](/docs/app/building-your-application/routing#terminology)입니다.
+- 페이지에 대해 `.js`, `.jsx`, 또는 `.tsx` 파일 확장자를 사용할 수 있습니다.
+- 라우트 세그먼트를 공개적으로 접근 가능하게 만들려면 `page.js` 파일이 필요합니다.
+- 페이지는 기본적으로 [서버 컴포넌트](/docs/app/building-your-application/rendering/server-components)입니다. 하지만 [클라이언트 컴포넌트](/docs/app/building-your-application/rendering/client-components)로 설정할 수 있습니다.
+- 페이지는 데이터를 가져올 수 있습니다. 자세한 정보는 [데이터 가져오기](/docs/app/building-your-application/data-fetching) 섹션을 참조하세요.
+</Callout>
+
+---
+
+## 레이아웃
+
+레이아웃은 여러 페이지 간에 **공유되는** UI입니다. 내비게이션시 레이아웃은 상태를 유지하고, 상호 작용이 가능하며, 다시 렌더링되지 않습니다. 레이아웃은 [중첩](#nesting-layouts)될 수도 있습니다.
+
+`layout.js` 파일에서 React 컴포넌트를 `default`로 내보내어 레이아웃을 정의할 수 있습니다. 이 컴포넌트는 렌더링 중에 하위 레이아웃(있는 경우) 또는 하위 페이지로 채워질 `children` prop을 수용해야 합니다.
+
+![layout.js 특별한 파일](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Flayout-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
+
+```tsx filename="app/dashboard/layout.tsx" switcher
+export default function DashboardLayout({
+  children, // 페이지 또는 중첩된 레이아웃이 될 것입니다
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <section>
+      {/* 여기에 공유 UI (예: 헤더 또는 사이드바)를 포함하세요 */}
+      <nav></nav>
+
+      {children}
+    </section>
+  )
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/dashboard/layout.js" switcher
+export default function DashboardLayout({
+  children, // 페이지 또는 중첩된 레이아웃이 될 것입니다
+}) {
+  return (
+    <section>
+      {/* 여기에 공유 UI (예: 헤더 또는 사이드바)를 포함하세요 */}
+      <nav></nav>
+
+      {children}
+    </section>
+  )
+}
+```
+</details>
+
+<Callout>
+**알아두기**:
+
+- 최상위 레이아웃을 [Root Layout](#root-layout-required)이라고 합니다. 이 **필수** 레이아웃은 애플리케이션의 모든 페이지에서 공유됩니다. Root 레이아웃에는 `html`과 `body` 태그가 포함되어야 합니다.
+- 모든 라우트 세그먼트는 선택적으로 자체 [Layout](#nesting-layouts)을 정의할 수 있습니다. 이러한 레이아웃은 해당 세그먼트의 모든 페이지에서 공유됩니다.
+- 라우트의 레이아웃은 기본적으로 **중첩**됩니다. 각 부모 레이아웃은 React의 `children` prop을 사용하여 아래의 자식 레이아웃들을 감쌉니다.
+- [Route Groups](/docs/app/building-your-application/routing/route-groups)를 사용하여 특정 라우트 세그먼트를 공유 레이아웃에 포함시키거나 배제할 수 있습니다.
+- 레이아웃은 기본적으로 [서버 컴포넌트](/docs/app/building-your-application/rendering/server-components)입니다. 하지만 [클라이언트 컴포넌트](/docs/app/building-your-application/rendering/client-components)로 설정할 수 있습니다.
+- 레이아웃은 데이터를 가져올 수 있습니다. 자세한 정보는 [데이터 가져오기](/docs/app/building-your-application/data-fetching) 섹션을 참조하세요.
+- 부모 레이아웃과 그 하위 요소 사이에 데이터를 전달할 수 없습니다. 그러나 라우트에서 동일한 데이터를 한 번 이상 가져올 수 있으며, React는 성능에 영향을 주지 않고 [요청을 자동으로 중복 제거](/docs/app/building-your-application/caching#request-memoization)합니다.
+- 레이아웃은 그 아래의 라우트 세그먼트에 접근할 수 없습니다. 모든 라우트 세그먼트에 접근하려면 Client Component에서 [`useSelectedLayoutSegment`](/docs/app/api-reference/functions/use-selected-layout-segment) 또는 [`useSelectedLayoutSegments`](/docs/app/api-reference/functions/use-selected-layout-segments)를 사용할 수 있습니다.
+- 레이아웃에 대해서 `.js`, `.jsx`, 또는 `.tsx` 파일 확장자를 사용할 수 있습니다.
+- 동일한 폴더에 `layout.js`와 `page.js` 파일을 정의할 수 있습니다. 레이아웃은 페이지를 감싸게 됩니다.
+</Callout>
+
+---
+
+### Root 레이아웃 (필수)
+
+루트 레이아웃은 `app` 디렉터리의 최상위에서 정의되며 모든 라우트에 적용됩니다. 이 레이아웃을 사용하면 서버에서 반환되는 초기 HTML을 수정할 수 있습니다.
+
+```tsx filename="app/layout.tsx" switcher
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/layout.js" switcher
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+</details>
+
+
+<Callout>
+**알아두기**:
+
+- `app` 디렉터리에는 루트 레이아웃이 **반드시** 포함되어야 합니다.
+- 루트 레이아웃은 Next.js가 자동으로 생성하지 않기 때문에 `<html>` 및 `<body>` 태그를 정의해야 합니다.
+- `<head>` HTML 요소를 관리하기 위해, 예를 들면 `<title>` 요소 등, [내장 SEO 지원](/docs/app/building-your-application/optimizing/metadata)을 사용할 수 있습니다.
+- [라우트 그룹](/docs/app/building-your-application/routing/route-groups)을 사용하여 여러 루트 레이아웃을 만들 수 있습니다. [여기에서 예시를 확인하세요](/docs/app/building-your-application/routing/route-groups#creating-multiple-root-layouts).
+- 루트 레이아웃은 기본적으로 [서버 컴포넌트](/docs/app/building-your-application/rendering/server-components)이며 [클라이언트 컴포넌트](/docs/app/building-your-application/rendering/client-components)로 설정될 **수 없습니다**.
+
+**`pages` 디렉터리에서 이동:** 루트 레이아웃은 [`_app.js`](/docs/pages/building-your-application/routing/custom-app) 및 [`_document.js`](/docs/pages/building-your-application/routing/custom-document) 파일을 대체합니다. [이전 가이드를 확인하세요](/docs/app/building-your-application/upgrading/app-router-migration#migrating-_documentjs-and-_appjs).
+</Callout>
+
+### 레이아웃 중첩하기
+
+폴더 내에 정의된 레이아웃(예: `app/dashboard/layout.js`)은 특정 라우트 세그먼트(예: `acme.com/dashboard`)에 적용되며 해당 세그먼트가 활성화될 때 렌더링됩니다. 기본적으로 파일 계층 구조의 레이아웃은 **중첩**되어 있으며, 그것은 `children` prop을 통해 자식 레이아웃을 감싼다는 것을 의미합니다.
+
+![중첩된 레이아웃](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fnested-layout.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
+
+```tsx filename="app/dashboard/layout.tsx" switcher
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return <section>{children}</section>
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/dashboard/layout.js" switcher
+export default function DashboardLayout({ children }) {
+  return <section>{children}</section>
+}
+```
+</details>
+
+<Callout>
+**알아두기**:
+
+- `<html>` 및 `<body>` 태그는 오직 루트 레이아웃에만 포함될 수 있습니다.
+</Callout>
+
+위의 두 레이아웃을 결합하면, 루트 레이아웃(`app/layout.js`)은 대시보드 레이아웃(`app/dashboard/layout.js`)을 감싸게 되며, 대시보드 레이아웃은 `app/dashboard/*` 내의 라우트 세그먼트를 감싸게 됩니다.
+
+두 레이아웃은 다음과 같이 중첩됩니다:
+
+![중첩된 레이아웃들](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fnested-layouts-ui.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
+
+[Route Groups](/docs/app/building-your-application/routing/route-groups)를 사용하여 특정 라우트 세그먼트를 공유 레이아웃에 포함시키거나 배제할 수 있습니다.
+
+---
+
+## 템플릿
+
+템플릿은 각 자식 레이아웃이나 페이지를 감싸는 레이아웃과 유사합니다. 라우트 간에 지속되고 상태를 유지하는 레이아웃과 달리 템플릿은 네비게이션마다 각각의 자식에 대해 새로운 인스턴스를 생성합니다. 이는 사용자가 같은 템플릿을 공유하는 라우트 사이를 이동할 때 컴포넌트의 새 인스턴스가 마운트되고, DOM 요소가 재생성되며, 상태는 **보존되지 않으며**, 효과가 재동기화된다는 것을 의미합니다.
+
+특정한 동작이 필요한 경우가 있을 수 있으며, 이런 경우 템플릿이 레이아웃보다 더 적합한 옵션이 될 수 있습니다. 예를 들면:
+
+- `useEffect` (예: 페이지 뷰 기록) 및 `useState` (예: 페이지별 피드백 양식)에 의존하는 기능.
+- 기본 프레임워크 동작을 변경하기 위해. 예로, 레이아웃 내의 Suspense 경계는 페이지 전환시가 아닌 레이아웃이 처음 로드될 때만 fallback을 표시합니다. 그러나 템플릿의 경우, 각 네비게이션마다 fallback이 표시됩니다.
+
+템플릿은 `template.js` 파일에서 기본 React 컴포넌트를 내보내는 것으로 정의될 수 있습니다. 컴포넌트는 `children` prop을 받아야 합니다.
+
+![template.js 특별한 파일](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Ftemplate-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
+
+```tsx filename="app/template.tsx" switcher
+export default function Template({ children
+}: { 
+    children: React.ReactNode 
+}) {
+  return <div>{children}</div>
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/template.js" switcher
+export default function Template({ children }) {
+  return <div>{children}</div>
+}
+```
+</details>
+
+중첩 측면에서, `template.js`는 레이아웃과 그 자식 사이에서 렌더링됩니다. 여기에 간략한 출력이 있습니다:
+
+```jsx filename="Output"
+<Layout>
+  {/* 템플릿에는 고유한 키가 주어집니다. */}
+  <Template key={routeParam}>{children}</Template>
+</Layout>
+```
+
+## `<head>` 수정하기
+
+`app` 디렉터리에서는 [내장 SEO 지원](/docs/app/building-your-application/optimizing/metadata)을 사용하여 `title` 및 `meta`와 같은 `<head>` HTML 요소를 수정할 수 있습니다.
+
+메타데이터는 [`layout.js`](/docs/app/api-reference/file-conventions/layout) 또는 [`page.js`](/docs/app/api-reference/file-conventions/page) 파일에서 [`metadata` 객체](/docs/app/api-reference/functions/generate-metadata#the-metadata-object)나 [`generateMetadata` 함수](/docs/app/api-reference/functions/generate-metadata#generatemetadata-function)를 내보내는 것으로 정의될 수 있습니다.
+
+```tsx filename="app/page.tsx" switcher
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Next.js',
+}
+
+export default function Page() {
+  return '...'
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.js" switcher
+export const metadata = {
+  title: 'Next.js',
+}
+
+export default function Page() {
+  return '...'
+}
+```
+</details>
+
+> **알아두기**: 루트 레이아웃에 수동으로 `<head>` 태그를 추가해서는 **안 됩니다**. 대신 [Metadata API](/docs/app/api-reference/functions/generate-metadata)를 사용해야 하며, 이 API는 스트리밍 및 `<head>` 요소 중복 제거와 같은 고급 요구사항을 자동으로 처리합니다.
+
+[API 참조에서 사용 가능한 메타데이터 옵션에 대해 자세히 알아보세요.](/docs/app/api-reference/functions/generate-metadata)

@@ -1,0 +1,125 @@
+---
+title: 프로젝트 구성 및 파일 공동 위치
+date: '2023-09-01 01:12'
+summary: Next.js 프로젝트를 어떻게 구성하고 파일을 함께 위치시킬지 학습합니다.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+[routing 폴더 및 파일 규칙](/docs/getting-started/project-structure#app-routing-conventions)을 제외하면 Next.js는 프로젝트 파일의 구성 및 공동 위치에 대한 **특별한 의견**이 없습니다.
+
+이 페이지는 프로젝트를 구성하기 위해 사용할 수 있는 기본 동작과 기능들을 공유합니다.
+
+- [기본적으로 안전한 공동 위치](#safe-colocation-by-default)
+- [프로젝트 구성 기능](#project-organization-features)
+- [프로젝트 구성 전략](#project-organization-strategies)
+
+## 기본적으로 안전한 공동 위치
+
+`app` 디렉터리에서는 [중첩된 폴더 계층 구조](/docs/app/building-your-application/routing#route-segments)가 라우트 구조를 정의합니다.
+
+각 폴더는 URL 경로의 해당 세그먼트에 매핑되는 라우트 세그먼트를 나타냅니다.
+
+그러나 폴더를 통해 라우트 구조가 정의되어 있더라도 라우트 세그먼트에 `page.js` 또는 `route.js` 파일이 추가되기 전까지는 라우트가 **공개적으로 접근 가능하지 않습니다**.
+
+!["라우트 세그먼트에 page.js 또는 route.js 파일이 추가될 때까지 라우트가 공개적으로 접근 가능하지 않다는 것을 보여주는 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-not-routable.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+또한 라우트가 공개적으로 접근 가능해지더라도 `page.js` 또는 `route.js`에서 **반환된 내용만** 클라이언트에 전송됩니다.
+
+!["page.js와 route.js 파일이 라우트를 공개적으로 접근 가능하게 만든다는 것을 보여주는 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-routable.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+이는 `app` 디렉터리 내의 라우트 세그먼트 안에서 **프로젝트 파일**을 **안전하게 함께 위치시킬 수 있다는 것을 의미**합니다.
+
+!["세그먼트에 page.js 또는 route.js 파일이 포함되어 있을 때도 함께 위치한 프로젝트 파일이 라우트 가능하지 않다는 것을 보여주는 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-colocation.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+> **알아두면 좋아요**:
+>
+> - 이것은 `pages` 디렉터리와는 다르게, `pages` 내의 모든 파일이 라우트로 간주되는 것과는 다릅니다.
+> - `app` 안에서 프로젝트 파일을 공동 위치시킬 수는 있지만, **반드시 그렇게 할 필요는 없습니다**. 원한다면 [그들을 `app` 디렉터리 밖에 보관할 수 있습니다](#store-project-files-outside-of-app).
+
+## 프로젝트 구성 기능
+
+Next.js는 프로젝트를 구성하는 데 도움이 되는 여러 기능을 제공합니다.
+
+### 개인 폴더
+
+언더스코어로 폴더명을 접두하는 것으로 개인 폴더를 만들 수 있습니다: `_folderName`
+
+이것은 폴더가 개인적인 구현 세부사항이며 라우팅 시스템에 의해 고려되어서는 안된다는 것을 나타냅니다. 따라서 폴더와 모든 하위 폴더를 라우팅에서 **제외**시킵니다.
+
+!["개인 폴더를 사용하는 폴더 구조 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-private-folders.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+`app` 디렉터리의 파일은 [기본적으로 안전하게 공동 위치될 수 있기 때문](#safe-colocation-by-default)에, 개인 폴더는 공동 위치를 위해 필요하지 않습니다. 그러나 다음과 같은 경우 유용할 수 있습니다:
+
+- UI 로직과 라우팅 로직 분리.
+- 프로젝트 및 Next.js 생태계 전체에서 내부 파일을 일관되게 구성.
+- 코드 편집기에서 파일 분류 및 그룹화.
+- Next.js 파일 규칙과의 미래의 이름 충돌 방지.
+
+> **알아두면 좋아요**:
+>
+> - 프레임워크 규칙은 아니지만, 개인 폴더 외부의 파일을 "개인"으로 표시하기 위해 같은 언더스코어 패턴을 사용하는 것을 고려해 볼 수 있습니다.
+> - 언더스코어로 시작하는 URL 세그먼트를 생성하려면 폴더 이름 앞에 `%5F` (언더스코어의 URL 인코딩 형식)를 접두해야 합니다: `%5FfolderName`.
+> - 개인 폴더를 사용하지 않는다면, 예상치 못한 이름 충돌을 방지하기 위해 Next.js [특별한 파일 규칙](/docs/getting-started/project-structure#routing-files)을 알고 있으면 좋습니다.
+
+
+### 라우트 그룹
+
+라우트 그룹은 괄호로 폴더를 감싸서 생성할 수 있습니다: `(폴더명)`
+
+이것은 해당 폴더가 조직적인 목적을 위한 것이며 라우트의 URL 경로에 **포함되어서는 안된다는 것을** 나타냅니다.
+
+!["라우트 그룹을 사용하는 폴더 구조 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-route-groups.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+라우트 그룹은 아래와 같은 경우 유용합니다:
+
+- [라우트를 그룹별로 조직화하기](/docs/app/building-your-application/routing/route-groups#organize-routes-without-affecting-the-url-path), 예를 들면, 사이트 섹션, 목적, 팀 별로.
+- 같은 라우트 세그먼트 레벨에서 중첩 레이아웃 활성화하기:
+  - [같은 세그먼트 내에서 다중 중첩 레이아웃 생성, 다중 루트 레이아웃 포함](/docs/app/building-your-application/routing/route-groups#creating-multiple-root-layouts)
+  - [공통 세그먼트 내의 라우트 하위 집합에 레이아웃 추가](/docs/app/building-your-application/routing/route-groups#opting-specific-segments-into-a-layout)
+
+### `src` 디렉터리
+
+Next.js는 옵셔널한 [`src` 디렉터리](/docs/app/building-your-application/configuring/src-directory) 안에 애플리케이션 코드(`app` 포함)를 저장하는 것을 지원합니다. 이로써 애플리케이션 코드와 대부분의 프로젝트 설정 파일들을 구분할 수 있게 됩니다.
+
+!["`src` 디렉터리를 사용하는 폴더 구조 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-src-directory.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+### 모듈 경로 별칭
+
+Next.js는 깊게 중첩된 프로젝트 파일 간의 가져오기를 더 쉽게 읽고 유지 관리할 수 있게 해주는 [모듈 경로 별칭](/docs/app/building-your-application/configuring/absolute-imports-and-module-aliases)을 지원합니다.
+
+```jsx filename="app/dashboard/settings/analytics/page.js"
+// 이전
+import { Button } from '../../../components/button'
+
+// 이후
+import { Button } from '@/components/button'
+```
+
+## 프로젝트 구성 전략
+
+Next.js 프로젝트에서 파일과 폴더를 어떻게 구성할 것인지에 관해 "올바른" 또는 "틀린" 방법은 없습니다.
+
+아래 섹션은 일반적인 전략에 대한 매우 고수준의 개요를 나열합니다. 가장 간단한 교훈은 당신과 당신의 팀에게 적합한 전략을 선택하고 프로젝트 전반에 걸쳐 일관성을 유지하는 것입니다.
+
+> **알아두면 좋아요**: 아래 예제에서는 `components`와 `lib` 폴더를 일반화된 플레이스홀더로 사용하고 있습니다. 이들의 명명법은 프레임워크의 특별한 의미를 가지고 있지 않으며, 여러분의 프로젝트는 `ui`, `utils`, `hooks`, `styles` 등의 다른 폴더를 사용할 수 있습니다.
+
+### `app` 밖에 프로젝트 파일 저장하기
+
+이 전략은 모든 애플리케이션 코드를 프로젝트의 **루트**에 있는 공유 폴더에 저장하며, `app` 디렉터리를 순전히 라우팅 용도로만 사용합니다.
+
+!["`app` 밖에 프로젝트 파일을 저장하는 폴더 구조 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-project-root.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+### `app` 내의 상위 레벨 폴더에 프로젝트 파일 저장하기
+
+이 전략은 모든 애플리케이션 코드를 `app` 디렉터리의 **루트**에 있는 공유 폴더에 저장합니다.
+
+!["`app` 내의 상위 레벨 폴더에 프로젝트 파일을 저장하는 폴더 구조 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-app-root.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
+
+### 피처나 라우트 별로 프로젝트 파일 나누기
+
+이 전략은 전역적으로 공유되는 애플리케이션 코드를 `app` 디렉터리의 루트에 저장하고, 특정 애플리케이션 코드를 그것들을 사용하는
+
+ 라우트 세그먼트로 **분할**합니다.
+
+!["피처나 라우트 별로 프로젝트 파일을 나누는 폴더 구조 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-app-root-split.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)

@@ -4,6 +4,43 @@ date: '2023-01-01 01:00'
 summary: Next.js 효과적으로 학습하는 기본 가이드와 팁.
 ---
 
+## Next.js란?
+
+Next.js는 전체 스택 웹 애플리케이션을 구축하기 위한 React 프레임워크입니다. React 컴포넌트를 사용하여 사용자 인터페이스를 구축하고, Next.js로 추가 기능과 최적화를 수행합니다.
+
+내부적으로 Next.js는 React를 위해 필요한 도구들, 예를 들면 번들링, 컴파일 등을 자동으로 추상화 및 설정합니다. 이로 인해 개발자는 설정에 시간을 보내지 않고 애플리케이션 구축에 중점을 둘 수 있습니다.
+
+개인 개발자이든 큰 팀의 일원이든, Next.js는 대화형, 동적이며 빠른 React 애플리케이션을 구축하는 데 도움을 줄 수 있습니다.
+
+
+아래는 간단한 Next.js와 React로 만든 컴포넌트의 예시입니다:
+
+```jsx showLineNumbers
+// pages/index.js
+import React from 'react';
+
+function HomePage() {
+  return <div>Welcome to Next.js!</div>;
+}
+
+export default HomePage;
+```
+
+### 주요 기능
+
+Next.js의 주요 기능은 다음과 같습니다:
+
+| 기능 | 설명 |
+| --- | --- |
+| [라우팅](/docs/app/building-your-application/routing) | 서버 컴포넌트를 기반으로 한 파일 시스템 기반 라우터로 레이아웃, 중첩 라우팅, 로딩 상태, 오류 처리 등을 지원합니다. |
+| [렌더링](/docs/app/building-your-application/rendering) | 클라이언트-사이드 및 서버-사이드 렌더링 지원. Next.js와 함께 서버에서 정적 및 동적 렌더링을 최적화하며, Edge 및 Node.js 런타임에서 스트리밍합니다. |
+| [데이터 가져오기](/docs/app/building-your-application/data-fetching) | 서버 컴포넌트에서의 비동기/대기를 사용하여 간소화된 데이터 가져오기, 그리고 요청 메모이제이션, 데이터 캐싱 및 재검증을 위한 확장된 `fetch` API를 제공합니다. |
+| [스타일링](/docs/app/building-your-application/styling) | CSS 모듈, Tailwind CSS, CSS-in-JS를 포함한 선호하는 스타일링 방법 지원. |
+| [최적화](/docs/app/building-your-application/optimizing) | 애플리케이션의 핵심 웹 품질과 사용자 경험을 개선하기 위한 이미지, 글꼴, 스크립트 최적화. |
+| [TypeScript](/docs/app/building-your-application/configuring/typescript) | 향상된 TypeScript 지원, 더 나은 타입 검사 및 더 효율적인 컴파일, 그리고 사용자 정의 TypeScript 플러그인 및 타입 검사기를 제공합니다. |
+
+
+
 ## Next.js 학습 가이드
 
 이제 여러분은 웹 프론트엔드의 미래로 불리는 Next.js를 학습하려는 중요한 기회를 얻게 되었습니다. 세계에서 가장 선도적인 기업들은 사용자 중심의 경험을 제공하기 위해 Next.js를 선택하고 있습니다. 그렇기 때문에 이 기술을 습득하는 것은 여러분의 개발 경력에 있어서 큰 전환점이 될 수 있습니다. 단순히 코드를 작성하는 것이 아닌, 성능, 접근성, 그리고 사용자 경험에 중점을 둔 웹 애플리케이션을 구축하는 능력을 키울 수 있는 시기입니다. 이 가이드는 그 첫 걸음을 돕기 위해 준비되었습니다. 

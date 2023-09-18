@@ -1,0 +1,301 @@
+---
+title: 병렬 라우트
+date: '2023-09-01 01:08'
+summary: 독립적으로 탐색할 수 있는 동일한 뷰에서 하나 이상의 페이지를 동시에 렌더링합니다. 고도로 동적인 애플리케이션을 위한 패턴입니다.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+
+병렬 라우팅을 사용하면 동일한 레이아웃에서 하나 이상의 페이지를 동시 또는 조건부로 렌더링할 수 있습니다. 대시보드나 소셜 사이트의 피드와 같은 앱의 고도로 동적인 부분에서 병렬 라우팅은 복잡한 라우팅 패턴을 구현하는 데 사용할 수 있습니다.
+
+예를 들면, 팀과 분석 페이지를 동시에 렌더링할 수 있습니다.
+
+!["병렬 라우트 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+병렬 라우팅을 사용하면 각 라우트가 독립적으로 스트리밍되면서 각 라우트의 독립적인 오류 및 로딩 상태를 정의할 수 있습니다.
+
+!["병렬 라우트는 사용자 정의 오류 및 로딩 상태를 가능하게 함"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-cinematic-universe.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+또한 병렬 라우팅을 사용하면 인증 상태와 같은 특정 조건을 기반으로 슬롯을 조건부로 렌더링할 수 있습니다. 이로 인해 동일한 URL에서 완전히 분리된 코드를 사용할 수 있습니다.
+
+!["조건부 라우트 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fconditional-routes-ui.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+## 규약
+
+병렬 라우트는 명명된 **슬롯**을 사용하여 생성됩니다. 슬롯은 `@폴더` 규약으로 정의되며, 동일한 레벨의 레이아웃에 prop으로 전달됩니다.
+
+> 슬롯은 라우트 세그먼트가 _아니며 URL 구조에 영향을 주지 않습니다_. 파일 경로 `/@team/members`는 `/members`에서 접근 가능합니다.
+
+예를 들어, 다음 파일 구조는 두 개의 명시적인 슬롯을 정의합니다: `@analytics`와 `@team`.
+
+!["병렬 라우트 파일 시스템 구조"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-file-system.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+
+위의 폴더 구조는 `app/layout.js` 내의 컴포넌트가 `@analytics` 및 `@team` 슬롯 prop을 수락하며, `children` prop과 함께 병렬로 렌더링할 수 있다는 것을 의미합니다:
+
+```tsx filename="app/layout.tsx" switcher
+export default function Layout(props: {
+  children: React.ReactNode
+  analytics: React.ReactNode
+  team: React.ReactNode
+}) {
+  return (
+    <>
+      {props.children}
+      {props.team}
+      {props.analytics}
+    </>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/layout.js" switcher
+export default function Layout(props) {
+  return (
+    <>
+      {props.children}
+      {props.team}
+      {props.analytics}
+    </>
+  )
+}
+```
+</details>
+
+> **알아두면 좋은 정보**: `children` prop은 폴더에 매핑할 필요가 없는 암시적 슬롯입니다. 이는 `app/page.js`가 `app/@children/page.js`와 동일하다는 것을 의미합니다.
+
+---
+## 일치하지 않는 라우트
+
+기본적으로 슬롯 내에 렌더링된 컨텐츠는 현재 URL과 일치합니다.
+
+슬롯이 일치하지 않는 경우, Next.js가 렌더링하는 내용은 라우팅 기술과 폴더 구조에 따라 다릅니다.
+
+### `default.js`
+
+현재 URL을 기반으로 슬롯의 활성 상태를 복구할 수 없는 경우, `default.js` 파일을 정의하여 폴백으로 렌더링 할 수 있습니다.
+
+다음 폴더 구조를 고려하세요. `@team` 슬롯에는 `settings` 디렉토리가 있지만, `@analytics`에는 없습니다.
+
+!["병렬 라우트 일치하지 않는 라우트"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-unmatched-routes.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+#### 탐색
+
+탐색 시, Next.js는 현재 URL과 일치하지 않더라도 슬롯의 이전 활성 상태를 렌더링합니다.
+
+#### 새로고침
+
+새로고침 시, Next.js는 먼저 일치하지 않는 슬롯의 `default.js` 파일을 렌더링하려고 시도합니다. 사용할 수 없는 경우 404가 렌더링됩니다.
+
+> 일치하지 않는 라우트의 404는 병렬로 렌더링되어서는 안 되는 라우트를 실수로 렌더링하지 않도록 도와줍니다.
+
+---
+
+## `useSelectedLayoutSegment(s)`
+
+[`useSelectedLayoutSegment`](/docs/app/api-reference/functions/use-selected-layout-segment)와 [`useSelectedLayoutSegments`](/docs/app/api-reference/functions/use-selected-layout-segments) 둘 다 `parallelRoutesKey`를 받아들여, 해당 슬롯 내에서 활성 라우트 세그먼트를 읽을 수 있게 합니다.
+
+```tsx filename="app/layout.tsx" switcher
+'use client'
+
+import { useSelectedLayoutSegment } from 'next/navigation'
+
+export default async function Layout(props: {
+  //...
+  auth: React.ReactNode
+}) {
+  const loginSegments = useSelectedLayoutSegment('auth')
+  // ...
+}
+```
+
+```jsx filename="app/layout.js" switcher
+'use client'
+
+import { useSelectedLayoutSegment } from 'next/navigation'
+
+export default async function Layout(props) {
+  const loginSegments = useSelectedLayoutSegment('auth')
+  // ...
+}
+```
+
+사용자가 `@auth/login` 또는 URL 바에서 `/login`으로 이동하면, `loginSegments`는 문자열 `"login"`과 동일하게 됩니다.
+
+---
+
+## 예시
+
+### 모달
+
+병렬 라우팅은 모달을 렌더링하는 데 사용될 수 있습니다.
+
+!["병렬 라우트 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-auth-modal.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+`@auth` 슬롯은 `/login` 같은 일치하는 라우트로 이동함으로써 표시될 수 있는 `<Modal>` 컴포넌트를 렌더링합니다.
+
+```tsx filename="app/layout.tsx" switcher
+export default async function Layout(props: {
+  // ...
+  auth: React.ReactNode
+}) {
+  return (
+    <>
+      {/* ... */}
+      {props.auth}
+    </>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/layout.js" switcher
+export default async function Layout(props) {
+  return (
+    <>
+      {/* ... */}
+      {props.auth}
+    </>
+  )
+}
+```
+</details>
+
+```tsx filename="app/@auth/login/page.tsx" switcher
+import { Modal } from 'components/modal'
+
+export default function Login() {
+  return (
+    <Modal>
+      <h1>Login</h1>
+      {/* ... */}
+    </Modal>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/@auth/login/page.js" switcher
+import { Modal } from 'components/modal'
+
+export default function Login() {
+  return (
+    <Modal>
+      <h1>Login</h1>
+      {/* ... */}
+    </Modal>
+  )
+}
+```
+</details>
+
+모달의 내용이 활성화되지 않은 상태에서 렌더링되지 않도록 하려면 `null`을 반환하는 `default.js` 파일을 만들 수 있습니다.
+
+```tsx filename="app/@auth/default.tsx" switcher
+export default function Default() {
+  return null
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/@auth/default.js" switcher
+export default function Default() {
+  return null
+}
+```
+</details>
+
+
+#### 모달 닫기
+
+모달이 클라이언트 내비게이션을 통해 시작되었다면 예를 들면 `<Link href="/login">`을 사용한다면, `router.back()`을 호출하거나 `Link` 컴포넌트를 사용하여 모달을 닫을 수 있습니다.
+
+```tsx filename="app/@auth/login/page.tsx" highlight="5" switcher
+'use client'
+import { useRouter } from 'next/navigation'
+import { Modal } from 'components/modal'
+
+export default async function Login() {
+  const router = useRouter()
+  return (
+    <Modal>
+      <span onClick={() => router.back()}>모달 닫기</span>
+      <h1>Login</h1>
+      ...
+    </Modal>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/@auth/login/page.js" highlight="5" switcher
+'use client'
+import { useRouter } from 'next/navigation'
+import { Modal } from 'components/modal'
+
+export default async function Login() {
+  const router = useRouter()
+  return (
+    <Modal>
+      <span onClick={() => router.back()}>모달 닫기</span>
+      <h1>Login</h1>
+      ...
+    </Modal>
+  )
+}
+```
+</details>
+> 모달에 대한 더 많은 정보는 [라우트 가로채기](/docs/app/building-your-application/routing/intercepting-routes) 섹션에서 다룹니다.
+
+다른 곳으로 이동하면서 모달을 닫고 싶다면, catch-all 라우트를 사용할 수도 있습니다.
+
+!["병렬 라우트 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-catchall.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+```tsx filename="app/@auth/[...catchAll]/page.tsx" switcher
+export default function CatchAll() {
+  return null
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/@auth/[...catchAll]/page.js" switcher
+export default function CatchAll() {
+  return null
+}
+```
+</details>
+> Catch-all 라우트는 `default.js`보다 우선순위가 높습니다.
+
+
+### 조건부 라우트
+
+병렬 라우트는 조건부 라우팅을 구현하는 데 사용될 수 있습니다. 예를 들어, 인증 상태에 따라 `@dashboard` 또는 `@login` 라우트를 렌더링 할 수 있습니다.
+
+```tsx filename="app/layout.tsx" switcher
+import { getUser } from '@/lib/auth'
+
+export default function Layout({
+  dashboard,
+  login,
+}: {
+  dashboard: React.ReactNode
+  login: React.ReactNode
+}) {
+  const isLoggedIn = getUser()
+  return isLoggedIn ? dashboard : login
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/layout.js" switcher
+import { getUser } from '@/lib/auth'
+
+export default function Layout({ dashboard, login }) {
+  const isLoggedIn = getUser()
+  return isLoggedIn ? dashboard : login
+}
+```
+</details>
+
+!["병렬 라우트 인증 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fconditional-routes-ui.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)

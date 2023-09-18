@@ -23,7 +23,8 @@ Next.js 13.4는 App Router의 안정성을 표시하는 기본적인 릴리즈�
 13.4의 릴리즈와 함께, 이제 App Router를 운영 환경에 채택하기 시작할 수 있습니다.
 
 ```bash
-npm i next@latest react@latest react-dom@latest eslint-config-next@latest
+npm i next@latest react@latest react-dom@latest \
+eslint-config-next@latest
 ```
 
 ## Next.js 앱 라우터(App Router)
@@ -198,7 +199,11 @@ import Head from 'next/head';
 export default () => (
   <div>
     <Head>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta 
+        name="viewport" 
+        content="width=device-width, 
+        initial-scale=1" 
+      />
     </Head>
     <h1>안녕. 나는 모바일에 최적화되어 있어!</h1>
   </div>

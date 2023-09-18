@@ -1,0 +1,57 @@
+---
+title: 라우트 가로채기
+date: '2023-09-01 01:09'
+summary: 현재 레이아웃 내에서 새로운 라우트를 로드하면서 브라우저 URL을 마스킹하여 모달과 같은 고급 라우팅 패턴에 유용하게 사용하세요.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+---
+
+
+라우트 가로채기는 현재 레이아웃 내의 애플리케이션의 다른 부분에서 라우트를 로드할 수 있게 합니다. 이 라우팅 패러다임은 사용자가 다른 컨텍스트로 전환하지 않고도 라우트의 콘텐츠를 표시하고 싶을 때 유용할 수 있습니다.
+
+예를 들어 피드에서 사진을 클릭하면 피드 위에 모달로 사진을 표시할 수 있습니다. 이 경우 Next.js는 `/photo/123` 라우트를 가로채서 URL을 마스킹하고 `/feed` 위에 오버레이 합니다.
+
+!["라우트 가로채기 소프트 네비게이션"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fintercepting-routes-soft-navigate.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+그러나 공유 가능한 URL을 클릭하거나 페이지를 새로 고침하여 사진으로 이동할 때 전체 사진 페이지가 모달 대신 렌더링되어야 합니다. 라우트 가로채기는 발생해서는 안 됩니다.
+
+!["라우트 가로채기 하드 네비게이션"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fintercepting-routes-hard-navigate.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+## 규칙
+
+라우트 가로채기는 `(..)` 규칙으로 정의될 수 있으며, 이는 세그먼트에 대한 상대 경로 규칙 `../`과 유사합니다.
+
+다음을 사용할 수 있습니다:
+
+- `(.)`는 **동일한 레벨**의 세그먼트와 일치
+- `(..)`는 **한 레벨 위**의 세그먼트와 일치
+- `(..)(..)`는 **두 레벨 위**의 세그먼트와 일치
+- `(...)`는 **루트** `app` 디렉토리에서의 세그먼트와 일치
+
+예를 들어, `feed` 세그먼트 내에서 `(..)photo` 디렉토리를 생성하여 `photo` 세그먼트를 가로챌 수 있습니다.
+
+!["라우트 가로채기 폴더 구조"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fintercepted-routes-files.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+> `(..)` 규칙은 파일 시스템이 아닌 _라우트 세그먼트_를 기반으로 합니다.
+
+## 예제
+
+### 모달
+
+라우트 가로채기는 [병렬 라우트](/docs/app/building-your-application/routing/parallel-routes)와 함께 모달을 생성하는 데 사용될 수 있습니다.
+
+이 패턴을 사용하여 모달을 만들면 모달 작업 시 일반적으로 발생하는 몇 가지 문제점을 극복할 수 있습니다:
+
+- 모달 콘텐츠를 **URL을 통해 공유** 가능하게 합니다.
+- 페이지를 새로고침할 때 모달을 닫는 대신 **컨텍스트를 유지**합니다.
+- 이전 라우트로 가는 대신 **뒤로 이동하여 모달을 닫습니다.**
+- **앞으로 이동하여 모달을 다시 엽니다.**
+
+!["라우트 가로채기 모달 예제"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fintercepted-routes-modal-example.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
+
+> 위 예에서, `photo` 세그먼트 경로는 `@modal`이 _슬롯_이고 _세그먼트_가 아니므로 `(..)` 매처를 사용할 수 있습니다. 이는 `photo` 라우트가 _파일 시스템_ 레벨이 두 개 높음에도 불구하고 오직 하나의 _세그먼트_ 레벨만 높다는 것을 의미합니다.
+
+다른 예로는 상단 내비게이션에서 로그인 모달을 열거나 전용 `/login` 페이지를 갖는 것, 사이드 모달에서 장바구니를 열어 보는 것이 있습니다.
+
+[가로채기 및 병렬 라우트와 함께하는 모달 예제 보기](https://github.com/vercel-labs/nextgram).

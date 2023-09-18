@@ -35,6 +35,16 @@ export const docsConfig: DocsConfig = {
               href: '/docs/getting-started/nextjs-foundation/app-router',
               disabled: false,
             },
+            {
+              title: '설치하기',
+              href: '/docs/getting-started/nextjs-foundation/installation',
+              disabled: false,
+            },
+            {
+              title: '프로젝트 구조',
+              href: '/docs/getting-started/nextjs-foundation/project-structure',
+              disabled: false,
+            },
           ],
         },
         {
@@ -363,9 +373,533 @@ export const docsConfig: DocsConfig = {
       href: '/docs/nextjs',
       items: [
         {
-          title: 'Introduction',
-          href: '/docs/nextjs',
-          disabled: true,
+          title: '라우팅',
+          href: '/docs/nextjs/routing',
+          items: [
+            {
+              title: '라우트 정의하기',
+              href: '/docs/nextjs/routing/defining-routes',
+              disabled: false,
+            },
+            {
+              title: '페이지와 레이아웃',
+              href: '/docs/nextjs/routing/pages-and-layouts',
+              disabled: false,
+            },
+            {
+              title: '링크 생성 및 내비게이션',
+              href: '/docs/nextjs/routing/linking-and-navigating',
+              disabled: false,
+            },
+            {
+              title: '라우트 그룹',
+              href: '/docs/nextjs/routing/route-groups',
+              disabled: false,
+            },
+            {
+              title: '동적 라우트',
+              href: '/docs/nextjs/routing/dynamic-routes',
+              disabled: false,
+            },
+            {
+              title: '로딩 UI 및 스트리밍',
+              href: '/docs/nextjs/routing/loading-ui-and-streaming',
+              disabled: false,
+            },
+            {
+              title: '오류 처리',
+              href: '/docs/nextjs/routing/error-handling',
+              disabled: false,
+            },
+            {
+              title: '병렬 라우트',
+              href: '/docs/nextjs/routing/parallel-routes',
+              disabled: false,
+            },
+            {
+              title: '라우트 가로채기',
+              href: '/docs/nextjs/routing/intercepting-routes',
+              disabled: false,
+            },
+            {
+              title: '라우트 핸들러',
+              href: '/docs/nextjs/routing/route-handlers',
+              disabled: false,
+            },
+            {
+              title: '미들웨어',
+              href: '/docs/nextjs/routing/middleware',
+              disabled: false,
+            },
+            {
+              title: '프로젝트 구성',
+              href: '/docs/nextjs/routing/colocation',
+              disabled: false,
+            },
+            {
+              title: '국제화',
+              href: '/docs/nextjs/routing/internationalization',
+              disabled: false,
+            },     
+          ],
+        },
+        {
+          title: '데이터 가져오기',
+          href: '/docs/react/installation',
+          items: [
+            {
+              title: '1',
+              href: '/docs/nextjs/routing/defining-routes',
+              disabled: false,
+            },
+            {
+              title: '2',
+              href: '/docs/nextjs/routing/pages-and-layouts',
+              disabled: false,
+            },
+            {
+              title: '3',
+              href: '/docs/nextjs/routing/linking-and-navigating',
+              disabled: false,
+            },
+            {
+              title: '4',
+              href: '/docs/nextjs/routing/route-groups',
+              disabled: false,
+            },
+            {
+              title: '5',
+              href: '/docs/nextjs/routing/dynamic-routes',
+              disabled: false,
+            },
+            {
+              title: '6',
+              href: '/docs/nextjs/routing/loading-ui-and-streaming',
+              disabled: false,
+            },
+            {
+              title: '7',
+              href: '/docs/nextjs/routing/error-handling',
+              disabled: false,
+            },
+            {
+              title: '8',
+              href: '/docs/nextjs/routing/parallel-routes',
+              disabled: false,
+            },
+            {
+              title: '9',
+              href: '/docs/nextjs/routing/intercepting-routes',
+              disabled: false,
+            },
+            {
+              title: '10',
+              href: '/docs/nextjs/routing/route-handlers',
+              disabled: false,
+            },
+            {
+              title: '11',
+              href: '/docs/nextjs/routing/middleware',
+              disabled: false,
+            },
+            {
+              title: '12',
+              href: '/docs/nextjs/routing/colocation',
+              disabled: false,
+            },
+            {
+              title: '13',
+              href: '/docs/nextjs/routing/internationalization',
+              disabled: false,
+            },     
+          ],
+        },
+        {
+          title: '렌더링',
+          href: '/docs/react/describing-the-ui',
+          items: [
+            {
+              title: '첫 번째 컴포넌트',
+              href: '/docs/react/describing-the-ui/your-first-component',
+              disabled: false,
+            },
+            {
+              title: '컴포넌트 가져오기/내보내기',
+              href: '/docs/react/describing-the-ui/importing-and-exporting-components',
+              disabled: false,
+            },
+            {
+              title: 'JSX 기반 마크업 작성',
+              href: '/docs/react/describing-the-ui/writing-markup-with-jsx',
+              disabled: false,
+            },
+            {
+              title: 'JSX 내 자바스크립트',
+              href: '/docs/react/describing-the-ui/javascript-in-jsx-with-curly-braces',
+              disabled: false,
+            },
+            {
+              title: '컴포넌트에 Props 전달',
+              href: '/docs/react/describing-the-ui/passing-props-to-a-component',
+              disabled: false,
+            },
+            {
+              title: '조건부 렌더링',
+              href: '/docs/react/describing-the-ui/conditional-rendering',
+              disabled: false,
+            },
+            {
+              title: '리스트 렌더링',
+              href: '/docs/react/describing-the-ui/rendering-lists',
+              disabled: false,
+            },
+            {
+              title: '컴포넌트의 순수성 유지',
+              href: '/docs/react/describing-the-ui/keeping-components-pure',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: '캐싱',
+          href: '/docs/react/adding-interactivity',
+          items: [
+            {
+              title: '이벤트에 응답하기',
+              href: '/docs/react/adding-interactivity/responding-to-events',
+              disabled: false,
+            },
+            {
+              title: 'State: 컴포넌트 기억 공간',
+              href: '/docs/react/adding-interactivity/state-a-components-memory',
+              disabled: false,
+            },
+            {
+              title: '렌더링과 커밋',
+              href: '/docs/react/adding-interactivity/render-and-commit',
+              disabled: false,
+            },
+            {
+              title: 'State를 스냅샷으로 사용',
+              href: '/docs/react/adding-interactivity/state-as-a-snapshot',
+              disabled: false,
+            },
+            {
+              title: '여러 State 연속 업데이트',
+              href: '/docs/react/adding-interactivity/queueing-a-series-of-state-updates',
+              disabled: false,
+            },
+            {
+              title: 'State에서 객체 업데이트',
+              href: '/docs/react/adding-interactivity/updating-objects-in-state',
+              disabled: false,
+            },
+            {
+              title: 'State에서 배열 업데이트',
+              href: '/docs/react/adding-interactivity/updating-arrays-in-state',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: '스타일링',
+          href: '/docs/react/managing-state',
+          items: [
+            {
+              title: '사용자 입력 State 처리',
+              href: '/docs/react/managing-state/reacting-to-input-with-state',
+              disabled: false,
+            },
+            {
+              title: 'State 구조 선택',
+              href: '/docs/react/managing-state/choosing-the-state-structure',
+              disabled: false,
+            },
+            {
+              title: '컴포넌트간 State 공유',
+              href: '/docs/react/managing-state/sharing-state-between-components',
+              disabled: false,
+            },
+            {
+              title: 'State 보존과 재설정',
+              href: '/docs/react/managing-state/preserving-and-resetting-state',
+              disabled: false,
+            },
+            {
+              title: 'Reducer: State 로직 추출',
+              href: '/docs/react/managing-state/extracting-state-logic-into-a-reducer',
+              disabled: false,
+            },
+            {
+              title: 'Context: 데이터 깊이 전달',
+              href: '/docs/react/managing-state/passing-data-deeply-with-context',
+              disabled: false,
+            },
+            {
+              title: 'Reducer와 Context 활용',
+              href: '/docs/react/managing-state/scaling-up-with-reducer-and-context',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: '최적화',
+          href: '/docs/react/escape-hatches',
+          items: [
+            {
+              title: 'Refs: 값 참조',
+              href: '/docs/react/escape-hatches/referencing-values-with-refs',
+              disabled: false,
+            },
+            {
+              title: 'Refs: DOM 조작',
+              href: '/docs/react/escape-hatches/manipulating-the-dom-with-refs',
+              disabled: false,
+            },
+            {
+              title: 'Effect: 동기화',
+              href: '/docs/react/escape-hatches/synchronizing-with-effects',
+              disabled: false,
+            },
+            {
+              title: 'Effect: 필요성 검토',
+              href: '/docs/react/escape-hatches/you-might-not-need-an-effect',
+              disabled: false,
+            },
+            {
+              title: 'Effect: 라이프사이클',
+              href: '/docs/react/escape-hatches/lifecycle-of-reactive-effects',
+              disabled: false,
+            },
+            {
+              title: 'Effect: Event를 분리',
+              href: '/docs/react/escape-hatches/separating-events-from-effects',
+              disabled: false,
+            },
+            {
+              title: 'Effect: 종속성 제거',
+              href: '/docs/react/escape-hatches/removing-effect-dependencies',
+              disabled: false,
+            },
+            {
+              title: '사용자 정의 훅: 로직 재사용',
+              href: '/docs/react/escape-hatches/reusing-logic-with-custom-hooks',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: '환경설정',
+          href: '/docs/react/installation',
+          items: [
+            {
+              title: '1',
+              href: '/docs/nextjs/routing/defining-routes',
+              disabled: false,
+            },
+            {
+              title: '2',
+              href: '/docs/nextjs/routing/pages-and-layouts',
+              disabled: false,
+            },
+            {
+              title: '3',
+              href: '/docs/nextjs/routing/linking-and-navigating',
+              disabled: false,
+            },
+            {
+              title: '4',
+              href: '/docs/nextjs/routing/route-groups',
+              disabled: false,
+            },
+            {
+              title: '5',
+              href: '/docs/nextjs/routing/dynamic-routes',
+              disabled: false,
+            },
+            {
+              title: '6',
+              href: '/docs/nextjs/routing/loading-ui-and-streaming',
+              disabled: false,
+            },
+            {
+              title: '7',
+              href: '/docs/nextjs/routing/error-handling',
+              disabled: false,
+            },
+            {
+              title: '8',
+              href: '/docs/nextjs/routing/parallel-routes',
+              disabled: false,
+            },
+            {
+              title: '9',
+              href: '/docs/nextjs/routing/intercepting-routes',
+              disabled: false,
+            },
+            {
+              title: '10',
+              href: '/docs/nextjs/routing/route-handlers',
+              disabled: false,
+            },
+            {
+              title: '11',
+              href: '/docs/nextjs/routing/middleware',
+              disabled: false,
+            },
+            {
+              title: '12',
+              href: '/docs/nextjs/routing/colocation',
+              disabled: false,
+            },
+            {
+              title: '13',
+              href: '/docs/nextjs/routing/internationalization',
+              disabled: false,
+            },     
+          ],
+        },
+        {
+          title: '배포',
+          href: '/docs/react/installation',
+          items: [
+            {
+              title: '1',
+              href: '/docs/nextjs/routing/defining-routes',
+              disabled: false,
+            },
+            {
+              title: '2',
+              href: '/docs/nextjs/routing/pages-and-layouts',
+              disabled: false,
+            },
+            {
+              title: '3',
+              href: '/docs/nextjs/routing/linking-and-navigating',
+              disabled: false,
+            },
+            {
+              title: '4',
+              href: '/docs/nextjs/routing/route-groups',
+              disabled: false,
+            },
+            {
+              title: '5',
+              href: '/docs/nextjs/routing/dynamic-routes',
+              disabled: false,
+            },
+            {
+              title: '6',
+              href: '/docs/nextjs/routing/loading-ui-and-streaming',
+              disabled: false,
+            },
+            {
+              title: '7',
+              href: '/docs/nextjs/routing/error-handling',
+              disabled: false,
+            },
+            {
+              title: '8',
+              href: '/docs/nextjs/routing/parallel-routes',
+              disabled: false,
+            },
+            {
+              title: '9',
+              href: '/docs/nextjs/routing/intercepting-routes',
+              disabled: false,
+            },
+            {
+              title: '10',
+              href: '/docs/nextjs/routing/route-handlers',
+              disabled: false,
+            },
+            {
+              title: '11',
+              href: '/docs/nextjs/routing/middleware',
+              disabled: false,
+            },
+            {
+              title: '12',
+              href: '/docs/nextjs/routing/colocation',
+              disabled: false,
+            },
+            {
+              title: '13',
+              href: '/docs/nextjs/routing/internationalization',
+              disabled: false,
+            },     
+          ],
+        },
+        {
+          title: '업그레이드',
+          href: '/docs/react/installation',
+          items: [
+            {
+              title: '1',
+              href: '/docs/nextjs/routing/defining-routes',
+              disabled: false,
+            },
+            {
+              title: '2',
+              href: '/docs/nextjs/routing/pages-and-layouts',
+              disabled: false,
+            },
+            {
+              title: '3',
+              href: '/docs/nextjs/routing/linking-and-navigating',
+              disabled: false,
+            },
+            {
+              title: '4',
+              href: '/docs/nextjs/routing/route-groups',
+              disabled: false,
+            },
+            {
+              title: '5',
+              href: '/docs/nextjs/routing/dynamic-routes',
+              disabled: false,
+            },
+            {
+              title: '6',
+              href: '/docs/nextjs/routing/loading-ui-and-streaming',
+              disabled: false,
+            },
+            {
+              title: '7',
+              href: '/docs/nextjs/routing/error-handling',
+              disabled: false,
+            },
+            {
+              title: '8',
+              href: '/docs/nextjs/routing/parallel-routes',
+              disabled: false,
+            },
+            {
+              title: '9',
+              href: '/docs/nextjs/routing/intercepting-routes',
+              disabled: false,
+            },
+            {
+              title: '10',
+              href: '/docs/nextjs/routing/route-handlers',
+              disabled: false,
+            },
+            {
+              title: '11',
+              href: '/docs/nextjs/routing/middleware',
+              disabled: false,
+            },
+            {
+              title: '12',
+              href: '/docs/nextjs/routing/colocation',
+              disabled: false,
+            },
+            {
+              title: '13',
+              href: '/docs/nextjs/routing/internationalization',
+              disabled: false,
+            },     
+          ],
         },
       ],
     },
