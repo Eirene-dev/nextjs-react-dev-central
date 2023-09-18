@@ -1,0 +1,85 @@
+---
+title: 엣지와 Node.js 런타임
+date: '2023-09-01 03:04'
+summary: Next.js에서 스위치 가능한 런타임(엣지와 Node.js)에 대해 알아보세요.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+Next.js의 맥락에서 런타임은 실행 중인 코드에 사용 가능한 라이브러리, API 및 일반 기능의 집합을 의미합니다.
+
+서버에서는 응용 프로그램 코드의 일부를 렌더링할 수 있는 두 가지 런타임이 있습니다:
+
+- **Node.js 런타임**(기본)은 모든 Node.js API 및 생태계의 호환 가능한 패키지에 액세스 할 수 있습니다.
+- **엣지 런타임**은 [Web API](/docs/app/api-reference/edge)를 기반으로 합니다.
+
+## 런타임 차이점
+
+런타임을 선택할 때 고려해야 할 많은 요소들이 있습니다. 이 표는 주요 차이점을 한눈에 보여줍니다. 차이점에 대한 더 깊은 분석을 원한다면 아래 섹션을 참조하세요.
+
+|                                                                                                          | Node   | 서버리스 | 엣지                |
+| --------------------------------------------------------------------------------------------------------- | ------ | -------- | ------------------- |
+| [콜드 부트](https://vercel.com/docs/concepts/get-started/compute#cold-and-hot-boots?utm_source=next-site&utm_medium=docs&utm_campaign=next-website)       | /      | ~250ms   | 즉시                |
+| [HTTP 스트리밍](/docs/app/building-your-application/routing/loading-ui-and-streaming)                    | 예     | 예       | 예                 |
+| IO                                                                                                       | 모두   | 모두     | `fetch`            |
+| 확장성                                                                                                   | /      | 높음     | 최고               |
+| 보안                                                                                                     | 일반   | 높음     | 높음               |
+| 지연시간                                                                                                | 일반   | 낮음     | 최저               |
+| npm 패키지                                                                                               | 모두   | 모두     | 작은 부분집합      |
+| [정적 렌더링](/docs/app/building-your-application/rendering/server-components#static-rendering-default)  | 예     | 예       | 아니요             |
+| [동적 렌더링](/docs/app/building-your-application/rendering/server-components#dynamic-rendering)        | 예     | 예       | 예                 |
+| [`fetch`와 데이터 재검증](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) | 예 | 예 | 예  |
+
+### 엣지 런타임
+
+Next.js에서 경량의 엣지 런타임은 사용 가능한 Node.js API의 하위 집합입니다.
+
+엣지 런타임은 작고 간단한 함수로 낮은 지연 시간으로 동적이며 개인화 된 콘텐츠를 전달해야 할 경우 이상적입니다. 엣지 런타임의 속도는 리소스 사용이 최소화되어 있기 때문에 많은 시나리오에서 제한적일 수 있습니다.
+
+예를 들어, Vercel에서 엣지 런타임에서 실행되는 코드는 [1MB와 4MB 사이로 제한되며](https://vercel.com/docs/concepts/limits/overview#edge-middleware-and-edge-functions-size) 이 제한은 가져온 패키지, 폰트 및 파일을 포함하며 배포 인프라에 따라 다를 수 있습니다.
+
+### Node.js 런타임
+
+Node.js 런타임을 사용하면 모든 Node.js API와 이러한 API에 의존하는 모든 npm 패키지에 액세스 할 수 있습니다. 그러나 엣지 런타임을 사용하는 경로만큼 빠르게 시작되지는 않습니다.
+
+Next.js 애플리케이션을 Node.js 서버에 배포하면 인프라를 관리, 확장 및 구성해야 합니다. 대안으로, Vercel과 같은 서버리스 플랫폼에 Next.js 애플리케이션을 배포하여 이를 대신 처리할 수 있습니다.
+
+### 서버리스 Node.js
+
+서버리스는 엣지 런타임보다 복잡한 계산 부하를 처리할 수 있는 확장 가능한 솔루션이 필요한 경우 이상적입니다. 예를 들어, Vercel의 서버리스 함수에서는 가져온 패키지, 폰트 및 파일을 포함하여 전체 코드 크기가 [50MB](https://vercel.com/docs/concepts/limits/overview#serverless-function-size)입니다.
+
+[엣지](https://vercel.com/docs/concepts/functions/edge-functions)를 사용하는 경로와 비교하면 서버리스 함수가 요청을 처리하기 시작하기 전에 부팅하는 데 수백 밀리초가 걸릴 수 있습니다. 사이
+
+트가 받는 트래픽의 양에 따라 함수가 자주 "온" 상태가 아니므로 이는 자주 발생할 수 있습니다.
+
+
+## 예제
+
+### 세그먼트 런타임 옵션
+
+Next.js 애플리케이션에서 개별 라우트 세그먼트에 대한 런타임을 지정할 수 있습니다. 이렇게 하려면 [`runtime`이라는 변수를 선언하고 내보내십시오](/docs/app/api-reference/file-conventions/route-segment-config). 변수는 문자열이어야 하며 `'nodejs'` 또는 `'edge'` 런타임의 값이어야 합니다.
+
+다음 예제는 `'edge'`의 `runtime` 값을 내보내는 페이지 라우트 세그먼트를 보여줍니다:
+
+```tsx filename="app/page.tsx" switcher
+export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
+```
+
+```jsx filename="app/page.js" switcher
+export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
+```
+
+레이아웃 수준에서 `runtime`을 정의하면 레이아웃 아래의 모든 라우트가 엣지 런타임에서 실행됩니다:
+
+```tsx filename="app/layout.tsx" switcher
+export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
+```
+
+```jsx filename="app/layout.js" switcher
+export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
+```
+
+세그먼트 런타임이 설정되지 않은 경우 기본 `nodejs` 런타임이 사용됩니다. Node.js 런타임에서 변경할 계획이 없다면 `runtime` 옵션을 사용할 필요가 없습니다.
+
+
+> 사용 가능한 API의 전체 목록을 참조하려면 [Node.js 문서](https://nodejs.org/docs/latest/api/) 및 [Edge 문서](/docs/app/api-reference/edge)를 참조하세요. 두 런타임은 배포 인프라에 따라 [스트리밍](/docs/app/building-your-application/routing/loading-ui-and-streaming)도 지원할 수 있습니다.
