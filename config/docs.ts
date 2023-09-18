@@ -526,22 +526,22 @@ export const docsConfig: DocsConfig = {
           href: '/docs/nextjs/styling',
           items: [
             {
-              title: '1',
+              title: 'CSS 모듈',
               href: '/docs/nextjs/styling/css-modules',
               disabled: false,
             },
             {
-              title: '2',
+              title: 'Tailwind CSS',
               href: '/docs/nextjs/styling/tailwind-css',
               disabled: false,
             },
             {
-              title: '3',
+              title: 'CSS-in-JS',
               href: '/docs/nextjs/styling/css-in-js',
               disabled: false,
             },
             {
-              title: '4',
+              title: 'Sass',
               href: '/docs/nextjs/styling/sass',
               disabled: false,
             },
@@ -549,51 +549,51 @@ export const docsConfig: DocsConfig = {
         },
         {
           title: '최적화',
-          href: '/docs/react/escape-hatches',
+          href: '/docs/nextjs/optimizing',
           items: [
             {
               title: '1',
-              href: '/docs/nextjs/routing/defining-routes',
+              href: '/docs/nextjs/optimizing/images',
               disabled: false,
             },
             {
               title: '2',
-              href: '/docs/nextjs/routing/pages-and-layouts',
+              href: '/docs/nextjs/optimizing/fonts',
               disabled: false,
             },
             {
               title: '3',
-              href: '/docs/nextjs/routing/linking-and-navigating',
+              href: '/docs/nextjs/optimizing/scripts',
               disabled: false,
             },
             {
               title: '4',
-              href: '/docs/nextjs/routing/route-groups',
+              href: '/docs/nextjs/optimizing/metadata',
               disabled: false,
             },
             {
               title: '5',
-              href: '/docs/nextjs/routing/dynamic-routes',
+              href: '/docs/nextjs/optimizing/static-assets',
               disabled: false,
             },
             {
               title: '6',
-              href: '/docs/nextjs/routing/loading-ui-and-streaming',
+              href: '/docs/nextjs/optimizing/lazy-loading',
               disabled: false,
             },
             {
               title: '7',
-              href: '/docs/nextjs/routing/error-handling',
+              href: '/docs/nextjs/optimizing/analytics',
               disabled: false,
             },
             {
               title: '8',
-              href: '/docs/nextjs/routing/parallel-routes',
+              href: '/docs/nextjs/optimizing/open-telemetry',
               disabled: false,
             },
             {
               title: '9',
-              href: '/docs/nextjs/routing/parallel-routes',
+              href: '/docs/nextjs/optimizing/instrumentation',
               disabled: false,
             }    
           ],

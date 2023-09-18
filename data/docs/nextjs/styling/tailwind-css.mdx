@@ -1,10 +1,122 @@
 ---
-title: Styling
+title: Tailwind CSS
 date: '2023-09-01 05:02'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: Next.js 애플리케이션에 Tailwind CSS를 사용하여 스타일링하세요.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+[Tailwind CSS](https://tailwindcss.com/)는 Next.js와 탁월하게 작동하는 유틸리티 중심의 CSS 프레임워크입니다.
+
+## Tailwind 설치하기
+
+Tailwind CSS 패키지를 설치하고 `init` 명령어를 실행하여 `tailwind.config.js`와 `postcss.config.js` 파일을 모두 생성합니다:
+
+```bash filename="터미널"
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+## Tailwind 설정하기
+
+`tailwind.config.js` 내부에서 Tailwind CSS 클래스 이름을 사용할 파일의 경로를 추가합니다:
+
+```js filename="tailwind.config.js"
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}', // `app` 디렉토리의 추가에 주의하세요.
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+
+    // 혹은 `src` 디렉토리를 사용하는 경우:
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+`postcss.config.js`를 수정할 필요는 없습니다.
+
+
+---
+## 스타일 임포트하기
+
+애플리케이션의 [글로벌 스타일시트](/docs/app/building-your-application/styling/css-modules#global-styles)에 Tailwind가 생성한 스타일을 주입하기 위해 사용하는 [Tailwind CSS 지시어](https://tailwindcss.com/docs/functions-and-directives#directives)를 추가하세요. 예를 들면:
+
+```css filename="app/globals.css"
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+애플리케이션의 모든 라우트에 스타일을 적용하기 위해 [루트 레이아웃](/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required) (`app/layout.tsx`) 내에서 `globals.css` 스타일시트를 임포트하세요.
+
+```tsx filename="app/layout.tsx" switcher
+import type { Metadata } from 'next'
+
+// 이 스타일은 애플리케이션의 모든 라우트에 적용됩니다.
+import './globals.css'
+
+export const metadata: Metadata = {
+  title: 'Create Next App',
+  description: 'create next app에 의해 생성됨',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/layout.js" switcher
+// 이 스타일은 애플리케이션의 모든 라우트에 적용됩니다.
+import './globals.css'
+
+export const metadata = {
+  title: 'Create Next App',
+  description: 'create next app에 의해 생성됨',
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+</details>
+
+## 클래스 사용하기
+
+Tailwind CSS를 설치하고 글로벌 스타일을 추가한 후, 애플리케이션에서 Tailwind의 유틸리티 클래스를 사용할 수 있습니다.
+
+```tsx filename="app/page.tsx" switcher
+export default function Page() {
+  return <h1 className="text-3xl font-bold underline">안녕, Next.js!</h1>
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.js" switcher
+export default function Page() {
+  return <h1 className="text-3xl font-bold underline">안녕, Next.js!</h1>
+}
+```
+</details>
+
+## Turbopack과 함께 사용하기
+
+Next.js 13.1 버전부터, Tailwind CSS와 PostCSS는 [Turbopack](https://turbo.build/pack/docs/features/css#tailwind-css)과 함께 지원됩니다.

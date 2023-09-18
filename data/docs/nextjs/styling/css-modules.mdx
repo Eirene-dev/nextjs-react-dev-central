@@ -1,10 +1,137 @@
 ---
-title: Styling
+title: CSS 모듈
 date: '2023-09-01 05:01'
-summary: React는 웹 및 네이티브 사용자 인터페이스를 위한 라이브러리입니다.
+summary: Next.js 애플리케이션에 CSS 모듈로 스타일을 적용하세요.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+
+Next.js는 `.module.css` 확장자를 사용하여 CSS 모듈에 대한 내장 지원을 제공합니다.
+
+CSS 모듈은 고유한 클래스 이름을 자동으로 생성하여 CSS를 로컬 범위로 제한합니다. 이를 통해 서로 다른 파일에서 동일한 클래스 이름을 사용하면서 충돌을 걱정하지 않아도 됩니다. 이러한 특성으로 인해 CSS 모듈은 컴포넌트 수준의 CSS를 포함하기에 이상적인 방법입니다.
+
+## 예제
+
+CSS 모듈은 `app` 디렉토리 내의 모든 파일에 가져올 수 있습니다:
+
+```tsx filename="app/dashboard/layout.tsx" switcher
+import styles from './styles.module.css'
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return <section className={styles.dashboard}>{children}</section>
+}
+```
+
+```jsx filename="app/dashboard/layout.js" switcher
+import styles from './styles.module.css'
+
+export default function DashboardLayout({ children }) {
+  return <section className={styles.dashboard}>{children}</section>
+}
+```
+
+```css filename="app/dashboard/styles.module.css"
+.dashboard {
+  padding: 24px;
+}
+```
+
+CSS 모듈은 _선택적 기능_이며 **`.module.css` 확장자가 있는 파일에만 활성화됩니다**.
+일반적인 `<link>` 스타일시트와 전역 CSS 파일은 여전히 지원됩니다.
+
+제품 환경에서 모든 CSS 모듈 파일은 자동으로 **많은 수의 축소되고 코드 분할된** `.css` 파일로 연결됩니다.
+이 `.css` 파일들은 애플리케이션의 핫 실행 경로를 나타내며, 애플리케이션의 그림을 위해 최소한의 CSS만 로드됩니다.
+
+## 전역 스타일
+전역 스타일은 `app` 디렉토리 내의 모든 레이아웃, 페이지 또는 컴포넌트에 가져올 수 있습니다.
+
+> **알아두기**: 이는 `pages` 디렉토리와 다르게, `_app.js` 파일 내에서만 전역 스타일을 가져올 수 있다는 점에서 다릅니다.
+
+예를 들어, `app/global.css`라는 스타일시트를 고려해 보세요:
+
+```css
+body {
+  padding: 20px 20px 60px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+```
+
+루트 레이아웃(`app/layout.js`) 내에서 `global.css` 스타일시트를 가져와서 애플리케이션의 모든 경로에 스타일을 적용합니다:
+
+```tsx filename="app/layout.tsx" switcher
+// 이 스타일은 애플리케이션의 모든 경로에 적용됩니다
+import './global.css'
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+```jsx filename="app/layout.js" switcher
+// 이 스타일은 애플리케이션의 모든 경로에 적용됩니다
+import './global.css'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+## 외부 스타일시트
+
+외부 패키지에서 출판된 스타일시트는 `app` 디렉토리 내의 어디서든, 그리고 함께 배치된 컴포넌트에서도 가져올 수 있습니다:
+
+```tsx filename="app/layout.tsx" switcher
+import 'bootstrap/dist/css/bootstrap.css'
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body className="container">{children}</body>
+    </html>
+  )
+}
+```
+
+```jsx filename="app/layout.js" switcher
+import 'bootstrap/dist/css/bootstrap.css'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className="container">{children}</body>
+    </html>
+  )
+}
+```
+
+> **알아두기**: 외부 스타일시트는 npm 패키지에서 직접 가져오거나 코드베이스와 함께 다운로드해야 합니다. `<link rel="stylesheet" />`를 사용할 수 없습니다.
+
+## 추가 기능
+
+Next.js는 스타일을 추가하는 저자 경험을 향상시키기 위해 추가 기능을 포함하고 있습니다:
+
+- `next dev`로 로컬에서 실행할 때, 로컬 스타일시트(전역 또는 CSS 모듈 포함)는 편집 내용이 저장됨에 따라 즉시 변경사항을 반영하기 위해 [Fast Refresh](/docs/architecture/fast-refresh)를 활용합니다.
+- `next build`로 제품 환경을 위해 빌드할 때, CSS 파일은 스타일을 검색하기 위해 필요한 네트워크 요청 수를 줄이기 위해 더 적은 수의 축소된 `.css` 파일로 번들됩니다.
+- JavaScript를 비활성화하면 제품 환경 빌드(`next start`)에서 스타일이 여전히 로드됩니다. 그러나 [Fast Refresh](/docs/architecture/fast-refresh)를 활성화하기 위해 `next dev`에는 여전히 JavaScript가 필요합니다.
