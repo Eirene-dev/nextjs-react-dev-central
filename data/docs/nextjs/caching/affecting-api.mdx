@@ -5,6 +5,7 @@ summary: Next.js의 캐싱 메커니즘 개요.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
+---
 
 ## APIs
 
@@ -18,15 +19,15 @@ summary: Next.js의 캐싱 메커니즘 개요.
 | [`fetch`](#fetch)                                                       |            |                      | 캐시                | 캐시      |
 | [`fetch` `options.cache`](#fetch-optionscache)                          |            |                      | 캐시 또는 제외      |            |
 | [`fetch` `options.next.revalidate`](#fetch-optionsnextrevalidate)       |            | 재검증               | 재검증               |            |
-| [`fetch` `options.next.tags`](#fetch-optionsnexttags-and-revalidatetag) |            | 캐시                | 캐시                |            |
-| [`revalidateTag`](#fetch-optionsnexttags-and-revalidatetag)             |            | 재검증               | 재검증               |            |
+| [`fetch` `options.next.tags`](#fetch-optionsnexttags-및-revalidatetag) |            | 캐시                | 캐시                |            |
+| [`revalidateTag`](#fetch-optionsnexttags-및-revalidatetag)             |            | 재검증               | 재검증               |            |
 | [`revalidatePath`](#revalidatepath)                                     |            | 재검증               | 재검증               |            |
-| [`const revalidate`](#segment-config-options)                           |            | 재검증 또는 제외    | 재검증 또는 제외    |            |
-| [`const dynamic`](#segment-config-options)                              |            | 캐시 또는 제외      | 캐시 또는 제외      |            |
+| [`const revalidate`](#s세그먼트-구성-옵션)                           |            | 재검증 또는 제외    | 재검증 또는 제외    |            |
+| [`const dynamic`](#세그먼트-구성-옵션)                              |            | 캐시 또는 제외      | 캐시 또는 제외      |            |
 | [`cookies`](#cookies)                                                   | 재검증     | 제외                 |                      |            |
-| [`headers`, `useSearchParams`, `searchParams`](#dynamic-functions)      |            | 제외                 |                      |            |
+| [`headers`, `useSearchParams`, `searchParams`](#동적-함수)      |            | 제외                 |                      |            |
 | [`generateStaticParams`](#generatestaticparams)                         |            | 캐시                |                      |            |
-| [`React.cache`](#react-cache-function)                                  |            |                      |                      | 캐시      |
+| [`React.cache`](#react-cache-함수)                                  |            |                      |                      | 캐시      |
 | [`unstable_cache`](#unstable_cache) (곧 출시 예정)                       |            |                      |                      |            |
 
 ### `<Link>`
@@ -35,13 +36,13 @@ summary: Next.js의 캐싱 메커니즘 개요.
 
 사전 가져오기를 비활성화하려면 `prefetch` prop을 `false`로 설정할 수 있습니다. 그러나 이렇게 해도 캐시는 영구적으로 건너뛰지 않으며 사용자가 라우트를 방문할 때 클라이언트 측에서 라우트 세그먼트가 계속 캐시됩니다.
 
-[`<Link>` 컴포넌트](/docs/app/api-reference/components/link)에 대한 자세한 내용을 확인하세요.
+[`<Link>` 컴포넌트](https://nextjs.org/docs/app/api-reference/components/link)에 대한 자세한 내용을 확인하세요.
 
 ### `router.prefetch`
 
 `useRouter` 훅의 `prefetch` 옵션은 라우트를 수동으로 사전 가져오는 데 사용할 수 있습니다. 이렇게하면 React 서버 컴포넌트 페이로드가 라우터 캐시에 추가됩니다.
 
-[`useRouter` 훅](/docs/app/api-reference/functions/use-router) API 참조를 확인하세요.
+[`useRouter` 훅](https://nextjs.org/docs/app/api-reference/functions/use-router) API 참조를 확인하세요.
 
 ### `router.refresh`
 
@@ -49,7 +50,7 @@ summary: Next.js의 캐싱 메커니즘 개요.
 
 렌더링 결과는 React 상태와 브라우저 상태를 유지하면서 클라이언트에서 조정됩니다.
 
-[`useRouter` 훅](/docs/app/api-reference/functions/use-router) API 참조를 확인하세요.
+[`useRouter` 훅](https://nextjs.org/docs/app/api-reference/functions/use-router) API 참조를 확인하세요.
 
 ### `fetch`
 
@@ -60,7 +61,7 @@ summary: Next.js의 캐싱 메커니즘 개요.
 fetch(`https://...`, { cache: 'force-cache' })
 ```
 
-더 많은 옵션은 [`fetch` API 참조](/docs/app/api-reference/functions/fetch)를 확인하세요.
+더 많은 옵션은 [`fetch` API 참조](https://nextjs.org/docs/app/api-reference/functions/fetch)를 확인하세요.
 
 ### `fetch options.cache`
 
@@ -73,7 +74,7 @@ fetch(`https://...`, { cache: 'no-store' })
 
 렌더링 출력이 데이터에 의존하기 때문에, `cache: 'no-store'`를 사용하면 `fetch` 요청이 사용되는 라우트의 전체 라우트 캐시도 건너뜁니다. 즉, 요청마다 라우트가 동적으로 렌더링되지만 동일한 라우트에서 다른 캐시된 데이터 요청을 계속 사용할 수 있습니다.
 
-더 많은 옵션은 [`fetch` API 참조](/docs/app/api-reference/functions/fetch)를 확인하세요.
+더 많은 옵션은 [`fetch` API 참조](https://nextjs.org/docs/app/api-reference/functions/fetch)를 확인하세요.
 
 ### `fetch options.next.revalidate`
 
@@ -86,7 +87,7 @@ fetch(`https://...`, { cache: 'no-store' })
 fetch(`https://...`, { next: { revalidate: 3600 } })
 ```
 
-더 많은 옵션은 [`fetch` API 참조](/docs/app/api-reference/functions/fetch)를 확인하세요.
+더 많은 옵션은 [`fetch` API 참조](https://nextjs.org/docs/app/api-reference/functions/fetch)를 확인하세요.
 
 
 ### `fetch options.next.tags` 및 `revalidateTag`
@@ -112,8 +113,8 @@ revalidateTag('a')
 
 무엇을 하려는지에 따라 `revalidateTag`를 사용할 수 있는 두 가지 위치가 있습니다:
 
-1. [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers) - 타사 이벤트(예: 웹훅)에 응답하여 데이터를 재검증합니다. 라우트 핸들러는 특정 라우트에 연결되어 있지 않으므로 라우터 캐시는 즉시 무효화되지 않습니다.
-2. [서버 액션](/docs/app/building-your-application/data-fetching/forms-and-mutations) - 사용자 작업(예: 폼 제출) 후 데이터를 재검증합니다. 이로 인해 관련 라우트의 라우터 캐시가 무효화됩니다.
+1. [라우트 핸들러](/docs/nextjs/routing/route-handlers) - 타사 이벤트(예: 웹훅)에 응답하여 데이터를 재검증합니다. 라우트 핸들러는 특정 라우트에 연결되어 있지 않으므로 라우터 캐시는 즉시 무효화되지 않습니다.
+2. [서버 액션](/docs/nextjs/data-fetching/forms-and-mutations) - 사용자 작업(예: 폼 제출) 후 데이터를 재검증합니다. 이로 인해 관련 라우트의 라우터 캐시가 무효화됩니다.
 
 ### `revalidatePath`
 
@@ -125,10 +126,10 @@ revalidatePath('/')
 
 무엇을 하려는지에 따라 `revalidatePath`를 사용할 수 있는 두 가지 위치가 있습니다:
 
-1. [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers) - 타사 이벤트(예: 웹훅)에 응답하여 데이터를 재검증합니다.
-2. [서버 액션](/docs/app/building-your-application/data-fetching/forms-and-mutations) - 사용자 상호 작용(예: 폼 제출, 버튼 클릭) 후 데이터를 재검증합니다.
+1. [라우트 핸들러](/docs/nextjs/routing/route-handlers) - 타사 이벤트(예: 웹훅)에 응답하여 데이터를 재검증합니다.
+2. [서버 액션](/docs/nextjs/data-fetching/forms-and-mutations) - 사용자 상호 작용(예: 폼 제출, 버튼 클릭) 후 데이터를 재검증합니다.
 
-[`revalidatePath` API 참조](/docs/app/api-reference/functions/revalidatePath)를 확인하여 자세한 내용을 알아보세요.
+[`revalidatePath` API 참조](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)를 확인하여 자세한 내용을 알아보세요.
 
 > **`revalidatePath`** vs. **`router.refresh`**:
 >
@@ -144,7 +145,7 @@ revalidatePath('/')
 
 서버 액션에서 `cookies.set` 또는 `cookies.delete`를 사용하면 쿠키를 사용하는 라우트가 오래되지 않도록 라우터 캐시가 무효화됩니다(예: 인증 변경 반영).
 
-[`cookies`](/docs/app/api-reference/functions/cookies) API 참조를 확인하세요.
+[`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) API 참조를 확인하세요.
 
 ### 세그먼트 구성 옵션
 
@@ -155,15 +156,15 @@ revalidatePath('/')
 - `const dynamic = 'force-dynamic'`
 - `const revalidate = 0`
 
-[라우트 세그먼트 구성](/docs/app/api-reference/file-conventions/route-segment-config) 문서에서 더 많은 옵션을 확인하세요.
+[라우트 세그먼트 구성](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) 문서에서 더 많은 옵션을 확인하세요.
 
 ### `generateStaticParams`
 
-[동적 세그먼트](/docs/app/building-your-application/routing/dynamic-routes) (예: `app/blog/[slug]/page.js`)의 경우, `generateStaticParams`에 의해 제공된 경로는 빌드 시간에 Full Route Cache에 캐싱됩니다. 요청 시간에 Next.js는 처음 방문될 때 빌드 시간에 알려지지 않았던 경로도 캐싱합니다.
+[동적 세그먼트](/docs/nextjs/routing/dynamic-routes) (예: `app/blog/[slug]/page.js`)의 경우, `generateStaticParams`에 의해 제공된 경로는 빌드 시간에 Full Route Cache에 캐싱됩니다. 요청 시간에 Next.js는 처음 방문될 때 빌드 시간에 알려지지 않았던 경로도 캐싱합니다.
 
-라우트 세그먼트에서 `export const dynamicParams = false` 옵션을 사용하여 요청 시간에 캐싱을 비활성화할 수 있습니다. 이 설정 옵션을 사용할 때, `generateStaticParams`에 의해 제공된 경로만 제공되며 다른 라우트는 404 또는 일치합니다 ([catch-all routes](/docs/app/building-your-application/routing/dynamic-routes#catch-all-segments)의 경우).
+라우트 세그먼트에서 `export const dynamicParams = false` 옵션을 사용하여 요청 시간에 캐싱을 비활성화할 수 있습니다. 이 설정 옵션을 사용할 때, `generateStaticParams`에 의해 제공된 경로만 제공되며 다른 라우트는 404 또는 일치합니다 ([catch-all routes](/docs/nextjs/routing/dynamic-routes#catch-all-세그먼트)의 경우).
 
-[`generateStaticParams` API 참조](/docs/app/api-reference/functions/generate-static-params)를 확인하여 자세한 정보를 얻으세요.
+[`generateStaticParams` API 참조](https://nextjs.org/docs/app/api-reference/functions/generate-static-params)를 확인하여 자세한 정보를 얻으세요.
 
 ### React `cache` 함수
 

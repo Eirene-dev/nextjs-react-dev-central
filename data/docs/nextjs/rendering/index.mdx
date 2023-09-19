@@ -28,7 +28,7 @@ summary: Next.js의 렌더링 환경, 전략, 및 런타임 간의 차이점을 
 
 그러나 각 환경은 고유한 기능과 제약 조건을 갖습니다. 따라서 서버와 클라이언트에 대한 코드가 항상 동일하다고는 할 수 없습니다. 특정 작업(예: 데이터 가져오기 또는 사용자 상태 관리)은 다른 환경보다 한 환경에서 더 잘 수행될 수 있습니다.
 
-React와 Next.js를 효과적으로 사용하려면 이러한 차이점을 이해하는 것이 중요합니다. [서버](/docs/app/building-your-application/rendering/server-components) 및 [클라이언트](/docs/app/building-your-application/rendering/client-components) 컴포넌트 페이지에서 차이점과 사용 사례를 더 자세히 다룰 것입니다. 지금은 기본 내용을 계속 다루겠습니다.
+React와 Next.js를 효과적으로 사용하려면 이러한 차이점을 이해하는 것이 중요합니다. [서버](/docs/nextjs/rendering/server-components) 및 [클라이언트](/docs/nextjs/rendering/client-components) 컴포넌트 페이지에서 차이점과 사용 사례를 더 자세히 다룰 것입니다. 지금은 기본 내용을 계속 다루겠습니다.
 
 ### 요청-응답 주기
 
@@ -71,7 +71,7 @@ React의 `"use client"` 규칙을 사용하여 경계를 정의할 수 있습니
 
 실제로 이 모델은 개발자들에게 먼저 서버에서 실행하고자 하는 내용을 생각한 다음, 결과를 클라이언트로 전송하여 애플리케이션을 상호 작용하게 만드는 것을 권장합니다.
 
-이 개념은 같은 컴포넌트 트리에서 [클라이언트와 서버 컴포넌트를 교차시키는 방법](/docs/app/building-your-application/rendering/composition-patterns)을 살펴볼 때 더욱 명확해질 것입니다.
+이 개념은 같은 컴포넌트 트리에서 [클라이언트와 서버 컴포넌트를 교차시키는 방법](/docs/nextjs/rendering/composition-patterns)을 살펴볼 때 더욱 명확해질 것입니다.
 
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

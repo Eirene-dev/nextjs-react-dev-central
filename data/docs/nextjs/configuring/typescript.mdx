@@ -11,9 +11,11 @@ Next.js는 React 애플리케이션을 구축하기 위한 TypeScript 중심의 
 
 필요한 패키지를 자동으로 설치하고 적절한 설정을 구성하기 위한 내장 TypeScript 지원이 포함되어 있습니다.
 
-또한 에디터를 위한 [TypeScript 플러그인](#typescript-plugin)도 제공합니다.
+또한 에디터를 위한 [TypeScript 플러그인](#typescript-플러그인)도 제공합니다.
 
 > **🎥 시청하기:** 내장된 TypeScript 플러그인에 대해 알아보기 → [YouTube (3분)](https://www.youtube.com/watch?v=pqMqn9fKEf8)
+
+---
 
 ## 새 프로젝트
 
@@ -23,11 +25,15 @@ Next.js는 React 애플리케이션을 구축하기 위한 TypeScript 중심의 
 npx create-next-app@latest
 ```
 
+---
+
 ## 기존 프로젝트
 
 프로젝트에 TypeScript를 추가하려면 파일의 확장자를 `.ts` / `.tsx`로 변경합니다. `next dev`와 `next build`를 실행하면 필요한 의존성이 자동으로 설치되며 추천된 설정 옵션을 포함하는 `tsconfig.json` 파일이 추가됩니다.
 
 이미 `jsconfig.json` 파일이 있었다면, 기존 `jsconfig.json`에서 `paths` 컴파일러 옵션을 새로운 `tsconfig.json` 파일로 복사하고 기존의 `jsconfig.json` 파일을 삭제하세요.
+
+---
 
 ## TypeScript 플러그인
 
@@ -47,12 +53,14 @@ VS Code에서 플러그인을 활성화하려면:
 
 TypeScript 플러그인은 다음을 도울 수 있습니다:
 
-- [세그먼트 구성 옵션](/docs/app/api-reference/file-conventions/route-segment-config)에 대한 잘못된 값이 전달되면 경고합니다.
+- [세그먼트 구성 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)에 대한 잘못된 값이 전달되면 경고합니다.
 - 사용 가능한 옵션과 문맥 중심의 문서를 보여줍니다.
 - `use client` 지시문이 올바르게 사용되도록 합니다.
 - 클라이언트 후크(예: `useState`)는 클라이언트 컴포넌트에서만 사용되도록 합니다.
 
 > **알아두기**: 더 많은 기능이 향후에 추가될 예정입니다.
+
+---
 
 ## 최소 TypeScript 버전
 
@@ -122,9 +130,9 @@ function Card<T extends string>({ href }: { href: Route<T> | URL }) {
 Next.js 13은 **향상된 타입 안정성**을 가지고 있습니다. 이에는 다음이 포함됩니다:
 
 1. **데이터 가져오기 함수와 페이지 간의 데이터 직렬화 없음**: 서버에서 컴포넌트, 레이아웃 및 페이지 내에서 직접 `fetch`할 수 있습니다. 이 데이터는 클라이언트 측에서 React에서 사용하기 위해 직렬화(문자열로 변환)될 필요가 _없습니다_. 대신 `app`이 기본적으로 서버 컴포넌트를 사용하기 때문에 추가 단계 없이 `Date`, `Map`, `Set` 등의 값을 사용할 수 있습니다. 이전에는 서버와 클라이언트 간의 경계를 수동으로 타입화해야 했습니다.
-2. **컴포넌트 간의 데이터 흐름 간소화**: `_app`의 제거와 루트 레이아웃을 선호함으로써 컴포넌트와 페이지 간의 데이터 흐름을 더 쉽게 시각화할 수 있습니다. 이전에는 개별 `pages`와 `_app` 사이의 데이터 흐름을 타입화하는 것이 어렵고 혼란스러운 버그를 도입할 수 있었습니다. Next.js 13의 [colocated data fetching](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating)을 통해 이제 더 이상 문제가 아닙니다.
+2. **컴포넌트 간의 데이터 흐름 간소화**: `_app`의 제거와 루트 레이아웃을 선호함으로써 컴포넌트와 페이지 간의 데이터 흐름을 더 쉽게 시각화할 수 있습니다. 이전에는 개별 `pages`와 `_app` 사이의 데이터 흐름을 타입화하는 것이 어렵고 혼란스러운 버그를 도입할 수 있었습니다. Next.js 13의 [colocated data fetching](/docs/nextjs/data-fetching/fetching-caching-and-revalidating)을 통해 이제 더 이상 문제가 아닙니다.
 
-[Next.js의 데이터 가져오기](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating)는 데이터
+[Next.js의 데이터 가져오기](/docs/nextjs/data-fetching/fetching-caching-and-revalidating)는 데이터
 
 베이스 또는 콘텐츠 제공자 선택에 대해 규정적이지 않으면서 종단 간 타입 안정성에 최대한 가깝게 제공합니다.
 
@@ -163,11 +171,15 @@ TypeScript의 이전 버전을 사용하는 경우 `'Promise<Element>'는 유효
 
 또한 직렬화해야 하는 코드가 줄어들었습니다. 렌더링되지 않은 데이터는 서버와 클라이언트 사이를 넘나들지 않습니다(서버에 남아 있음). 이제 서버 컴포넌트의 지원을 통해 이것이 가능해졌습니다.
 
+---
+
 ## 경로 별칭과 baseUrl
 
 Next.js는 자동으로 `tsconfig.json`의 `"paths"`와 `"baseUrl"` 옵션을 지원합니다.
 
-이 기능에 대한 자세한 정보는 [모듈 경로 별칭 문서](/docs/app/building-your-application/configuring/absolute-imports-and-module-aliases)에서 확인할 수 있습니다.
+이 기능에 대한 자세한 정보는 [모듈 경로 별칭 문서](/docs/nextjs/configuring/absolute-imports-and-module-aliases)에서 확인할 수 있습니다.
+
+---
 
 ## next.config.js의 타입 체크
 
@@ -186,9 +198,13 @@ const nextConfig = {
 module.exports = nextConfig
 ```
 
+---
+
 ## 점진적 타입 체크
 
 `v10.2.1`부터 Next.js는 `tsconfig.json`에서 활성화된 경우 [점진적 타입 체크](https://www.typescriptlang.org/tsconfig#incremental)를 지원합니다. 이는 큰 애플리케이션에서 타입 체크 속도를 향상시킬 수 있습니다.
+
+---
 
 ## TypeScript 오류 무시하기
 
@@ -212,10 +228,12 @@ module.exports = {
 }
 ```
 
+---
+
 ## 버전 변경 사항
 
 | 버전       | 변경 사항                                                                                                                               |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `v13.2.0` | 정적으로 타입화된 링크가 베타로 사용 가능합니다.                                                                                        |
-| `v12.0.0` | [SWC](/docs/architecture/nextjs-compiler)가 기본적으로 TypeScript와 TSX를 컴파일하기 위해 사용됩니다. 이로 인해 빌드 속도가 빨라졌습니다.  |
+| `v12.0.0` | [SWC](https://nextjs.org/docs/architecture/nextjs-compiler)가 기본적으로 TypeScript와 TSX를 컴파일하기 위해 사용됩니다. 이로 인해 빌드 속도가 빨라졌습니다.  |
 | `v10.2.1` | `tsconfig.json`에서 활성화된 경우 [점진적 타입 체크](https://www.typescriptlang.org/tsconfig#incremental) 지원이 추가되었습니다. |

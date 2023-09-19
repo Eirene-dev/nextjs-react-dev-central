@@ -25,9 +25,13 @@ I **love** using [Next.js](https://nextjs.org/)
 
 Next.js는 애플리케이션 내의 로컬 MDX 콘텐츠와 서버에서 동적으로 가져온 원격 MDX 파일을 모두 지원할 수 있습니다. Next.js 플러그인은 마크다운과 React 컴포넌트를 HTML로 변환하며, `app`에서의 기본 사용을 포함하여 서버 컴포넌트에서의 사용을 지원합니다.
 
+---
+
 ## `@next/mdx`
 
 `@next/mdx` 패키지는 프로젝트 루트의 `next.config.js` 파일에서 구성됩니다. **로컬 파일에서 데이터를 가져옵니다**, `/pages` 또는 `/app` 디렉터리에 `.mdx` 확장자로 페이지를 직접 생성할 수 있습니다.
+
+---
 
 ## 시작하기
 
@@ -100,6 +104,8 @@ export default function Page() {
 ```
 </details>
 
+---
+
 ## 원격 MDX
 
 만약 마크다운 또는 MDX 파일이 애플리케이션 내부에 _존재하지 않는다면_, 서버에서 그것들을 동적으로 가져올 수 있습니다. 이것은 CMS 또는 다른 데이터 소스에서 내용을 가져오는 데 유용합니다.
@@ -128,9 +134,13 @@ export default async function Home() {
 }
 ```
 
+---
+
 ## 레이아웃
 
-MDX 콘텐츠 주위에 레이아웃을 공유하려면 App Router와 함께 [내장 레이아웃 지원](/docs/app/building-your-application/routing/pages-and-layouts#layouts)을 사용할 수 있습니다.
+MDX 콘텐츠 주위에 레이아웃을 공유하려면 App Router와 함께 [내장 레이아웃 지원](/docs/nextjs/routing/pages-and-layouts#레이아웃)을 사용할 수 있습니다.
+
+---
 
 ## Remark와 Rehype 플러그인
 
@@ -157,6 +167,8 @@ const withMDX = createMDX({
 export default withMDX(nextConfig)
 ```
 
+---
+
 ## 프론트매터
 
 프론트매터는 페이지에 대한 데이터를 저장하기 위해 사용할 수 있는 YAML과 유사한 키/값 쌍입니다. `@next/mdx`는 기본적으로 프론트매터를 지원하지 않지만, MDX 콘텐츠에 프론트매터를 추가하기 위한 많은 솔루션이 있습니다. 예를 들면 [gray-matter](https://github.com/jonschlinkert/gray-matter)와 같은 것들이 있습니다.
@@ -170,6 +182,8 @@ export const meta = {
 
 # 나의 MDX 페이지
 ```
+
+---
 
 ## 커스텀 요소들
 
@@ -246,6 +260,7 @@ export default function Post(props) {
 
 사이트 전체에서 사용한다면, 모든 MDX 페이지가 커스텀 요소 설정을 선택하도록 `_app.js`에 프로바이더를 추가하려고 할 수 있습니다.
 
+---
 
 ## 깊게 탐구하기: 마크다운을 HTML로 어떻게 변환하나요?
 
@@ -289,6 +304,7 @@ module.exports = withMDX({
   },
 })
 ```
+---
 
 ## 유용한 링크들
 

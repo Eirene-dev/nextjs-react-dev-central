@@ -6,20 +6,22 @@ summary: Next.js의 내장 데이터 캐시 사용 기법.
 
 <TOCInline toc={props.toc} asDisclosure />
 
+---
+
 ## 데이터 캐시
 
 Next.js는 수신되는 **서버 요청** 및 **배포**를 걸쳐 데이터 패치의 결과를 **지속**시키는 내장 Data Cache를 갖고 있습니다. 이것은 Next.js가 각 서버 요청이 지속적인 캐싱 의미론을 설정할 수 있도록 기본 `fetch` API를 확장하므로 가능합니다.
 
 > **알아두면 좋아요**: 브라우저에서, `fetch`의 `cache` 옵션은 요청이 브라우저의 HTTP 캐시와 어떻게 상호작용할지를 나타내는 반면, Next.js에서의 `cache` 옵션은 서버 측 요청이 서버의 데이터 캐시와 어떻게 상호작용할지를 나타냅니다.
 
-기본적으로 `fetch`를 사용하는 데이터 요청은 **캐시**됩니다. 캐싱 동작을 구성하기 위해 `fetch`의 [`cache`](#fetch-optionscache) 및 [`next.revalidate`](#fetch-optionsnextrevalidate) 옵션을 사용할 수 있습니다.
+기본적으로 `fetch`를 사용하는 데이터 요청은 **캐시**됩니다. 캐싱 동작을 구성하기 위해 `fetch`의 [`cache`](/docs/nextjs/caching/affecting-api#fetch-optionscache) 및 [`next.revalidate`](/docs/nextjs/caching/affecting-api#fetch-optionsnextrevalidate) 옵션을 사용할 수 있습니다.
 
 **데이터 캐시 작동 방식**
 
 !["캐시되고 캐시되지 않은 fetch 요청이 데이터 캐시와 어떻게 상호 작용하는지 보여주는 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fdata-cache.png&w=1920&q=75&dpl=dpl_E2DMmJw3MgUzvPqW6x3tFd2oxLX6)
 
 - 렌더링 중 `fetch` 요청이 처음 호출되면 Next.js는 캐시된 응답을 위해 데이터 캐시를 확인합니다.
-- 캐시된 응답이 발견되면 즉시 반환되고 [메모이제이션](#request-memoization)됩니다.
+- 캐시된 응답이 발견되면 즉시 반환되고 [메모이제이션](/docs/nextjs/caching/request-memoization)됩니다.
 - 캐시된 응답이 발견되지 않으면 데이터 소스에 요청이 이루어지고 결과는 데이터 캐시에 저장되며 메모이제이션됩니다.
 - 캐시되지 않은 데이터의 경우 (예: `{ cache: 'no-store' }`), 결과는 항상 데이터 소스에서 가져오며 메모이제이션됩니다.
 - 데이터가 캐시되든 안 되든 요청은 항상 메모이제이션되어 React 렌더 패스 중 동일한 데이터에 대한 중복 요청을 피합니다.
@@ -51,7 +53,7 @@ Next.js는 수신되는 **서버 요청** 및 **배포**를 걸쳐 데이터 패
 fetch('https://...', { next: { revalidate: 3600 } })
 ```
 
-대안으로, [라우트 세그먼트 설정 옵션](#segment-config-options)을 사용하여 세그먼트 내의 모든 `fetch` 요청을 설정하거나 `fetch`를 사용할 수 없는 경우를 위해 사용할 수 있습니다.
+대안으로, [라우트 세그먼트 설정 옵션](/docs/nextjs/caching/affecting-api#세그먼트-구성-옵션)을 사용하여 세그먼트 내의 모든 `fetch` 요청을 설정하거나 `fetch`를 사용할 수 없는 경우를 위해 사용할 수 있습니다.
 
 **시간 기반 재검증이 작동하는 방식**
 !["시간 기반 재검증이 어떻게 작동하는지 보여주는 다이어그램, 재검증 기간 후에는 첫 번째 요청에 대해 오래된 데이터가 반환되며, 그런 다음 데이터가 재검증됩니다."](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Ftime-based-revalidation.png&w=1920&q=75&dpl=dpl_E2DMmJw3MgUzvPqW6x3tFd2oxLX6)
@@ -67,7 +69,7 @@ fetch('https://...', { next: { revalidate: 3600 } })
 
 #### 요청 기반 재검증
 
-데이터는 경로별([`revalidatePath`](#revalidatepath)) 또는 캐시 태그별([`revalidateTag`](#fetch-optionsnexttags-and-revalidatetag))로 요청에 따라 재검증될 수 있습니다.
+데이터는 경로별([`revalidatePath`](/docs/nextjs/caching/affecting-api#revalidatepath)) 또는 캐시 태그별([`revalidateTag`](/docs/nextjs/caching/affecting-api#fetch-optionsnexttags-및-revalidatetag))로 요청에 따라 재검증될 수 있습니다.
 
 **요청 기반 재검증 작동 방식**
 !["요청 기반 재검증 작동 방식을 보여주는 다이어그램, 재검증 요청 후 데이터 캐시는 새로운 데이터로 업데이트됩니다."](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fon-demand-revalidation.png&w=1920&q=75&dpl=dpl_E2DMmJw3MgUzvPqW6x3tFd2oxLX6)
@@ -80,14 +82,14 @@ fetch('https://...', { next: { revalidate: 3600 } })
 
 ### 캐싱 선택 해제
 
-개별 데이터 페치에 대해서는 [`cache`](#fetch-optionscache) 옵션을 `no-store`로 설정하여 캐싱을 선택 해제할 수 있습니다. 이는 `fetch`가 호출될 때마다 데이터를 가져온다는 것을 의미합니다.
+개별 데이터 페치에 대해서는 [`cache`](/docs/nextjs/caching/affecting-api#fetch-optionscache) 옵션을 `no-store`로 설정하여 캐싱을 선택 해제할 수 있습니다. 이는 `fetch`가 호출될 때마다 데이터를 가져온다는 것을 의미합니다.
 
 ```jsx
 // 개별 `fetch` 요청에 대해 캐싱 선택 해제
 fetch(`https://...`, { cache: 'no-store' })
 ```
 
-대안으로, 특정 라우트 세그먼트에 대한 캐싱을 선택 해제하기 위해 [라우트 세그먼트 설정 옵션](#segment-config-options)을 사용할 수 있습니다. 이는 라우트 세그먼트 내의 모든 데이터 요청에 영향을 미치며, 타사 라이브러리도 포함됩니다.
+대안으로, 특정 라우트 세그먼트에 대한 캐싱을 선택 해제하기 위해 [라우트 세그먼트 설정 옵션](/docs/nextjs/caching/affecting-api#세그먼트-구성-옵션)을 사용할 수 있습니다. 이는 라우트 세그먼트 내의 모든 데이터 요청에 영향을 미치며, 타사 라이브러리도 포함됩니다.
 
 ```jsx
 // 라우트 세그먼트 내의 모든 데이터 요청에 대해 캐싱 선택 해제

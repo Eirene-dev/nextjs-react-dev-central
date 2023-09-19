@@ -6,10 +6,11 @@ summary: Next.js의 Request 메모이제이션에 기반한 캐싱 기법.
 
 <TOCInline toc={props.toc} asDisclosure />
 
+---
 
 ## Request 메모이제이션
 
-React는 동일한 URL과 옵션을 가진 Request를 자동으로 **메모이제이션**하기 위해 [`fetch` API](#fetch)를 확장합니다. 이는 React 컴포넌트 트리에서 여러 위치에서 동일한 데이터를 위해 fetch 함수를 호출하더라도 한 번만 실행할 수 있다는 것을 의미합니다.
+React는 동일한 URL과 옵션을 가진 Request를 자동으로 **메모이제이션**하기 위해 [`fetch` API](/docs/nextjs/caching/affecting-api#fetch)를 확장합니다. 이는 React 컴포넌트 트리에서 여러 위치에서 동일한 데이터를 위해 fetch 함수를 호출하더라도 한 번만 실행할 수 있다는 것을 의미합니다.
 
 !["중복 제거된 Fetch 요청"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fdeduplicated-fetch-requests.png&w=1920&q=75&dpl=dpl_E2DMmJw3MgUzvPqW6x3tFd2oxLX6)
 
@@ -23,19 +24,19 @@ async function getItem() {
 }
 
 // 이 함수는 두 번 호출되지만 처음에만 실행됩니다
-const item = await getItem() // 캐시 미스
+const item = await getItem() // 캐시 MISS
 
 // 두 번째 호출은 루트의 어느 곳에서나 가능합니다
-const item = await getItem() // 캐시 히트
+const item = await getItem() // 캐시 HIT
 ```
 
 **Request 메모이제이션의 작동 방식**
 
 !["React 렌더링 중에 fetch 메모이제이션이 어떻게 작동하는지 보여주는 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Frequest-memoization.png&w=1920&q=75&dpl=dpl_E2DMmJw3MgUzvPqW6x3tFd2oxLX6)
 
-- 루트를 렌더링하는 동안 특정 요청이 처음 호출되면 그 결과는 메모리에 없으므로 캐시 `미스`가 됩니다.
+- 루트를 렌더링하는 동안 특정 요청이 처음 호출되면 그 결과는 메모리에 없으므로 캐시 `MISS`가 됩니다.
 - 따라서 함수가 실행되고 데이터는 외부 소스에서 가져와 메모리에 저장됩니다.
-- 동일한 렌더링 패스에서의 요청의 후속 함수 호출은 캐시 `히트`가 되며, 함수를 실행하지 않고도 메모리에서 데이터가 반환됩니다.
+- 동일한 렌더링 패스에서의 요청의 후속 함수 호출은 캐시 `HIT`가 되며, 함수를 실행하지 않고도 메모리에서 데이터가 반환됩니다.
 - 루트가 렌더링되고 렌더링 패스가 완료되면 메모리는 "리셋"되고 모든 요청 메모이제이션 항목이 지워집니다.
 
 > **알아두면 좋아요**:
@@ -45,7 +46,7 @@ const item = await getItem() // 캐시 히트
 > - 메모이제이션은 React 컴포넌트 트리에만 적용됩니다, 이는:
 >   - `generateMetadata`, `generateStaticParams`, 레이아웃, 페이지 및 기타 서버 컴포넌트 내의 `fetch` 요청에 적용됩니다.
 >   - 라우트 핸들러 내의 `fetch` 요청에는 적용되지 않습니다. 왜냐하면 그것들은 React 컴포넌트 트리의 일부가 아니기 때문입니다.
-> - `fetch`가 적절하지 않은 경우 (예: 일부 데이터베이스 클라이언트, CMS 클라이언트 또는 GraphQL 클라이언트), 함수를 메모이제이션하기 위해 [React `cache` 함수](#react-cache-function)를 사용할 수 있습니다.
+> - `fetch`가 적절하지 않은 경우 (예: 일부 데이터베이스 클라이언트, CMS 클라이언트 또는 GraphQL 클라이언트), 함수를 메모이제이션하기 위해 [React `cache` 함수](/docs/nextjs/caching/affecting-api#react-cache-함수)를 사용할 수 있습니다.
 
 ### 지속 시간
 

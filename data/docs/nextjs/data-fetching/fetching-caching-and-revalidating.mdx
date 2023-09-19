@@ -4,9 +4,7 @@ date: '2023-09-01 02:01'
 summary: Next.js 애플리케이션에서 데이터를 가져오고, 캐시하고, 재검증하는 방법을 알아보세요.
 ---
 
-<TOCInline toc={props.toc} asDisclosure />
-
-
+<TOCInline toc={props.toc} asDisclosure toHeading={3} />
 
 
 데이터 가져오기는 모든 애플리케이션의 핵심 부분입니다. 이 페이지에서는 React와 Next.js에서 데이터를 어떻게 가져오고, 캐시하고, 재검증할 수 있는지 설명합니다.
@@ -14,15 +12,17 @@ summary: Next.js 애플리케이션에서 데이터를 가져오고, 캐시하�
 데이터를 가져올 수 있는 네 가지 방법이 있습니다:
 
 1. [서버에서 `fetch`를 사용하여](#서버에서-fetch를-사용하여-데이터-가져오기)
-2. [서버에서 서드파티 라이브러리를 사용하여](#서버에서-서드파티-라이브러리를-사용하여-데이터-가져오기)
-3. [클라이언트에서 라우트 핸들러를 통해](#클라이언트에서-라우트-핸들러를-통해-데이터-가져오기)
-4. [클라이언트에서 서드파티 라이브러리를 사용하여](#클라이언트에서-라우트-핸들러를-통해-데이터-가져오기).
+2. [서버에서 서드파티 라이브러리를 사용하여](#서드-파티-라이브러리를-사용하여-서버에서-데이터-가져오기)
+3. [클라이언트에서 라우트 핸들러를 통해](#클라이언트에서-라우트-핸들러로-데이터-가져오기)
+4. [클라이언트에서 서드파티 라이브러리를 사용하여](#서드-파티-라이브러리를-사용하여-클라이언트에서-데이터-가져오기).
+
+---
 
 ## 서버에서 `fetch`를 사용하여 데이터 가져오기
 
-Next.js는 서버에서 각 fetch 요청에 대한 [캐싱](#데이터-캐싱) 및 [재검증](#데이터-재검증) 동작을 구성할 수 있도록 기본 [`fetch` 웹 API](https://developer.mozilla.org/docs/Web/API/Fetch_API)를 확장합니다. React는 React 컴포넌트 트리를 렌더링하는 동안 fetch 요청을 자동으로 [메모이즈](/docs/app/building-your-application/data-fetching/patterns#필요한-곳에서-데이터-가져오기)합니다.
+Next.js는 서버에서 각 fetch 요청에 대한 [캐싱](#데이터-캐싱) 및 [재검증](#데이터-재검증) 동작을 구성할 수 있도록 기본 [`fetch` 웹 API](https://developer.mozilla.org/docs/Web/API/Fetch_API)를 확장합니다. React는 React 컴포넌트 트리를 렌더링하는 동안 fetch 요청을 자동으로 [메모이즈](/docs/nextjs/data-fetching/patterns#필요한-곳에서-데이터-가져오기)합니다.
 
-[`async`/`await`와 함께 서버 컴포넌트에서 `fetch`를 사용](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md), [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers) 및 [서버 액션](/docs/app/building-your-application/data-fetching/forms-and-mutations)에서 `fetch`를 사용할 수 있습니다.
+[`async`/`await`와 함께 서버 컴포넌트에서 `fetch`를 사용](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md), [라우트 핸들러](/docs/nextjs/routing/route-handlers) 및 [서버 액션](/docs/nextjs/data-fetching/forms-and-mutations)에서 `fetch`를 사용할 수 있습니다.
 
 예시:
 
@@ -72,7 +72,7 @@ export default async function Page() {
 
 > **알아두면 좋아요**:
 >
-> - Next.js는 [`cookies`](/docs/app/api-reference/functions/cookies) 및 [`headers`](/docs/app/api-reference/functions/headers)와 같이 서버 컴포넌트에서 데이터를 가져올 때 필요할 수 있는 유용한 함수를 제공합니다. 이들은 요청 시간 정보에 의존하기 때문에 라우트가 동적으로 렌더링됩니다.
+> - Next.js는 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) 및 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)와 같이 서버 컴포넌트에서 데이터를 가져올 때 필요할 수 있는 유용한 함수를 제공합니다. 이들은 요청 시간 정보에 의존하기 때문에 라우트가 동적으로 렌더링됩니다.
 > - 라우트 핸들러에서는 라우트 핸들러가 React 컴포넌트 트리의 일부가 아니므로 `fetch` 요청이 메모이즈되지 않습니다.
 > - TypeScript와 함께 서버 컴포넌트에서 `async`/`await`를 사용하려면 TypeScript `5.1.3` 이상 및 `@types/react` `18.2.8` 이상이 필요합니다.
 
@@ -82,20 +82,20 @@ export default async function Page() {
 
 캐싱은 모든 요청에 대해 데이터 소스에서 다시 가져오지 않아도 되도록 데이터를 저장합니다.
 
-기본적으로 Next.js는 서버의 [데이터 캐시](/docs/app/building-your-application/caching#데이터-캐시)에 `fetch`의 반환 값을 자동으로 캐시합니다. 이는 데이터를 빌드 시간 또는 요청 시간에 가져와 캐싱하고 각 데이터 요청에 재사용할 수 있음을 의미합니다.
+기본적으로 Next.js는 서버의 [데이터 캐시](/docs/nextjs/caching/data-cache)에 `fetch`의 반환 값을 자동으로 캐시합니다. 이는 데이터를 빌드 시간 또는 요청 시간에 가져와 캐싱하고 각 데이터 요청에 재사용할 수 있음을 의미합니다.
 
 ```js
 // 'force-cache'는 기본값이며 생략할 수 있습니다.
 fetch('https://...', { cache: 'force-cache' })
 ```
 
-`POST` 방법을 사용하는 `fetch` 요청도 자동으로 캐시됩니다. 그러나 [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers) 내부에서 `POST` 방법을 사용하는 경우 캐시되지 않습니다.
+`POST` 방법을 사용하는 `fetch` 요청도 자동으로 캐시됩니다. 그러나 [라우트 핸들러](/docs/nextjs/routing/route-handlers) 내부에서 `POST` 방법을 사용하는 경우 캐시되지 않습니다.
 
 > **데이터 캐시란?**
 >
 > 데이터 캐시는 지속적인 [HTTP 캐시](https://developer.mozilla.org/docs/Web/HTTP/Caching)입니다. 플랫폼에 따라 캐시는 자동으로 확장되며 [여러 지역간에 공유](https://vercel.com/docs/infrastructure/data-cache)될 수 있습니다.
 >
-> [데이터 캐시](/docs/app/building-your-application/caching#data-cache)에 대한 자세한 내용을 알아보세요.
+> [데이터 캐시](/docs/nextjs/caching#data-cache)에 대한 자세한 내용을 알아보세요.
 
 ### 데이터 재검증
 
@@ -104,7 +104,7 @@ fetch('https://...', { cache: 'force-cache' })
 캐시된 데이터는 두 가지 방법으로 재검증될 수 있습니다:
 
 - **시간 기반 재검증**: 일정 시간이 경과한 후 데이터를 자동으로 재검증합니다. 데이터가 자주 변경되지 않고 최신성이 그렇게 중요하지 않은 경우 유용합니다.
-- **요청 기반 재검증**: 이벤트(예: 폼 제출)를 기반으로 데이터를 수동으로 재검증합니다. 요청 기반 재검증은 한 번에 데이터 그룹을 재검증하기 위해 태그 기반 또는 경로 기반 접근법을 사용할 수 있습니다. 머리가 없는 CMS의 내용이 업데이트될 때처럼 최신 데이터가 최대한 빨리 표시되도록 하려면 유용합니다.
+- **요청 기반 재검증**: 이벤트(예: 폼 제출)를 기반으로 데이터를 수동으로 재검증합니다. 요청 기반 재검증은 한 번에 데이터 그룹을 재검증하기 위해 태그 기반 또는 경로 기반 접근법을 사용할 수 있습니다. Headless CMS의 내용이 업데이트될 때처럼 최신 데이터가 최대한 빨리 표시되도록 하려면 유용합니다.
 
 #### 시간 기반 재검증
 
@@ -114,7 +114,7 @@ fetch('https://...', { cache: 'force-cache' })
 fetch('https://...', { next: { revalidate: 3600 } })
 ```
 
-또는 라우트 세그먼트의 모든 `fetch` 요청을 재검증하려면 [세그먼트 구성 옵션](/docs/app/api-reference/file-conventions/route-segment-config)을 사용할 수 있습니다.
+또는 라우트 세그먼트의 모든 `fetch` 요청을 재검증하려면 [세그먼트 구성 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용할 수 있습니다.
 
 ```jsx filename="layout.js / page.js"
 export const revalidate = 3600 // 최대 1시간마다 재검증
@@ -122,12 +122,12 @@ export const revalidate = 3600 // 최대 1시간마다 재검증
 
 정적으로 렌더링된 라우트에 여러 개의 fetch 요청이 있고 각 요청에 다른 재검증 빈도가 있는 경우 모든 요청에 가장 낮은 시간이 사용됩니다. 동적으로 렌더링된 라우트의 경우 각 `fetch` 요청은 독립적으로 재검증됩니다.
 
-[시간 기반 재검증](/docs/app/building-your-application/caching#time-based-revalidation)에 대한 자세한 내용을 알아보세요.
+[시간 기반 재검증](/docs/nextjs/caching/data-cache#시간-기반-재검증)에 대한 자세한 내용을 알아보세요.
 
 
 #### 요청 기반 재검증
 
-라우트 핸들러나 서버 액션 내에서 경로([`revalidatePath`](/docs/app/api-reference/functions/revalidatePath)) 또는 캐시 태그([`revalidateTag`](/docs/app/api-reference/functions/revalidateTag))를 기반으로 데이터를 요청에 따라 재검증할 수 있습니다.
+라우트 핸들러나 서버 액션 내에서 경로([`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)) 또는 캐시 태그([`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag))를 기반으로 데이터를 요청에 따라 재검증할 수 있습니다.
 
 Next.js에는 라우트 간의 `fetch` 요청을 무효화하기 위한 캐시 태깅 시스템이 있습니다.
 
@@ -145,7 +145,8 @@ export default async function Page() {
   // ...
 }
 ```
-
+<details>
+    <summary>JavaScript</summary>
 ```jsx filename="app/page.js" switcher
 export default async function Page() {
   const res = await fetch('https://...', 
@@ -155,6 +156,7 @@ export default async function Page() {
   // ...
 }
 ```
+</details>
 
 라우트 핸들러를 사용하는 경우, Next.js 앱만 알고 있는 비밀 토큰을 생성해야 합니다. 이 비밀은 권한이 없는 재검증 시도를 방지하기 위해 사용됩니다. 예를 들어, 다음 URL 구조로 라우트에 접근할 수 있습니다(수동으로 또는 웹훅을 사용하여):
 
@@ -190,7 +192,7 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-또는 경로와 연관된 모든 데이터를 재검증하기 위해 [`revalidatePath`](/docs/app/api-reference/functions/revalidatePath)를 사용할 수 있습니다.
+또는 경로와 연관된 모든 데이터를 재검증하기 위해 [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)를 사용할 수 있습니다.
 
 ```ts filename="app/api/revalidate/route.ts" switcher
 import { NextRequest, NextResponse } from 'next/server'
@@ -214,7 +216,7 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-[요청 기반 재검증](/docs/app/building-your-application/caching#on-demand-revalidation)에 대한 자세한 내용을 알아보세요.
+[요청 기반 재검증](/docs/nextjs/caching/data-cache#요청-기반-재검증)에 대한 자세한 내용을 알아보세요.
 
 #### 오류 처리 및 재검증
 
@@ -240,11 +242,11 @@ export async function POST(request: NextRequest) {
 fetch('https://...', { cache: 'no-store' })
 ```
 
-[`fetch` API 참조](/docs/app/api-reference/functions/fetch)에서 사용 가능한 모든 `cache` 옵션을 확인하세요.
+[`fetch` API 참조](https://nextjs.org/docs/app/api-reference/functions/fetch)에서 사용 가능한 모든 `cache` 옵션을 확인하세요.
 
 #### 여러 `fetch` 요청
 
-라우트 세그먼트(예: 레이아웃 또는 페이지)에 여러 `fetch` 요청이 있는 경우, [세그먼트 설정 옵션](/docs/app/api-reference/file-conventions/route-segment-config)을 사용하여 세그먼트 내의 모든 데이터 요청의 캐싱 동작을 구성할 수 있습니다.
+라우트 세그먼트(예: 레이아웃 또는 페이지)에 여러 `fetch` 요청이 있는 경우, [세그먼트 설정 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용하여 세그먼트 내의 모든 데이터 요청의 캐싱 동작을 구성할 수 있습니다.
 
 예를 들어, `const dynamic = 'force-dynamic'`을 사용하면 모든 데이터가 요청 시간에 가져와지고 세그먼트가 동적으로 렌더링됩니다.
 
@@ -253,13 +255,15 @@ fetch('https://...', { cache: 'no-store' })
 export const dynamic = 'force-dynamic'
 ```
 
-세그먼트 설정 옵션의 광범위한 목록이 있으며, 라우트 세그먼트의 정적 및 동적 동작을 세밀하게 제어할 수 있습니다. 자세한 내용은 [API 참조](/docs/app/api-reference/file-conventions/route-segment-config)를 참조하세요.
+세그먼트 설정 옵션의 광범위한 목록이 있으며, 라우트 세그먼트의 정적 및 동적 동작을 세밀하게 제어할 수 있습니다. 자세한 내용은 [API 참조](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)를 참조하세요.
+
+---
 
 ## 서드 파티 라이브러리를 사용하여 서버에서 데이터 가져오기
 
-`fetch`를 지원하거나 노출하지 않는 서드 파티 라이브러리(예: 데이터베이스, CMS, ORM 클라이언트)를 사용하는 경우, [라우트 세그먼트 설정 옵션](/docs/app/api-reference/file-conventions/route-segment-config) 및 React의 `cache` 함수를 사용하여 해당 요청의 캐싱 및 재검증 동작을 구성할 수 있습니다.
+`fetch`를 지원하거나 노출하지 않는 서드 파티 라이브러리(예: 데이터베이스, CMS, ORM 클라이언트)를 사용하는 경우, [라우트 세그먼트 설정 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) 및 React의 `cache` 함수를 사용하여 해당 요청의 캐싱 및 재검증 동작을 구성할 수 있습니다.
 
-데이터가 캐시되는지 여부는 라우트 세그먼트가 [정적 또는 동적으로 렌더링되는지](/docs/app/building-your-application/rendering/server-components#server-rendering-strategies)에 따라 다릅니다. 세그먼트가 정적(기본값)인 경우, 요청의 출력은 라우트 세그먼트의 일부로 캐시 및 재검증됩니다. 세그먼트가 동적인 경우, 요청의 출력은 캐시되지 않고 세그먼트가 렌더링될 때마다 모든 요청에서 다시 가져옵니다.
+데이터가 캐시되는지 여부는 라우트 세그먼트가 [정적 또는 동적으로 렌더링되는지](/docs/nextjs/rendering/server-components#서버-렌더링-전략)에 따라 다릅니다. 세그먼트가 정적(기본값)인 경우, 요청의 출력은 라우트 세그먼트의 일부로 캐시 및 재검증됩니다. 세그먼트가 동적인 경우, 요청의 출력은 캐시되지 않고 세그먼트가 렌더링될 때마다 모든 요청에서 다시 가져옵니다.
 
 > **알아두기:**
 >
@@ -271,7 +275,7 @@ export const dynamic = 'force-dynamic'
 아래 예제에서:
 
 - `revalidate` 옵션은 `3600`으로 설정되어 있습니다. 이는 데이터가 캐시되고 최대 매시간마다 재검증됨을 의미합니다.
-- React의 `cache` 함수는 데이터 요청을 [메모이제이션](/docs/app/building-your-application/caching#request-memoization)하기 위해 사용됩니다.
+- React의 `cache` 함수는 데이터 요청을 [메모이제이션](/docs/nextjs/caching/request-memoization)하기 위해 사용됩니다.
 
 ```ts filename="utils/get-item.ts" switcher
 import { cache } from 'react'
@@ -349,18 +353,20 @@ export default async function Page({ params: { id } }) {
 </details>
 
 
+---
 
 ## 클라이언트에서 라우트 핸들러로 데이터 가져오기
 
-클라이언트 컴포넌트에서 데이터를 가져올 필요가 있다면 클라이언트에서 [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers)를 호출할 수 있습니다. 라우트 핸들러는 서버에서 실행되어 클라이언트에 데이터를 반환합니다. 이는 API 토큰과 같은 민감한 정보를 클라이언트에 노출하지 않고자 할 때 유용합니다.
+클라이언트 컴포넌트에서 데이터를 가져올 필요가 있다면 클라이언트에서 [라우트 핸들러](/docs/nextjs/routing/route-handlers)를 호출할 수 있습니다. 라우트 핸들러는 서버에서 실행되어 클라이언트에 데이터를 반환합니다. 이는 API 토큰과 같은 민감한 정보를 클라이언트에 노출하지 않고자 할 때 유용합니다.
 
-예제는 [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers) 문서에서 확인하세요.
+예제는 [라우트 핸들러](/docs/nextjs/routing/route-handlers) 문서에서 확인하세요.
 
 > **서버 컴포넌트와 라우트 핸들러**
 >
 > 서버 컴포넌트는 서버에서 렌더링되기 때문에 데이터를 가져오기 위해 서버 컴포넌트에서 라우트 핸들러를 호출할 필요가 없습니다. 대신 서버 컴포넌트 내부에서 데이터를 직접 가져올 수 있습니다.
 
 
+---
 
 ## 서드 파티 라이브러리를 사용하여 클라이언트에서 데이터 가져오기
 

@@ -29,7 +29,7 @@ summary: Next.js에서 CSS-in-JS 라이브러리 사용하기
 
 > **알아두세요**: 다양한 CSS-in-JS 라이브러리를 테스트 중이며, React 18 기능 및/또는 `app` 디렉토리를 지원하는 라이브러리에 대한 예제를 더 추가할 예정입니다.
 
-서버 컴포넌트를 스타일링하려면 [CSS 모듈](/docs/app/building-your-application/styling/css-modules) 또는 PostCSS나 [Tailwind CSS](/docs/app/building-your-application/styling/tailwind-css)와 같은 CSS 파일을 출력하는 다른 솔루션을 사용하는 것이 좋습니다.
+서버 컴포넌트를 스타일링하려면 [CSS 모듈](/docs/nextjs/styling/css-modules) 또는 PostCSS나 [Tailwind CSS](/docs/nextjs/styling/tailwind-css)와 같은 CSS 파일을 출력하는 다른 솔루션을 사용하는 것이 좋습니다.
 
 ## `app`에서 CSS-in-JS 구성하기
 
@@ -103,7 +103,7 @@ export default function StyledJsxRegistry({ children }) {
 ```
 </details>
 
-그런 다음, 레지스트리로 [루트 레이아웃](/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required)을 감싸십시오:
+그런 다음, 레지스트리로 [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃)을 감싸십시오:
 
 ```tsx filename="app/layout.tsx" switcher
 import StyledJsxRegistry from './registry'

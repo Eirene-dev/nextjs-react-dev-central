@@ -11,7 +11,9 @@ Next.js의 맥락에서 런타임은 실행 중인 코드에 사용 가능한 �
 서버에서는 응용 프로그램 코드의 일부를 렌더링할 수 있는 두 가지 런타임이 있습니다:
 
 - **Node.js 런타임**(기본)은 모든 Node.js API 및 생태계의 호환 가능한 패키지에 액세스 할 수 있습니다.
-- **엣지 런타임**은 [Web API](/docs/app/api-reference/edge)를 기반으로 합니다.
+- **엣지 런타임**은 [Web API](https://nextjs.org/docs/app/api-reference/edge)를 기반으로 합니다.
+
+---
 
 ## 런타임 차이점
 
@@ -20,15 +22,15 @@ Next.js의 맥락에서 런타임은 실행 중인 코드에 사용 가능한 �
 |                                                                                                          | Node   | 서버리스 | 엣지                |
 | --------------------------------------------------------------------------------------------------------- | ------ | -------- | ------------------- |
 | [콜드 부트](https://vercel.com/docs/concepts/get-started/compute#cold-and-hot-boots?utm_source=next-site&utm_medium=docs&utm_campaign=next-website)       | /      | ~250ms   | 즉시                |
-| [HTTP 스트리밍](/docs/app/building-your-application/routing/loading-ui-and-streaming)                    | 예     | 예       | 예                 |
+| [HTTP 스트리밍](/docs/nextjs/routing/loading-ui-and-streaming)                    | 예     | 예       | 예                 |
 | IO                                                                                                       | 모두   | 모두     | `fetch`            |
 | 확장성                                                                                                   | /      | 높음     | 최고               |
 | 보안                                                                                                     | 일반   | 높음     | 높음               |
 | 지연시간                                                                                                | 일반   | 낮음     | 최저               |
 | npm 패키지                                                                                               | 모두   | 모두     | 작은 부분집합      |
-| [정적 렌더링](/docs/app/building-your-application/rendering/server-components#static-rendering-default)  | 예     | 예       | 아니요             |
-| [동적 렌더링](/docs/app/building-your-application/rendering/server-components#dynamic-rendering)        | 예     | 예       | 예                 |
-| [`fetch`와 데이터 재검증](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) | 예 | 예 | 예  |
+| [정적 렌더링](/docs/nextjs/rendering/server-components#정적-렌더링-기본-설정)  | 예     | 예       | 아니요             |
+| [동적 렌더링](/docs/nextjs/rendering/server-components#동적-렌더링)        | 예     | 예       | 예                 |
+| [`fetch`와 데이터 재검증](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-재검증) | 예 | 예 | 예  |
 
 ### 엣지 런타임
 
@@ -52,12 +54,13 @@ Next.js 애플리케이션을 Node.js 서버에 배포하면 인프라를 관리
 
 트가 받는 트래픽의 양에 따라 함수가 자주 "온" 상태가 아니므로 이는 자주 발생할 수 있습니다.
 
+---
 
 ## 예제
 
 ### 세그먼트 런타임 옵션
 
-Next.js 애플리케이션에서 개별 라우트 세그먼트에 대한 런타임을 지정할 수 있습니다. 이렇게 하려면 [`runtime`이라는 변수를 선언하고 내보내십시오](/docs/app/api-reference/file-conventions/route-segment-config). 변수는 문자열이어야 하며 `'nodejs'` 또는 `'edge'` 런타임의 값이어야 합니다.
+Next.js 애플리케이션에서 개별 라우트 세그먼트에 대한 런타임을 지정할 수 있습니다. 이렇게 하려면 [`runtime`이라는 변수를 선언하고 내보내십시오](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config). 변수는 문자열이어야 하며 `'nodejs'` 또는 `'edge'` 런타임의 값이어야 합니다.
 
 다음 예제는 `'edge'`의 `runtime` 값을 내보내는 페이지 라우트 세그먼트를 보여줍니다:
 
@@ -82,4 +85,4 @@ export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
 세그먼트 런타임이 설정되지 않은 경우 기본 `nodejs` 런타임이 사용됩니다. Node.js 런타임에서 변경할 계획이 없다면 `runtime` 옵션을 사용할 필요가 없습니다.
 
 
-> 사용 가능한 API의 전체 목록을 참조하려면 [Node.js 문서](https://nodejs.org/docs/latest/api/) 및 [Edge 문서](/docs/app/api-reference/edge)를 참조하세요. 두 런타임은 배포 인프라에 따라 [스트리밍](/docs/app/building-your-application/routing/loading-ui-and-streaming)도 지원할 수 있습니다.
+> 사용 가능한 API의 전체 목록을 참조하려면 [Node.js 문서](https://nodejs.org/docs/latest/api/) 및 [Edge 문서](https://nextjs.org/docs/app/api-reference/edge)를 참조하세요. 두 런타임은 배포 인프라에 따라 [스트리밍](/docs/nextjs/routing/loading-ui-and-streaming)도 지원할 수 있습니다.

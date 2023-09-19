@@ -27,7 +27,7 @@ CSP는 악의적인 스크립트를 차단하도록 설계되었지만, 인라�
 
 ### 미들웨어를 이용한 난스 추가하기
 
-[미들웨어](/docs/app/building-your-application/routing/middleware)는 페이지가 렌더링되기 전에 헤더를 추가하고 난스를 생성할 수 있게 해줍니다.
+[미들웨어](/docs/nextjs/routing/middleware)는 페이지가 렌더링되기 전에 헤더를 추가하고 난스를 생성할 수 있게 해줍니다.
 
 페이지가 조회될 때마다 새로운 난스가 생성되어야 합니다. 이것은 **난스를 추가하기 위해 동적 렌더링을 사용해야 함**을 의미합니다.
 
@@ -107,7 +107,7 @@ export function middleware(request) {
 ```
 </details>
 
-기본적으로 미들웨어는 모든 요청에서 실행됩니다. [`matcher`](/docs/app/building-your-application/routing/middleware#matcher)를 사용하여 특정 경로에서 미들웨어가 실행되도록 필터링할 수 있습니다.
+기본적으로 미들웨어는 모든 요청에서 실행됩니다. [`matcher`](/docs/nextjs/routing/middleware#매처)를 사용하여 특정 경로에서 미들웨어가 실행되도록 필터링할 수 있습니다.
 
 우리는 `next/link`에서의 프리페치와 CSP 헤더가 필요 없는 정적 자산의 일치를 무시하는 것을 권장합니다.
 
@@ -157,7 +157,7 @@ export const config = {
 
 ### nonce 읽기
 
-이제 [`headers`](/docs/app/api-reference/functions/headers)를 사용하여 [Server Component](/docs/app/building-your-application/rendering/server-components)에서 nonce를 읽을 수 있습니다:
+이제 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)를 사용하여 [Server Component](/docs/nextjs/rendering/server-components)에서 nonce를 읽을 수 있습니다:
 
 ```tsx filename="app/page.tsx" switcher
 import { headers } from 'next/headers'

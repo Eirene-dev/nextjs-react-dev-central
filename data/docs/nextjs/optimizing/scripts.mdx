@@ -96,11 +96,11 @@ export default function RootLayout({ children }) {
 - `lazyOnload`: 브라우저의 유휴 시간 동안 스크립트를 로드합니다.
 - `worker`: (실험적) 웹 워커에서 스크립트를 로드합니다.
 
-각 전략과 사용 사례에 대해 더 자세히 알아보려면 [`next/script`](/docs/app/api-reference/components/script#strategy) API 참조 문서를 참조하세요.
+각 전략과 사용 사례에 대해 더 자세히 알아보려면 [`next/script`](https://nextjs.org/docs/app/api-reference/components/script#strategy) API 참조 문서를 참조하세요.
 
 ### 웹 워커로 스크립트 오프로딩하기 (실험적)
 
-> **경고:** `worker` 전략은 아직 안정적이지 않으며 [`app`](/docs/app/building-your-application/routing/defining-routes) 디렉토리와 함께 작동하지 않습니다. 주의하여 사용하세요.
+> **경고:** `worker` 전략은 아직 안정적이지 않으며 [`app`](/docs/nextjs/routing/defining-routes) 디렉토리와 함께 작동하지 않습니다. 주의하여 사용하세요.
 
 `worker` 전략을 사용하는 스크립트는 [Partytown](https://partytown.builder.io/)을 사용하여 웹 워커에서 오프로드 및 실행됩니다. 이것은 주 스레드를 나머지 응용 프로그램 코드에 전용으로 사용함으로써 사이트의 성능을 향상시킬 수 있습니다.
 
@@ -186,7 +186,7 @@ export default function Home() {
 - `onReady`: 스크립트 로딩이 완료되고 컴포넌트가 마운트될 때마다 코드를 실행합니다.
 - `onError`: 스크립트 로딩에 실패하면 코드를 실행합니다.
 
-이러한 핸들러들은 `next/script`가 [클라이언트 컴포넌트](/docs/app/building-your-application/rendering/client-components) 내에서 import되고 사용될 때만 작동하며, 코드의 첫 번째 줄로 `"use client"`가 정의되어야 합니다:
+이러한 핸들러들은 `next/script`가 [클라이언트 컴포넌트](/docs/nextjs/rendering/client-components) 내에서 import되고 사용될 때만 작동하며, 코드의 첫 번째 줄로 `"use client"`가 정의되어야 합니다:
 
 ```tsx filename="app/page.tsx" switcher
 'use client'
@@ -228,9 +228,9 @@ export default function Page() {
 ```
 </details>
 
-각 이벤트 핸들러에 대한 자세한 내용과 예제를 보려면 [`next/script`](/docs/app/api-reference/components/script#onload) API 참조 문서를 참조하세요.
+각 이벤트 핸들러에 대한 자세한 내용과 예제를 보려면 [`next/script`](https://nextjs.org/docs/app/api-reference/components/script#onload) API 참조 문서를 참조하세요.
 
 
 ## 추가 속성
 
-[`nonce`](https://developer.mozilla.org/docs/Web/HTML/Global_attributes/nonce) 또는 [사용자 정의 데이터 속성](https://developer.mozilla.org/docs/Web/HTML/Global_attributes/data-*)과 같이 Script 컴포넌트에서 사용되지 않는 많은 DOM 속성을 `<script>` 요소에 할당할 수 있습니다. 추가 속성을 포함하면 이를 자동으로 최종 최적화된 HTML에 포함된 `<script>` 요소로 전달합니다.
+[`nonce`](/en-US/docs/Web/HTML/Global_attributes/nonce) 또는 [사용자 정의 데이터 속성](https://developer.mozilla.org/docs/Web/HTML/Global_attributes/data-*)과 같이 Script 컴포넌트에서 사용되지 않는 많은 DOM 속성을 `<script>` 요소에 할당할 수 있습니다. 추가 속성을 포함하면 이를 자동으로 최종 최적화된 HTML에 포함된 `<script>` 요소로 전달합니다.

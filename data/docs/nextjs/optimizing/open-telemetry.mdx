@@ -28,6 +28,8 @@ OpenTelemetry를 활성화하면 `getStaticProps`와 같은 모든 코드를 유
 > **알아두면 좋습니다**: 현재 서버리스 함수에서만 OpenTelemetry 바인딩을 지원합니다.
 > `edge`나 클라이언트 측 코드에 대해서는 제공하지 않습니다.
 
+---
+
 ## 시작하기
 
 OpenTelemetry는 확장 가능하지만 제대로 설정하는 것은 다소 장황할 수 있습니다.
@@ -42,7 +44,7 @@ OpenTelemetry는 확장 가능하지만 제대로 설정하는 것은 다소 장
 npm install @vercel/otel
 ```
 
-다음으로 프로젝트의 **루트 디렉토리**에 사용자 지정 [`instrumentation.ts`](/docs/app/building-your-application/optimizing/instrumentation) (또는 `.js`) 파일을 생성합니다 (하나를 사용하는 경우 `src` 폴더 안에):
+다음으로 프로젝트의 **루트 디렉토리**에 사용자 지정 [`instrumentation.ts`](/docs/nextjs/optimizing/instrumentation) (또는 `.js`) 파일을 생성합니다 (하나를 사용하는 경우 `src` 폴더 안에):
 
 ```ts filename="your-project/instrumentation.ts" switcher
 import { registerOTel } from '@vercel/otel'
@@ -66,7 +68,7 @@ export function register() {
 > **알아두면 좋은 사항**
 >
 > - `instrumentation` 파일은 프로젝트의 루트에 있어야 하며, `app` 또는 `pages` 디렉토리 내부에 있어서는 안 됩니다. `src` 폴더를 사용하고 있다면, `pages`와 `app` 옆에 `src` 안에 파일을 위치시키십시오.
-> - [`pageExtensions` 설정 옵션](/docs/app/api-reference/next-config-js/pageExtensions)을 사용하여 접미사를 추가하는 경우, `instrumentation` 파일 이름도 일치하게 업데이트해야 합니다.
+> - [`pageExtensions` 설정 옵션](https://nextjs.org/docs/app/api-reference/next-config-js/pageExtensions)을 사용하여 접미사를 추가하는 경우, `instrumentation` 파일 이름도 일치하게 업데이트해야 합니다.
 > - 기본 [with-opentelemetry](https://github.com/vercel/next.js/tree/canary/examples/with-opentelemetry) 예제를 생성했으니 참조하십시오.
 
 ### 수동 OpenTelemetry 구성
@@ -125,6 +127,8 @@ sdk.start()
 이렇게 하면 `@vercel/otel`을 사용하는 것과 동일하나, 수정 및 확장이 가능합니다.
 예를 들면, `@opentelemetry/exporter-trace-otlp-http` 대신 `@opentelemetry/exporter-trace-otlp-grpc`를 사용하거나 더 많은 리소스 속성을 지정할 수 있습니다.
 
+---
+
 ## 도구 구성 테스트
 
 OpenTelemetry 추적을 로컬에서 테스트하려면 호환되는 백엔드가 있는 OpenTelemetry 수집기가 필요합니다.
@@ -162,7 +166,9 @@ Collector를 실행하는 것이 준비되면, 각 플랫폼의 배포 가이드
 ### 사용자 정의 Exporters
 
 OpenTelemetry Collector 사용을 권장합니다.
-플랫폼에서 불가능한 경우 [수동 OpenTelemetry 구성](/docs/pages/building-your-application/optimizing/open-telemetry#manual-opentelemetry-configuration)과 함께 사용자 정의 OpenTelemetry exporter를 사용할 수 있습니다.
+
+
+---
 
 ## 사용자 정의 Spans
 

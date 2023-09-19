@@ -8,6 +8,8 @@ summary: Next.js 애플리케이션에 Tailwind CSS를 사용하여 스타일링
 
 [Tailwind CSS](https://tailwindcss.com/)는 Next.js와 탁월하게 작동하는 유틸리티 중심의 CSS 프레임워크입니다.
 
+---
+
 ## Tailwind 설치하기
 
 Tailwind CSS 패키지를 설치하고 `init` 명령어를 실행하여 `tailwind.config.js`와 `postcss.config.js` 파일을 모두 생성합니다:
@@ -45,7 +47,7 @@ module.exports = {
 ---
 ## 스타일 임포트하기
 
-애플리케이션의 [글로벌 스타일시트](/docs/app/building-your-application/styling/css-modules#global-styles)에 Tailwind가 생성한 스타일을 주입하기 위해 사용하는 [Tailwind CSS 지시어](https://tailwindcss.com/docs/functions-and-directives#directives)를 추가하세요. 예를 들면:
+애플리케이션의 [글로벌 스타일시트](/docs/nextjs/styling/css-modules#전역-스타일)에 Tailwind가 생성한 스타일을 주입하기 위해 사용하는 [Tailwind CSS 지시어](https://tailwindcss.com/docs/functions-and-directives#directives)를 추가하세요. 예를 들면:
 
 ```css filename="app/globals.css"
 @tailwind base;
@@ -53,7 +55,7 @@ module.exports = {
 @tailwind utilities;
 ```
 
-애플리케이션의 모든 라우트에 스타일을 적용하기 위해 [루트 레이아웃](/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required) (`app/layout.tsx`) 내에서 `globals.css` 스타일시트를 임포트하세요.
+애플리케이션의 모든 라우트에 스타일을 적용하기 위해 [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃) (`app/layout.tsx`) 내에서 `globals.css` 스타일시트를 임포트하세요.
 
 ```tsx filename="app/layout.tsx" switcher
 import type { Metadata } from 'next'

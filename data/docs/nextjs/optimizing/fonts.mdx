@@ -7,13 +7,15 @@ summary: 내장된 next/font 로더로 애플리케이션의 웹 폰트를 최�
 <TOCInline toc={props.toc} asDisclosure />
 
 
-[**`next/font`**](/docs/app/api-reference/components/font)는 당신의 폰트(맞춤 폰트 포함)를 자동으로 최적화하고 개선된 프라이버시와 성능을 위해 외부 네트워크 요청을 제거합니다.
+[**`next/font`**](https://nextjs.org/docs/app/api-reference/components/font)는 당신의 폰트(맞춤 폰트 포함)를 자동으로 최적화하고 개선된 프라이버시와 성능을 위해 외부 네트워크 요청을 제거합니다.
 
 > **🎥 동영상:** `next/font`의 사용 방법에 대해 더 자세히 알아보세요 → [YouTube (6분)](https://www.youtube.com/watch?v=L8_98i_bMMA).
 
 `next/font`에는 _모든_ 폰트 파일에 대한 **내장된 자동 자체 호스팅** 기능이 포함되어 있습니다. 이는 기본적으로 사용되는 CSS `size-adjust` 속성 덕분에 레이아웃 이동 없이 웹 폰트를 최적으로 로드할 수 있음을 의미합니다.
 
 이 새로운 폰트 시스템을 사용하면 성능과 프라이버시를 염두에 두고 모든 Google 폰트를 편리하게 사용할 수 있습니다. CSS와 폰트 파일은 빌드 시간에 다운로드되며 나머지 정적 자산과 함께 자체 호스팅됩니다. **브라우저는 Google에 요청을 보내지 않습니다.**
+
+---
 
 ## Google 폰트
 
@@ -122,7 +124,7 @@ const roboto = Roboto({
 
 ### 부분 집합 지정하기
 
-Google 폰트는 자동으로 [부분 집합화](https://fonts.google.com/knowledge/glossary/subsetting)됩니다. 이로 인해 폰트 파일의 크기가 줄어들고 성능이 향상됩니다. 미리 로드하려는 부분 집합을 정의해야 합니다. [`preload`](/docs/app/api-reference/components/font#preload)가 `true`인 상태에서 부분 집합을 지정하지 않으면 경고가 발생합니다.
+Google 폰트는 자동으로 [부분 집합화](https://fonts.google.com/knowledge/glossary/subsetting)됩니다. 이로 인해 폰트 파일의 크기가 줄어들고 성능이 향상됩니다. 미리 로드하려는 부분 집합을 정의해야 합니다. [`preload`](https://nextjs.org/docs/app/api-reference/components/font#preload)가 `true`인 상태에서 부분 집합을 지정하지 않으면 경고가 발생합니다.
 
 함수 호출에 추가하여 이를 수행할 수 있습니다:
 
@@ -136,7 +138,7 @@ const inter = Inter({ subsets: ['latin'] })
 ```
 </details>
 
-더 자세한 정보는 [폰트 API 참조](/docs/app/api-reference/components/font)를 참조하세요.
+더 자세한 정보는 [폰트 API 참조](https://nextjs.org/docs/app/api-reference/components/font)를 참조하세요.
 
 ### 여러 폰트 사용하기
 
@@ -178,7 +180,7 @@ export const roboto_mono = Roboto_Mono({
 ```tsx filename="app/layout.tsx" switcher
 import { inter } from './fonts'
 
-export default function 레이아웃({ children }
+export default function Layout({ children }
 : { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.className}>
@@ -194,7 +196,7 @@ export default function 레이아웃({ children }
 ```jsx filename="app/layout.js" switcher
 import { inter } from './fonts'
 
-export default function 레이아웃({ children }) {
+export default function Layout({ children }) {
   return (
     <html lang="en" className={inter.className}>
       <body>
@@ -209,7 +211,7 @@ export default function 레이아웃({ children }) {
 ```tsx filename="app/page.tsx" switcher
 import { roboto_mono } from './fonts'
 
-export default function 페이지() {
+export default function Page() {
   return (
     <>
       <h1 className={roboto_mono.className}>내 페이지</h1>
@@ -234,7 +236,7 @@ export default function 페이지() {
 
 위 예제에서는, `Inter` 폰트는 전역적으로 적용되며, `Roboto Mono` 폰트는 필요에 따라 가져와서 적용할 수 있습니다.
 
-또한, [CSS 변수](/docs/app/api-reference/components/font#variable)를 생성하고 선호하는 CSS 솔루션과 함께 사용할 수 있습니다:
+또한, [CSS 변수](https://nextjs.org/docs/app/api-reference/components/font#variable)를 생성하고 선호하는 CSS 솔루션과 함께 사용할 수 있습니다:
 
 ```tsx filename="app/layout.tsx" switcher
 import { Inter, Roboto_Mono } from 'next/font/google'
@@ -319,6 +321,8 @@ h1 {
 
 > **추천사항**: 각각의 새로운 폰트는 클라이언트가 다운로드해야 하는 추가 리소스이므로, 여러 폰트를 사용할 때는 신중하게 사용하세요.
 
+---
+
 ## 로컬 폰트
 
 `next/font/local`을 임포트하고 로컬 폰트 파일의 `src`를 지정하세요. 최상의 성능과 유연성을 위해 [변수 폰트](https://fonts.google.com/variablefonts) 사용을 권장합니다.
@@ -396,11 +400,13 @@ const roboto = localFont({
 })
 ```
 
-더 자세한 정보는 [폰트 API 레퍼런스](/docs/app/api-reference/components/font)에서 확인하세요.
+더 자세한 정보는 [폰트 API 레퍼런스](https://nextjs.org/docs/app/api-reference/components/font)에서 확인하세요.
+
+---
 
 ## Tailwind CSS와 함께 사용하기
 
-`next/font`는 [Tailwind CSS](https://tailwindcss.com/)와 [CSS 변수](/docs/app/api-reference/components/font#css-variables)를 통해 함께 사용될 수 있습니다.
+`next/font`는 [Tailwind CSS](https://tailwindcss.com/)와 [CSS 변수](https://nextjs.org/docs/app/api-reference/components/font#css-variables)를 통해 함께 사용될 수 있습니다.
 
 아래 예제에서는 `next/font/google`의 폰트 `Inter`를 사용합니다(구글 또는 로컬 폰트 중 어떤 폰트든 사용 가능합니다). `variable` 옵션으로 폰트를 로드하여 CSS 변수 이름을 정의하고 `inter`에 할당합니다. 그런 다음 `inter.variable`을 사용하여 HTML 문서에 CSS 변수를 추가합니다.
 
@@ -466,7 +472,7 @@ export default function RootLayout({ children }) {
 
 
 
-마지막으로, CSS 변수를 [Tailwind CSS 설정](/docs/app/building-your-application/styling/tailwind-css#configuring-tailwind)에 추가하세요:
+마지막으로, CSS 변수를 [Tailwind CSS 설정](/docs/nextjs/styling/tailwind-css#tailwind-설정하기)에 추가하세요:
 
 ```js filename="tailwind.config.js"
 /** @type {import('tailwindcss').Config} */
@@ -490,13 +496,17 @@ module.exports = {
 
 이제 `font-sans`와 `font-mono` 유틸리티 클래스를 사용하여 요소에 폰트를 적용할 수 있습니다.
 
+---
+
 ## 미리 로딩하기
 
 사이트의 페이지에서 폰트 함수가 호출되면 모든 루트에서 전역적으로 사용 가능하거나 미리 로드되지 않습니다. 대신 폰트는 사용된 파일의 유형에 따라 관련 루트에서만 미리 로드됩니다:
 
-- [고유 페이지](/docs/app/building-your-application/routing/pages-and-layouts#pages)인 경우 해당 페이지의 고유 루트에서 미리 로드됩니다.
-- [레이아웃](/docs/app/building-your-application/routing/pages-and-layouts#layouts)인 경우 레이아웃으로 감싸진 모든 루트에서 미리 로드됩니다.
-- [루트 레이아웃](/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required)인 경우 모든 루트에서 미리 로드됩니다.
+- [고유 페이지](/docs/nextjs/routing/pages-and-layouts#페이지)인 경우 해당 페이지의 고유 루트에서 미리 로드됩니다.
+- [레이아웃](/docs/nextjs/routing/pages-and-layouts#레이아웃)인 경우 레이아웃으로 감싸진 모든 루트에서 미리 로드됩니다.
+- [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃)인 경우 모든 루트에서 미리 로드됩니다.
+
+---
 
 ## 폰트 재사용
 

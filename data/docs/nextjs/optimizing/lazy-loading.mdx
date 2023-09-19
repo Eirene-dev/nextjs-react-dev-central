@@ -16,11 +16,15 @@ Next.js에서 지연 로딩을 구현하는 두 가지 방법은 다음과 같�
 1. `next/dynamic`과 함께 [Dynamic Imports](#nextdynamic) 사용하기
 2. [Suspense](https://react.dev/reference/react/Suspense)와 함께 [`React.lazy()`](https://react.dev/reference/react/lazy) 사용하기
 
-기본적으로, 서버 컴포넌트는 자동으로 [코드 분할](https://developer.mozilla.org/docs/Glossary/Code_splitting)되며, 서버에서 클라이언트로 UI의 일부를 점진적으로 보내기 위해 [스트리밍](/docs/app/building-your-application/routing/loading-ui-and-streaming)을 사용할 수 있습니다. 지연 로딩은 클라이언트 컴포넌트에 적용됩니다.
+기본적으로, 서버 컴포넌트는 자동으로 [코드 분할](https://developer.mozilla.org/docs/Glossary/Code_splitting)되며, 서버에서 클라이언트로 UI의 일부를 점진적으로 보내기 위해 [스트리밍](/docs/nextjs/routing/loading-ui-and-streaming)을 사용할 수 있습니다. 지연 로딩은 클라이언트 컴포넌트에 적용됩니다.
+
+---
 
 ## `next/dynamic`
 
 `next/dynamic`은 [`React.lazy()`](https://react.dev/reference/react/lazy)와 [Suspense](https://react.dev/reference/react/Suspense)의 복합체입니다. 이것은 점진적인 마이그레이션을 허용하기 위해 `app`과 `pages` 디렉토리에서 동일하게 동작합니다.
+
+---
 
 ## 예시
 

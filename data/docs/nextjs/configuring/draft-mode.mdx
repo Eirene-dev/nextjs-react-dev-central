@@ -6,14 +6,18 @@ summary: Next.js에는 정적 및 동적 페이지 간에 전환할 수 있는 �
 
 <TOCInline toc={props.toc} asDisclosure />
 
+---
+
 ## 드래프트 모드
-Heeadless CMS에서 데이터를 가져올 때 정적 렌더링은 유용합니다. 그러나 Heeadless CMS에서 드래프트를 작성하고 페이지에서 즉시 드래프트를 보고 싶을 때에는 이상적이지 않습니다. Next.js에 빌드 시간이 아닌 **요청 시간**에 이러한 페이지를 렌더링하도록 하고 게시된 콘텐츠 대신 드래프트 콘텐츠를 가져오도록 하고 싶습니다. 특정 경우에만 Next.js에 [동적 렌더링](/docs/app/building-your-application/rendering/server-components#dynamic-rendering)으로 전환하도록 하고 싶습니다.
+Heeadless CMS에서 데이터를 가져올 때 정적 렌더링은 유용합니다. 그러나 Heeadless CMS에서 드래프트를 작성하고 페이지에서 즉시 드래프트를 보고 싶을 때에는 이상적이지 않습니다. Next.js에 빌드 시간이 아닌 **요청 시간**에 이러한 페이지를 렌더링하도록 하고 게시된 콘텐츠 대신 드래프트 콘텐츠를 가져오도록 하고 싶습니다. 특정 경우에만 Next.js에 [동적 렌더링](/docs/nextjs/rendering/server-components#동적-렌더링)으로 전환하도록 하고 싶습니다.
 
 Next.js에는 이 문제를 해결하는 **드래프트 모드**라는 기능이 있습니다. 사용 방법에 대한 지침은 다음과 같습니다.
 
+---
+
 ## 단계 1: 라우트 핸들러 생성 및 접근
 
-먼저, [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers)를 생성하세요. 임의의 이름을 가질 수 있습니다. 예: `app/api/draft/route.ts`
+먼저, [라우트 핸들러](/docs/nextjs/routing/route-handlers)를 생성하세요. 임의의 이름을 가질 수 있습니다. 예: `app/api/draft/route.ts`
 
 그런 다음, `next/headers`에서 `draftMode`를 가져와 `enable()` 메서드를 호출합니다.
 
@@ -41,7 +45,6 @@ export async function GET(request) {
 
 이것을 수동으로 테스트하려면 `/api/draft`를 방문하고 브라우저의 개발자 도구를 확인하세요. `Set-Cookie` 응답 헤더에 `__prerender_bypass`라는 이름의 쿠키가 있음을 확인하세요.
 
----
 
 ### Headless CMS에서 안전하게 접근하기
 
@@ -212,7 +215,7 @@ export async function GET(request) {
 }
 ```
 
-그런 다음, Route Handler를 호출하기 위해 `/api/disable-draft`로 요청을 보냅니다. 이 경로를 [`next/link`](/docs/app/api-reference/components/link)를 사용하여 호출할 경우, prefetch로 쿠키를 실수로 삭제하지 않도록 `prefetch={false}`를 전달해야 합니다.
+그런 다음, Route Handler를 호출하기 위해 `/api/disable-draft`로 요청을 보냅니다. 이 경로를 [`next/link`](https://nextjs.org/docs/app/api-reference/components/link)를 사용하여 호출할 경우, prefetch로 쿠키를 실수로 삭제하지 않도록 `prefetch={false}`를 전달해야 합니다.
 
 ### `next build`마다 고유함
 

@@ -9,6 +9,8 @@ summary: 서버와 클라이언트 컴포넌트를 사용할 때 권장되는 �
 
 React 애플리케이션을 구축할 때 애플리케이션의 어떤 부분이 서버나 클라이언트에서 렌더링되어야 하는지 고려해야 합니다. 이 페이지에서는 서버 및 클라이언트 컴포넌트를 사용할 때 권장되는 조합 패턴에 대해 설명합니다.
 
+---
+
 ## 언제 서버와 클라이언트 컴포넌트를 사용해야 할까요?
 
 서버 및 클라이언트 컴포넌트의 다양한 사용 사례에 대한 간단한 요약입니다:
@@ -27,6 +29,7 @@ React 애플리케이션을 구축할 때 애플리케이션의 어떤 부분이
 
 
 ---
+
 ## 서버 컴포넌트 패턴
 
 클라이언트 측 렌더링을 선택하기 전에 데이터를 가져오거나 데이터베이스나 백엔드 서비스에 액세스하는 등 서버에서 일부 작업을 수행하길 원할 수 있습니다.
@@ -37,9 +40,9 @@ React 애플리케이션을 구축할 때 애플리케이션의 어떤 부분이
 
 서버에서 데이터를 가져올 때 동일한 데이터에 의존하는 레이아웃과 페이지가 있을 수 있는 경우가 있습니다.
 
-[React Context](https://react.dev/learn/passing-data-deeply-with-context) (서버에서 사용할 수 없음)를 사용하거나 데이터를 props로 전달하는 대신 [`fetch`](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#fetching-data-on-the-server-with-fetch)나 React의 `cache` 함수를 사용하여 필요한 컴포넌트에서 동일한 데이터를 가져올 수 있습니다. 중복 데이터 요청에 대한 걱정 없이. 이는 React가 데이터 요청을 자동으로 메모이제이션하기 위해 `fetch`를 확장하고, `fetch`를 사용할 수 없는 경우 `cache` 함수를 사용할 수 있기 때문입니다.
+[React Context](/docs/react/managing-state/passing-data-deeply-with-context) (서버에서 사용할 수 없음)를 사용하거나 데이터를 props로 전달하는 대신 [`fetch`](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#fetching-data-on-the-server-with-fetch)나 React의 `cache` 함수를 사용하여 필요한 컴포넌트에서 동일한 데이터를 가져올 수 있습니다. 중복 데이터 요청에 대한 걱정 없이. 이는 React가 데이터 요청을 자동으로 메모이제이션하기 위해 `fetch`를 확장하고, `fetch`를 사용할 수 없는 경우 `cache` 함수를 사용할 수 있기 때문입니다.
 
-React에서 [메모이제이션](/docs/app/building-your-application/caching#request-memoization)에 대해 더 알아보세요.
+React에서 [메모이제이션](/docs/nextjs/caching/request-memoization)에 대해 더 알아보세요.
 
 ### 클라이언트 환경에서 서버 전용 코드 유지하기
 
@@ -184,12 +187,13 @@ export default function Page() {
 }
 ```
 
-대부분의 서드파티 컴포넌트를 감쌀 필요가 없다고 예상하지만, 클라이언트 컴포넌트 내에서 사용할 것이라고 예상하기 때문입니다. 그러나 예외적인 경우는 프로바이더들입니다. 이들은 React의 상태와 컨텍스트에 의존하며 일반적으로 어플리케이션의 루트에서 필요합니다. [아래에서 서드파티 컨텍스트 프로바이더에 대해 더 알아보세요](#using-context-providers).
+대부분의 서드파티 컴포넌트를 감쌀 필요가 없다고 예상하지만, 클라이언트 컴포넌트 내에서 사용할 것이라고 예상하기 때문입니다. 그러나 예외적인 경우는 프로바이더들입니다. 
+이들은 React의 상태와 컨텍스트에 의존하며 일반적으로 어플리케이션의 루트에서 필요합니다. [아래에서 서드파티 컨텍스트 프로바이더에 대해 더 알아보세요](#컨텍스트-프로바이더-사용하기).
 
 
-#### 컨텍스트 프로바이더 사용하기
+#### Context 프로바이더 사용하기
 
-컨텍스트 프로바이더는 전역적인 관심사, 예를 들면 현재 테마와 같은 것을 공유하기 위해 애플리케이션의 루트 근처에서 보통 렌더링됩니다. [React 컨텍스트](https://react.dev/learn/passing-data-deeply-with-context)는 서버 컴포넌트에서 지원되지 않기 때문에, 애플리케이션의 루트에서 컨텍스트를 생성하려고 하면 오류가 발생합니다:
+Context 프로바이더는 전역적인 관심사, 예를 들면 현재 테마와 같은 것을 공유하기 위해 애플리케이션의 루트 근처에서 보통 렌더링됩니다. [React Context](/docs/react/managing-state/passing-data-deeply-with-context)는 서버 컴포넌트에서 지원되지 않기 때문에, 애플리케이션의 루트에서 컨텍스트를 생성하려고 하면 오류가 발생합니다:
 
 ```tsx filename="app/layout.tsx" switcher
 import { createContext } from 'react'
@@ -210,7 +214,7 @@ export default function RootLayout({ children }) {
 }
 ```
 
-이 문제를 해결하려면 클라이언트 컴포넌트 내에서 컨텍스트를 생성하고 그 프로바이더를 렌더링하세요:
+이 문제를 해결하려면 클라이언트 컴포넌트 내에서 Context를 생성하고 그 프로바이더를 렌더링하세요:
 
 ```tsx filename="app/theme-provider.tsx" switcher
 'use client'
@@ -249,7 +253,7 @@ export default function RootLayout({
 }
 ```
 
-프로바이더가 루트에서 렌더링되면, 앱 전체의 다른 클라이언트 컴포넌트들이 이 컨텍스트를 소비할 수 있게 됩니다.
+프로바이더가 루트에서 렌더링되면, 앱 전체의 다른 클라이언트 컴포넌트들이 이 Context를 소비할 수 있게 됩니다.
 
 > **알아두면 좋아요**: 프로바이더는 트리 내에서 가능한 깊게 렌더링해야 합니다 – `ThemeProvider`가 전체 `<html>` 문서가 아닌 오직 `{children}`만 감싸는 것에 주목하세요. 이로 인해 Next.js는 서버 컴포넌트의 정적 부분을 최적화하는 것이 더 쉬워집니다.
 
@@ -257,9 +261,11 @@ export default function RootLayout({
 
 비슷한 방식으로, 다른 개발자들에게 사용되기 위한 패키지를 생성하는 라이브러리 작성자들은 패키지의 클라이언트 진입점을 표시하기 위해 `"use client"` 지시어를 사용할 수 있습니다. 이를 통해 패키지 사용자들은 패키지 컴포넌트를 서버 컴포넌트 내로 직접 가져올 수 있게 되어, 감싸는 경계를 생성할 필요가 없습니다.
 
-['트리 내에서 'use client' 사용](#moving-client-components-down-the-tree)하기를 통해 서버 컴포넌트 모듈 그래프의 일부로 가져온 모듈들을 최적화할 수 있습니다.
+['트리 내에서 'use client' 사용](#트리-아래로-클라이언트-컴포넌트-이동하기)하기를 통해 서버 컴포넌트 모듈 그래프의 일부로 가져온 모듈들을 최적화할 수 있습니다.
 
 몇몇 번들러들은 `"use client"` 지시어를 제거할 수 있다는 점을 알아두는 것이 중요합니다. [React Wrap Balancer](https://github.com/shuding/react-wrap-balancer/blob/main/tsup.config.ts#L10-L13) 및 [Vercel Analytics](https://github.com/vercel/analytics/blob/main/packages/web/tsup.config.js#L26-L30) 저장소에서 esbuild를 설정하여 `"use client"` 지시어를 포함하는 방법의 예를 찾을 수 있습니다.
+
+---
 
 ## 클라이언트 컴포넌트
 
@@ -294,13 +300,15 @@ export default function Layout( { children }
 
 ### 서버에서 클라이언트 컴포넌트로 props 전달하기 (직렬화)
 
-서버 컴포넌트에서 데이터를 가져오는 경우, 데이터를 클라이언트 컴포넌트로 props로 전달하려 할 수 있습니다. 서버에서 클라이언트 컴포넌트로 전달된 Props는 React에 의해 [직렬화 가능](https://developer.mozilla.org/docs/Glossary/Serialization)해야 합니다.
+서버 컴포넌트에서 데이터를 가져오는 경우, 데이터를 클라이언트 컴포넌트로 props로 전달하려 할 수 있습니다. 서버에서 클라이언트 컴포넌트로 전달된 Props는 React에 의해 [직렬화 가능](https://developer.mozilla.org/en-US/docs/Glossary/Serialization)해야 합니다.
 
-클라이언트 컴포넌트가 직렬화할 수 없는 데이터에 의존하는 경우, [서드 파티 라이브러리로 클라이언트에서 데이터를 가져오기](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#fetching-data-on-the-client-with-third-party-libraries) 또는 서버에서 [Route Handler](/docs/app/building-your-application/routing/route-handlers)를 통해 데이터를 가져올 수 있습니다.
+클라이언트 컴포넌트가 직렬화할 수 없는 데이터에 의존하는 경우, [서드 파티 라이브러리로 클라이언트에서 데이터를 가져오기](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#드-파티-라이브러리를-사용하여-서버에서-데이터-가져오기) 또는 서버에서 [Route Handler](/docs/nextjs/routing/route-handlers)를 통해 데이터를 가져올 수 있습니다.
+
+---
 
 ## 서버와 클라이언트 컴포넌트의 중첩
 
-클라이언트와 서버 컴포넌트를 중첩할 때, UI를 컴포넌트의 트리로 시각화하는 것이 도움이 될 수 있습니다. [루트 레이아웃](/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required)으로 시작하여, 서버 컴포넌트인 이를 통해 `"use client"` 지시어를 추가함으로써 클라이언트에서 특정 하위 트리의 컴포넌트를 렌더링할 수 있습니다.
+클라이언트와 서버 컴포넌트를 중첩할 때, UI를 컴포넌트의 트리로 시각화하는 것이 도움이 될 수 있습니다. [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#Root-레이아웃)으로 시작하여, 서버 컴포넌트인 이를 통해 `"use client"` 지시어를 추가함으로써 클라이언트에서 특정 하위 트리의 컴포넌트를 렌더링할 수 있습니다.
 
 {/* 다이어그램 - 중첩 */}
 
@@ -313,7 +321,8 @@ export default function Layout( { children }
 
 {/* 다이어그램 */}
 
-- 클라이언트 컴포넌트가 서버 컴포넌트 후에 렌더링되기 때문에, 클라이언트 컴포넌트 모듈 내에서 서버 컴포넌트를 가져올 수 없습니다(서버로 돌아가는 새로운 요청이 필요하기 때문입니다). 대신, 서버 컴포넌트를 클라이언트 컴포넌트에 `props`로 전달할 수 있습니다. [지원되지 않는 패턴](#unsupported-pattern-importing-server-components-into-client-components) 및 [지원되는 패턴](#supported-pattern-passing-server-components-to-client-components-as-props) 섹션을 참조하세요.
+- 클라이언트 컴포넌트가 서버 컴포넌트 후에 렌더링되기 때문에, 클라이언트 컴포넌트 모듈 내에서 서버 컴포넌트를 가져올 수 없습니다(서버로 돌아가는 새로운 요청이 필요하기 때문입니다). 
+대신, 서버 컴포넌트를 클라이언트 컴포넌트에 `props`로 전달할 수 있습니다. [지원되지 않는 패턴](#지원되지-않는-패턴-클라이언트-컴포넌트-내에서-서버-컴포넌트-가져오기) 및 [지원되는 패턴](#지원되는-패턴-서버-컴포넌트를-클라이언트-컴포넌트에-props로-전달하기) 섹션을 참조하세요.
 
 ### 지원되지 않는 패턴: 클라이언트 컴포넌트 내에서 서버 컴포넌트 가져오기
 
