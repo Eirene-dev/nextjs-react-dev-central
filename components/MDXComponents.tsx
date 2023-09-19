@@ -7,6 +7,12 @@ import CustomLink from './Link'
 import { Callout } from '@/components/callout'
 import { MdxCard } from '@/components/mdx-card'
 import {
+  StyleBlueBold,
+  StyleImportant,
+  StyleUnderline,
+  StyleWarning,
+} from '@/components/StyledComponents'
+import {
   AlertTriangle,
   ArrowRight,
   Check,
@@ -46,4 +52,8 @@ export const components: MDXComponents = {
   ShieldAlert,
   Info,
   FileText,
+  StyleBlueBold,
+  StyleImportant,
+  StyleUnderline,
+  StyleWarning,
 }

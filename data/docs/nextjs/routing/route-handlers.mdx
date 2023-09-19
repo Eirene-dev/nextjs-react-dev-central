@@ -10,11 +10,16 @@ summary: 웹의 Request와 Response API를 사용하여 주어진 라우트에 �
 
 !["Route.js 특별한 파일"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-special-file.png&w=1920&q=75&dpl=dpl_FcsRuVSqhZQjoKTEBMfGGqHxFR53)
 
-> **알아두면 좋은 정보**: 라우트 핸들러는 `app` 디렉토리 내에서만 사용 가능합니다. `pages` 디렉토리 내의 [API 라우트](/docs/pages/building-your-application/routing/api-routes)와 동등한 기능을 제공하므로 API 라우트와 라우트 핸들러를 함께 사용할 필요는 **없습니다**.
+<Callout type="warning" icon="알아두면 좋은 정보: Page 라우터의 API 라우트와의 관계">
+라우트 핸들러는 `app` 디렉토리 내에서만 사용 가능합니다.
+`pages` 디렉토리 내의 [API 라우트](/docs/getting-started/nextjs-first-app/api-routes)와 동등한 기능을 제공하므로 <StyleWarning>API 라우트와 라우트 핸들러를 함께 사용할 필요는 **없습니다**.</StyleWarning>
+</Callout>
+
+---
 
 ## 규칙
 
-라우트 핸들러는 `app` 디렉토리 내 [`route.js|ts` 파일](/docs/app/api-reference/file-conventions/route)에 정의됩니다:
+라우트 핸들러는 `app` 디렉토리 내 [`route.js|ts` 파일](https://nextjs.org/docs/app/api-reference/file-conventions/route)에 정의됩니다:
 
 ```ts filename="app/api/route.ts" switcher
 export async function GET(request: Request) {}
@@ -34,7 +39,9 @@ export async function GET(request) {}
 
 ### 확장된 `NextRequest` 및 `NextResponse` API
 
-기본 [Request](https://developer.mozilla.org/docs/Web/API/Request) 및 [Response](https://developer.mozilla.org/docs/Web/API/Response)를 지원하는 것 외에도, Next.js는 고급 사용 사례를 위한 편리한 도우미를 제공하기 위해 [`NextRequest`](/docs/app/api-reference/functions/next-request) 및 [`NextResponse`](/docs/app/api-reference/functions/next-response)로 확장합니다.
+기본 [Request](https://developer.mozilla.org/docs/Web/API/Request) 및 [Response](https://developer.mozilla.org/docs/Web/API/Response)를 지원하는 것 외에도, Next.js는 고급 사용 사례를 위한 편리한 도우미를 제공하기 위해 [`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request) 및 [`NextResponse`](https://nextjs.org/docs/app/api-reference/functions/next-response)로 확장합니다.
+
+---
 
 ## 동작
 
@@ -75,9 +82,8 @@ export async function GET() {
 }
 ```
 </details>
-> **TypeScript 주의**: `Response.json()`은 유효하지만, 기본 TypeScript 타입은 현재 오류를 표시합니다. 대신 타입이 지정된 응답을 위해 [`NextResponse.json()`](/docs/app/api-reference/functions/next-response#json)을 사용할 수 있습니다.
+> **TypeScript 주의**: `Response.json()`은 유효하지만, 기본 TypeScript 타입은 현재 오류를 표시합니다. 대신 타입이 지정된 응답을 위해 [`NextResponse.json()`](https://nextjs.org/docs/app/api-reference/functions/next-response#json)을 사용할 수 있습니다.
 
----
 
 ### 캐싱에서 제외하기
 
@@ -85,8 +91,8 @@ export async function GET() {
 
 - `GET` 메서드와 함께 `Request` 객체를 사용합니다.
 - 다른 HTTP 메서드를 사용합니다.
-- `cookies`와 `headers`와 같은 [동적 함수](#dynamic-functions)를 사용합니다.
-- [세그먼트 설정 옵션](#segment-config-options)을 통해 수동으로 동적 모드를 지정합니다.
+- `cookies`와 `headers`와 같은 [동적 함수](#동적-함수)를 사용합니다.
+- [세그먼트 설정 옵션](#세그먼트-구성-옵션)을 통해 수동으로 동적 모드를 지정합니다.
 
 예시:
 
@@ -168,11 +174,11 @@ export async function POST() {
 }
 ```
 </details>
-> **알아두면 좋은 정보**: API 라우트와 마찬가지로, 라우트 핸들러는 폼 제출 처리와 같은 경우에 사용될 수 있습니다. React와 깊게 통합되는 [폼 및 변형 처리](/docs/app/building-your-application/data-fetching/forms-and-mutations)를 위한 새로운 추상화가 진행 중입니다.
+> **알아두면 좋은 정보**: API 라우트와 마찬가지로, 라우트 핸들러는 폼 제출 처리와 같은 경우에 사용될 수 있습니다. React와 깊게 통합되는 [폼 및 변형 처리](/docs/nextjs/data-fetching/forms-and-mutations)를 위한 새로운 추상화가 진행 중입니다.
 
 
 
-### 라우트 해결
+### 라우트 결정 방식
 
 `route`를 가장 낮은 수준의 라우팅 원시로 간주할 수 있습니다.
 
@@ -197,13 +203,15 @@ export default function Page() {
 export async function POST(request) {}
 ```
 
+---
+
 ## 예시
 
 다음 예제들은 Route 핸들러를 Next.js의 다른 API와 기능과 어떻게 조합하는지 보여줍니다.
 
 ### 캐싱된 데이터 재검증하기
 
-[`next.revalidate`](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) 옵션을 사용하여 [캐시된 데이터를 재검증](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data)할 수 있습니다:
+[`next.revalidate`](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-재검증) 옵션을 사용하여 [캐시된 데이터를 재검증](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-재검증)할 수 있습니다:
 
 ```ts filename="app/items/route.ts" switcher
 import { NextResponse } from 'next/server'
@@ -233,21 +241,20 @@ export async function GET() {
 ```
 </details>
 
-또는 [`revalidate` 세그먼트 설정 옵션](/docs/app/api-reference/file-conventions/route-segment-config#revalidate)을 사용할 수 있습니다:
+또는 [`revalidate` 세그먼트 설정 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#revalidate)을 사용할 수 있습니다:
 
 ```ts
 export const revalidate = 60
 ```
 
----
 
 ### 동적 함수
 
-Route 핸들러는 Next.js의 [`cookies`](/docs/app/api-reference/functions/cookies)와 [`headers`](/docs/app/api-reference/functions/headers)와 같은 동적 함수와 함께 사용될 수 있습니다.
+Route 핸들러는 Next.js의 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies)와 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)와 같은 동적 함수와 함께 사용될 수 있습니다.
 
 #### 쿠키
 
-`next/headers`에서 [`cookies`](/docs/app/api-reference/functions/cookies)를 사용하여 쿠키를 읽을 수 있습니다. 이 서버 함수는 Route 핸들러에서 직접 호출되거나 다른 함수 내에서 중첩될 수 있습니다.
+`next/headers`에서 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies)를 사용하여 쿠키를 읽을 수 있습니다. 이 서버 함수는 Route 핸들러에서 직접 호출되거나 다른 함수 내에서 중첩될 수 있습니다.
 
 이 `cookies` 인스턴스는 읽기 전용입니다. 쿠키를 설정하려면 [`Set-Cookie`](https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie) 헤더를 사용하여 새로운 `Response`를 반환해야 합니다.
 
@@ -281,7 +288,7 @@ export async function GET(request) {
 ```
 </details>
 
-대안으로 기본 Web API 위에 추상화를 사용하여 쿠키를 읽을 수 있습니다. ([`NextRequest`](/docs/app/api-reference/functions/next-request)):
+대안으로 기본 Web API 위에 추상화를 사용하여 쿠키를 읽을 수 있습니다. ([`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request)):
 
 ```ts filename="app/api/route.ts" switcher
 import { type NextRequest } from 'next/server'
@@ -303,7 +310,7 @@ export async function GET(request) {
 
 #### 헤더
 
-`next/headers`에서 [`headers`](/docs/app/api-reference/functions/headers)를 사용하여 헤더를 읽을 수 있습니다. 이 서버 함수는 Route 핸들러에서 직접 호출되거나 다른 함수 내에서 중첩될 수 있습니다.
+`next/headers`에서 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)를 사용하여 헤더를 읽을 수 있습니다. 이 서버 함수는 Route 핸들러에서 직접 호출되거나 다른 함수 내에서 중첩될 수 있습니다.
 
 이 `headers` 인스턴스는 읽기 전용입니다. 헤더를 설정하려면 새로운 `headers`가 포함된 새로운 `Response`를 반환해야 합니다.
 
@@ -337,7 +344,7 @@ export async function GET(request) {
 ```
 </details>
 
-대안으로, 헤더를 읽기 위해 기본 Web API 위에 추상화를 사용할 수 있습니다. ([`NextRequest`](/docs/app/api-reference/functions/next-request)):
+대안으로, 헤더를 읽기 위해 기본 Web API 위에 추상화를 사용할 수 있습니다. ([`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request)):
 
 ```ts filename="app/api/route.ts" switcher
 import { type NextRequest } from 'next/server'
@@ -378,9 +385,9 @@ export async function GET(request) {
 
 ### 동적 라우트 세그먼트
 
-> 계속하기 전에 [라우트 정의하기](/docs/app/building-your-application/routing/defining-routes) 페이지를 읽어보는 것을 권장합니다.
+> 계속하기 전에 [라우트 정의하기](/docs/nextjs/routing/defining-routes) 페이지를 읽어보는 것을 권장합니다.
 
-라우트 핸들러는 [동적 세그먼트](/docs/app/building-your-application/routing/dynamic-routes)를 사용하여 동적 데이터로부터 요청 핸들러를 생성할 수 있습니다.
+라우트 핸들러는 [동적 세그먼트](/docs/nextjs/routing/dynamic-routes)를 사용하여 동적 데이터로부터 요청 핸들러를 생성할 수 있습니다.
 
 ```ts filename="app/items/[slug]/route.ts" switcher
 export async function GET(
@@ -661,7 +668,7 @@ export async function GET(request) {
 
 ### 엣지 및 Node.js 런타임
 
-라우트 핸들러는 스트리밍을 포함하여 엣지와 Node.js 런타임을 모두 원활하게 지원하기 위해 동형 웹 API를 가지고 있습니다. 라우트 핸들러는 페이지와 레이아웃과 동일한 [라우트 세그먼트 구성](/docs/app/api-reference/file-conventions/route-segment-config)을 사용하므로 일반적으로 요청되는 기능인 [정적으로 재생성된](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) 라우트 핸들러를 지원합니다.
+라우트 핸들러는 스트리밍을 포함하여 엣지와 Node.js 런타임을 모두 원활하게 지원하기 위해 동형 웹 API를 가지고 있습니다. 라우트 핸들러는 페이지와 레이아웃과 동일한 [라우트 세그먼트 구성](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용하므로 일반적으로 요청되는 기능인 [정적으로 재생성된](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-재검증) 라우트 핸들러를 지원합니다.
 
 `runtime` 세그먼트 구성 옵션을 사용하여 런타임을 지정할 수 있습니다:
 
@@ -671,7 +678,7 @@ export const runtime = 'edge' // 기본값은 'nodejs'
 
 ### 비-UI 응답
 
-라우트 핸들러를 사용하여 비-UI 콘텐츠를 반환할 수 있습니다. [`sitemap.xml`](/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-sitemap), [`robots.txt`](/docs/app/api-reference/file-conventions/metadata/robots#generate-a-robots-file), [`앱 아이콘`](/docs/app/api-reference/file-conventions/metadata/app-icons#generate-icons-using-code-js-ts-tsx), 및 [오픈 그래프 이미지](/docs/app/api-reference/file-conventions/metadata/opengraph-image) 모두 내장 지원이 있습니다.
+라우트 핸들러를 사용하여 비-UI 콘텐츠를 반환할 수 있습니다. [`sitemap.xml`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-sitemap), [`robots.txt`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots#generate-a-robots-file), [`앱 아이콘`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#generate-icons-using-code-js-ts-tsx), 및 [오픈 그래프 이미지](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image) 모두 내장 지원이 있습니다.
 
 ```ts filename="app/rss.xml/route.ts" switcher
 export async function GET() {
@@ -707,7 +714,7 @@ export async function GET() {
 
 ### 세그먼트 구성 옵션
 
-라우트 핸들러는 페이지와 레이아웃과 동일한 [라우트 세그먼트 구성](/docs/app/api-reference/file-conventions/route-segment-config)을 사용합니다.
+라우트 핸들러는 페이지와 레이아웃과 동일한 [라우트 세그먼트 구성](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용합니다.
 
 ```ts filename="app/items/route.ts" switcher
 export const dynamic = 'auto'
@@ -728,5 +735,5 @@ export const runtime = 'nodejs'
 export const preferredRegion = 'auto'
 ```
 </details>
-자세한 내용은 [API 참조](/docs/app/api-reference/file-conventions/route-segment-config)를 참조하세요.
+자세한 내용은 [API 참조](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)를 참조하세요.
 

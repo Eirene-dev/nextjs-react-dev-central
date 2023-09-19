@@ -5,16 +5,17 @@ summary: 요청이 완료되기 전에 코드를 실행하는 미들웨어의 �
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
-
-{/* 이 문서의 내용은 앱과 페이지 라우터 사이에서 공유됩니다. `<PagesOnly>Content</PagesOnly>` 컴포넌트를 사용하여 페이지 라우터에 특정한 내용을 추가할 수 있습니다. 공유되는 내용은 컴포넌트 안에 둘 필요가 없습니다. */}
-
 미들웨어는 요청이 완료되기 전에 코드를 실행할 수 있게 해줍니다. 들어오는 요청을 기반으로 응답을 리라이트, 리디렉션, 요청 또는 응답 헤더 수정, 또는 직접 응답하는 방식으로 수정할 수 있습니다.
 
-미들웨어는 캐시된 컨텐츠와 라우트가 일치되기 전에 실행됩니다. [경로 매칭](#matching-paths)에서 자세한 내용을 확인하세요.
+미들웨어는 캐시된 컨텐츠와 라우트가 일치되기 전에 실행됩니다. [경로 매칭](#경로-매칭)에서 자세한 내용을 확인하세요.
 
-## 관례
+---
+
+## 규칙
 
 프로젝트의 루트에 `middleware.ts` (또는 `.js`) 파일을 사용하여 미들웨어를 정의하세요. 예를 들면, `pages` 또는 `app`와 동일한 수준에서, 또는 해당하는 경우 `src` 내부에 있습니다.
+
+---
 
 ## 예제
 
@@ -49,6 +50,8 @@ export const config = {
 ```
 </details>
 
+---
+
 ## 경로 매칭
 
 미들웨어는 **프로젝트의 모든 라우트에** 대해 호출됩니다. 다음은 실행 순서입니다:
@@ -64,8 +67,8 @@ export const config = {
 
 미들웨어가 실행될 경로를 정의하는 두 가지 방법이 있습니다:
 
-1. [사용자 정의 매처 설정](#matcher)
-2. [조건문](#conditional-statements)
+1. [사용자 정의 매처 설정](#매처)
+2. [조건문](#조건문)
 
 ### 매처
 
@@ -132,8 +135,9 @@ export function middleware(request: NextRequest) {
   }
 }
 ```
+
 <details>
-    <summary>JavaScript</summary>
+<summary>JavaScript</summary>
 ```js filename="middleware.js" switcher
 import { NextResponse } from 'next/server'
 
@@ -149,6 +153,8 @@ export function middleware(request) {
 ```
 </details>
 
+--- 
+
 ## NextResponse
 
 `NextResponse` API를 통해 다음 작업을 수행할 수 있습니다:
@@ -163,8 +169,8 @@ export function middleware(request) {
 
 미들웨어에서 응답을 생성하려면 다음과 같은 방법이 있습니다:
 
-1. 응답을 생성하는 라우트([Page](/docs/app/building-your-application/routing/pages-and-layouts) 또는 [Route Handler](/docs/app/building-your-application/routing/route-handlers))로 `rewrite`합니다.
-2. `NextResponse`를 직접 반환합니다. [응답 생성](#producing-a-response)을 참조하세요.
+1. 응답을 생성하는 라우트([Page](/docs/nextjs/routing/pages-and-layouts) 또는 [Route Handler](/docs/nextjs/routing/route-handlers))로 `rewrite`합니다.
+2. `NextResponse`를 직접 반환합니다. [응답 생성](#응답-생성하기)을 참조하세요.
 
 </Callout>
 
@@ -173,10 +179,11 @@ export function middleware(request) {
 미들웨어에서 응답을 생성하려면 다음과 같은 방법이 있습니다:
 
 1. 응답을 생성하는 라우트([Page](/docs/pages/building-your-application/routing/pages-and-layouts) 또는 [Edge API Route](/docs/pages/building-your-application/routing/api-routes))로 `rewrite`합니다.
-2. `NextResponse`를 직접 반환합니다. [응답 생성](#producing-a-response)을 참조하세요.
+2. `NextResponse`를 직접 반환합니다. [응답 생성](#p응답-생성하기)을 참조하세요.
 
 </Callout>
 
+--- 
 
 ## 쿠키 사용하기
 
@@ -249,6 +256,8 @@ export function middleware(request) {
 }
 ```
 </details>
+
+--- 
 
 ## 헤더 설정하기
 
@@ -361,7 +370,7 @@ export function middleware(request) {
 ```
 </details>
 
-
+--- 
 
 ## 고급 미들웨어 플래그
 
@@ -415,6 +424,7 @@ export default async function middleware(req) {
   // 플래그 없이는 /hello로 정규화됩니다.
 }
 ```
+--- 
 
 ## 버전 히스토리
 
@@ -422,6 +432,6 @@ export default async function middleware(req) {
 | --------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `v13.1.0` | 고급 미들웨어 플래그 추가                                                                                                 |
 | `v13.0.0` | 미들웨어는 요청 헤더, 응답 헤더를 수정하고 응답을 전송할 수 있습니다.                                                       |
-| `v12.2.0` | 미들웨어는 안정적이며, [업그레이드 가이드](/docs/messages/middleware-upgrade-guide)를 참조하세요.                         |
+| `v12.2.0` | 미들웨어는 안정적이며, [업그레이드 가이드](https://nextjs.org/docs/messages/middleware-upgrade-guide)를 참조하세요.                         |
 | `v12.0.9` | Edge Runtime에서 절대 URL 강제 적용 ([PR](https://github.com/vercel/next.js/pull/33410))                                   |
 | `v12.0.0` | 미들웨어 (베타) 추가                                                                                                      |

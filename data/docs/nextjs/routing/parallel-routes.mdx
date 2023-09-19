@@ -5,10 +5,13 @@ summary: 독립적으로 탐색할 수 있는 동일한 뷰에서 하나 이상�
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
+---
+
+## 병렬 라우트 소개
 
 병렬 라우팅을 사용하면 동일한 레이아웃에서 하나 이상의 페이지를 동시 또는 조건부로 렌더링할 수 있습니다. 대시보드나 소셜 사이트의 피드와 같은 앱의 고도로 동적인 부분에서 병렬 라우팅은 복잡한 라우팅 패턴을 구현하는 데 사용할 수 있습니다.
 
-예를 들면, 팀과 분석 페이지를 동시에 렌더링할 수 있습니다.
+예를 들면, Team과 Analytics 페이지를 동시에 렌더링할 수 있습니다.
 
 !["병렬 라우트 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
 
@@ -20,9 +23,9 @@ summary: 독립적으로 탐색할 수 있는 동일한 뷰에서 하나 이상�
 
 !["조건부 라우트 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fconditional-routes-ui.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
 
-## 규약
+## 규칙
 
-병렬 라우트는 명명된 **슬롯**을 사용하여 생성됩니다. 슬롯은 `@폴더` 규약으로 정의되며, 동일한 레벨의 레이아웃에 prop으로 전달됩니다.
+병렬 라우트는 명명된 **슬롯**을 사용하여 생성됩니다. 슬롯은 <StyleBlueBold>`@폴더`</StyleBlueBold> 규약으로 정의되며, 동일한 레벨의 레이아웃에 prop으로 전달됩니다.
 
 > 슬롯은 라우트 세그먼트가 _아니며 URL 구조에 영향을 주지 않습니다_. 파일 경로 `/@team/members`는 `/members`에서 접근 가능합니다.
 
@@ -94,7 +97,7 @@ export default function Layout(props) {
 
 ## `useSelectedLayoutSegment(s)`
 
-[`useSelectedLayoutSegment`](/docs/app/api-reference/functions/use-selected-layout-segment)와 [`useSelectedLayoutSegments`](/docs/app/api-reference/functions/use-selected-layout-segments) 둘 다 `parallelRoutesKey`를 받아들여, 해당 슬롯 내에서 활성 라우트 세그먼트를 읽을 수 있게 합니다.
+[`useSelectedLayoutSegment`](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment)와 [`useSelectedLayoutSegments`](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segments) 둘 다 `parallelRoutesKey`를 받아들여, 해당 슬롯 내에서 활성 라우트 세그먼트를 읽을 수 있게 합니다.
 
 ```tsx filename="app/layout.tsx" switcher
 'use client'
@@ -109,7 +112,8 @@ export default async function Layout(props: {
   // ...
 }
 ```
-
+<details>
+    <summary>JavaScript</summary>
 ```jsx filename="app/layout.js" switcher
 'use client'
 
@@ -120,7 +124,7 @@ export default async function Layout(props) {
   // ...
 }
 ```
-
+</details>
 사용자가 `@auth/login` 또는 URL 바에서 `/login`으로 이동하면, `loginSegments`는 문자열 `"login"`과 동일하게 됩니다.
 
 ---
@@ -246,7 +250,7 @@ export default async function Login() {
 }
 ```
 </details>
-> 모달에 대한 더 많은 정보는 [라우트 가로채기](/docs/app/building-your-application/routing/intercepting-routes) 섹션에서 다룹니다.
+> 모달에 대한 더 많은 정보는 [라우트 가로채기](/docs/nextjs/routing/intercepting-routes) 섹션에서 다룹니다.
 
 다른 곳으로 이동하면서 모달을 닫고 싶다면, catch-all 라우트를 사용할 수도 있습니다.
 

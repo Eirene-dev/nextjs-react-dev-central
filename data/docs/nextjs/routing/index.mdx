@@ -4,8 +4,11 @@ date: '2023-09-01 01:00'
 summary: 프론트엔드 애플리케이션을 위한 라우팅의 기본을 배웁니다.
 ---
 
+<TOCInline toc={props.toc} asDisclosure />
 
 애플리케이션의 기본 구조는 라우팅입니다. 이 페이지에서는 웹용 라우팅의 **핵심 개념**과 Next.js에서 라우팅을 어떻게 다루는지 소개합니다.
+
+---
 
 ## 용어
 
@@ -24,34 +27,42 @@ summary: 프론트엔드 애플리케이션을 위한 라우팅의 기본을 배
 - **URL 세그먼트:** 슬래시로 구분된 URL 경로의 일부입니다.
 - **URL 경로:** 도메인 이후의 URL 부분입니다 (세그먼트로 구성됨).
 
+---
+
 ## `app` 라우터
 
-버전 13에서, Next.js는 [React Server Components](/docs/app/building-your-application/rendering/server-components)를 기반으로 한 새로운 **앱 라우터**를 소개했습니다. 이는 공유 레이아웃, 중첩 라우팅, 로딩 상태, 에러 처리 등을 지원합니다.
+버전 13에서, Next.js는 [React Server Components](/docs/nextjs/rendering/server-components)를 기반으로 한 새로운 **App 라우터**를 소개했습니다. 이는 공유 레이아웃, 중첩 라우팅, 로딩 상태, 에러 처리 등을 지원합니다.
 
-앱 라우터는 `app`이라는 새로운 디렉토리에서 작동합니다. `app` 디렉토리는 점진적인 채택을 허용하기 위해 `pages` 디렉토리와 함께 작동합니다. 이를 통해 애플리케이션의 일부 라우트를 새로운 동작으로 변경할 수 있으며, 기존 동작을 유지하기 위해 `pages` 디렉토리에 다른 라우트를 유지할 수도 있습니다. 애플리케이션에서 `pages` 디렉토리를 사용하면 [페이지 라우터](/docs/pages/building-your-application/routing) 문서도 참조해주세요.
+App 라우터는 `app`이라는 새로운 디렉토리에서 작동합니다. `app` 디렉토리는 점진적인 채택을 허용하기 위해 `pages` 디렉토리와 함께 작동합니다. 이를 통해 애플리케이션의 일부 라우트를 새로운 동작으로 변경할 수 있으며, 기존 동작을 유지하기 위해 `pages` 디렉토리에 다른 라우트를 유지할 수도 있습니다. 
 
-> **알아두세요**: 앱 라우터는 페이지 라우터보다 우선순위가 있습니다. 디렉토리 간의 라우트는 동일한 URL 경로로 해석되어서는 안되며, 충돌을 방지하기 위해 빌드 시간 오류가 발생합니다.
+<Callout type="warning">
+이 문서에서는 App 라우터를 기반으로 설명합니다.
+</Callout>
+
+> **알아두세요**: App 라우터는 Page 라우터보다 우선순위가 있습니다. 디렉토리 간의 라우트는 동일한 URL 경로로 해석되어서는 안되며, 충돌을 방지하기 위해 빌드 시간 오류가 발생합니다.
 
 !["Next.js 앱 디렉토리"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fnext-router-directories.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-기본적으로 `app` 내의 컴포넌트들은 [React Server Components](/docs/app/building-your-application/rendering/server-components)입니다. 이것은 성능 최적화이며, 이를 쉽게 채택할 수 있습니다. 또한 [클라이언트 컴포넌트](/docs/app/building-your-application/rendering/client-components)도 사용할 수 있습니다.
+기본적으로 `app` 내의 컴포넌트들은 [React Server Components](/docs/nextjs/rendering/server-components)입니다. 이것은 성능 최적화이며, 이를 쉽게 채택할 수 있습니다. 또한 [클라이언트 컴포넌트](/docs/nextjs/rendering/client-components)도 사용할 수 있습니다.
 
-> **추천**: 서버 컴포넌트에 익숙하지 않다면, [서버](/docs/app/building-your-application/rendering/server-components) 페이지를 확인하세요.
+> **추천**: 서버 컴포넌트에 익숙하지 않다면, [서버 컴포넌트](/docs/nextjs/rendering/server-components) 페이지를 확인하세요.
+
+---
 
 ## 폴더와 파일의 역할
 
 Next.js는 파일 시스템 기반 라우터를 사용하여:
 
-- **폴더**는 라우트를 정의하는 데 사용됩니다. 라우트는 **루트 폴더**에서 시작하여 `page.js` 파일을 포함하는 최종 **리프 폴더**까지의 파일 시스템 계층을 따르는 단일 경로입니다. [라우트 정의](/docs/app/building-your-application/routing/defining-routes)를 참조하세요.
+- **폴더**는 라우트를 정의하는 데 사용됩니다. 라우트는 **루트 폴더**에서 시작하여 `page.js` 파일을 포함하는 최종 **리프 폴더**까지의 파일 시스템 계층을 따르는 단일 경로입니다. [라우트 정의](/docs/nextjs/routing/defining-routes)를 참조하세요.
 - **파일**은 라우트 세그먼트에 표시되는 UI를 생성하는 데 사용됩니다. [특별한 파일](#file-conventions)을 참조하세요.
+
+---
 
 ## 라우트 세그먼트
 
 라우트의 각 폴더는 **라우트 세그먼트**를 나타냅니다. 각 라우트 세그먼트는 **URL 경로**의 해당 **세그먼트**에 매핑됩니다.
 
 !["라우트 세그먼트가 URL 세그먼트에 어떻게 매핑되는지"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-segments-to-path-segments.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
-
-라우트 세그먼트에는 여러 종류가 있으며, [세그먼트 유형](#segment-types)을 참조하세요.
 
 ---
 
@@ -65,23 +76,27 @@ Next.js는 파일 시스템 기반 라우터를 사용하여:
 - `dashboard` (세그먼트)
 - `settings` (리프 세그먼트)
 
+---
+
 ## 파일 규칙
 
 Next.js는 중첩된 라우트에서 특정 동작의 UI를 생성하기 위한 특별한 파일들을 제공합니다:
 
 |                                                                                       |                                                                                                |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [`layout`](/docs/app/building-your-application/routing/pages-and-layouts#layouts)     | 세그먼트와 그 자식에 대한 공유 UI                                                              |
-| [`page`](/docs/app/building-your-application/routing/pages-and-layouts#pages)         | 라우트의 고유 UI 및 라우트를 공개적으로 접근 가능하게 함                                         |
-| [`loading`](/docs/app/building-your-application/routing/loading-ui-and-streaming)     | 세그먼트와 그 자식에 대한 로딩 UI                                                              |
-| [`not-found`](/docs/app/api-reference/file-conventions/not-found)                     | 세그먼트와 그 자식에 대한 404 UI                                                               |
-| [`error`](/docs/app/building-your-application/routing/error-handling)                 | 세그먼트와 그 자식에 대한 에러 UI                                                              |
-| [`global-error`](/docs/app/building-your-application/routing/error-handling)          | 전역 에러 UI                                                                                   |
-| [`route`](/docs/app/building-your-application/routing/route-handlers)                 | 서버 사이드 API 엔드포인트                                                                     |
-| [`template`](/docs/app/building-your-application/routing/pages-and-layouts#templates) | 특별하게 다시 렌더링되는 레이아웃 UI                                                           |
-| [`default`](/docs/app/api-reference/file-conventions/default)                         | [병렬 라우트](/docs/app/building-your-application/routing/parallel-routes)를 위한 기본 UI     |
+| [`layout`](/docs/nextjs/routing/pages-and-layouts#레이아웃)     | 세그먼트와 그 자식에 대한 공유 UI                                                              |
+| [`page`](/docs/nextjs/routing/pages-and-layouts#페이지)         | 라우트의 고유 UI 및 라우트를 공개적으로 접근 가능하게 함                                         |
+| [`loading`](/docs/nextjs/routing/loading-ui-and-streaming)     | 세그먼트와 그 자식에 대한 로딩 UI                                                              |
+| [`not-found`](https://nextjs.orghttps://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/not-found)                     | 세그먼트와 그 자식에 대한 404 UI                                                               |
+| [`error`](/docs/nextjs/routing/error-handling)                 | 세그먼트와 그 자식에 대한 에러 UI                                                              |
+| [`global-error`](/docs/nextjs/routing/error-handling)          | 전역 에러 UI                                                                                   |
+| [`route`](/docs/nextjs/routing/route-handlers)                 | 서버 사이드 API 엔드포인트                                                                     |
+| [`template`](/docs/nextjs/routing/pages-and-layouts#템플릿) | 특별하게 다시 렌더링되는 레이아웃 UI                                                           |
+| [`default`](https://nextjs.orghttps://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/default)                         | [병렬 라우트](/docs/nextjs/routing/parallel-routes)를 위한 기본 UI     |
 
 > **참고**: 특별한 파일들에 `.js`, `.jsx` 또는 `.tsx` 확장자를 사용할 수 있습니다.
+
+---
 
 ## 컴포넌트 계층 구조
 
@@ -99,25 +114,31 @@ Next.js는 중첩된 라우트에서 특정 동작의 UI를 생성하기 위한 
 
 ![](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fnested-file-conventions-component-hierarchy.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-## 코로케이션
+---
+
+## 코드 공동 위치(Colocation)
 
 특별한 파일 외에도 `app` 디렉토리 내의 폴더 안에 본인의 파일들(예: 컴포넌트, 스타일, 테스트 등)을 함께 위치시킬 수 있습니다.
 
 이는 폴더가 라우트를 정의하는 반면, `page.js` 또는 `route.js`에서 반환된 내용만 공개적으로 접근 가능하기 때문입니다.
 
 ![](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-colocation.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
-[프로젝트 조직 및 코로케이션](/docs/app/building-your-application/routing/colocation)에 대한 자세한 내용을 알아보세요.
+[프로젝트 구성 및 파일 공동 위치](/docs/nextjs/routing/colocation)에 대한 자세한 내용을 알아보세요.
+
+---
 
 ## 고급 라우팅 패턴
 
-앱 라우터는 보다 고급 라우팅 패턴을 구현하는 데 도움이 되는 규칙들도 제공합니다. 이에는 다음이 포함됩니다:
+App 라우터는 보다 고급 라우팅 패턴을 구현하는 데 도움이 되는 규칙들도 제공합니다. 이에는 다음이 포함됩니다:
 
-- [병렬 라우트](/docs/app/building-your-application/routing/parallel-routes): 한 뷰에서 독립적으로 탐색할 수 있는 두 개 이상의 페이지를 동시에 표시합니다. 병렬 뷰에 서브 네비게이션을 가진 경우 사용할 수 있습니다. 예: 대시보드.
-- [라우트 가로채기](/docs/app/building-your-application/routing/intercepting-routes): 다른 라우트의 컨텍스트에서 라우트를 가로채서 표시합니다. 현재 페이지의 컨텍스트를 유지하는 것이
+- [병렬 라우트](/docs/nextjs/routing/parallel-routes): 한 뷰에서 독립적으로 탐색할 수 있는 두 개 이상의 페이지를 동시에 표시합니다. 병렬 뷰에 서브 네비게이션을 가진 경우 사용할 수 있습니다. 예: 대시보드.
+- [라우트 가로채기](/docs/nextjs/routing/intercepting-routes): 다른 라우트의 컨텍스트에서 라우트를 가로채서 표시합니다. 현재 페이지의 컨텍스트를 유지하는 것이
 
  중요할 때 사용할 수 있습니다. 예: 하나의 작업을 편집하면서 모든 작업을 보거나 피드에서 사진을 확장할 때.
 
 이러한 패턴들을 통해 복잡한 UI를 구축할 수 있으며, 작은 팀과 개별 개발자가 구현하기 어려웠던 기능들을 보다 쉽게 만들 수 있게 됩니다.
+
+---
 
 ## 다음 단계
 

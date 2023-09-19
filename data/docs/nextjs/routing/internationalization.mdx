@@ -8,12 +8,39 @@ summary: 국제화 라우팅 및 지역화된 콘텐츠를 통해 다양한 언�
 
 Next.js는 여러 언어를 지원하기 위해 콘텐츠의 라우팅 및 렌더링을 구성할 수 있게 해줍니다. 다양한 지역에 맞게 사이트를 적용하려면 번역된 콘텐츠(지역화) 및 국제화된 라우트가 필요합니다.
 
+---
+
 ## 용어 설명
 
 - **Locale:** 언어 및 형식 지정 기본 설정에 대한 식별자입니다. 이는 사용자의 선호 언어와 그들의 지리적 지역을 포함할 수 있습니다.
   - `en-US`: 미국에서 사용되는 영어
   - `nl-NL`: 네덜란드에서 사용되는 네덜란드어
   - `nl`: 지역 특정이 아닌 네덜란드어
+
+<Callout type="warning" icon="한국어 설정">
+Next.js에서 대한민국에서 사용하는 한국어를 설정하기 위해서는 `ko-KR`를 사용하면 됩니다. 
+
+다국어 지원과 국제화(i18n)을 Next.js 프로젝트에 적용하려면, 다음과 같은 단계를 따르면 됩니다:
+
+1. **next.config.js** 파일에서 `i18n` 설정을 추가하세요.
+
+```js
+module.exports = {
+  i18n: {
+    locales: ['ko-KR', 'en-US'],  // 여러 언어를 지원한다면 배열에 추가
+    defaultLocale: 'ko-KR',
+  },
+}
+```
+
+2. 여기서 `locales`는 지원하는 언어 목록입니다. 필요한 경우 다른 언어 코드를 추가할 수 있습니다. `defaultLocale`은 기본 언어를 설정하는 부분입니다. 이 예제에서는 대한민국에서 사용하는 한국어인 `ko-KR`를 기본으로 설정했습니다.
+
+3. 이 설정을 마치면 Next.js가 자동으로 각 언어별로 라우팅을 처리합니다. 예를 들면, `/en-US/about`는 영어로 된 "about" 페이지로 이동하고, `/ko-KR/about`는 한국어로 된 "about" 페이지로 이동합니다.
+
+4. 각 언어에 따른 문자열을 제공하려면, 예를 들어 `locales` 폴더 내에 각 언어별 폴더를 만들고 그 안에 번역된 문자열을 관리하는 방법 등 다양한 방법이 있습니다. 번역 라이브러리(예: `next-i18next`, `react-intl` 등)를 사용하여 이를 보다 효율적으로 관리할 수 있습니다.
+
+이렇게 설정하면 Next.js에서 대한민국에서 사용하는 한국어 설정을 적용할 수 있습니다.
+</Callout>
 
 ## 라우팅 개요
 
@@ -33,7 +60,7 @@ let defaultLocale = 'en-US'
 match(languages, locales, defaultLocale) // -> 'en-US'
 ```
 
-라우팅은 서브 경로(`/fr/products`) 또는 도메인(`my-site.fr/products`)을 통해 국제화될 수 있습니다. 이 정보를 통해 사용자를 로케일을 기반으로 [Middleware](/docs/app/building-your-application/routing/middleware) 내에서 리디렉션할 수 있습니다.
+라우팅은 서브 경로(`/fr/products`) 또는 도메인(`my-site.fr/products`)을 통해 국제화될 수 있습니다. 이 정보를 통해 사용자를 로케일을 기반으로 [Middleware](/docs/nextjs/routing/middleware) 내에서 리디렉션할 수 있습니다.
 
 ```js filename="middleware.js"
 import { NextResponse } from 'next/server'
@@ -135,7 +162,7 @@ export default async function Page({ params: { lang } }) {
 }
 ```
 
-`app/` 디렉토리 내의 모든 레이아웃과 페이지는 기본적으로 [서버 컴포넌트(Server Components)](/docs/app/building-your-application/rendering/server-components)로 설정되므로, 번역 파일의 크기가 클라이언트 측 JavaScript 번들 크기에 영향을 주는 것에 대해 걱정할 필요가 없습니다. 이 코드는 **서버에서만 실행되며**, 결과적으로 생성된 HTML만 브라우저로 전송됩니다.
+`app/` 디렉토리 내의 모든 레이아웃과 페이지는 기본적으로 [서버 컴포넌트(Server Components)](/docs/nextjs/rendering/server-components)로 설정되므로, 번역 파일의 크기가 클라이언트 측 JavaScript 번들 크기에 영향을 주는 것에 대해 걱정할 필요가 없습니다. 이 코드는 **서버에서만 실행되며**, 결과적으로 생성된 HTML만 브라우저로 전송됩니다.
 
 ## 정적 생성 (Static Generation)
 

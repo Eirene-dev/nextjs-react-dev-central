@@ -6,19 +6,19 @@ summary: Next.js에서 첫 번째 라우트를 생성하는 방법을 배우십�
 
 <TOCInline toc={props.toc} asDisclosure />
 
-> [라우팅 기본사항](/docs/app/building-your-application/routing) 페이지를 먼저 읽는 것을 권장합니다.
-
 이 페이지에서는 Next.js 애플리케이션에서 라우트를 정의하고 구성하는 방법을 안내합니다.
+
+---
 
 ## 라우트 생성하기
 
 Next.js는 **폴더**를 사용하여 라우트를 정의하는 파일 시스템 기반의 라우터를 사용합니다.
 
-각 폴더는 [**라우트 세그먼트**](/docs/app/building-your-application/routing#route-segments)를 나타내며, 이는 **URL 세그먼트**에 매핑됩니다. [중첩된 라우트](/docs/app/building-your-application/routing#nested-routes)를 생성하려면 폴더를 서로 중첩할 수 있습니다.
+각 폴더는 [**라우트 세그먼트**](/docs/nextjs/routing#라우트-세그먼트)를 나타내며, 이는 **URL 세그먼트**에 매핑됩니다. [중첩된 라우트](/docs/nextjs/routing#중첩-라우트)를 생성하려면 폴더를 서로 중첩할 수 있습니다.
 
 ![라우트 세그먼트와 경로 세그먼트의 매핑](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-segments-to-path-segments.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-특별한 [`page.js` 파일](/docs/app/building-your-application/routing/pages-and-layouts#pages)은 라우트 세그먼트를 공개적으로 접근 가능하게 만드는 데 사용됩니다.
+특별한 [`page.js` 파일](/docs/nextjs/routing/pages-and-layouts#페이지)은 라우트 세그먼트를 공개적으로 접근 가능하게 만드는 데 사용됩니다.
 
 ![라우트 정의하기](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fdefining-routes.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
@@ -26,9 +26,12 @@ Next.js는 **폴더**를 사용하여 라우트를 정의하는 파일 시스템
 
 > **알아두기**: 특별한 파일에 대해 `.js`, `.jsx`, 또는 `.tsx` 파일 확장자를 사용할 수 있습니다.
 
+---
+
 ## UI 생성하기
 
-[특별한 파일 규칙](/docs/app/building-your-application/routing#file-conventions)은 각 라우트 세그먼트에 대한 UI를 생성하는 데 사용됩니다. 가장 일반적인 것은 라우트별 고유한 UI를 보여주는 [페이지](/docs/app/building-your-application/routing/pages-and-layouts#pages)와 여러 라우트간에 공유되는 UI를 보여주는 [레이아웃](/docs/app/building-your-application/routing/pages-and-layouts#layouts)입니다.
+[특별한 파일 규칙](/docs/nextjs/routing#파일-규칙)은 각 라우트 세그먼트에 대한 UI를 생성하는 데 사용됩니다. 
+가장 일반적인 것은 라우트별 고유한 UI를 보여주는 [페이지](/docs/nextjs/routing/pages-and-layouts#페이지)와 여러 라우트간에 공유되는 UI를 보여주는 [레이아웃](/docs/nextjs/routing/pages-and-layouts#레이아웃)입니다.
 
 예를 들어 첫 번째 페이지를 만들려면 `app` 디렉토리 안에 `page.js` 파일을 추가하고 React 컴포넌트를 내보내세요:
 
@@ -38,8 +41,11 @@ export default function Page() {
 }
 ```
 
+<details>
+    <summary>JavaScript</summary>
 ```jsx filename="app/page.js" switcher
 export default function Page() {
   return <h1>안녕, Next.js!</h1>
 }
 ```
+</details>
