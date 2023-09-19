@@ -178,7 +178,7 @@ export const docsConfig: DocsConfig = {
             {
               title: 'TypeScript',
               href: '/docs/react/installation/typescript',
-              disabled: true,
+              disabled: false,
             },
             {
               title: 'React 개발자 도구',

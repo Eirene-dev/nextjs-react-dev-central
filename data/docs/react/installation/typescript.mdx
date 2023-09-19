@@ -1,9 +1,375 @@
 ---
 title: TypeScript
 date: '2023-03-05'
-summary: XXX
+summary: React에서 TypeScript를 설정하고 사용 하는 방법에 대해 배웁니다.
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
-## sss
-sss
+
+## TypeScript 사용하기
+
+JavaScript 코드베이스에 타입 정의를 추가하는 인기있는 방법 중 하나는 TypeScript를 사용하는 것입니다. 기본적으로 TypeScript는 JSX를 지원하며, 프로젝트에 @types/react와 @types/react-dom을 추가함으로써 React Web의 완전한 지원을 받을 수 있습니다.
+
+여러분이 배울 내용:
+- React 컴포넌트와 함께 사용하는 TypeScript
+- 훅(hooks)과 타이핑(typing)의 예제들
+- @types/react에서의 일반적인 타입들
+- 추가 학습 자료
+
+## 설치하기
+모든 생산 수준의 React 프레임워크는 TypeScript를 사용하는 것에 대한 지원을 제공합니다. 프레임워크별 설치 가이드를 따르세요:
+
+- Next.js
+- Remix
+- Gatsby
+- Expo
+
+## 기존 React 프로젝트에 TypeScript 추가하기
+
+React의 최신 타입 정의를 설치하려면:
+
+```bash
+npm install @types/react @types/react-dom
+```
+
+다음 컴파일러 옵션이 tsconfig.json에 설정되어야 합니다:
+
+1. lib에는 dom이 포함되어야 합니다. (참고: lib 옵션이 지정되지 않으면 기본적으로 dom이 포함됩니다.)
+2. jsx는 유효한 옵션 중 하나로 설정되어야 합니다. 대부분의 애플리케이션에는 preserve 옵션이 적합합니다. 라이브러리를 게시하는 경우 jsx 문서를 참고하여 어떤 값을 선택해야 할지 확인하세요.
+
+## React 컴포넌트와 TypeScript
+
+React와 TypeScript를 함께 사용하는 것은 React와 JavaScript를 작성하는 것과 매우 유사합니다. 컴포넌트를 작업할 때의 주요 차이점은 컴포넌트의 props에 대한 타입을 제공할 수 있다는 것입니다. 이러한 타입들은 정확성 검사와 에디터 내 인라인 문서 제공을 위해 사용될 수 있습니다.
+
+빠른 시작 가이드의 MyButton 컴포넌트를 사용하면, 버튼의 제목을 설명하는 타입을 추가할 수 있습니다: 
+
+```jsx
+function MyButton({ title }: { title: string }) {
+  return (
+    <button>{title}</button>
+  );
+}
+
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Welcome to my app</h1>
+      <MyButton title="I'm a button" />
+    </div>
+  );
+}
+```
+
+
+이 인라인 구문은 컴포넌트에 대한 타입을 제공하는 가장 간단한 방법입니다. 그러나 몇 개의 필드를 설명하기 시작하면 관리하기 번거로워질 수 있습니다. 대신 컴포넌트의 props를 설명하기 위해 인터페이스나 타입을 사용할 수 있습니다:
+
+```jsx
+interface MyButtonProps {
+  /** 버튼 내부에 표시할 텍스트 */
+  title: string;
+  /** 버튼과 상호 작용할 수 있는지 여부 */
+  disabled: boolean;
+}
+
+function MyButton({ title, disabled }: MyButtonProps) {
+  return (
+    <button disabled={disabled}>{title}</button>
+  );
+}
+
+export default function MyApp() {
+  return (
+    <div>
+      <h1>내 앱에 오신 것을 환영합니다</h1>
+      <MyButton title="나는 비활성화된 버튼이야" disabled={true}/>
+    </div>
+  );
+}
+```
+
+컴포넌트의 props를 설명하는 타입은 필요에 따라 간단하거나 복잡할 수 있습니다. 그러나 그것들은 타입 또는 인터페이스로 설명된 객체 타입이어야 합니다. TypeScript가 객체를 어떻게 설명하는지는 Object Types에서 학습할 수 있습니다. 또한 Union Types를 사용하여 몇 가지 다른 타입 중 하나가 될 수 있는 prop을 설명하는 것에 관심이 있을 수 있으며, 더 고급 사용 사례를 위한 Types from Types 가이드도 참조하실 수 있습니다.
+
+
+## 예제 Hooks
+@types/react에서 제공하는 타입 정의에는 기본 제공되는 훅들의 타입이 포함되어 있어, 추가 설정 없이 컴포넌트에서 사용할 수 있습니다. 이 타입들은 컴포넌트에서 작성하는 코드를 고려하여 구축되어 있기 때문에 대부분의 경우 추론된 타입을 얻을 수 있으며, 이상적으로는 타입을 제공하는 세세한 부분을 다룰 필요가 없습니다.
+
+그러나 훅에 대한 타입을 제공하는 방법에 대한 몇 가지 예를 살펴볼 수 있습니다.
+
+### useState
+`useState` 훅은 초기 상태로 전달된 값을 재사용하여 해당 값의 타입이 무엇이어야 하는지 결정합니다. 예를 들면:
+
+```jsx
+// 타입을 "boolean"으로 추론
+const [enabled, setEnabled] = useState(false);
+```
+
+위 코드는 enabled에 boolean 타입을 할당하고, setEnabled는 boolean 인수 또는 boolean을 반환하는 함수를 받는 함수가 됩니다. 상태에 대한 타입을 명시적으로 제공하려면 useState 호출에 타입 인수를 제공하여 수행할 수 있습니다:
+
+```jsx
+// 타입을 명시적으로 "boolean"으로 설정
+const [enabled, setEnabled] = useState<boolean>(false);
+```
+
+이 경우에는 별로 유용하지 않지만, 유니언 타입이 있는 경우 타입을 제공하려는 흔한 경우입니다. 예를 들면, 여기서 status는 몇 가지 다른 문자열 중 하나가 될 수 있습니다:
+```jsx
+type Status = "idle" | "loading" | "success" | "error";
+
+const [status, setStatus] = useState<Status>("idle");
+```
+
+또는 상태 구조화 원칙에서 권장하는 것처럼, 관련 상태를 객체로 그룹화하고 객체 타입을 통해 다양한 가능성을 설명할 수 있습니다:
+
+```jsx
+type RequestState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success', data: any }
+  | { status: 'error', error: Error };
+
+const [requestState, setRequestState] 
+    = useState<RequestState>({ status: 'idle' });
+```
+
+
+### useReducer 
+`useReducer`훅은 리듀서 함수와 초기 상태를 사용하는 보다 복잡한 훅입니다. 리듀서 함수의 타입은 초기 상태에서 추론됩니다. `useReducer` 호출에 타입 인수를 제공하여 상태에 대한 타입을 제공할 수 있지만, 초기 상태에 타입을 설정하는 것이 종종 더 좋습니다:
+
+```jsx
+import {useReducer} from 'react';
+
+interface State {
+   count: number 
+};
+
+type CounterAction =
+  | { type: "reset" }
+  | { type: "setCount"; value: State["count"] }
+
+const initialState: State = { count: 0 };
+
+function stateReducer(state: State, action: CounterAction): State {
+  switch (action.type) {
+    case "reset":
+      return initialState;
+    case "setCount":
+      return { ...state, count: action.value };
+    default:
+      throw new Error("알 수 없는 액션");
+  }
+}
+
+export default function App() {
+  const [state, dispatch] = useReducer(stateReducer, initialState);
+
+  const addFive = () => dispatch(
+    { type: "setCount", value: state.count + 5 }
+  );
+  const reset = () => dispatch({ type: "reset" });
+
+  return (
+    <div>
+      <h1>내 카운터에 오신 것을 환영합니다</h1>
+
+      <p>카운트: {state.count}</p>
+      <button onClick={addFive}>5 추가하기</button>
+      <button onClick={reset}>초기화</button>
+    </div>
+  );
+}
+```
+
+여기에서는 몇몇 핵심 부분에서 TypeScript를 사용하고 있습니다:
+
+- `interface State`는 리듀서의 상태의 형태를 설명합니다.
+- `type CounterAction`은 리듀서에 전달될 수 있는 다양한 액션들을 설명합니다.
+- `const initialState: State`는 초기 상태에 대한 타입을 제공하며, 기본적으로 useReducer에 의해 사용되는 타입도 제공합니다.
+- `stateReducer(state: State, action: CounterAction): State`는 리듀서 함수의 인수와 반환 값에 대한 타입을 설정합니다.
+
+`initialState`에 타입을 설정하는 것보다 더 명시적인 대안은 `useReducer`에 타입 인수를 제공하는 것입니다:
+
+```jsx
+import { stateReducer, State } from './your-reducer-implementation';
+
+const initialState = { count: 0 };
+
+export default function App() {
+  const [state, dispatch] = useReducer<State>(stateReducer, initialState);
+}
+```
+
+
+### useContext
+`useContext` 훅은 컴포넌트를 통해 `props`를 전달하지 않고 컴포넌트 트리에 데이터를 전달하는 기법입니다. 프로바이더 컴포넌트를 생성함으로써 사용되며, 자식 컴포넌트에서 값을 사용하기 위한 훅을 생성하는 경우가 많습니다.
+
+컨텍스트에 의해 제공된 값의 타입은 `createContext` 호출에 전달된 값에서 추론됩니다:
+```jsx
+import { createContext, useContext, useState } from 'react';
+
+type Theme = "light" | "dark" | "system";
+const ThemeContext = createContext<Theme>("system");
+
+const useGetTheme = () => useContext(ThemeContext);
+
+export default function MyApp() {
+  const [theme, setTheme] = useState<Theme>('light');
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <MyComponent />
+    </ThemeContext.Provider>
+  )
+}
+
+function MyComponent() {
+  const theme = useGetTheme();
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+    </div>
+  )
+}
+```
+
+이 기법은 기본값이 합리적으로 존재할 때 작동합니다. 그러나 때로는 그렇지 않은 경우도 있으며, 그런 경우에는 기본값으로 null이 합리적으로 느껴질 수 있습니다. 그러나 타입 시스템이 코드를 이해할 수 있도록 하려면, createContext에 ContextShape | null을 명시적으로 설정해야 합니다.
+
+이로 인해 컨텍스트 소비자의 타입에서 `| null`을 제거해야 하는 문제가 발생합니다. 우리의 추천은 훅이 그 존재를 런타임에서 확인하고 존재하지 않을 때 오류를 발생시키도록 하는 것입니다:
+
+
+```jsx
+import { createContext, useContext, useState, useMemo } from 'react';
+
+// This is a simpler example, 
+// but you can imagine a more complex object here
+type ComplexObject = {
+  kind: string
+};
+
+// The context is created with `| null` 
+// in the type, to accurately reflect the default value.
+const Context = createContext<ComplexObject | null>(null);
+
+// The `| null` will be removed via the check in the hook.
+const useGetComplexObject = () => {
+  const object = useContext(Context);
+  if (!object) { throw new Error(
+    "useGetComplexObject must be used within a Provider") }
+  return object;
+}
+
+export default function MyApp() {
+  const object = useMemo(() => ({ kind: "complex" }), []);
+
+  return (
+    <Context.Provider value={object}>
+      <MyComponent />
+    </Context.Provider>
+  )
+}
+
+function MyComponent() {
+  const object = useGetComplexObject();
+
+  return (
+    <div>
+      <p>Current object: {object.kind}</p>
+    </div>
+  )
+}
+```
+
+
+### useMemo
+`useMemo` 훅은 함수 호출로부터 메모이즈된 값을 생성/재접근하며, 두 번째 매개변수로 전달된 의존성이 변경될 때만 함수를 다시 실행합니다. 훅을 호출한 결과는 첫 번째 매개변수의 함수 반환값에서 추론됩니다. 훅에 타입 인자를 제공하여 더 명확하게 만들 수 있습니다.
+
+```jsx
+// visibleTodos의 타입은 filterTodos의 반환값으로부터 추론됩니다.
+const visibleTodos = useMemo(() => filterTodos(todos, tab), [todos, tab]);
+```
+
+### useCallback
+`useCallback`은 두 번째 매개변수로 전달된 의존성이 동일한 한 함수에 대한 안정된 참조를 제공합니다. `useMemo`와 마찬가지로, 함수의 타입은 첫 번째 매개변수의 함수 반환값에서 추론되며, 훅에 타입 인자를 제공하여 더 명확하게 만들 수 있습니다.
+```jsx
+const handleClick = useCallback(() => {
+  // ...
+}, [todos]);
+```
+TypeScript의 strict 모드에서 작업할 때, `useCallback`은 콜백에 매개변수에 대한 타입을 추가하는 것이 필요합니다. 이는 콜백의 타입이 함수의 반환값에서 추론되기 때문이며, 매개변수 없이는 타입을 완전히 이해할 수 없습니다.
+
+코드 스타일 선호에 따라, 콜백을 정의하는 동시에 이벤트 핸들러에 대한 타입을 제공하기 위해 React 타입의 *EventHandler 함수를 사용할 수 있습니다:
+```jsx
+import { useState, useCallback } from 'react';
+
+export default function Form() {
+  const [value, setValue] = useState("Change me");
+
+  const handleChange = useCallback<
+    React.ChangeEventHandler<HTMLInputElement>
+  >((event) => {
+    setValue(event.currentTarget.value);
+  }, [setValue])
+  
+  return (
+    <>
+      <input value={value} onChange={handleChange} />
+      <p>Value: {value}</p>
+    </>
+  );
+}
+```
+
+
+## 유용한 타입들 
+`@types/react` 패키지에서는 꽤 광범위한 타입 세트가 제공됩니다. React와 TypeScript가 어떻게 상호 작용하는지에 익숙해질 때 읽어볼만한 가치가 있습니다. 이들을 DefinitelyTyped의 React 폴더에서 찾을 수 있습니다. 여기에서는 좀 더 일반적인 타입 몇 가지를 다룰 것입니다.
+
+### DOM 이벤트 
+React에서 DOM 이벤트를 다룰 때 이벤트의 타입은 종종 이벤트 핸들러에서 추론될 수 있습니다. 그러나 함수를 추출하여 이벤트 핸들러에 전달하려면 이벤트의 타입을 명시적으로 설정해야 합니다.
+```jsx
+import { useState } from 'react';
+
+export default function Form() {
+  const [value, setValue] = useState("Change me");
+
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    setValue(event.currentTarget.value);
+  }
+
+  return (
+    <>
+      <input value={value} onChange={handleChange} />
+      <p>Value: {value}</p>
+    </>
+  );
+}
+```
+React 타입에서 제공되는 여러 이벤트 타입들이 있습니다.
+> 전체 목록은 DOM에서 가장 인기 있는 이벤트를 기반으로 한 여기에서 찾을 수 있습니다.
+
+찾고 있는 타입을 결정할 때 사용하는 이벤트 핸들러에 대한 호버 정보를 먼저 살펴볼 수 있습니다. 이는 이벤트의 타입을 보여줍니다.
+
+이 목록에 포함되지 않은 이벤트를 사용해야 하는 경우, 모든 이벤트의 기본 타입인 `React.SyntheticEvent` 타입을 사용할 수 있습니다.
+
+
+### 스타일 속성
+React에서 인라인 스타일을 사용할 때, `style` 속성에 전달된 객체를 설명하기 위해 `React.CSSProperties`를 사용할 수 있습니다. 이 타입은 가능한 모든 CSS 속성의 유니온이며, 스타일 속성에 유효한 CSS 속성을 전달하고 있음을 확인하고, 에디터에서 자동완성을 얻기 위한 좋은 방법입니다.
+```jsx
+interface MyComponentProps {
+  style: React.CSSProperties;
+}
+```
+
+## 추가 학습
+이 가이드에서는 React와 TypeScript를 함께 사용하는 기본 사항을 다루었지만, 알아야 할 것이 훨씬 더 많습니다.
+개별 API 문서 페이지에서는 TypeScript와 함께 사용하는 방법에 대한 더 깊은 문서를 포함할 수 있습니다.
+
+다음 리소스를 추천합니다:
+
+- [TypeScript 핸드북](https://www.typescriptlang.org/docs/handbook/)은 TypeScript의 공식 문서로, 주요 언어 기능의 대부분을 다룹니다.
+
+- [TypeScript 릴리스 노트](https://devblogs.microsoft.com/typescript/)에서는 각 새로운 기능을 깊게 다룹니다.
+
+- [React TypeScript 치트시트](https://react-typescript-cheatsheet.netlify.app/)는 TypeScript와 React를 함께 사용하기 위한 커뮤니티에서 관리하는 치트시트로, 많은 유용한 특별한 경우를 다루며, 이 문서보다 더 넓은 범위를 제공합니다.
+
+- [TypeScript 커뮤니티 Discord](https://discord.com/invite/typescript)는 TypeScript와 React 문제에 대해 질문하고 도움을 받기 위한 좋은 장소입니다.
