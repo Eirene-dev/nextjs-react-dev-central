@@ -599,7 +599,7 @@ export const docsConfig: DocsConfig = {
           ],
         },
         {
-          title: '설정하기',
+          title: '환경 설정',
           href: '/docs/nextjs/configuring',
           items: [
             {
@@ -649,7 +649,7 @@ export const docsConfig: DocsConfig = {
           href: '/docs/nextjs/deploying',
           items: [
             {
-              title: 'Static Exports',
+              title: '정적 내보내기',
               href: '/docs/nextjs/deploying/static-exports',
               disabled: false,
             }  
@@ -660,12 +660,12 @@ export const docsConfig: DocsConfig = {
           href: '/docs/nextjs/upgrading',
           items: [
             {
-              title: 'Codemods',
+              title: '코드 변환도구',
               href: '/docs/nextjs/upgrading/codemods',
               disabled: false,
             },
             {
-              title: 'AppRouter 마이그레이션',
+              title: 'App 라우터 마이그레이션',
               href: '/docs/nextjs/upgrading/app-router-migration',
               disabled: false,
             },

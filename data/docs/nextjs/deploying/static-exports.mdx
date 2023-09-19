@@ -1,0 +1,336 @@
+---
+title: 정적 내보내기
+date: '2023-09-01 08:01'
+summary: Next.js는 정적 사이트나 싱글 페이지 애플리케이션(SPA)로 시작할 수 있게 해주며, 나중에 서버가 필요한 기능을 선택적으로 사용하도록 업그레이드할 수 있습니다.
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+Next.js를 사용하면 사용자는 정적 사이트나 싱글 페이지 애플리케이션(SPA)으로 시작할 수 있습니다. 그리고 필요에 따라 서버가 필요한 기능을 사용하도록 업그레이드할 수 있습니다.
+
+`next build`를 실행할 때, Next.js는 라우트별로 HTML 파일을 생성합니다. 엄격한 SPA를 개별 HTML 파일로 분리함으로써, Next.js는 클라이언트 측에서 불필요한 자바스크립트 코드를 로드하는 것을 방지할 수 있습니다. 이로 인해 번들 크기가 줄어들고 페이지 로드 속도가 빨라집니다.
+
+Next.js는 이러한 정적 내보내기를 지원하기 때문에, HTML/CSS/JS 정적 자산을 제공할 수 있는 어떤 웹 서버에도 배포하고 호스팅할 수 있습니다.
+
+## 설정
+
+정적 내보내기를 활성화하려면 `next.config.js` 내의 출력 모드를 변경하십시오:
+
+```js filename="next.config.js" highlight={5}
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
+  output: 'export',
+
+  // 선택적: 링크 변경 `/me` -> `/me/` 그리고 `/me.html` -> `/me/index.html` 출력
+  // trailingSlash: true,
+
+  // 선택적: 자동 `/me` -> `/me/` 방지, 대신 `href`를 유지
+  // skipTrailingSlashRedirect: true,
+
+  // 선택적: 출력 디렉토리 변경 `out` -> `dist`
+  // distDir: 'dist',
+}
+
+module.exports = nextConfig
+```
+
+`next build`를 실행한 후, Next.js는 애플리케이션의 HTML/CSS/JS 자산을 포함하는 `out` 폴더를 생성합니다.
+
+## 지원되는 기능
+
+Next.js의 핵심은 정적 내보내기를 지원하도록 설계되었습니다.
+
+### 서버 컴포넌트
+
+정적 내보내기를 생성하기 위해 `next build`를 실행할 때, `app` 디렉토리 내에서 사용된 서버 컴포넌트는 전통적인 정적 사이트 생성과 유사하게 빌드 중에 실행됩니다.
+
+결과 컴포넌트는 초기 페이지 로드를 위한 정적 HTML로 렌더링되며, 라우트 간의 클라이언트 탐색을 위한 정적 페이로드로 렌더링됩니다. 서버 컴포넌트를 정적 내보내기로 사용할 때 [동적 서버 함수](#unsupported-features)를 사용하지 않는 한 변경할 필요가 없습니다.
+
+```tsx filename="app/page.tsx" switcher
+export default async function Page() {
+  // 이 fetch는 `next build` 중 서버에서 실행됩니다.
+  const res = await fetch('https://api.example.com/...')
+  const data = await res.json()
+
+  return <main>...</main>
+}
+```
+
+### 클라이언트 컴포넌트
+
+클라이언트에서 데이터를 가져오려면 [SWR](https://github.com/vercel/swr)을 사용하여 요청을 메모이제이션하기 위해 클라이언트 컴포넌트를 사용할 수 있습니다.
+
+```tsx filename="app/other/page.tsx" switcher
+'use client'
+
+import useSWR from 'swr'
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
+
+export default function Page() {
+  const { data, error } = useSWR(
+    `https://jsonplaceholder.typicode.com/posts/1`,
+    fetcher
+  )
+  if (error) return '불러오기 실패'
+  if (!data) return '로딩 중...'
+
+  return data.title
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/other/page.js" switcher
+'use client'
+
+import useSWR from 'swr'
+
+const fetcher = (url) => fetch(url).then((r) => r.json())
+
+export default function Page() {
+  const { data, error } = useSWR(
+    `https://jsonplaceholder.typicode.com/posts/1`,
+    fetcher
+  )
+  if (error) return '불러오기 실패'
+  if (!data) return '로딩 중...'
+
+  return data.title
+}
+```
+</details>
+
+라우트 전환은 클라이언트 측에서 발생하기 때문에 이는 전통적인 SPA처럼 동작합니다. 예를 들어, 아래의 인덱스 라우트는 클라이언트에서 다른 포스트로 이동할 수 있게 합니다:
+
+```tsx filename="app/page.tsx" switcher
+import Link from 'next/link'
+
+export default function Page() {
+  return (
+    <>
+      <h1>인덱스 페이지</h1>
+      <hr />
+      <ul>
+        <li>
+          <Link href="/post/1">포스트 1</Link>
+        </li>
+        <li>
+          <Link href="/post/2">포스트 2</Link>
+        </li>
+      </ul>
+    </>
+  )
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.js" switcher
+import Link from 'next/link'
+
+export default function Page() {
+  return (
+    <>
+      <h1>인덱스 페이지</h1>
+      <p>
+        <Link href="/other">다른 페이지</Link>
+      </p>
+    </>
+  )
+}
+```
+</details>
+
+
+### 이미지 최적화
+
+[이미지 최적화](/docs/app/building-your-application/optimizing/images)는 `next.config.js`에서 사용자 정의 이미지 로더를 정의함으로써 `next/image`와 함께 정적으로 내보내어 사용할 수 있습니다. 예를 들어, Cloudinary와 같은 서비스를 사용하여 이미지를 최적화할 수 있습니다:
+
+```js filename="next.config.js"
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+  images: {
+    loader: 'custom',
+    loaderFile: './my-loader.ts',
+  },
+}
+
+module.exports = nextConfig
+```
+
+이 사용자 정의 로더는 원격 소스에서 이미지를 가져오는 방법을 정의합니다. 예를 들어, 아래의 로더는 Cloudinary의 URL을 구성합니다:
+
+```ts filename="my-loader.ts" switcher
+export default function cloudinaryLoader({
+  src,
+  width,
+  quality,
+}: {
+  src: string
+  width: number
+  quality?: number
+}) {
+  const params = ['f_auto', 'c_limit', `w_${width}`, \
+    `q_${quality || 'auto'}`]
+  return `https://res.cloudinary.com/demo/image/upload/$\
+    {params.join(
+    ','
+  )}${src}`
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="my-loader.js" switcher
+export default function cloudinaryLoader({ src, width, quality }) {
+  const params = ['f_auto', 'c_limit', `w_${width}`, \
+    `q_${quality || 'auto'}`]
+  return `https://res.cloudinary.com/demo/image/upload/${\
+    params.join(
+    ','
+  )}${src}`
+}
+```
+</details>
+
+그런 다음 Cloudinary의 이미지에 대한 상대 경로를 정의하여 애플리케이션에서 `next/image`를 사용할 수 있습니다:
+
+```tsx filename="app/page.tsx" switcher
+import Image from 'next/image'
+
+export default function Page() {
+  return <Image alt="거북이" src="/turtles.jpg" width={300} height={300} />
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```jsx filename="app/page.js" switcher
+import Image from 'next/image'
+
+export default function Page() {
+  return <Image 
+    alt="거북이" 
+    src="/turtles.jpg" 
+    width={300} 
+    height={300} 
+  />
+}
+```
+</details>
+
+
+### 라우트 핸들러
+
+라우트 핸들러는 `next build`를 실행할 때 정적 응답을 렌더링합니다. `GET` HTTP 동사만 지원됩니다. 이는 캐싱된 또는 캐싱되지 않은 데이터에서 정적 HTML, JSON, TXT 또는 기타 파일을 생성하는 데 사용될 수 있습니다. 예를 들면:
+
+```ts filename="app/data.json/route.ts" switcher
+import { NextResponse } from 'next/server'
+
+export async function GET() {
+  return NextResponse.json({ name: 'Lee' })
+}
+```
+<details>
+    <summary>JavaScript</summary>
+```js filename="app/data.json/route.js" switcher
+import { NextResponse } from 'next/server'
+
+export async function GET() {
+  return NextResponse.json({ name: 'Lee' })
+}
+```
+</details>
+
+위의 `app/data.json/route.ts` 파일은 `next build` 중에 정적 파일로 렌더링되어 `{ name: 'Lee' }`를 포함하는 `data.json`을 생성합니다.
+
+들어오는 요청에서 동적 값을 읽어야 하는 경우 정적 내보내기를 사용할 수 없습니다.
+
+### 브라우저 API
+
+클라이언트 컴포넌트는 `next build` 중에 HTML로 사전 렌더링됩니다. `window`, `localStorage`, `navigator`와 같은 [웹 API](https://developer.mozilla.org/docs/Web/API)가 서버에서 사용할 수 없으므로 브라우저에서 실행될 때 이러한 API에만 안전하게 액세스해야 합니다. 예를 들면:
+
+```jsx
+'use client';
+
+import { useEffect } from 'react';
+
+export default function ClientComponent() {
+  useEffect(() => {
+    // 이제 `window`에 액세스할 수 있습니다.
+    console.log(window.innerHeight);
+  }, [])
+
+  return ...;
+}
+```
+
+## 지원되지 않는 기능
+
+Node.js 서버가 필요한 기능 또는 빌드 과정 중에 계산할 수 없는 동적 로직은 **지원되지 않습니다**:
+
+- `dynamicParams: true`를 가진 [동적 라우트](/docs/app/building-your-application/routing/dynamic-routes)
+- `generateStaticParams()` 없는 [동적 라우트](/docs/app/building-your-application/routing/dynamic-routes)
+- 요청에 의존하는 [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers)
+- [쿠키](/docs/app/api-reference/functions/cookies)
+- [재작성](/docs/app/api-reference/next-config-js/rewrites)
+- [리디렉션](/docs/app/api-reference/next-config-js/redirects)
+- [헤더](/docs/app/api-reference/next-config-js/headers)
+- [미들웨어](/docs/app/building-your-application/routing/middleware)
+- [증분 정적 재생성](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating)
+- 기본 `loader`와 함께 사용되는 [이미지 최적화](/docs/app/building-your-application/optimizing/images)
+- [드래프트 모드](/docs/app/building-your-application/configuring/draft-mode)
+
+이러한 기능 중 어느 것을 `next dev`와 함께 사용하려고 시도하면 루트 레이아웃의 [`dynamic`](/docs/app/api-reference/file-conventions/route-segment-config#dynamic) 옵션을 `error`로 설정하는 것과 유사한 오류가 발생합니다.
+
+```jsx
+export const dynamic = 'error'
+```
+
+## 배포하기
+
+정적 내보내기를 사용하면 Next.js는 HTML/CSS/JS 정적 리소스를 제공할 수 있는 어떤 웹 서버에서도 배포 및 호스팅될 수 있습니다.
+
+`next build`를 실행하면 Next.js는 `out` 폴더에 정적 내보내기를 생성합니다. 이제 `next export`를 사용할 필요가 없습니다. 예를 들면 다음과 같은 라우트가 있다고 가정하겠습니다:
+
+- `/`
+- `/blog/[id]`
+
+`next build`를 실행한 후 Next.js는 다음 파일을 생성합니다:
+
+- `/out/index.html`
+- `/out/404.html`
+- `/out/blog/post-1.html`
+- `/out/blog/post-2.html`
+
+Nginx와 같은 정적 호스트를 사용하는 경우 들어오는 요청에서 올바른 파일로의 리라이트를 설정할 수 있습니다:
+
+```nginx filename="nginx.conf"
+server {
+  listen 80;
+  server_name acme.com;
+
+  root /var/www/out;
+
+  location / {
+      try_files $uri $uri.html $uri/ =404;
+  }
+
+  # `trailingSlash: false`일 때 필요합니다.
+  # `trailingSlash: true`일 경우 생략할 수 있습니다.
+  location /blog/ {
+      rewrite ^/blog/(.*)$ /blog/$1.html break;
+  }
+
+  error_page 404 /404.html;
+  location = /404.html {
+      internal;
+  }
+}
+```
+
+## 버전 히스토리
+
+| 버전      | 변경 사항                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `v13.4.0` | App Router (안정 버전)는 React 서버 컴포넌트 및 라우트 핸들러를 사용하는 강화된 정적 내보내기 지원을 추가합니다.                     |
+| `v13.3.0` | `next export`는 폐기되었으며 `"output": "export"`로 대체되었습니다.                                                              |
