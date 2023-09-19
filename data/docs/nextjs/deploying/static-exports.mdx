@@ -11,6 +11,8 @@ Next.js를 사용하면 사용자는 정적 사이트나 싱글 페이지 애플
 
 Next.js는 이러한 정적 내보내기를 지원하기 때문에, HTML/CSS/JS 정적 자산을 제공할 수 있는 어떤 웹 서버에도 배포하고 호스팅할 수 있습니다.
 
+---
+
 ## 설정
 
 정적 내보내기를 활성화하려면 `next.config.js` 내의 출력 모드를 변경하십시오:
@@ -22,7 +24,8 @@ Next.js는 이러한 정적 내보내기를 지원하기 때문에, HTML/CSS/JS 
 const nextConfig = {
   output: 'export',
 
-  // 선택적: 링크 변경 `/me` -> `/me/` 그리고 `/me.html` -> `/me/index.html` 출력
+  // 선택적: 링크 변경 `/me` -> `/me/` 
+  // 그리고 `/me.html` -> `/me/index.html` 출력
   // trailingSlash: true,
 
   // 선택적: 자동 `/me` -> `/me/` 방지, 대신 `href`를 유지
@@ -37,6 +40,8 @@ module.exports = nextConfig
 
 `next build`를 실행한 후, Next.js는 애플리케이션의 HTML/CSS/JS 자산을 포함하는 `out` 폴더를 생성합니다.
 
+---
+
 ## 지원되는 기능
 
 Next.js의 핵심은 정적 내보내기를 지원하도록 설계되었습니다.
@@ -45,7 +50,7 @@ Next.js의 핵심은 정적 내보내기를 지원하도록 설계되었습니�
 
 정적 내보내기를 생성하기 위해 `next build`를 실행할 때, `app` 디렉토리 내에서 사용된 서버 컴포넌트는 전통적인 정적 사이트 생성과 유사하게 빌드 중에 실행됩니다.
 
-결과 컴포넌트는 초기 페이지 로드를 위한 정적 HTML로 렌더링되며, 라우트 간의 클라이언트 탐색을 위한 정적 페이로드로 렌더링됩니다. 서버 컴포넌트를 정적 내보내기로 사용할 때 [동적 서버 함수](#unsupported-features)를 사용하지 않는 한 변경할 필요가 없습니다.
+결과 컴포넌트는 초기 페이지 로드를 위한 정적 HTML로 렌더링되며, 라우트 간의 클라이언트 탐색을 위한 정적 페이로드로 렌더링됩니다. 서버 컴포넌트를 정적 내보내기로 사용할 때 [동적 서버 함수](#지원되지-않는-기능)를 사용하지 않는 한 변경할 필요가 없습니다.
 
 ```tsx filename="app/page.tsx" switcher
 export default async function Page() {
@@ -144,7 +149,7 @@ export default function Page() {
 
 ### 이미지 최적화
 
-[이미지 최적화](/docs/app/building-your-application/optimizing/images)는 `next.config.js`에서 사용자 정의 이미지 로더를 정의함으로써 `next/image`와 함께 정적으로 내보내어 사용할 수 있습니다. 예를 들어, Cloudinary와 같은 서비스를 사용하여 이미지를 최적화할 수 있습니다:
+[이미지 최적화](/docs/nextjs/optimizing/images)는 `next.config.js`에서 사용자 정의 이미지 로더를 정의함으로써 `next/image`와 함께 정적으로 내보내어 사용할 수 있습니다. 예를 들어, Cloudinary와 같은 서비스를 사용하여 이미지를 최적화할 수 있습니다:
 
 ```js filename="next.config.js"
 /** @type {import('next').NextConfig} */
@@ -264,27 +269,31 @@ export default function ClientComponent() {
 }
 ```
 
+---
+
 ## 지원되지 않는 기능
 
 Node.js 서버가 필요한 기능 또는 빌드 과정 중에 계산할 수 없는 동적 로직은 **지원되지 않습니다**:
 
-- `dynamicParams: true`를 가진 [동적 라우트](/docs/app/building-your-application/routing/dynamic-routes)
-- `generateStaticParams()` 없는 [동적 라우트](/docs/app/building-your-application/routing/dynamic-routes)
-- 요청에 의존하는 [라우트 핸들러](/docs/app/building-your-application/routing/route-handlers)
-- [쿠키](/docs/app/api-reference/functions/cookies)
-- [재작성](/docs/app/api-reference/next-config-js/rewrites)
-- [리디렉션](/docs/app/api-reference/next-config-js/redirects)
-- [헤더](/docs/app/api-reference/next-config-js/headers)
-- [미들웨어](/docs/app/building-your-application/routing/middleware)
-- [증분 정적 재생성](/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating)
-- 기본 `loader`와 함께 사용되는 [이미지 최적화](/docs/app/building-your-application/optimizing/images)
-- [드래프트 모드](/docs/app/building-your-application/configuring/draft-mode)
+- `dynamicParams: true`를 가진 [동적 라우트](/docs/nextjs/routing/dynamic-routes)
+- `generateStaticParams()` 없는 [동적 라우트](/docs/nextjs/routing/dynamic-routes)
+- 요청에 의존하는 [라우트 핸들러](/docs/nextjs/routing/route-handlers)
+- [쿠키](https://nextjs.org/docs/app/api-reference/functions/cookies)
+- [재작성](https://nextjs.org/docs/app/api-reference/next-config-js/rewrites)
+- [리디렉션](https://nextjs.org/docs/app/api-reference/next-config-js/redirects)
+- [헤더](https://nextjs.org/docs/app/api-reference/next-config-js/headers)
+- [미들웨어](/docs/nextjs/routing/middleware)
+- [증분 정적 재생성](/docs/nextjs/data-fetching/fetching-caching-and-revalidating)
+- 기본 `loader`와 함께 사용되는 [이미지 최적화](/docs/nextjs/optimizing/images)
+- [드래프트 모드](/docs/nextjs/configuring/draft-mode)
 
-이러한 기능 중 어느 것을 `next dev`와 함께 사용하려고 시도하면 루트 레이아웃의 [`dynamic`](/docs/app/api-reference/file-conventions/route-segment-config#dynamic) 옵션을 `error`로 설정하는 것과 유사한 오류가 발생합니다.
+이러한 기능 중 어느 것을 `next dev`와 함께 사용하려고 시도하면 루트 레이아웃의 [`dynamic`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic) 옵션을 `error`로 설정하는 것과 유사한 오류가 발생합니다.
 
 ```jsx
 export const dynamic = 'error'
 ```
+
+---
 
 ## 배포하기
 
@@ -327,6 +336,8 @@ server {
   }
 }
 ```
+
+---
 
 ## 버전 히스토리
 
