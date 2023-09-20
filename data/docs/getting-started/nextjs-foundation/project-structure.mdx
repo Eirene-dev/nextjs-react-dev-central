@@ -13,25 +13,25 @@ summary: Next.js 프로젝트에서의 폴더 및 파일 규칙 리스트
 
 |                                                                          |                                    |
 | ------------------------------------------------------------------------ | ---------------------------------- |
-| [`app`](/docs/app/building-your-application/routing)                     | 앱 라우터                         |
-| [`pages`](/docs/pages/building-your-application/routing)                 | 페이지 라우터                       |
-| [`public`](/docs/app/building-your-application/optimizing/static-assets) | 제공될 정적 자산                    |
-| [`src`](/docs/app/building-your-application/configuring/src-directory)   | 선택적 애플리케이션 소스 폴더       |
+| [`app`](/docs/nextjs/routing)                     | 앱 라우터                         |
+| [`pages`](https://nextjs.org/docs/pages/building-your-application/routing)                 | 페이지 라우터                       |
+| [`public`](/docs/nextjs/optimizing/static-assets) | 제공될 정적 자산                    |
+| [`src`](/docs/nextjs/configuring/src-directory)   | 선택적 애플리케이션 소스 폴더       |
 
 ## 최상위 파일
 
 |                                                                                             |                                         |
 | ------------------------------------------------------------------------------------------- | --------------------------------------- |
 | **Next.js**                                                                                 |                                         |
-| [`next.config.js`](/docs/app/api-reference/next-config-js)                                  | Next.js 설정 파일                        |
-| [`package.json`](/docs/getting-started/installation#manual-installation)                    | 프로젝트 의존성 및 스크립트             |
-| [`instrumentation.ts`](/docs/app/building-your-application/optimizing/instrumentation)      | OpenTelemetry 및 Instrumentation 파일   |
-| [`middleware.ts`](/docs/app/building-your-application/routing/middleware)                   | Next.js 요청 미들웨어                   |
-| [`.env`](/docs/app/building-your-application/configuring/environment-variables)             | 환경 변수                              |
-| [`.env.local`](/docs/app/building-your-application/configuring/environment-variables)       | 로컬 환경 변수                          |
-| [`.env.production`](/docs/app/building-your-application/configuring/environment-variables)  | 프로덕션 환경 변수                      |
-| [`.env.development`](/docs/app/building-your-application/configuring/environment-variables) | 개발 환경 변수                          |
-| [`.eslintrc.json`](/docs/app/building-your-application/configuring/eslint)                  | ESLint 설정 파일                        |
+| [`next.config.js`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/next-config-js)                                  | Next.js 설정 파일                        |
+| [`package.json`](/docs/getting-started/nextjs-foundation/installation)                    | 프로젝트 의존성 및 스크립트             |
+| [`instrumentation.ts`](/docs/nextjs/optimizing/instrumentation)      | OpenTelemetry 및 Instrumentation 파일   |
+| [`middleware.ts`](/docs/nextjs/routing/middleware)                   | Next.js 요청 미들웨어                   |
+| [`.env`](/docs/nextjs/configuring/environment-variables)             | 환경 변수                              |
+| [`.env.local`](/docs/nextjs/configuring/environment-variables)       | 로컬 환경 변수                          |
+| [`.env.production`](/docs/nextjs/configuring/environment-variables)  | 프로덕션 환경 변수                      |
+| [`.env.development`](/docs/nextjs/configuring/environment-variables) | 개발 환경 변수                          |
+| [`.eslintrc.json`](/docs/nextjs/configuring/eslint)                  | ESLint 설정 파일                        |
 | `.gitignore`                                                                                | 무시될 Git 파일 및 폴더                |
 | `next-env.d.ts`                                                                             | Next.js를 위한 TypeScript 선언 파일   |
 | `tsconfig.json`                                                                             | TypeScript 설정 파일                   |
@@ -44,56 +44,76 @@ summary: Next.js 프로젝트에서의 폴더 및 파일 규칙 리스트
 
 |                                                                                 |                     |                              |
 | ------------------------------------------------------------------------------- | ------------------- | ---------------------------- |
-| [`layout`](/docs/app/api-reference/file-conventions/layout)                     | `.js` `.jsx` `.tsx` | 레이아웃                       |
-| [`page`](/docs/app/api-reference/file-conventions/page)                         | `.js` `.jsx` `.tsx` | 페이지                         |
-| [`loading`](/docs/app/api-reference/file-conventions/loading)                   | `.js` `.jsx` `.tsx` | 로딩 UI                       |
-| [`not-found`](/docs/app/api-reference/file-conventions/not-found)               | `.js` `.jsx` `.tsx` | 찾을 수 없는 페이지 UI        |
-| [`error`](/docs/app/api-reference/file-conventions/error)                       | `.js` `.jsx` `.tsx` | 에러 UI                       |
-| [`global-error`](/docs/app/api-reference/file-conventions/error#global-errorjs) | `.js` `.jsx` `.tsx` | 전역 에러 UI                 |
-| [`route`](/docs/app/api-reference/file-conventions/route)                       | `.js` `.ts`         | API 엔드포인트                |
-| [`template`](/docs/app/api-reference/file-conventions/template)                 | `.js` `.jsx` `.tsx` | 다시 렌더링 된 레이아웃        |
-| [`default`](/docs/app/api-reference/file-conventions/default)                   | `.js` `.jsx` `.tsx` | 평행 라우트 대체 페이지       |
+| [`layout`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/layout)                     | `.js` `.jsx` `.tsx` | 레이아웃                       |
+| [`page`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/page)                         | `.js` `.jsx` `.tsx` | 페이지                         |
+| [`loading`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/loading)                   | `.js` `.jsx` `.tsx` | 로딩 UI                       |
+| [`not-found`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/not-found)               | `.js` `.jsx` `.tsx` | 찾을 수 없는 페이지 UI        |
+| [`error`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/error)                       | `.js` `.jsx` `.tsx` | 에러 UI                       |
+| [`global-error`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/error#global-errorjs) | `.js` `.jsx` `.tsx` | 전역 에러 UI                 |
+| [`route`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/route)                       | `.js` `.ts`         | API 엔드포인트                |
+| [`template`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/template)                 | `.js` `.jsx` `.tsx` | 다시 렌더링 된 레이아웃        |
+| [`default`](https://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/default)                   | `.js` `.jsx` `.tsx` | 평행 라우트 대체 페이지       |
 
 ### 중첩된 라우트
 
 |                                                                              |                      |
 | ---------------------------------------------------------------------------- | -------------------- |
-| [`folder`](/docs/app/building-your-application/routing#route-segments)       | 라우트 세그먼트       |
-| [`folder/folder`](/docs/app/building-your-application/routing#nested-routes) | 중첩된 라우트 세그먼트 |
+| [`folder`](/docs/nextjs/routing#라우트-세그먼트)       | 라우트 세그먼트       |
+| [`folder/folder`](/docs/nextjs/routing#중첩-라우트) | 중첩된 라우트 세그먼트 |
 
 ### 동적 라우트
 
 |                                                                                                           |                                  |
 | --------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| [`[folder]`](/docs/app/building-your-application/routing/dynamic-routes#convention)                       | 동적 라우트 세그먼트             |
-| [`[...folder]`](/docs/app/building-your-application/routing/dynamic-routes#catch-all-segments)            | 캐치올 라우트 세그먼트           |
-| [`[[...folder]]`](/docs/app/building-your-application/routing/dynamic-routes#optional-catch-all-segments) | 선택적 캐치올 라우트 세그먼트    |
+| [`[folder]`](/docs/nextjs/routing/dynamic-routes#규칙)                       | 동적 라우트 세그먼트             |
+| [`[...folder]`](/docs/nextjs/routing/dynamic-routes#catch-all-세그먼트)            | 캐치올 라우트 세그먼트           |
+| [`[[...folder]]`](/docs/nextjs/routing/dynamic-routes#optional-catch-all-세그먼트) | 선택적 캐치올 라우트 세그먼트    |
 
 ### 라우트 그룹 및 프라이빗 폴더
 
 |                                                                                     |                                                  |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [`(folder)`](/docs/app/building-your-application/routing/route-groups#convention)   | 라우팅에 영향을 주지 않는 그룹 라우트            |
-| [`_folder`](/docs/app/building-your-application/routing/colocation#private-folders) | 폴더와 모든 자식 세그먼트를 라우팅에서 제외      |
+| [`(folder)`](/docs/nextjs/routing/route-groups#규칙)   | 라우팅에 영향을 주지 않는 그룹 라우트            |
+| [`_folder`](/docs/nextjs/routing/colocation#라우팅-비공개-폴더) | 폴더와 모든 자식 세그먼트를 라우팅에서 제외      |
 
-###
+이 표는 라우팅과 메타데이터 파일 규약에 관한 것입니다.
 
- 특별한 폴더 및 파일 이름
+### 병렬 및 중단된 라우트
 
-|                                                                                                                       |                                                      |
-| --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [`__tests__`](/docs/app/building-your-application/testing#tests-folder)                                               | 테스트 폴더                                          |
-| [`__fixtures__`](/docs/app/building-your-application/testing#fixtures-folder)                                         | 픽스처 폴더                                          |
-| [`__mocks__`](/docs/app/building-your-application/testing#mocks-folder)                                               | 목 폴더                                              |
-| [`_app`](/docs/pages/building-your-application/routing/app)                                                           | 앱 파일                                              |
-| [`_document`](/docs/pages/building-your-application/routing/document)                                                 | 문서 파일                                            |
-| [`__app_layout`](/docs/pages/building-your-application/routing/app-layout)                                            | 앱 레이아웃 파일                                     |
-| [`__app_loading`](/docs/pages/building-your-application/routing/app-loading)                                          | 앱 로딩 파일                                        |
-| [`__app_not-found`](/docs/pages/building-your-application/routing/app-not-found)                                      | 앱 찾을 수 없는 페이지 파일                          |
-| [`__app_error`](/docs/pages/building-your-application/routing/app-error)                                              | 앱 에러 파일                                        |
-| [`__app_global-error`](/docs/pages/building-your-application/routing/app-error#app-global-error)                      | 앱 전역 에러 파일                                   |
-| [`__app_errors`](/docs/pages/building-your-application/routing/app-error#app-errors)                                 | 앱 에러 폴더                                        |
-| [`__app_error/[error]`](/docs/pages/building-your-application/routing/app-error#app-errorerror)                       | 앱 에러 폴더의 동적 에러 파일                      |
-| [`_middleware`](/docs/pages/building-your-application/routing/middleware#middlewarejs)                                 | 페이지 미들웨어 파일                                |
-| [`__middleware`](/docs/pages/building-your-application/routing/middleware#middleware-js-in-app-folder)               | 앱 폴더의 미들웨어 파일                             |
-| [`__middleware/[middleware]`](/docs/pages/building-your-application/routing/middleware#middlewaremiddleware-in-app-folder) | 앱 폴더의 동적 미들웨어 파일                        |
+|                                                                                                |                            |
+| ---------------------------------------------------------------------------------------------- | -------------------------- |
+| [`@folder`](/docs/nextjs/routing/parallel-routes#규칙)            | 명명된 슬롯                 |
+| [`(.)folder`](/docs/nextjs/routing/intercepting-routes#규칙)      | 같은 레벨 중단             |
+| [`(..)folder`](/docs/nextjs/routing/intercepting-routes#규칙)     | 한 레벨 위 중단            |
+| [`(..)(..)folder`](/docs/nextjs/routing/intercepting-routes#규칙) | 두 레벨 위 중단             |
+| [`(...)folder`](/docs/nextjs/routing/intercepting-routes#규칙)    | 루트에서 중단              |
+
+### 메타데이터 파일 규약
+
+#### 앱 아이콘
+
+|                                                                                                                 |                                     |                          |
+| --------------------------------------------------------------------------------------------------------------- | ----------------------------------- | ------------------------ |
+| [`favicon`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#favicon)                                | `.ico`                              | Favicon 파일              |
+| [`icon`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#icon)                                      | `.ico` `.jpg` `.jpeg` `.png` `.svg` | 앱 아이콘 파일            |
+| [`icon`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#generate-icons-using-code-js-ts-tsx)       | `.js` `.ts` `.tsx`                  | 생성된 앱 아이콘          |
+| [`apple-icon`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#apple-icon)                          | `.jpg` `.jpeg`, `.png`              | Apple 앱 아이콘 파일      |
+| [`apple-icon`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#generate-icons-using-code-js-ts-tsx) | `.js` `.ts` `.tsx`                  | 생성된 Apple 앱 아이콘    |
+
+#### 오픈 그래프 및 트위터 이미지
+
+|                                                                                                                             |                              |                            |
+| --------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | -------------------------- |
+| [`opengraph-image`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image#opengraph-image)                      | `.jpg` `.jpeg` `.png` `.gif` | 오픈 그래프 이미지 파일      |
+| [`opengraph-image`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image#generate-images-using-code-js-ts-tsx) | `.js` `.ts` `.tsx`           | 생성된 오픈 그래프 이미지    |
+| [`twitter-image`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image#twitter-image)                          | `.jpg` `.jpeg` `.png` `.gif` | 트위터 이미지 파일          |
+| [`twitter-image`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image#generate-images-using-code-js-ts-tsx)   | `.js` `.ts` `.tsx`           | 생성된 트위터 이미지        |
+
+#### SEO
+
+|                                                                                             |             |                       |
+| ------------------------------------------------------------------------------------------- | ----------- | --------------------- |
+| [`sitemap`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#static-sitemapxml)    | `.xml`      | 사이트맵 파일          |
+| [`sitemap`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-sitemap)   | `.js` `.ts` | 생성된 사이트맵        |
+| [`robots`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots#static-robotstxt)       | `.txt`      | 로봇 파일              |
+| [`robots`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots#generate-a-robots-file) | `.js` `.ts` | 생성된 로봇 파일       |

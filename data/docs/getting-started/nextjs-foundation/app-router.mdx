@@ -1,7 +1,7 @@
 ---
-title: "Next.js 13.4: 앱 라우터 공식화"
+title: "Next.js 13.4: App 라우터 공식화"
 date: '2023-01-01 01:05'
-summary: Next.js 13.4 릴리즈에서는 앱 라우터를 공식화하며, 설정 없이 파일시스템을 API로 사용하고, 모든 것이 함수 기반의 자바스크립트로 제공되며, 자동 서버 렌더링 및 코드 분할 기능을 포함하고 있습니다."
+summary: Next.js 13.4 릴리즈에서는 App 라우터를 공식화하며, 설정 없이 파일시스템을 API로 사용하고, 모든 것이 함수 기반의 자바스크립트로 제공되며, 자동 서버 렌더링 및 코드 분할 기능을 포함하고 있습니다."
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
@@ -27,7 +27,7 @@ npm i next@latest react@latest react-dom@latest \
 eslint-config-next@latest
 ```
 
-## Next.js 앱 라우터(App Router)
+## Next.js App 라우터(App Router)
 2016년에 React 애플리케이션을 서버에서 렌더링하기 위한 쉬운 방법을 제공하기 위해 Next.js를 출시했으며, 더 다양하고 개인화된 글로벌 웹을 만드는 것을 목표로 했습니다.
 
 최초의 발표 게시물에서 Next.js의 설계 원칙 중 일부를 공유했습니다:
@@ -46,7 +46,7 @@ Next.js는 이제 6살이 되었습니다. 우리의 원래 설계 원칙은 그
 <Callout type="page" icon="Page Router">
 pages/about.js
 ```jsx 
-// 페이지 라우터
+// Page 라우터
  
 import React from 'react';
 export default () => <h1>회사 소개</h1>;
@@ -63,14 +63,14 @@ export default () => <h1>회사 소개</h1>;
 
 프레임워크의 모든 부분은 라우터를 중심으로 설계되어야 합니다. 페이지 전환, 데이터 가져오기, 캐싱, 데이터 변경 및 재검증, 스트리밍, 스타일링 콘텐츠 등이 있습니다.
 
-스트리밍과 호환되게 하고, 레이아웃에 대한 향상된 지원 요청을 해결하기 위해, 앱 라우터가 출시 되었습니다.
+스트리밍과 호환되게 하고, 레이아웃에 대한 향상된 지원 요청을 해결하기 위해, App 라우터가 출시 되었습니다.
 
 <Callout type="app" icon="App Router">
 앱라우터의 레이아웃과 페이지는 이렇게 되었습니다.
 
 app/layout.js
 ```jsx
-// 새로운: 앱 라우터 ✨
+// 새로운: App 라우터 ✨
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -95,7 +95,7 @@ export default function Page() {
 <Callout type="page" icon="Page Router">
 pages/_app.js
 ```jsx
-// 페이지 라우터
+// Page 라우터
  
 // 이 "글로벌 레이아웃"은 모든 라우트를 감싼다. 다른 레이아웃 컴포넌트를
 // 구성할 방법이 없으며, 이 파일에서 전역 데이터를 가져올 수 없습니다.
@@ -104,15 +104,15 @@ export default function MyApp({ Component, pageProps }) {
 }
 ```
 
-<span className="text-red-600 font-bold">페이지 라우터를 사용하면 레이아웃을 구성할 수 없었고, 데이터 가져오기는 컴포넌트와 공유할 수 없었습니다.</span> 
+<span className="text-red-600 font-bold">Page 라우터를 사용하면 레이아웃을 구성할 수 없었고, 데이터 가져오기는 컴포넌트와 공유할 수 없었습니다.</span> 
 </Callout>
 
 <Callout type="app" icon="App Router">
-<span className="text-blue-600 font-bold">새로운 앱 라우터를 사용하면 이제 지원됩니다.</span>
+<span className="text-blue-600 font-bold">새로운 App 라우터를 사용하면 이제 지원됩니다.</span>
 
 app/layout.js
 ```jsx
-// 새로운: 앱 라우터 ✨
+// 새로운: App 라우터 ✨
 // 루트 레이아웃은 전체 애플리케이션을 위해 공유됩니다.
 export default function RootLayout({ children }) {
   return (
@@ -138,11 +138,11 @@ export default function DashboardLayout({ children }) {
 </Callout>
 
 <Callout type="page" icon="Page Router">
-페이지 라우터를 사용하면, `_document`를 사용하여 서버로부터 초기 페이로드를 커스터마이즈했습니다.
+Page 라우터를 사용하면, `_document`를 사용하여 서버로부터 초기 페이로드를 커스터마이즈했습니다.
 
 pages/_document.js
 ```jsx
-// 페이지 라우터
+// Page 라우터
  
 // 이 파일은 서버 요청에 대해 <html> 및 <body> 태그를 커스터마이즈할 수 있게 해주며,
 // HTML 요소를 작성하는 대신 프레임워크 특정 기능을 추가합니다.
@@ -163,11 +163,11 @@ export default function Document() {
 </Callout>
 
 <Callout type="app" icon="App Router">
-<span className="text-blue-600 font-bold">앱 라우터를 사용하면 Next.js에서 `<Html>`, `<Head>`, 및 `<Body>`를 가져올 필요가 없습니다. 대신에 React를 사용</span>하면 됩니다.
+<span className="text-blue-600 font-bold">App 라우터를 사용하면 Next.js에서 `<Html>`, `<Head>`, 및 `<Body>`를 가져올 필요가 없습니다. 대신에 React를 사용</span>하면 됩니다.
 
 app/layout.js
 ```jsx 
-// 새로운: 앱 라우터 ✨
+// 새로운: App 라우터 ✨
 // 루트 레이아웃은 전체 애플리케이션을 위해 공유됩니다.
 export default function RootLayout({ children }) {
   return (
@@ -181,8 +181,8 @@ export default function RootLayout({ children }) {
 
 새로운 파일 시스템 라우터를 구축하는 기회는 라우팅 시스템과 관련된 많은 기타 기능 요청을 해결할 적절한 시기였습니다. 예를 들면:
 
-- 이전에는 <span className="text-red-600 font-bold">`_app.js`에서 외부 npm 패키지(컴포넌트 라이브러리와 같은)의 글로벌 스타일시트만 가져올 수 있었습니다.</span> 이는 개발자 경험에 있어서 이상적이지 않았습니다. 앱 라우터를 사용하면 어떤 컴포넌트에서든 CSS 파일을 가져오고(그리고 공유)할 수 있습니다.
-- 이전에는 <span className="text-red-600 font-bold">Next.js에서 서버 사이드 렌더링으로 전환(`getServerSideProps`을 통해)하는 것</span>은 <span className="font-bold underline">전체 페이지가 Hydration이될 때까지 애플리케이션과 상호 작용하는 것이 차단</span>되었다는 것을 의미했습니다. <span className="text-blue-600 font-bold">앱 라우터로, 우리는 React Suspense와 깊게 통합</span>되도록 아키텍처를 리팩터링하여 <span className="font-semibold bg-yellow-100">페이지의 일부만을 선택적으로 Hydrate할 수 있습니다.</span> 이로 인해 UI의 다른 컴포넌트가 상호 작용 가능하도록 차단되지 않습니다. 콘텐츠는 서버에서 즉시 스트리밍될 수 있어 페이지의 perceived 로딩 성능이 향상됩니다.
+- 이전에는 <span className="text-red-600 font-bold">`_app.js`에서 외부 npm 패키지(컴포넌트 라이브러리와 같은)의 글로벌 스타일시트만 가져올 수 있었습니다.</span> 이는 개발자 경험에 있어서 이상적이지 않았습니다. App 라우터를 사용하면 어떤 컴포넌트에서든 CSS 파일을 가져오고(그리고 공유)할 수 있습니다.
+- 이전에는 <span className="text-red-600 font-bold">Next.js에서 서버 사이드 렌더링으로 전환(`getServerSideProps`을 통해)하는 것</span>은 <span className="font-bold underline">전체 페이지가 Hydration이될 때까지 애플리케이션과 상호 작용하는 것이 차단</span>되었다는 것을 의미했습니다. <span className="text-blue-600 font-bold">App 라우터로, 우리는 React Suspense와 깊게 통합</span>되도록 아키텍처를 리팩터링하여 <span className="font-semibold bg-yellow-100">페이지의 일부만을 선택적으로 Hydrate할 수 있습니다.</span> 이로 인해 UI의 다른 컴포넌트가 상호 작용 가능하도록 차단되지 않습니다. 콘텐츠는 서버에서 즉시 스트리밍될 수 있어 페이지의 perceived 로딩 성능이 향상됩니다.
 
 라우터는 Next.js 작동을 만드는 핵심입니다. 그러나 그것은 라우터 자체에 대한 것이 아니라 데이터 가져오기와 같은 프레임워크의 나머지 부분과 어떻게 통합되는지에 관한 것입니다.
 

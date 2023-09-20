@@ -37,7 +37,10 @@ summary: React 코드를 Next.js 앱으로 마이그레이션 후, 개발 서버
       }
 
       function HomePage() {
-        const names = ["Ada Lovelace", "Grace Hopper", "Margaret Hamilton"]
+        const names = ["Ada Lovelace", 
+          "Grace Hopper", 
+          "Margaret Hamilton"
+        ]
 
         const [likes, setLikes] = React.useState(0)
 
@@ -193,7 +196,10 @@ function Header({ title }) {
 }
 
 function HomePage() {
-  const names = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
+  const names = ['Ada Lovelace', 
+    'Grace Hopper', 
+    'Margaret Hamilton'
+  ];
 
   const [likes, setLikes] = useState(0);
 
@@ -260,7 +266,8 @@ HTML 파일에 남아 있는 유일한 코드는 JSX이므로 파일 유형을 `
       src="https://unpkg.com/react@17/umd/react.development.js">
     </script>
     <script 
-      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js">
+      src="https://unpkg.com/react-dom@17/\
+      umd/react-dom.development.js">
     </script>
     <script 
       src="https://unpkg.com/@babel/standalone/babel.min.js">
@@ -274,7 +281,10 @@ HTML 파일에 남아 있는 유일한 코드는 JSX이므로 파일 유형을 `
       }
 
       function HomePage() {
-        const names = ["Ada Lovelace", "Grace Hopper", "Margaret Hamilton"]
+        const names = ["Ada Lovelace", 
+          "Grace Hopper", 
+          "Margaret Hamilton"
+        ]
         const [likes, setLikes] = React.useState(0)
 
         function handleClick() {
@@ -311,7 +321,10 @@ function Header({ title }) {
 }
 
 export default function HomePage() {
-  const names = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
+  const names = ['Ada Lovelace', 
+    'Grace Hopper', 
+    'Margaret Hamilton'
+  ];
   const [likes, setLikes] = useState(0);
 
   function handleClick() {

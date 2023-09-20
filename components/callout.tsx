@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils'
 
+import { Info } from 'lucide-react'
+
 interface CalloutProps {
   icon?: string
   children?: React.ReactNode
@@ -21,14 +23,19 @@ export function Callout({ children, icon, type = 'default', ...props }: CalloutP
     >
       {icon && (
         <span
-          className={cn('mr-2 text-2xl', {
-            'ml-1 text-gray-400': type === 'page' || type === 'app',
+          className={cn('mr-0 text-2xl', {
+            'ml-0 mt-0 text-gray-400': type === 'page' || type === 'app',
           })}
         >
-          {icon}
+          <div className="flex items-center">
+            <span className="p-1 mr-0">
+              <Info />
+            </span>
+            <span>{icon}</span>
+          </div>
         </span>
       )}
-      <div>{children}</div>
+      <div className="mb-0">{children}</div>
     </div>
   )
 }
