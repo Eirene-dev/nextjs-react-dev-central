@@ -12,6 +12,7 @@ import {
   remarkImgToJsx,
   extractTocHeadings,
 } from 'pliny/mdx-plugins/index.js'
+
 // Rehype packages
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
@@ -232,7 +233,7 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs, allDocs, allExamples} = await importData()
+    const { allBlogs, allDocs, allExamples } = await importData()
     createTagCount(allBlogs)
     createSearchIndex(allBlogs, allDocs, allExamples)
   },

@@ -41,6 +41,9 @@ import {
   type Icon as LucideIcon,
 } from 'lucide-react'
 
+import DonutChart from './DonutChart'
+import MermaidChart from './MermaidChart'
+
 export const components: MDXComponents = {
   Image,
   TOCInline,
@@ -56,4 +59,6 @@ export const components: MDXComponents = {
   StyleImportant,
   StyleUnderline,
   StyleWarning,
+  DonutChart,
+  MermaidChart,
 }
