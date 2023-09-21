@@ -3,7 +3,7 @@ const projectsData = [
     title: 'Next.js Boilerplate',
     description: `Next.js와 React로 빠르게 웹 개발을 시작하세요! "Boilerplate"는 반복적인 기본 코드를 줄여주는 템플릿입니다. "Next.js Boilerplate"를 활용하면 몇 초 안에 효율적으로 웹 개발을 시작할 수 있습니다. 시작이 절반입니다, 지금 바로 도전해보세요!`,
     imgSrc: '/static/images/example/LightMode_CreateNextApp.png',
-    href: '#',
+    href: '/example/boilerplate',
   },
   {
     title: 'Next.js 13 App Playground',

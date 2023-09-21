@@ -66,7 +66,7 @@ function createTagCount(allBlogs) {
   writeFileSync('./app/tag-data.json', JSON.stringify(tagCount))
 }
 
-function createSearchIndex(allBlogs, allDocs) {
+function createSearchIndex(allBlogs, allDocs, allExamples) {
   if (
     siteMetadata?.search?.provider === 'kbar' &&
     siteMetadata.search.kbarConfig.searchDocumentsPath
@@ -74,6 +74,7 @@ function createSearchIndex(allBlogs, allDocs) {
     const combinedData = [
       ...allCoreContent(sortPosts(allBlogs)),
       ...allCoreContent(sortPosts(allDocs)),
+      ...allCoreContent(sortPosts(allExamples)),
     ]
     writeFileSync(
       `public/${siteMetadata.search.kbarConfig.searchDocumentsPath}`,
@@ -82,6 +83,42 @@ function createSearchIndex(allBlogs, allDocs) {
     console.log('Local search index generated...')
   }
 }
+
+export const Example = defineDocumentType(() => ({
+  name: 'Example',
+  filePathPattern: `example/**/*.mdx`,
+  contentType: 'mdx',
+  fields: {
+    title: { type: 'string', required: true },
+    date: { type: 'date', required: true },
+    tags: { type: 'list', of: { type: 'string' }, default: [] },
+    lastmod: { type: 'date' },
+    draft: { type: 'boolean' },
+    summary: { type: 'string' },
+    images: { type: 'list', of: { type: 'string' } },
+    authors: { type: 'list', of: { type: 'string' } },
+    layout: { type: 'string' },
+    bibliography: { type: 'string' },
+    canonicalUrl: { type: 'string' },
+  },
+  computedFields: {
+    ...computedFields,
+    structuredData: {
+      type: 'json',
+      resolve: (doc) => ({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: doc.title,
+        datePublished: doc.date,
+        dateModified: doc.lastmod || doc.date,
+        description: doc.summary,
+        image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
+        url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath}`,
+        author: doc.authors,
+      }),
+    },
+  },
+}))
 
 export const Doc = defineDocumentType(() => ({
   name: 'Doc',
@@ -175,7 +212,7 @@ export const Authors = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors, Doc],
+  documentTypes: [Blog, Authors, Doc, Example],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
@@ -195,8 +232,8 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs, allDocs } = await importData()
+    const { allBlogs, allDocs, allExamples} = await importData()
     createTagCount(allBlogs)
-    createSearchIndex(allBlogs, allDocs)
+    createSearchIndex(allBlogs, allDocs, allExamples)
   },
 })
