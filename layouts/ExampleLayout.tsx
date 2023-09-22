@@ -13,7 +13,6 @@ import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import { docsConfig } from '@/config/example'
 import { DocsSidebarNav } from '@/components/sidebar-nav'
 import { ChevronRight, ChevronDown, Plus, Minus, ChevronsRight } from 'lucide-react'
-import Icons from '@/components/icons'
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 const discussUrl = (path) =>
