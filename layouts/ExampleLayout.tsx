@@ -13,6 +13,7 @@ import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import { docsConfig } from '@/config/example'
 import { DocsSidebarNav } from '@/components/sidebar-nav'
 import { ChevronRight, ChevronDown, Plus, Minus, ChevronsRight } from 'lucide-react'
+import Icons from '@/components/icons'
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 const discussUrl = (path) =>
@@ -72,7 +73,34 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <dt className="sr-only">Authors</dt>
               <dd>
                 <ul className="flex flex-wrap justify-center gap-4 sm:space-x-12 xl:block xl:space-x-0 xl:space-y-8">
-                  {/* <DocsSidebarNav items={docsConfig.sidebarNav} /> */}
+                  {authorDetails.map((author) => (
+                    <li className="flex items-center space-x-2" key={author.name}>
+                      {author.avatar && (
+                        <Image
+                          src={author.avatar}
+                          width={38}
+                          height={38}
+                          alt="avatar"
+                          className="w-10 h-10 rounded-full"
+                        />
+                      )}
+                      <dl className="text-sm font-medium leading-5 whitespace-nowrap">
+                        <dt className="sr-only">Name</dt>
+                        <dd className="text-gray-900 dark:text-gray-100">{author.name}</dd>
+                        <dt className="sr-only">Github</dt>
+                        <dd>
+                          {author.github && (
+                            <Link
+                              href={author.github}
+                              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                            >
+                              @Github Repo
+                            </Link>
+                          )}
+                        </dd>
+                      </dl>
+                    </li>
+                  ))}
                 </ul>
               </dd>
             </dl>
