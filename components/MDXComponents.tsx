@@ -12,6 +12,10 @@ import {
   StyleUnderline,
   StyleWarning,
 } from '@/components/StyledComponents'
+
+import ScreenShot from '@/components/ScreenShot'
+import ToggleContent from '@/components//ToggleContent'
+
 import {
   AlertTriangle,
   ArrowRight,
@@ -61,4 +65,6 @@ export const components: MDXComponents = {
   StyleWarning,
   DonutChart,
   MermaidChart,
+  ScreenShot,
+  ToggleContent,
 }

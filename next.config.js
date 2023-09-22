@@ -69,9 +69,9 @@ module.exports = () => {
       remotePatterns: [
         {
           protocol: 'https',
-          hostname: 'picsum.photos',
+          hostname: 'lh3.googleusercontent.com',
           port: '',
-          pathname: '/account123/**',
+          pathname: '/**',
         },
       ],
     },

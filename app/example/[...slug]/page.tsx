@@ -10,17 +10,19 @@ import type { Authors, Example } from 'contentlayer/generated'
 import PostSimple from '@/layouts/PostSimple'
 import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
+import ExampleLayout from '@/layouts/ExampleLayout'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { DashboardTableOfContents } from '@/components/toc'
 import { getTableOfContents } from '@/lib/toc'
 
 const isProduction = process.env.NODE_ENV === 'production'
-const defaultLayout = 'PostSimple'
+const defaultLayout = 'ExampleLayout'
 const layouts = {
   PostSimple,
   PostLayout,
   PostBanner,
+  ExampleLayout,
 }
 
 export const generateStaticParams = async () => {
