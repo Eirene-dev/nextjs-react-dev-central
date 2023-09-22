@@ -16,7 +16,7 @@ React는 동일한 URL과 옵션을 가진 Request를 자동으로 **메모이�
 
 예를 들어, 루트 전체에서 동일한 데이터를 사용해야 하는 경우 (예: 레이아웃, 페이지 및 여러 컴포넌트에서) 트리의 상단에서 데이터를 가져온 다음 컴포넌트간에 props를 전달할 필요가 없습니다. 대신, 동일한 데이터에 대한 네트워크를 통한 여러 요청의 성능적인 영향에 대해 걱정하지 않고 필요한 컴포넌트에서 데이터를 가져올 수 있습니다.
 
-```tsx filename="app/example.tsx" switcher
+```tsx:"app/example.tsx" switcher
 async function getItem() {
   // `fetch` 함수는 자동으로 메모이제이션되며 결과는 캐시됩니다
   const res = await fetch('https://.../item/1')
@@ -60,7 +60,7 @@ const item = await getItem() // 캐시 HIT
 
 `fetch` Request에서 메모이제이션을 선택 해제하려면 요청에 `AbortController` `signal`을 전달할 수 있습니다.
 
-```js filename="app/example.js"
+```js:"app/example.js"
 const { signal } = new AbortController()
 fetch(url, { signal })
 ```

@@ -64,21 +64,21 @@ Next.js 애플리케이션에서 개별 라우트 세그먼트에 대한 런타�
 
 다음 예제는 `'edge'`의 `runtime` 값을 내보내는 페이지 라우트 세그먼트를 보여줍니다:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
 ```
 
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
 ```
 
 레이아웃 수준에서 `runtime`을 정의하면 레이아웃 아래의 모든 라우트가 엣지 런타임에서 실행됩니다:
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
 ```
 
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 export const runtime = 'edge' // 'nodejs' (기본값) | 'edge'
 ```
 

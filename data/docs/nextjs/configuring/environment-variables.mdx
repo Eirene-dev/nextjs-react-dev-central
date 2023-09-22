@@ -24,7 +24,7 @@ Next.js는 환경 변수에 대한 기본 지원이 포함되어 있어 다음 �
 
 Next.js는 `process.env`로 `.env.local`에서 환경 변수를 로드하는 내장 지원을 제공합니다.
 
-```txt filename=".env.local"
+```txt:".env.local"
 DB_HOST=localhost
 DB_USER=myuser
 DB_PASS=mypassword
@@ -34,7 +34,7 @@ DB_PASS=mypassword
 
 예를 들어:
 
-```js filename="app/api/route.js"
+```js:"app/api/route.js"
 export async function GET() {
   const db = await myDB.connect({
     host: process.env.DB_HOST,
@@ -49,7 +49,7 @@ export async function GET() {
 
 Next.js는 `.env*` 파일 내에서 `$VARIABLE`과 같이 다른 변수를 참조하는 변수를 자동으로 확장합니다. 이를 통해 다른 비밀 정보를 참조할 수 있습니다. 예를 들면:
 
-```txt filename=".env"
+```txt:".env"
 TWITTER_USER=nextjs
 TWITTER_URL=https://twitter.com/$TWITTER_USER
 ```
@@ -66,7 +66,7 @@ TWITTER_URL=https://twitter.com/$TWITTER_USER
 
 환경 변수의 값을 브라우저에서 액세스할 수 있게 하려면, Next.js는 빌드 시간에 js 번들에 값을 "인라인"하여 클라이언트에 전달할 수 있습니다. 이를 위해 `NEXT_PUBLIC_`을 변수 앞에 접두사로 붙이면 됩니다. 예를 들면:
 
-```txt filename="Terminal"
+```txt:"Terminal"
 NEXT_PUBLIC_ANALYTICS_ID=abcdefghijk
 ```
 
@@ -74,7 +74,7 @@ NEXT_PUBLIC_ANALYTICS_ID=abcdefghijk
 
 > **주의**: 빌드 후, 앱은 이러한 환경 변수의 변경 사항에 더 이상 응답하지 않습니다. 예를 들어, 하나의 환경에서 빌드된 슬러그를 다른 환경으로 프로모션하는 Heroku 파이프라인을 사용하거나, 단일 Docker 이미지를 여러 환경에 빌드 및 배포하는 경우, `NEXT_PUBLIC_` 변수는 빌드 시간에 평가된 값으로 고정됩니다. 따라서 프로젝트가 빌드될 때 이러한 값이 적절하게 설정되어야 합니다. 런타임 환경 값에 액세스해야 하는 경우 클라이언트에 이를 제공하기 위한 API를 직접 설정해야 합니다(요청 시 또는 초기화 중).
 
-```js filename="pages/index.js"
+```js:"pages/index.js"
 import setupAnalyticsService from '../lib/my-analytics-service'
 
 // 'NEXT_PUBLIC_ANALYTICS_ID'는 'NEXT_PUBLIC_' 접두사로
@@ -121,7 +121,7 @@ Next.js 애플리케이션을 [Vercel](https://vercel.com)에 배포할 때, 환
 
 만약 [개발 환경 변수](https://vercel.com/docs/concepts/projects/environment-variables#development-environment-variables?utm_source=next-site&utm_medium=docs&utm_campaign=next-website)를 구성했다면, 아래의 명령어를 사용해 로컬 머신에서 `.env.local`로 가져올 수 있습니다:
 
-```bash filename="Terminal"
+```bash:"Terminal"
 vercel env pull .env.local
 ```
 

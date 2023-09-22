@@ -15,7 +15,7 @@ summary: "create-next-app을 사용하여 새로운 Next.js 어플리케이션�
 
 `create-next-app`을 사용하여 새로운 Next.js 앱을 시작하는 것을 추천합니다. 이는 자동으로 모든 것을 설정해 줍니다. 프로젝트를 만들려면 다음을 실행하세요:
 
-```bash filename="터미널"
+```bash:"터미널"
 npx create-next-app@latest
 ```
 
@@ -33,7 +33,7 @@ npx create-next-app@latest
 ```
 
 한글로 번역하면 아래와 같습니다.
-```txt filename="터미널"
+```txt:"터미널"
 프로젝트의 이름은 무엇인가요? my-app
 TypeScript를 사용하시겠습니까? 아니요 / 예
 ESLint를 사용하시겠습니까? 아니요 / 예
@@ -55,13 +55,13 @@ App Router를 사용하시겠습니까? (추천) 아니요 / 예
 
 새로운 Next.js 앱을 수동으로 만들려면 필요한 패키지를 설치하세요:
 
-```bash filename="터미널"
+```bash:"터미널"
 npm install next@latest react@latest react-dom@latest
 ```
 
 `package.json` 파일을 열고 다음 `scripts`를 추가하세요:
 
-```json filename="package.json"
+```json:"package.json"
 {
   "scripts": {
     "dev": "next dev",
@@ -93,9 +93,7 @@ Next.js는 파일 시스템 라우팅을 사용하므로, 애플리케이션의 
 
 `app/layout.tsx` 안에 필요한 `<html>` 및 `<body>` 태그를 포함한 [root layout](/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required)를 생성하세요:
 
-```tsx filename="app/layout.ts
-
-x" switcher
+```tsx:"app/layout.ts"
 export default function RootLayout({
   children,
 }: {
@@ -108,8 +106,9 @@ export default function RootLayout({
   )
 }
 ```
-
-```jsx filename="app/layout.js" switcher
+<details>
+    <summary>JavaScript</summary>
+```jsx:"app/layout.js"
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -118,20 +117,23 @@ export default function RootLayout({ children }) {
   )
 }
 ```
+</details>
 
 마지막으로, 초기 내용을 포함한 홈페이지 `app/page.tsx`를 생성하세요:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx"
 export default function Page() {
   return <h1>안녕하세요, Next.js!</h1>
 }
 ```
-
-```jsx filename="app/page.js" switcher
+<details>
+    <summary>JavaScript</summary>
+```jsx:"app/page.js"
 export default function Page() {
   return <h1>안녕하세요, Next.js!</h1>
 }
 ```
+</details>
 
 > **알아두세요**: `layout.tsx`를 만들지 않으면, Next.js는 `next dev`로 개발 서버를 실행할 때 이 파일을 자동으로 생성합니다.
 
@@ -143,7 +145,7 @@ App Router 대신 Pages Router를 사용하려면, 프로젝트의 루트에 `pa
 
 그런 다음, `pages` 폴더 안에 `index.tsx` 파일을 추가하세요. 이것이 홈 페이지(`/`)가 됩니다:
 
-```tsx filename="pages/index.tsx" switcher
+```tsx:"pages/index.tsx"
 export default function Page() {
   return <h1>안녕하세요, Next.js!</h1>
 }
@@ -151,7 +153,7 @@ export default function Page() {
 
 다음으로, 전역 레이아웃을 정의하기 위해 `pages/` 안에 `_app.tsx` 파일을 추가하세요. [custom App 파일](/docs/pages/building-your-application/routing/custom-app)에 대해 더 알아보세요.
 
-```tsx filename="pages/_app.tsx" switcher
+```tsx:"pages/_app.tsx" switcher
 import type { AppProps } from 'next/app'
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -159,7 +161,7 @@ export default function App({ Component, pageProps }: AppProps) {
 }
 ```
 
-```jsx filename="pages/_app.js" switcher
+```jsx:"pages/_app.js" switcher
 export default function App({ Component, pageProps }) {
   return <Component {...pageProps} />
 }
@@ -167,7 +169,7 @@ export default function App({ Component, pageProps }) {
 
 마지막으로, 서버에서 초기 응답을 제어하기 위해 `pages/` 안에 `_document.tsx` 파일을 추가하세요. [custom Document 파일](/docs/pages/building-your-application/routing/custom-document)에 대해 더 알아보세요.
 
-```tsx filename="pages/_document.tsx" switcher
+```tsx:"pages/_document.tsx" switcher
 import { Html, Head, Main, NextScript } from 'next/document'
 
 export default function Document() {

@@ -45,7 +45,7 @@ CSS-in-JS를 구성하는 것은 세 단계의 선택 과정을 포함합니다:
 
 클라이언트 컴포넌트에서 `styled-jsx`를 사용하려면 `v5.1.0`이 필요합니다. 먼저 새로운 레지스트리를 만듭니다:
 
-```tsx filename="app/registry.tsx" switcher
+```tsx:"app/registry.tsx" switcher
 'use client'
 
 import React, { useState } from 'react'
@@ -76,7 +76,7 @@ export default function StyledJsxRegistry({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/registry.js" switcher
+```jsx:"app/registry.js" switcher
 'use client'
 
 import React, { useState } from 'react'
@@ -105,7 +105,7 @@ export default function StyledJsxRegistry({ children }) {
 
 그런 다음, 레지스트리로 [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃)을 감싸십시오:
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 import StyledJsxRegistry from './registry'
 
 export default function RootLayout({
@@ -124,7 +124,7 @@ export default function RootLayout({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 import StyledJsxRegistry from './registry'
 
 export default function RootLayout({ children }) {
@@ -148,7 +148,7 @@ export default function RootLayout({ children }) {
 
 먼저 `styled-components` API를 사용하여 렌더링 중 생성된 모든 CSS 스타일 규칙을 수집하는 전역 레지스트리 컴포넌트와 해당 규칙을 반환하는 함수를 생성합니다. 그런 다음 `useServerInsertedHTML` 훅을 사용하여 레지스트리에 수집된 스타일을 루트 레이아웃의 `<head>` HTML 태그에 주입합니다.
 
-```tsx filename="lib/registry.tsx" switcher
+```tsx:"lib/registry.tsx" switcher
 'use client'
 
 import React, { useState } from 'react'
@@ -184,7 +184,7 @@ export default function StyledComponentsRegistry({
 
 루트 레이아웃의 `children`을 스타일 레지스트리 컴포넌트로 감싸세요:
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 import StyledComponentsRegistry from './lib/registry'
 
 export default function RootLayout({

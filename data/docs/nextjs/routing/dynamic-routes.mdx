@@ -22,14 +22,14 @@ summary: 동적 라우트를 사용하여 동적 데이터로부터 프로그래
 
 예를 들면, 블로그는 다음과 같은 라우트를 포함할 수 있습니다: `app/blog/[slug]/page.js`, 여기서 `[slug]`는 블로그 게시물의 동적 세그먼트입니다.
 
-```tsx filename="app/blog/[slug]/page.tsx" switcher
+```tsx:"app/blog/[slug]/page.tsx" switcher
 export default function Page({ params }: { params: { slug: string } }) {
   return <div>내 게시물: {params.slug}</div>
 }
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/blog/[slug]/page.js" switcher
+```jsx:"app/blog/[slug]/page.js" switcher
 export default function Page({ params }) {
   return <div>내 게시물: {params.slug}</div>
 }
@@ -52,7 +52,7 @@ export default function Page({ params }) {
 
 `generateStaticParams` 함수는 [동적 라우트 세그먼트](/docs/nextjs/routing/dynamic-routes)와 함께 사용되어 요청 시간에 대신 빌드 시간에 라우트를 [**정적으로 생성**](/docs/nextjs/rendering/server-components#정적-렌더링-기본-설정)하는 데 사용할 수 있습니다.
 
-```tsx filename="app/blog/[slug]/page.tsx" switcher
+```tsx:"app/blog/[slug]/page.tsx" switcher
 export async function generateStaticParams() {
   const posts = await fetch('https://.../posts').then((res) 
     => res.json())
@@ -64,7 +64,7 @@ export async function generateStaticParams() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/blog/[slug]/page.js" switcher
+```jsx:"app/blog/[slug]/page.js" switcher
 export async function generateStaticParams() {
   const posts = await fetch('https://.../posts').then((res) 
     => res.json())
@@ -158,14 +158,14 @@ Catch-all 세그먼트는 매개변수를 <StyleWarning>[[이중 대괄호]]</St
 
 TypeScript를 사용할 때, 구성된 라우트 세그먼트에 따라 `params`에 대한 타입을 추가할 수 있습니다.
 
-```tsx filename="app/blog/[slug]/page.tsx" switcher
+```tsx:"app/blog/[slug]/page.tsx" switcher
 export default function Page({ params }: { params: { slug: string } }) {
   return <h1>My Page</h1>
 }
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/blog/[slug]/page.js" switcher
+```jsx:"app/blog/[slug]/page.js" switcher
 export default function Page({ params }) {
   return <h1>My Page</h1>
 }

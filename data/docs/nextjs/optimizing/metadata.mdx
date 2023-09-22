@@ -22,7 +22,7 @@ Next.js는 SEO와 웹 공유성을 향상시키기 위해 HTML `head` 요소 내
 
 정적 메타데이터를 정의하려면 `layout.js` 또는 정적 `page.js` 파일에서 [`Metadata` 객체](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-object)를 내보냅니다.
 
-```tsx filename="layout.tsx / page.tsx" switcher
+```tsx:"layout.tsx / page.tsx" switcher
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -35,7 +35,7 @@ export default function Page() {}
 <details>
     <summary>JavaScript</summary>
 
-```jsx filename="layout.js / page.js" switcher
+```jsx:"layout.js / page.js" switcher
 export const metadata = {
   title: '...',
   description: '...',
@@ -53,7 +53,7 @@ export default function Page() {}
 
 `generateMetadata` 함수를 사용하여 동적 값을 요구하는 메타데이터를 `fetch` 할 수 있습니다.
 
-```tsx filename="app/products/[id]/page.tsx" switcher
+```tsx:"app/products/[id]/page.tsx" switcher
 import type { Metadata, ResolvingMetadata } from 'next'
 
 type Props = {
@@ -88,7 +88,7 @@ export default function Page({ params, searchParams }: Props) {}
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/products/[id]/page.js" switcher
+```jsx:"app/products/[id]/page.js" switcher
 export async function generateMetadata({ params, searchParams }, parent) {
   // 라우트 매개변수 읽기
   const id = params.id
@@ -173,7 +173,7 @@ export default function Page({ params, searchParams }) {}
 
 #### 필드 덮어쓰기
 
-```jsx filename="app/layout.js"
+```jsx:"app/layout.js"
 export const metadata = {
   title: 'Acme',
   openGraph: {
@@ -184,7 +184,7 @@ export const metadata = {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/blog/page.js"
+```jsx:"app/blog/page.js"
 export const metadata = {
   title: '블로그',
   openGraph: {
@@ -205,11 +205,11 @@ export const metadata = {
 
 세그먼트간에 중첩된 필드를 공유하면서 다른 필드를 덮어쓰고 싶다면 별도의 변수로 분리할 수 있습니다:
 
-```jsx filename="app/shared-metadata.js"
+```jsx:"app/shared-metadata.js"
 export const openGraphImage = { images: ['http://...'] }
 ```
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 import { openGraphImage } from './shared-metadata'
 
 export const metadata = {
@@ -221,7 +221,7 @@ export const metadata = {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/about/page.js"
+```jsx:"app/about/page.js"
 import { openGraphImage } from '../shared-metadata'
 
 export const metadata = {
@@ -238,7 +238,7 @@ export const metadata = {
 
 #### 필드 상속
 
-```jsx filename="app/layout.js"
+```jsx:"app/layout.js"
 export const metadata = {
   title: 'Acme',
   openGraph: {
@@ -248,7 +248,7 @@ export const metadata = {
 }
 ```
 
-```jsx filename="app/about/page.js"
+```jsx:"app/about/page.js"
 export const metadata = {
   title: '소개',
 }
@@ -272,7 +272,7 @@ export const metadata = {
 
 이를 사용하려면 `next/server`에서 `ImageResponse`를 가져올 수 있습니다:
 
-```jsx filename="app/about/route.js"
+```jsx:"app/about/route.js"
 import { ImageResponse } from 'next/server'
 
 export const runtime = 'edge'
@@ -324,7 +324,7 @@ export async function GET() {
 
 현재 JSON-LD에 대한 추천 방식은 `layout.js` 또는 `page.js` 컴포넌트 내에서 구조화된 데이터를 `<script>` 태그로 렌더링하는 것입니다. 예를 들면:
 
-```tsx filename="app/products/[id]/page.tsx" switcher
+```tsx:"app/products/[id]/page.tsx" switcher
 export default async function Page({ params }) {
   const product = await getProduct(params.id)
 
@@ -350,7 +350,7 @@ export default async function Page({ params }) {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/products/[id]/page.js" switcher
+```jsx:"app/products/[id]/page.js" switcher
 export default async function Page({ params }) {
   const product = await getProduct(params.id)
 

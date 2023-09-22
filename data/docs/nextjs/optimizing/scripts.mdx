@@ -11,7 +11,7 @@ summary: 내장된 Script 컴포넌트로 제3자 스크립트를 최적화하�
 
 여러 라우트에서 3rd 파티 스크립트를 로드하려면 `next/script`를 가져와서 레이아웃 컴포넌트에 직접 스크립트를 포함하세요:
 
-```tsx filename="app/dashboard/layout.tsx" switcher
+```tsx:"app/dashboard/layout.tsx" switcher
 import Script from 'next/script'
 
 export default function DashboardLayout({
@@ -29,7 +29,7 @@ export default function DashboardLayout({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/layout.js" switcher
+```jsx:"app/dashboard/layout.js" switcher
 import Script from 'next/script'
 
 export default function DashboardLayout({ children }) {
@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }) {
 
 모든 라우트에 3rd 파티 스크립트를 로드하려면 `next/script`를 가져와서 루트 레이아웃에 직접 스크립트를 포함하세요:
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 import Script from 'next/script'
 
 export default function RootLayout({
@@ -68,7 +68,7 @@ export default function RootLayout({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 import Script from 'next/script'
 
 export default function RootLayout({ children }) {
@@ -106,7 +106,7 @@ export default function RootLayout({ children }) {
 
 이 전략은 여전히 실험적이며 `next.config.js`에서 `nextScriptWorkers` 플래그가 활성화된 경우에만 사용할 수 있습니다:
 
-```js filename="next.config.js"
+```js:"next.config.js"
 module.exports = {
   experimental: {
     nextScriptWorkers: true,
@@ -116,7 +116,7 @@ module.exports = {
 
 그런 다음 `next`를 실행하면 (보통 `npm run dev` 또는 `yarn dev`) Next.js는 필요한 패키지의 설치를 안내합니다:
 
-```bash filename="Terminal"
+```bash:"Terminal"
 npm run dev
 ```
 
@@ -124,7 +124,7 @@ npm run dev
 
 설치가 완료되면, `strategy="worker"`를 정의하면 애플리케이션에서 Partytown을 자동으로 인스턴스화하고 스크립트를 웹 워커로 오프로드합니다.
 
-```tsx filename="pages/home.tsx" switcher
+```tsx:"pages/home.tsx" switcher
 import Script from 'next/script'
 
 export default function Home() {
@@ -137,7 +137,7 @@ export default function Home() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="pages/home.js" switcher
+```jsx:"pages/home.js" switcher
 import Script from 'next/script'
 
 export default function Home() {
@@ -188,7 +188,7 @@ export default function Home() {
 
 이러한 핸들러들은 `next/script`가 [클라이언트 컴포넌트](/docs/nextjs/rendering/client-components) 내에서 import되고 사용될 때만 작동하며, 코드의 첫 번째 줄로 `"use client"`가 정의되어야 합니다:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 'use client'
 
 import Script from 'next/script'
@@ -208,7 +208,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 'use client'
 
 import Script from 'next/script'

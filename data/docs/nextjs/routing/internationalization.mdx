@@ -48,7 +48,7 @@ module.exports = {
 
 예를 들어, 다음 라이브러리들을 사용하여 들어오는 `Request`를 확인하여 `Headers`, 지원할 로케일 및 기본 로케일을 기반으로 어떤 로케일을 선택할 것인지 결정할 수 있습니다.
 
-```js filename="middleware.js"
+```js:"middleware.js"
 import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 
@@ -62,7 +62,7 @@ match(languages, locales, defaultLocale) // -> 'en-US'
 
 라우팅은 서브 경로(`/fr/products`) 또는 도메인(`my-site.fr/products`)을 통해 국제화될 수 있습니다. 이 정보를 통해 사용자를 로케일을 기반으로 [Middleware](/docs/nextjs/routing/middleware) 내에서 리디렉션할 수 있습니다.
 
-```js filename="middleware.js"
+```js:"middleware.js"
 import { NextResponse } from 'next/server'
 
 let locales = ['en-US', 'nl-NL', 'nl']
@@ -102,7 +102,7 @@ export const config = {
 
 마지막으로, `app/` 안의 모든 특별한 파일들이 `app/[lang]` 아래에 중첩되도록 합니다. 이를 통해 Next.js 라우터는 라우트 내의 다양한 로케일을 동적으로 처리하고 모든 레이아웃 및 페이지에 `lang` 매개변수를 전달할 수 있습니다. 예를 들면:
 
-```jsx filename="app/[lang]/page.js"
+```jsx:"app/[lang]/page.js"
 // 현재 로케일에 접근할 수 있습니다
 // 예: /en-US/products -> `lang`은 "en-US" 입니다
 export default async function Page({ params: { lang } }) {
@@ -119,7 +119,7 @@ export default async function Page({ params: { lang } }) {
 
 예를 들어, 애플리케이션 내에서 영어와 네덜란드어 콘텐츠 모두를 지원하려고 한다고 가정해봅시다. 우리는 키에서 지역화된 문자열로의 매핑을 제공하는 두 개의 다른 "사전"을 유지할 수 있습니다. 예를 들면:
 
-```json filename="dictionaries/en.json"
+```json:"dictionaries/en.json"
 {
   "products": {
     "cart": "Add to Cart"
@@ -127,7 +127,7 @@ export default async function Page({ params: { lang } }) {
 }
 ```
 
-```json filename="dictionaries/nl.json"
+```json:"dictionaries/nl.json"
 {
   "products": {
     "cart": "Toevoegen aan Winkelwagen"
@@ -137,7 +137,7 @@ export default async function Page({ params: { lang } }) {
 
 요청된 로케일의 번역을 불러오기 위해 `getDictionary` 함수를 생성할 수 있습니다:
 
-```jsx filename="app/[lang]/dictionaries.js"
+```jsx:"app/[lang]/dictionaries.js"
 import 'server-only'
 
 const dictionaries = {
@@ -152,7 +152,7 @@ export const getDictionary = async (locale) => dictionaries[locale]()
 
 현재 선택된 언어를 기반으로 레이아웃이나 페이지 내에서 사전을 가져올 수 있습니다.
 
-```jsx filename="app/[lang]/page.js"
+```jsx:"app/[lang]/page.js"
 import { getDictionary } from './dictionaries'
 
 export default async function Page({ params: { lang } }) {
@@ -168,7 +168,7 @@ export default async function Page({ params: { lang } }) {
 
 주어진 로케일 집합에 대한 정적 라우트를 생성하기 위해, 어떤 페이지나 레이아웃에서도 `generateStaticParams`를 사용할 수 있습니다. 예를 들면, 루트 레이아웃에서 전역적으로 사용될 수 있습니다:
 
-```jsx filename="app/[lang]/layout.js"
+```jsx:"app/[lang]/layout.js"
 export async function generateStaticParams() {
   return [{ lang: 'en-US' }, { lang: 'de' }]
 }

@@ -37,7 +37,7 @@ import { Button } from '@/components/button'
 
 이 구성의 예는 다음과 같습니다:
 
-```json filename="tsconfig.json 또는 jsconfig.json"
+```json:"tsconfig.json 또는 jsconfig.json"
 {
   "compilerOptions": {
     "baseUrl": "."
@@ -45,19 +45,19 @@ import { Button } from '@/components/button'
 }
 ```
 
-```tsx filename="components/button.tsx" switcher
+```tsx:"components/button.tsx" switcher
 export default function Button() {
   return <button>Click me</button>
 }
 ```
 
-```jsx filename="components/button.js" switcher
+```jsx:"components/button.js" switcher
 export default function Button() {
   return <button>Click me</button>
 }
 ```
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import Button from 'components/button'
 
 export default function HomePage() {
@@ -71,7 +71,7 @@ export default function HomePage() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 import Button from 'components/button'
 
 export default function HomePage() {
@@ -92,7 +92,7 @@ export default function HomePage() {
 
 예를 들어, 다음 구성은 `@/components/*`를 `components/*`에 매핑합니다:
 
-```json filename="tsconfig.json 또는 jsconfig.json"
+```json:"tsconfig.json 또는 jsconfig.json"
 {
   "compilerOptions": {
     "baseUrl": ".",
@@ -103,21 +103,21 @@ export default function HomePage() {
 }
 ```
 
-```tsx filename="components/button.tsx" switcher
+```tsx:"components/button.tsx" switcher
 export default function Button() {
   return <button>Click me</button>
 }
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="components/button.js" switcher
+```jsx:"components/button.js" switcher
 export default function Button() {
   return <button>Click me</button>
 }
 ```
 </details>
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import Button from '@/components/button'
 
 export default function HomePage() {
@@ -131,7 +131,7 @@ export default function HomePage() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 import Button from '@/components/button'
 
 export default function HomePage() {

@@ -26,7 +26,7 @@ Next.js는 서버에서 각 fetch 요청에 대한 [캐싱](#데이터-캐싱) �
 
 예시:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 async function getData() {
   const res = await fetch('https://api.example.com/...')
   // 반환 값은 *직렬화되지 않습니다*
@@ -48,7 +48,7 @@ export default async function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 async function getData() {
   const res = await fetch('https://api.example.com/...')
   // 반환 값은 *직렬화되지 않습니다*
@@ -116,7 +116,7 @@ fetch('https://...', { next: { revalidate: 3600 } })
 
 또는 라우트 세그먼트의 모든 `fetch` 요청을 재검증하려면 [세그먼트 구성 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용할 수 있습니다.
 
-```jsx filename="layout.js / page.js"
+```jsx:"layout.js / page.js"
 export const revalidate = 3600 // 최대 1시간마다 재검증
 ```
 
@@ -136,7 +136,7 @@ Next.js에는 라우트 간의 `fetch` 요청을 무효화하기 위한 캐시 �
 
 예를 들어, 아래 `fetch` 요청은 `collection` 캐시 태그를 추가합니다:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 export default async function Page() {
   const res = await fetch('https://...', 
     { next: { tags: ['collection'] } }
@@ -147,7 +147,7 @@ export default async function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 export default async function Page() {
   const res = await fetch('https://...', 
     { next: { tags: ['collection'] } }
@@ -160,11 +160,11 @@ export default async function Page() {
 
 라우트 핸들러를 사용하는 경우, Next.js 앱만 알고 있는 비밀 토큰을 생성해야 합니다. 이 비밀은 권한이 없는 재검증 시도를 방지하기 위해 사용됩니다. 예를 들어, 다음 URL 구조로 라우트에 접근할 수 있습니다(수동으로 또는 웹훅을 사용하여):
 
-```bash filename="URL"
+```bash:"URL"
 https://<your-site.com>/api/revalidate?tag=collection&secret=<token>
 ```
 
-```ts filename="app/api/revalidate/route.ts" switcher
+```ts:"app/api/revalidate/route.ts" switcher
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidateTag } from 'next/cache'
 
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
 
 또는 경로와 연관된 모든 데이터를 재검증하기 위해 [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)를 사용할 수 있습니다.
 
-```ts filename="app/api/revalidate/route.ts" switcher
+```ts:"app/api/revalidate/route.ts" switcher
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 
@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
 
 개별 `fetch` 요청에 대한 캐싱을 선택 취소하려면, `fetch` 내의 `cache` 옵션을 `'no-store'`로 설정할 수 있습니다. 이렇게 하면 모든 요청에서 데이터를 동적으로 가져옵니다.
 
-```js filename="layout.js / page.js"
+```js:"layout.js / page.js"
 fetch('https://...', { cache: 'no-store' })
 ```
 
@@ -250,7 +250,7 @@ fetch('https://...', { cache: 'no-store' })
 
 예를 들어, `const dynamic = 'force-dynamic'`을 사용하면 모든 데이터가 요청 시간에 가져와지고 세그먼트가 동적으로 렌더링됩니다.
 
-```js filename="layout.js / page.js"
+```js:"layout.js / page.js"
 // 추가
 export const dynamic = 'force-dynamic'
 ```
@@ -277,7 +277,7 @@ export const dynamic = 'force-dynamic'
 - `revalidate` 옵션은 `3600`으로 설정되어 있습니다. 이는 데이터가 캐시되고 최대 매시간마다 재검증됨을 의미합니다.
 - React의 `cache` 함수는 데이터 요청을 [메모이제이션](/docs/nextjs/caching/request-memoization)하기 위해 사용됩니다.
 
-```ts filename="utils/get-item.ts" switcher
+```ts:"utils/get-item.ts" switcher
 import { cache } from 'react'
 
 export const revalidate = 3600 // 데이터를 최대 매시간마다 재검증합니다.
@@ -289,7 +289,7 @@ export const getItem = cache(async (id: string) => {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="utils/get-item.js" switcher
+```js:"utils/get-item.js" switcher
 import { cache } from 'react'
 
 export const revalidate = 3600 // 데이터를 최대 매시간마다 재검증합니다.
@@ -303,7 +303,7 @@ export const getItem = cache(async (id) => {
 
 `getItem` 함수가 두 번 호출되더라도 데이터베이스에는 한 번의 쿼리만 수행됩니다.
 
-```tsx filename="app/item/layout.tsx" switcher
+```tsx:"app/item/layout.tsx" switcher
 import { getItem } from '@/utils/get-item'
 
 export default async function Layout({
@@ -317,7 +317,7 @@ export default async function Layout({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/item/layout.js" switcher
+```jsx:"app/item/layout.js" switcher
 import { getItem } from '@/utils/get-item'
 
 export default async function Layout({ params: { id } }) {
@@ -327,7 +327,7 @@ export default async function Layout({ params: { id } }) {
 ```
 </details>
 
-```tsx filename="app/item/[id]/page.tsx" switcher
+```tsx:"app/item/[id]/page.tsx" switcher
 import { getItem } from '@/utils/get-item'
 
 export default async function Page({
@@ -342,7 +342,7 @@ export default async function Page({
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/item/[id]/page.js" switcher
+```jsx:"app/item/[id]/page.js" switcher
 import { getItem } from '@/utils/get-item'
 
 export default async function Page({ params: { id } }) {

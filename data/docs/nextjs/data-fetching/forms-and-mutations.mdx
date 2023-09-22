@@ -18,7 +18,7 @@ summary: Next.js로 폼 제출과 데이터 변이를 어떻게 처리하는지 
 
 `next.config.js` 파일에서 서버 액션을 활성화하세요:
 
-```js filename="next.config.js"
+```js:"next.config.js"
 module.exports = {
   experimental: {
     serverActions: true,
@@ -48,7 +48,7 @@ module.exports = {
 
 서버 전용 폼을 생성하려면, 서버 컴포넌트에서 서버 액션을 정의하세요. 액션은 함수 상단의 `"use server"` 지시문과 함께 인라인으로 정의되거나, 파일 상단의 지시문을 포함한 별도의 파일에서 정의될 수 있습니다.
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 export default function Page() {
   async function create(formData: FormData) {
     'use server'
@@ -62,7 +62,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.jsx" switcher
+```jsx:"app/page.jsx" switcher
 export default function Page() {
   async function create(formData) {
     'use server'
@@ -82,7 +82,7 @@ export default function Page() {
 
 서버 액션은 필요에 따라 [Next.js 캐시](/docs/nextjs/caching)를 무효화할 수 있게 합니다. [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)를 사용하여 전체 라우트 세그먼트를 무효화할 수 있습니다:
 
-```ts filename="app/actions.ts" switcher
+```ts:"app/actions.ts" switcher
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -94,7 +94,7 @@ export default async function submit() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/actions.js" switcher
+```js:"app/actions.js" switcher
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -108,7 +108,7 @@ export default async function submit() {
 
 또는 [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag)를 사용하여 캐시 태그를 사용하여 특정 데이터 가져오기를 무효화할 수 있습니다:
 
-```ts filename="app/actions.ts" switcher
+```ts:"app/actions.ts" switcher
 'use server'
 
 import { revalidateTag } from 'next/cache'
@@ -120,7 +120,7 @@ export default async function submit() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/actions.js" switcher
+```js:"app/actions.js" switcher
 'use server'
 
 import { revalidateTag } from 'next/cache'
@@ -136,7 +136,7 @@ export default async function submit() {
 ### 리다이렉팅
 서버 액션의 완료 후 사용자를 다른 라우트로 리다이렉트하려면 [`redirect`](https://nextjs.org/docs/app/api-reference/functions/redirect)와 절대 또는 상대 URL을 사용할 수 있습니다:
 
-```ts filename="app/actions.ts" switcher
+```ts:"app/actions.ts" switcher
 'use server'
 
 import { redirect } from 'next/navigation'
@@ -150,7 +150,7 @@ export default async function submit() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/actions.js" switcher
+```js:"app/actions.js" switcher
 'use server'
 
 import { redirect } from 'next/navigation'
@@ -170,7 +170,7 @@ export default async function submit() {
 
 더 고급 서버 측 검증을 위해 [zod](https://zod.dev/)와 같은 스키마 검증 라이브러리를 사용하여 파싱된 폼 데이터의 구조를 검증하세요:
 
-```tsx filename="app/actions.ts" switcher
+```tsx:"app/actions.ts" switcher
 import { z } from 'zod'
 
 const schema = z.object({
@@ -186,7 +186,7 @@ export default async function submit(formData: FormData) {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/actions.js" switcher
+```jsx:"app/actions.js" switcher
 import { z } from 'zod'
 
 const schema = z.object({
@@ -205,7 +205,7 @@ export default async function submit(formData) {
 ### 로딩 상태 표시
 서버에서 폼을 제출할 때 로딩 상태를 표시하기 위해 `useFormStatus` 훅을 사용하세요:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 'use client'
 
 import { experimental_useFormStatus as useFormStatus } from 'react-dom'
@@ -222,7 +222,7 @@ function SubmitButton() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.jsx" switcher
+```jsx:"app/page.jsx" switcher
 'use client'
 
 import { experimental_useFormStatus as useFormStatus } from 'react-dom'
@@ -249,7 +249,7 @@ function SubmitButton() {
 
 서버 액션은 [직렬화 가능한 객체](https://developer.mozilla.org/en-US/docs/Glossary/Serialization)를 반환할 수도 있습니다. 예를 들어, 서버 액션이 새 항목을 생성하는 오류를 처리하고, 성공 또는 오류 메시지를 반환할 수 있습니다:
 
-```ts filename="app/actions.ts" switcher
+```ts:"app/actions.ts" switcher
 'use server'
 
 export async function create(formData: FormData) {
@@ -264,7 +264,7 @@ export async function create(formData: FormData) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/actions.js" switcher
+```js:"app/actions.js" switcher
 'use server'
 
 export async function create(formData) {
@@ -281,7 +281,7 @@ export async function create(formData) {
 
 그런 다음 클라이언트 컴포넌트에서 이 값을 읽고 상태에 저장하여 컴포넌트가 서버 액션의 결과를 뷰어에게 표시하도록 할 수 있습니다.
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 'use client'
 
 import { create } from './actions'
@@ -306,7 +306,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.jsx" switcher
+```jsx:"app/page.jsx" switcher
 'use client'
 
 import { create } from './actions'
@@ -341,7 +341,7 @@ export default function Page() {
 
 서버 액션이 완료되기 전에 UI를 낙관적으로 업데이트하려면 `useOptimistic`를 사용하세요. 이렇게 하면 응답을 기다리는 대신 미리 UI를 업데이트할 수 있습니다.
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 'use client'
 
 import { experimental_useOptimistic as useOptimistic } from 'react'
@@ -382,7 +382,7 @@ export function Thread({ messages }: { messages: Message[] }) {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.jsx" switcher
+```jsx:"app/page.jsx" switcher
 'use client'
 
 import { experimental_useOptimistic as useOptimistic } from 'react'
@@ -421,7 +421,7 @@ export function Thread({ messages }) {
 
 서버 액션 내에서 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) 함수를 사용하여 쿠키를 설정할 수 있습니다:
 
-```ts filename="app/actions.ts" switcher
+```ts:"app/actions.ts" switcher
 'use server'
 
 import { cookies } from 'next/headers'
@@ -433,7 +433,7 @@ export async function create() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/actions.js" switcher
+```js:"app/actions.js" switcher
 'use server'
 
 import { cookies } from 'next/headers'
@@ -449,7 +449,7 @@ export async function create() {
 
 서버 액션 내에서 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) 함수를 사용하여 쿠키를 읽을 수 있습니다:
 
-```ts filename="app/actions.ts" switcher
+```ts:"app/actions.ts" switcher
 'use server'
 
 import { cookies } from 'next/headers'
@@ -461,7 +461,7 @@ export async function read() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/actions.js" switcher
+```js:"app/actions.js" switcher
 'use server'
 
 import { cookies } from 'next/headers'
@@ -477,7 +477,7 @@ export async function read() {
 
 서버 액션 내에서 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) 함수를 사용하여 쿠키를 삭제할 수 있습니다:
 
-```ts filename="app/actions.ts" switcher
+```ts:"app/actions.ts" switcher
 'use server'
 
 import { cookies } from 'next/headers'
@@ -489,7 +489,7 @@ export async function delete() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/actions.js" switcher
+```js:"app/actions.js" switcher
 'use server'
 
 import { cookies } from 'next/headers'

@@ -10,7 +10,7 @@ Next.js는 `.scss`와 `.sass` 확장자 모두를 지원하는 내장 Sass 지�
 
 먼저 [`sass`](https://github.com/sass/sass)를 설치하세요:
 
-```bash filename="터미널"
+```bash:"터미널"
 npm install --save-dev sass
 ```
 
@@ -26,7 +26,7 @@ npm install --save-dev sass
 
 Sass 컴파일러를 설정하고 싶다면, `next.config.js`의 `sassOptions`를 사용하세요.
 
-```js filename="next.config.js"
+```js:"next.config.js"
 const path = require('path')
 
 module.exports = {
@@ -42,7 +42,7 @@ Next.js는 CSS 모듈 파일에서 내보낸 Sass 변수를 지원합니다.
 
 예를 들어, 내보낸 `primaryColor` Sass 변수를 사용하는 경우:
 
-```scss filename="app/variables.module.scss"
+```scss:"app/variables.module.scss"
 $primary-color: #64ff00;
 
 :export {
@@ -50,7 +50,7 @@ $primary-color: #64ff00;
 }
 ```
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 // 루트 `/` URL로 매핑됩니다
 
 import variables from './variables.module.scss'

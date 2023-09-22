@@ -21,7 +21,7 @@ summary: 라우트 세그먼트와 그 중첩된 자식들을 React 오류 경�
 
 !["error.js 특수 파일"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Ferror-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-```tsx filename="app/dashboard/error.tsx" switcher
+```tsx:"app/dashboard/error.tsx" switcher
 'use client' // 오류 컴포넌트는 클라이언트 컴포넌트이어야 합니다.
 
 import { useEffect } from 'react'
@@ -56,7 +56,7 @@ export default function Error({
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/error.js" switcher
+```jsx:"app/dashboard/error.js" switcher
 'use client' // 오류 컴포넌트는 클라이언트 컴포넌트이어야 합니다.
 
 import { useEffect } from 'react'
@@ -101,7 +101,7 @@ export default function Error({ error, reset }) {
 
 오류 컴포넌트는 `reset()` 함수를 사용하여 사용자에게 오류에서 복구하도록 시도할 수 있습니다. 실행될 때, 이 함수는 오류 경계의 내용을 다시 렌더링하려고 시도합니다. 성공하면, 대체 오류 컴포넌트는 다시 렌더링의 결과로 교체됩니다.
 
-```tsx filename="app/dashboard/error.tsx" switcher
+```tsx:"app/dashboard/error.tsx" switcher
 'use client'
 
 export default function Error({
@@ -122,7 +122,7 @@ export default function Error({
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/error.js" switcher
+```jsx:"app/dashboard/error.js" switcher
 'use client'
 
 export default function Error({ error, reset }) {
@@ -173,7 +173,7 @@ export default function Error({ error, reset }) {
 
 `global-error.js`가 정의되어 있더라도, 전역적으로 공유되는 UI와 브랜딩을 포함하는 루트 레이아웃 **내부**에서 렌더링될 대체 컴포넌트를 정의하는 루트 `error.js`를 정의하는 것이 여전히 권장됩니다.
 
-```tsx filename="app/global-error.tsx" switcher
+```tsx:"app/global-error.tsx" switcher
 'use client'
 
 export default function GlobalError({
@@ -195,7 +195,7 @@ export default function GlobalError({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/global-error.js" switcher
+```jsx:"app/global-error.js" switcher
 'use client'
 
 export default function GlobalError({ error, reset }) {

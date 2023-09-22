@@ -17,7 +17,7 @@ Next.js는 이러한 정적 내보내기를 지원하기 때문에, HTML/CSS/JS 
 
 정적 내보내기를 활성화하려면 `next.config.js` 내의 출력 모드를 변경하십시오:
 
-```js filename="next.config.js" highlight={5}
+```js:"next.config.js" highlight={5}
 /**
  * @type {import('next').NextConfig}
  */
@@ -52,7 +52,7 @@ Next.js의 핵심은 정적 내보내기를 지원하도록 설계되었습니�
 
 결과 컴포넌트는 초기 페이지 로드를 위한 정적 HTML로 렌더링되며, 라우트 간의 클라이언트 탐색을 위한 정적 페이로드로 렌더링됩니다. 서버 컴포넌트를 정적 내보내기로 사용할 때 [동적 서버 함수](#지원되지-않는-기능)를 사용하지 않는 한 변경할 필요가 없습니다.
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 export default async function Page() {
   // 이 fetch는 `next build` 중 서버에서 실행됩니다.
   const res = await fetch('https://api.example.com/...')
@@ -66,7 +66,7 @@ export default async function Page() {
 
 클라이언트에서 데이터를 가져오려면 [SWR](https://github.com/vercel/swr)을 사용하여 요청을 메모이제이션하기 위해 클라이언트 컴포넌트를 사용할 수 있습니다.
 
-```tsx filename="app/other/page.tsx" switcher
+```tsx:"app/other/page.tsx" switcher
 'use client'
 
 import useSWR from 'swr'
@@ -86,7 +86,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/other/page.js" switcher
+```jsx:"app/other/page.js" switcher
 'use client'
 
 import useSWR from 'swr'
@@ -108,7 +108,7 @@ export default function Page() {
 
 라우트 전환은 클라이언트 측에서 발생하기 때문에 이는 전통적인 SPA처럼 동작합니다. 예를 들어, 아래의 인덱스 라우트는 클라이언트에서 다른 포스트로 이동할 수 있게 합니다:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import Link from 'next/link'
 
 export default function Page() {
@@ -130,7 +130,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 import Link from 'next/link'
 
 export default function Page() {
@@ -151,7 +151,7 @@ export default function Page() {
 
 [이미지 최적화](/docs/nextjs/optimizing/images)는 `next.config.js`에서 사용자 정의 이미지 로더를 정의함으로써 `next/image`와 함께 정적으로 내보내어 사용할 수 있습니다. 예를 들어, Cloudinary와 같은 서비스를 사용하여 이미지를 최적화할 수 있습니다:
 
-```js filename="next.config.js"
+```js:"next.config.js"
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
@@ -166,7 +166,7 @@ module.exports = nextConfig
 
 이 사용자 정의 로더는 원격 소스에서 이미지를 가져오는 방법을 정의합니다. 예를 들어, 아래의 로더는 Cloudinary의 URL을 구성합니다:
 
-```ts filename="my-loader.ts" switcher
+```ts:"my-loader.ts" switcher
 export default function cloudinaryLoader({
   src,
   width,
@@ -186,7 +186,7 @@ export default function cloudinaryLoader({
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="my-loader.js" switcher
+```js:"my-loader.js" switcher
 export default function cloudinaryLoader({ src, width, quality }) {
   const params = ['f_auto', 'c_limit', `w_${width}`, \
     `q_${quality || 'auto'}`]
@@ -200,7 +200,7 @@ export default function cloudinaryLoader({ src, width, quality }) {
 
 그런 다음 Cloudinary의 이미지에 대한 상대 경로를 정의하여 애플리케이션에서 `next/image`를 사용할 수 있습니다:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import Image from 'next/image'
 
 export default function Page() {
@@ -209,7 +209,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 import Image from 'next/image'
 
 export default function Page() {
@@ -228,7 +228,7 @@ export default function Page() {
 
 라우트 핸들러는 `next build`를 실행할 때 정적 응답을 렌더링합니다. `GET` HTTP 동사만 지원됩니다. 이는 캐싱된 또는 캐싱되지 않은 데이터에서 정적 HTML, JSON, TXT 또는 기타 파일을 생성하는 데 사용될 수 있습니다. 예를 들면:
 
-```ts filename="app/data.json/route.ts" switcher
+```ts:"app/data.json/route.ts" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -237,7 +237,7 @@ export async function GET() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/data.json/route.js" switcher
+```js:"app/data.json/route.js" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -313,7 +313,7 @@ export const dynamic = 'error'
 
 Nginx와 같은 정적 호스트를 사용하는 경우 들어오는 요청에서 올바른 파일로의 리라이트를 설정할 수 있습니다:
 
-```nginx filename="nginx.conf"
+```nginx:"nginx.conf"
 server {
   listen 80;
   server_name acme.com;

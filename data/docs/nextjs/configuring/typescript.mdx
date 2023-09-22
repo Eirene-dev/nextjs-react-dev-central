@@ -21,7 +21,7 @@ Next.js는 React 애플리케이션을 구축하기 위한 TypeScript 중심의 
 
 `create-next-app`은 이제 기본적으로 TypeScript를 포함하고 배포됩니다.
 
-```bash filename="터미널"
+```bash:"터미널"
 npx create-next-app@latest
 ```
 
@@ -75,7 +75,7 @@ Next.js는 `next/link`를 사용할 때 타이핑 오류 및 기타 오류를 �
 
 이 기능을 사용하려면 `experimental.typedRoutes`를 활성화하고 프로젝트에서 TypeScript를 사용해야 합니다.
 
-```js filename="next.config.js"
+```js:"next.config.js"
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
@@ -138,7 +138,7 @@ Next.js 13은 **향상된 타입 안정성**을 가지고 있습니다. 이에�
 
 평범한 TypeScript로 응답 데이터를 타입화할 수 있습니다. 예를 들면:
 
-```tsx filename="app/page.tsx"
+```tsx:"app/page.tsx"
 async function getData() {
   const res = await fetch('https://api.example.com/...')
   // 반환 값은 직렬화되지 *않습니다*
@@ -216,7 +216,7 @@ module.exports = nextConfig
 
 `next.config.js`를 열고 `typescript` 설정에서 `ignoreBuildErrors` 옵션을 활성화하십시오:
 
-```js filename="next.config.js"
+```js:"next.config.js"
 module.exports = {
   typescript: {
     // !! 경고 !!

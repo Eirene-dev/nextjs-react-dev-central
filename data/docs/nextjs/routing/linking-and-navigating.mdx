@@ -21,7 +21,7 @@ Next.js에서 라우트 간에 이동하는 두 가지 방법이 있습니다:
 
 `next/link`에서 가져와서 `href` prop을 컴포넌트에 전달하여 사용할 수 있습니다:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import Link from 'next/link'
 
 export default function Page() {
@@ -31,7 +31,7 @@ export default function Page() {
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 import Link from 'next/link'
 
 export default function Page() {
@@ -48,7 +48,7 @@ export default function Page() {
 
 [동적 세그먼트](/docs/nextjs/routing/dynamic-routes)로 링크할 때, 블로그 포스트의 목록을 생성하는 것과 같은 방법으로 [템플릿 리터럴과 보간](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)을 사용할 수 있습니다:
 
-```jsx filename="app/blog/PostList.js"
+```jsx:"app/blog/PostList.js"
 import Link from 'next/link'
 
 export default function PostList({ posts }) {
@@ -68,7 +68,7 @@ export default function PostList({ posts }) {
 
 [`usePathname()`](https://nextjs.org/docs/app/api-reference/functions/use-pathname)을 사용하여 링크가 활성 상태인지 확인할 수 있습니다. 예를 들어, 현재 `pathname`이 링크의 `href`와 일치하는 경우 활성 링크에 클래스를 추가하려면:
 
-```jsx filename="app/ui/Navigation.js"
+```jsx:"app/ui/Navigation.js"
 'use client'
 
 import { usePathname } from 'next/navigation'
@@ -138,7 +138,7 @@ router.push('/dashboard', { scroll: false })
 
 이 훅은 클라이언트 컴포넌트 내에서만 사용할 수 있으며 `next/navigation`에서 가져옵니다.
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 'use client'
 
 import { useRouter } from 'next/navigation'

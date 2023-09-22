@@ -36,7 +36,7 @@ summary: 독립적으로 탐색할 수 있는 동일한 뷰에서 하나 이상�
 
 위의 폴더 구조는 `app/layout.js` 내의 컴포넌트가 `@analytics` 및 `@team` 슬롯 prop을 수락하며, `children` prop과 함께 병렬로 렌더링할 수 있다는 것을 의미합니다:
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 export default function Layout(props: {
   children: React.ReactNode
   analytics: React.ReactNode
@@ -53,7 +53,7 @@ export default function Layout(props: {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 export default function Layout(props) {
   return (
     <>
@@ -99,7 +99,7 @@ export default function Layout(props) {
 
 [`useSelectedLayoutSegment`](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment)와 [`useSelectedLayoutSegments`](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segments) 둘 다 `parallelRoutesKey`를 받아들여, 해당 슬롯 내에서 활성 라우트 세그먼트를 읽을 수 있게 합니다.
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 'use client'
 
 import { useSelectedLayoutSegment } from 'next/navigation'
@@ -114,7 +114,7 @@ export default async function Layout(props: {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 'use client'
 
 import { useSelectedLayoutSegment } from 'next/navigation'
@@ -139,7 +139,7 @@ export default async function Layout(props) {
 
 `@auth` 슬롯은 `/login` 같은 일치하는 라우트로 이동함으로써 표시될 수 있는 `<Modal>` 컴포넌트를 렌더링합니다.
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 export default async function Layout(props: {
   // ...
   auth: React.ReactNode
@@ -154,7 +154,7 @@ export default async function Layout(props: {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 export default async function Layout(props) {
   return (
     <>
@@ -166,7 +166,7 @@ export default async function Layout(props) {
 ```
 </details>
 
-```tsx filename="app/@auth/login/page.tsx" switcher
+```tsx:"app/@auth/login/page.tsx" switcher
 import { Modal } from 'components/modal'
 
 export default function Login() {
@@ -180,7 +180,7 @@ export default function Login() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/@auth/login/page.js" switcher
+```jsx:"app/@auth/login/page.js" switcher
 import { Modal } from 'components/modal'
 
 export default function Login() {
@@ -196,14 +196,14 @@ export default function Login() {
 
 모달의 내용이 활성화되지 않은 상태에서 렌더링되지 않도록 하려면 `null`을 반환하는 `default.js` 파일을 만들 수 있습니다.
 
-```tsx filename="app/@auth/default.tsx" switcher
+```tsx:"app/@auth/default.tsx" switcher
 export default function Default() {
   return null
 }
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/@auth/default.js" switcher
+```jsx:"app/@auth/default.js" switcher
 export default function Default() {
   return null
 }
@@ -215,7 +215,7 @@ export default function Default() {
 
 모달이 클라이언트 내비게이션을 통해 시작되었다면 예를 들면 `<Link href="/login">`을 사용한다면, `router.back()`을 호출하거나 `Link` 컴포넌트를 사용하여 모달을 닫을 수 있습니다.
 
-```tsx filename="app/@auth/login/page.tsx" highlight="5" switcher
+```tsx:"app/@auth/login/page.tsx" highlight="5" switcher
 'use client'
 import { useRouter } from 'next/navigation'
 import { Modal } from 'components/modal'
@@ -233,7 +233,7 @@ export default async function Login() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/@auth/login/page.js" highlight="5" switcher
+```jsx:"app/@auth/login/page.js" highlight="5" switcher
 'use client'
 import { useRouter } from 'next/navigation'
 import { Modal } from 'components/modal'
@@ -256,14 +256,14 @@ export default async function Login() {
 
 !["병렬 라우트 다이어그램"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-catchall.png&w=1920&q=75&dpl=dpl_AheoaH6KggwueRBPuJE2i4F6XpcR)
 
-```tsx filename="app/@auth/[...catchAll]/page.tsx" switcher
+```tsx:"app/@auth/[...catchAll]/page.tsx" switcher
 export default function CatchAll() {
   return null
 }
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/@auth/[...catchAll]/page.js" switcher
+```jsx:"app/@auth/[...catchAll]/page.js" switcher
 export default function CatchAll() {
   return null
 }
@@ -276,7 +276,7 @@ export default function CatchAll() {
 
 병렬 라우트는 조건부 라우팅을 구현하는 데 사용될 수 있습니다. 예를 들어, 인증 상태에 따라 `@dashboard` 또는 `@login` 라우트를 렌더링 할 수 있습니다.
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 import { getUser } from '@/lib/auth'
 
 export default function Layout({
@@ -292,7 +292,7 @@ export default function Layout({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 import { getUser } from '@/lib/auth'
 
 export default function Layout({ dashboard, login }) {

@@ -23,7 +23,7 @@ summary: Pages 라우터에서 App 라우터로 기존의 Next.js 애플리케�
 
 Next.js 버전 13으로 업데이트하려면 선호하는 패키지 매니저를 사용하여 다음 명령을 실행하세요:
 
-```bash filename="Terminal"
+```bash:"Terminal"
 npm install next@latest react@latest react-dom@latest
 ```
 
@@ -31,7 +31,7 @@ npm install next@latest react@latest react-dom@latest
 
 ESLint를 사용하는 경우 ESLint 버전을 업그레이드해야 합니다:
 
-```bash filename="Terminal"
+```bash:"Terminal"
 npm install -D eslint-config-next@latest
 ```
 
@@ -134,7 +134,7 @@ npm install next@latest
 
 `app` 디렉토리 내에 새로운 `app/layout.tsx` 파일을 생성합니다. 이것은 `app` 내의 모든 루트에 적용되는 [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃)입니다.
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 export default function RootLayout({
   // Layouts must accept a children prop.
   // This will be populated with nested layouts or pages
@@ -152,7 +152,7 @@ export default function RootLayout({
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 export default function RootLayout({
   // Layouts must accept a children prop.
   // This will be populated with nested layouts or pages
@@ -172,7 +172,7 @@ export default function RootLayout({
 
 `app` 디렉토리는 반드시 루트 레이아웃을 포함해야 합니다. 루트 레이아웃은 `<html>`, `<body>` 태그를 정의해야 합니다. Next.js는 자동으로 이들을 생성하지 않습니다.
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -183,7 +183,7 @@ export const metadata: Metadata = {
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 export const metadata = {
   title: 'Home',
   description: 'Welcome to Next.js',
@@ -209,7 +209,7 @@ Next.js는 `pages` 디렉터리에서 페이지별 레이아웃을 달성하기 
 
 **변경 전**
 
-```jsx filename="components/DashboardLayout.js"
+```jsx:"components/DashboardLayout.js"
 export default function DashboardLayout({ children }) {
   return (
     <div>
@@ -221,7 +221,7 @@ export default function DashboardLayout({ children }) {
 ```
 
 
-```jsx filename="pages/dashboard/index.js"
+```jsx:"pages/dashboard/index.js"
 import DashboardLayout from '../components/DashboardLayout'
 
 export default function Page() {
@@ -237,7 +237,7 @@ Page.getLayout = function getLayout(page) {
 
 - `pages/dashboard/index.js`의 `Page.getLayout` 속성을 제거하고 `app` 디렉터리로 페이지를 마이그레이션하기 위한 [단계](#step-4-migrating-pages)를 따릅니다.
 
-  ```jsx filename="app/dashboard/page.js"
+  ```jsx:"app/dashboard/page.js"
   export default function Page() {
     return <p>나의 페이지</p>
   }
@@ -245,7 +245,7 @@ Page.getLayout = function getLayout(page) {
 
 - `DashboardLayout`의 내용을 새로운 [클라이언트 컴포넌트](/docs/nextjs/rendering/client-components)로 이동하여 `pages` 디렉터리의 동작을 유지합니다.
 
-  ```jsx filename="app/dashboard/DashboardLayout.js"
+  ```jsx:"app/dashboard/DashboardLayout.js"
   // 이 지시문은 파일의 맨 위, 모든 import 앞에 있어야 합니다.
   'use client' 
 
@@ -262,7 +262,7 @@ Page.getLayout = function getLayout(page) {
 
 - `DashboardLayout`을 `app` 디렉터리 내 새로운 `layout.js` 파일에 가져옵니다.
 
-  ```jsx filename="app/dashboard/layout.js"
+  ```jsx:"app/dashboard/layout.js"
   import DashboardLayout from './DashboardLayout'
 
   // 이것은 서버 컴포넌트입니다.
@@ -282,7 +282,7 @@ Page.getLayout = function getLayout(page) {
 
 **변경 전:**
 
-```tsx filename="pages/index.tsx" switcher
+```tsx:"pages/index.tsx" switcher
 import Head from 'next/head'
 
 export default function Page() {
@@ -297,7 +297,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="pages/index.js" switcher
+```jsx:"pages/index.js" switcher
 import Head from 'next/head'
 
 export default function Page() {
@@ -314,7 +314,7 @@ export default function Page() {
 
 **변경 후:**
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -327,7 +327,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 export const metadata = {
   title: '나의 페이지 제목',
 }
@@ -363,7 +363,7 @@ export default function Page() {
 - `app` 디렉터리 내에 새로운 파일(예: `app/home-page.tsx` 또는 유사한 이름)을 만들어 클라이언트 컴포넌트를 내보냅니다. 클라이언트 컴포넌트를 정의하려면 파일 상단(모든 가져오기 이전)에 `'use client'` 지시문을 추가합니다.
 - 기본 내보내기된 페이지 컴포넌트를 `pages/index.js`에서 `app/home-page.tsx`로 이동합니다.
 
-```tsx filename="app/home-page.tsx" switcher
+```tsx:"app/home-page.tsx" switcher
 'use client'
 
 // 이것은 클라이언트 컴포넌트입니다. 데이터를 props로 받아오며
@@ -380,7 +380,7 @@ export default function HomePage({ recentPosts }) {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/home-page.js" switcher
+```jsx:"app/home-page.js" switcher
 'use client'
 
 // 이것은 클라이언트 컴포넌트입니다. 데이터를 props로 받아오며
@@ -404,7 +404,7 @@ export default function HomePage({ recentPosts }) {
 - `pages/index.js`에서 데이터를 가져오고 있었다면, 새로운 [데이터 가져오기 API](/docs/nextjs/data-fetching/fetching-caching-and-revalidating)를 사용하여 데이터 가져오기 로직을 직접 서버 컴포넌트로 이동시킵니다. 
 자세한 내용은 [데이터 가져오기 업그레이드 가이드](#단계-6-데이터-가져오기-방법-마이그레이션)를 참고하세요.
 
-  ```tsx filename="app/page.tsx" switcher
+  ```tsx:"app/page.tsx" switcher
   // 클라이언트 컴포넌트를 가져옵니다.
   import HomePage from './home-page'
 
@@ -438,7 +438,7 @@ export default function HomePage({ recentPosts }) {
 - 페이지 변경사항을 감지하기 위해 `useSearchParams`와 `usePathname`을 함께 사용할 수 있습니다. 자세한 내용은 [라우터 이벤트](https://nextjs.org/docs/app/api-reference/functions/use-router#router-events) 섹션을 참고하세요.
 - 이 새로운 후크들은 클라이언트 컴포넌트에서만 지원됩니다. 서버 컴포넌트에서는 사용할 수 없습니다.
 
-```tsx filename="app/example-client-component.tsx" switcher
+```tsx:"app/example-client-component.tsx" switcher
 'use client'
 
 import { useRouter, usePathname, useSearchParams } \
@@ -467,7 +467,7 @@ export default function ExampleClientComponent() {
 
 `pages` 디렉터리는 페이지의 데이터를 가져오기 위해 `getServerSideProps`와 `getStaticProps`를 사용합니다. `app` 디렉터리 내에서 이전의 데이터 가져오기 함수들은 `fetch()`와 `async` React 서버 컴포넌트 위에 구축된 [더 간단한 API](/docs/nextjs/data-fetching)로 대체됩니다.
 
-```tsx filename="app/page.tsx"
+```tsx:"app/page.tsx"
 export default async function Page() {
   // 이 요청은 수동으로 무효화될 때까지 캐시되어야 합니다.
   // `getStaticProps`와 유사합니다.
@@ -494,7 +494,7 @@ export default async function Page() {
 
 `pages` 디렉터리에서 `getServerSideProps`는 서버에서 데이터를 가져와 파일 내 기본으로 내보낸 React 컴포넌트에 props를 전달하는데 사용됩니다. 페이지의 초기 HTML은 서버에서 사전 렌더링되고, 이후 브라우저에서 페이지를 "hydrate"합니다(상호 작용 가능하게 만듭니다).
 
-```jsx filename="pages/dashboard.js"
+```jsx:"pages/dashboard.js"
 // `pages` 디렉터리
 
 export async function getServerSideProps() {
@@ -519,7 +519,7 @@ export default function Dashboard({ projects }) {
 
 `cache` 옵션을 `no-store`로 설정함으로써 가져온 데이터가 [저장되지 않아야 함](/docs/nextjs/data-fetching/fetching-caching-and-revalidating)을 나타낼 수 있습니다. 이는 `pages` 디렉터리의 `getServerSideProps`와 유사합니다.
 
-```tsx filename="app/dashboard/page.tsx"
+```tsx:"app/dashboard/page.tsx"
 // `app` 디렉터리
 
 // 이 함수는 어떠한 이름으로든 지정할 수 있습니다.
@@ -549,7 +549,7 @@ export default async function Dashboard() {
 
 예를 들어, `getServerSideProps`에서 `req` 객체를 검색하고 요청의 쿠키와 헤더를 검색하는 데 사용할 수 있습니다.
 
-```jsx filename="pages/index.js"
+```jsx:"pages/index.js"
 // `pages` 디렉터리
 
 export async function getServerSideProps({ req, query }) {
@@ -569,7 +569,7 @@ export default function Page(props) {
 - [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers): Web Headers API를 기반으로 하며 [서버 컴포넌트](/docs/nextjs/rendering/server-components) 내에서 요청 헤더를 검색하는 데 사용할 수 있습니다.
 - [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies): Web Cookies API를 기반으로 하며 [서버 컴포넌트](/docs/nextjs/rendering/server-components) 내에서 쿠키를 검색하는 데 사용할 수 있습니다.
 
-```tsx filename="app/page.tsx"
+```tsx:"app/page.tsx"
 // `app` 디렉터리
 import { cookies, headers } from 'next/headers'
 
@@ -592,7 +592,7 @@ export default async function Page() {
 
 `pages` 디렉터리에서 `getStaticProps` 함수는 빌드 시간에 페이지를 사전 렌더링하는 데 사용됩니다. 이 함수는 외부 API나 직접 데이터베이스에서 데이터를 가져와 빌드 중 페이지 전체에 이 데이터를 전달하는 데 사용할 수 있습니다.
 
-```jsx filename="pages/index.js"
+```jsx:"pages/index.js"
 // `pages` 디렉터리
 
 export async function getStaticProps() {
@@ -609,7 +609,7 @@ export default function Index({ projects }) {
 
 `app` 디렉터리에서 [`fetch()`](https://nextjs.org/docs/app/api-reference/functions/fetch)로 데이터를 가져올 때 기본적으로 `cache: 'force-cache'`가 되며, 이는 요청 데이터를 수동으로 무효화될 때까지 캐시하게 됩니다. 이것은 `pages` 디렉터리의 `getStaticProps`와 유사합니다.
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 // `app` 디렉터리
 
 // 이 함수는 어떠한 이름으로든 지정할 수 있습니다.
@@ -631,7 +631,7 @@ export default async function Index() {
 
 `pages` 디렉터리에서, `getStaticPaths` 함수는 빌드 시간에 사전 렌더링되어야 할 동적 경로를 정의하는 데 사용됩니다.
 
-```jsx filename="pages/posts/[id].js"
+```jsx:"pages/posts/[id].js"
 // `pages` 디렉터리
 import PostLayout from '@/components/post-layout'
 
@@ -657,7 +657,7 @@ export default function Post({ post }) {
 
 [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params)는 `getStaticPaths`와 유사하게 동작하지만, 라우트 매개변수를 반환하기 위한 간소화된 API를 가지고 있으며 [레이아웃](/docs/nextjs/routing/pages-and-layouts) 내에서 사용될 수 있습니다. `generateStaticParams`의 반환 형태는 중첩된 `param` 객체 배열이나 해결된 경로 문자열 대신 세그먼트 배열입니다.
 
-```jsx filename="app/posts/[id]/page.js"
+```jsx:"app/posts/[id]/page.js"
 // `app` 디렉터리
 import PostLayout from '@/components/post-layout'
 
@@ -686,7 +686,7 @@ export default async function Post({ params }) {
 
 `pages` 디렉터리에서, `getStaticPaths`에서 반환되는 `fallback` 속성은 빌드 시간에 사전 렌더링되지 않은 페이지의 동작을 정의하는 데 사용됩니다. 이 속성은 페이지가 생성되는 동안 대체 페이지를 표시하려면 `true`로 설정할 수 있고, 404 페이지를 표시하려면 `false`로 설정하거나, 요청 시간에 페이지를 생성하려면 `blocking`으로 설정할 수 있습니다.
 
-```jsx filename="pages/posts/[id].js"
+```jsx:"pages/posts/[id].js"
 // `pages` 디렉터리
 
 export async function getStaticPaths() {
@@ -712,7 +712,7 @@ export default function Post({ post }) {
 
 이는 `pages` 디렉터리의 `getStaticPaths`의 `fallback: true | false | 'blocking'` 옵션을 대체합니다. 스트리밍과의 차이 때문에 `dynamicParams`에 `fallback: 'blocking'` 옵션이 포함되지 않았습니다.
 
-```jsx filename="app/posts/[id]/page.js"
+```jsx:"app/posts/[id]/page.js"
 // `app` 디렉터리
 
 export const dynamicParams = true;
@@ -738,7 +738,7 @@ export default async function Post({ params }) {
 
 `pages` 디렉터리에서, `getStaticProps` 함수를 사용하면 특정 시간 후 페이지를 자동으로 재생성하기 위해 `revalidate` 필드를 추가할 수 있습니다.
 
-```jsx filename="pages/index.js"
+```jsx:"pages/index.js"
 // `pages` 디렉터리
 
 export async function getStaticProps() {
@@ -762,7 +762,7 @@ export default function Index({ posts }) {
 
 `app` 디렉터리에서, [`fetch()`](https://nextjs.org/docs/app/api-reference/functions/fetch)로 데이터를 가져올 때 `revalidate`를 사용하여 지정된 초 동안 요청을 캐시할 수 있습니다.
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 // `app` 디렉터리
 
 async function getPosts() {
@@ -786,11 +786,11 @@ API 라우트는 `pages/api` 디렉터리에서 어떠한 변경도 없이 계�
 
 Route Handlers는 Web [Request](https://developer.mozilla.org/docs/Web/API/Request) 및 [Response](https://developer.mozilla.org/docs/Web/API/Response) API를 사용하여 주어진 라우트에 대한 사용자 정의 요청 핸들러를 생성할 수 있게 해줍니다.
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 export async function GET(request: Request) {}
 ```
 
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 export async function GET(request) {}
 ```
 
@@ -811,7 +811,7 @@ export async function GET(request) {}
 
 Tailwind CSS를 사용하고 있다면, `tailwind.config.js` 파일에 `app` 디렉터리를 추가해야 합니다:
 
-```js filename="tailwind.config.js"
+```js:"tailwind.config.js"
 module.exports = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}', // <-- 이 줄을 추가합니다
@@ -823,7 +823,7 @@ module.exports = {
 
 또한 `app/layout.js` 파일에서 전역 스타일을 가져와야 합니다:
 
-```jsx filename="app/layout.js"
+```jsx:"app/layout.js"
 import '../styles/globals.css'
 
 export default function RootLayout({ children }) {

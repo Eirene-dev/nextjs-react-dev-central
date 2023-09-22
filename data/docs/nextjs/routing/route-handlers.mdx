@@ -21,12 +21,12 @@ summary: 웹의 Request와 Response API를 사용하여 주어진 라우트에 �
 
 라우트 핸들러는 `app` 디렉토리 내 [`route.js|ts` 파일](https://nextjs.org/docs/app/api-reference/file-conventions/route)에 정의됩니다:
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 export async function GET(request: Request) {}
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 export async function GET(request) {}
 ```
 </details>
@@ -49,7 +49,7 @@ export async function GET(request) {}
 
 라우트 핸들러는 `Response` 객체와 함께 `GET` 메서드를 사용할 때 기본적으로 캐싱됩니다.
 
-```ts filename="app/items/route.ts" switcher
+```ts:"app/items/route.ts" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -66,7 +66,7 @@ export async function GET() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/items/route.js" switcher
+```js:"app/items/route.js" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -96,7 +96,7 @@ export async function GET() {
 
 예시:
 
-```ts filename="app/products/api/route.ts" switcher
+```ts:"app/products/api/route.ts" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -115,7 +115,7 @@ export async function GET(request: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/products/api/route.js" switcher
+```js:"app/products/api/route.js" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET(request) {
@@ -135,7 +135,7 @@ export async function GET(request) {
 </details>
 마찬가지로, `POST` 메서드는 라우트 핸들러가 동적으로 평가되게 합니다.
 
-```ts filename="app/items/route.ts" switcher
+```ts:"app/items/route.ts" switcher
 import { NextResponse } from 'next/server'
 
 export async function POST() {
@@ -155,7 +155,7 @@ export async function POST() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/items/route.js" switcher
+```js:"app/items/route.js" switcher
 import { NextResponse } from 'next/server'
 
 export async function POST() {
@@ -193,7 +193,7 @@ export async function POST() {
 
 각 `route.js` 또는 `page.js` 파일은 해당 라우트의 모든 HTTP 동사를 인수로 합니다.
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 export default function Page() {
   return <h1>Hello, Next.js!</h1>
 }
@@ -213,7 +213,7 @@ export async function POST(request) {}
 
 [`next.revalidate`](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-재검증) 옵션을 사용하여 [캐시된 데이터를 재검증](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-재검증)할 수 있습니다:
 
-```ts filename="app/items/route.ts" switcher
+```ts:"app/items/route.ts" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -227,7 +227,7 @@ export async function GET() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/items/route.js" switcher
+```js:"app/items/route.js" switcher
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -258,7 +258,7 @@ Route 핸들러는 Next.js의 [`cookies`](https://nextjs.org/docs/app/api-refere
 
 이 `cookies` 인스턴스는 읽기 전용입니다. 쿠키를 설정하려면 [`Set-Cookie`](https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie) 헤더를 사용하여 새로운 `Response`를 반환해야 합니다.
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
@@ -273,7 +273,7 @@ export async function GET(request: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 import { cookies } from 'next/headers'
 
 export async function GET(request) {
@@ -290,7 +290,7 @@ export async function GET(request) {
 
 대안으로 기본 Web API 위에 추상화를 사용하여 쿠키를 읽을 수 있습니다. ([`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request)):
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 import { type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -299,7 +299,7 @@ export async function GET(request: NextRequest) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 export async function GET(request) {
   const token = request.cookies.get('token')
 }
@@ -314,7 +314,7 @@ export async function GET(request) {
 
 이 `headers` 인스턴스는 읽기 전용입니다. 헤더를 설정하려면 새로운 `headers`가 포함된 새로운 `Response`를 반환해야 합니다.
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 import { headers } from 'next/headers'
 
 export async function GET(request: Request) {
@@ -329,7 +329,7 @@ export async function GET(request: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 import { headers } from 'next/headers'
 
 export async function GET(request) {
@@ -346,7 +346,7 @@ export async function GET(request) {
 
 대안으로, 헤더를 읽기 위해 기본 Web API 위에 추상화를 사용할 수 있습니다. ([`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request)):
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 import { type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -355,7 +355,7 @@ export async function GET(request: NextRequest) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 export async function GET(request) {
   const requestHeaders = new Headers(request.headers)
 }
@@ -363,7 +363,7 @@ export async function GET(request) {
 </details>
 ### 리다이렉트
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 import { redirect } from 'next/navigation'
 
 export async function GET(request: Request) {
@@ -372,7 +372,7 @@ export async function GET(request: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 import { redirect } from 'next/navigation'
 
 export async function GET(request) {
@@ -389,7 +389,7 @@ export async function GET(request) {
 
 라우트 핸들러는 [동적 세그먼트](/docs/nextjs/routing/dynamic-routes)를 사용하여 동적 데이터로부터 요청 핸들러를 생성할 수 있습니다.
 
-```ts filename="app/items/[slug]/route.ts" switcher
+```ts:"app/items/[slug]/route.ts" switcher
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
@@ -399,7 +399,7 @@ export async function GET(
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/items/[slug]/route.js" switcher
+```js:"app/items/[slug]/route.js" switcher
 export async function GET(request, { params }) {
   const slug = params.slug // 'a', 'b', 또는 'c'
 }
@@ -417,7 +417,7 @@ export async function GET(request, { params }) {
 
 스트리밍은 AI 생성 컨텐츠에 주로 OpenAI와 같은 대형 언어 모델(LLMs)과 함께 사용됩니다. [AI SDK](https://sdk.vercel.ai/docs)에 대해 더 자세히 알아보세요.
 
-```ts filename="app/api/chat/route.ts" switcher
+```ts:"app/api/chat/route.ts" switcher
 import { Configuration, OpenAIApi } from 'openai-edge'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 
@@ -454,7 +454,7 @@ export async function POST(req: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/chat/route.js" switcher
+```js:"app/api/chat/route.js" switcher
 import { Configuration, OpenAIApi } from 'openai-edge'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 
@@ -493,7 +493,7 @@ export async function POST(req) {
 
 이런 추상화는 스트림을 생성하기 위해 웹 API를 사용합니다. 또한 기본 웹 API를 직접 사용할 수도 있습니다.
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 // https://developer.mozilla.org/\
 // docs/Web/API/ReadableStream#convert_async_iterator_to_stream
 function iteratorToStream(iterator: any) {
@@ -535,7 +535,7 @@ export async function GET() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 // https://developer.mozilla.org/\
 // docs/Web/API/ReadableStream#convert_async_iterator_to_stream
 function iteratorToStream(iterator) {
@@ -583,7 +583,7 @@ export async function GET() {
 
 표준 웹 API 메서드를 사용하여 `Request` 본문을 읽을 수 있습니다:
 
-```ts filename="app/items/route.ts" switcher
+```ts:"app/items/route.ts" switcher
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
@@ -593,7 +593,7 @@ export async function POST(request: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/items/route.js" switcher
+```js:"app/items/route.js" switcher
 import { NextResponse } from 'next/server'
 
 export async function POST(request) {
@@ -607,7 +607,7 @@ export async function POST(request) {
 
 `request.formData()` 함수를 사용하여 `FormData`를 읽을 수 있습니다:
 
-```ts filename="app/items/route.ts" switcher
+```ts:"app/items/route.ts" switcher
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
@@ -619,7 +619,7 @@ export async function POST(request: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/items/route.js" switcher
+```js:"app/items/route.js" switcher
 import { NextResponse } from 'next/server'
 
 export async function POST(request) {
@@ -637,7 +637,7 @@ export async function POST(request) {
 
 표준 웹 API 메서드를 사용하여 `Response`에 CORS 헤더를 설정할 수 있습니다:
 
-```ts filename="app/api/route.ts" switcher
+```ts:"app/api/route.ts" switcher
 export async function GET(request: Request) {
   return new Response('안녕, Next.js!', {
     status: 200,
@@ -651,7 +651,7 @@ export async function GET(request: Request) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/api/route.js" switcher
+```js:"app/api/route.js" switcher
 export async function GET(request) {
   return new Response('안녕, Next.js!', {
     status: 200,
@@ -680,7 +680,7 @@ export const runtime = 'edge' // 기본값은 'nodejs'
 
 라우트 핸들러를 사용하여 비-UI 콘텐츠를 반환할 수 있습니다. [`sitemap.xml`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-sitemap), [`robots.txt`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots#generate-a-robots-file), [`앱 아이콘`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#generate-icons-using-code-js-ts-tsx), 및 [오픈 그래프 이미지](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image) 모두 내장 지원이 있습니다.
 
-```ts filename="app/rss.xml/route.ts" switcher
+```ts:"app/rss.xml/route.ts" switcher
 export async function GET() {
   return new Response(`<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
@@ -696,7 +696,7 @@ export async function GET() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/rss.xml/route.js" switcher
+```js:"app/rss.xml/route.js" switcher
 export async function GET() {
   return new Response(`<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
@@ -716,7 +716,7 @@ export async function GET() {
 
 라우트 핸들러는 페이지와 레이아웃과 동일한 [라우트 세그먼트 구성](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용합니다.
 
-```ts filename="app/items/route.ts" switcher
+```ts:"app/items/route.ts" switcher
 export const dynamic = 'auto'
 export const dynamicParams = true
 export const revalidate = false
@@ -726,7 +726,7 @@ export const preferredRegion = 'auto'
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="app/items/route.js" switcher
+```js:"app/items/route.js" switcher
 export const dynamic = 'auto'
 export const dynamicParams = true
 export const revalidate = false

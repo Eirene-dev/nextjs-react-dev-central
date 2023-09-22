@@ -42,7 +42,7 @@ import Image from 'next/image'
 
 Next.js는 가져온 파일을 기반으로 이미지의 `width`와 `height`를 [자동으로 결정](#이미지-크기-조절)합니다. 이 값들은 이미지 로딩 중 [누적 레이아웃 이동](https://nextjs.org/learn/seo/web-performance/cls)을 방지하는 데 사용됩니다.
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 import Image from 'next/image'
 import profilePic from './me.png'
 
@@ -70,7 +70,7 @@ Next.js는 빌드 프로세스 중에 원격 파일에 접근할 수 없으므�
 
 `width`와 `height` 속성은 이미지의 올바른 종횡비를 추론하고 이미지 로딩으로 인한 레이아웃 이동을 방지하는 데 사용됩니다. `width`와 `height`는 이미지 파일의 렌더링 크기를 결정하지 _않습니다_. [이미지 크기 조정](#이미지-크기-조절)에 대해 더 자세히 알아보세요.
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 import Image from 'next/image'
 
 export default function Page() {
@@ -87,7 +87,7 @@ export default function Page() {
 
 이미지를 안전하게 최적화하려면 `next.config.js`에서 지원되는 URL 패턴 목록을 정의하세요. 악의적인 사용을 방지하기 위해 가능한 한 구체적으로 설정하세요. 예를 들면, 다음 설정은 특정 AWS S3 버킷에서의 이미지만 허용합니다:
 
-```js filename="next.config.js"
+```js:"next.config.js"
 module.exports = {
   images: {
     remotePatterns: [
@@ -136,7 +136,7 @@ LCP 이미지를 식별한 후, 속성을 다음과 같이 추가할 수 있습�
 
 ### 코드
 
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 import Image from 'next/image'
 import profilePic from '../public/me.png'
 

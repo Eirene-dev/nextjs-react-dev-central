@@ -116,7 +116,7 @@ Next.js는 라우팅할 때 배경에서 애플리케이션의 최신 버전을 
 
 > **알아두면 좋아요**: 수동 신호 처리는 `next dev`에서 사용할 수 없습니다.
 
-```json filename="package.json"
+```json:"package.json"
 {
   "scripts": {
     "dev": "next dev",
@@ -126,7 +126,7 @@ Next.js는 라우팅할 때 배경에서 애플리케이션의 최신 버전을 
 }
 ```
 
-```js filename="pages/_document.js"
+```js:"pages/_document.js"
 if (process.env.NEXT_MANUAL_SIG_HANDLE) {
   // 여러분의 사용자 정의
 

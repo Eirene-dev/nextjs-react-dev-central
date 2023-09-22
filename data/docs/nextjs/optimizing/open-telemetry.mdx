@@ -40,13 +40,13 @@ OpenTelemetry는 확장 가능하지만 제대로 설정하는 것은 다소 장
 
 시작하려면 `@vercel/otel`을 설치해야 합니다:
 
-```bash filename="터미널"
+```bash:"터미널"
 npm install @vercel/otel
 ```
 
 다음으로 프로젝트의 **루트 디렉토리**에 사용자 지정 [`instrumentation.ts`](/docs/nextjs/optimizing/instrumentation) (또는 `.js`) 파일을 생성합니다 (하나를 사용하는 경우 `src` 폴더 안에):
 
-```ts filename="your-project/instrumentation.ts" switcher
+```ts:"your-project/instrumentation.ts" switcher
 import { registerOTel } from '@vercel/otel'
 
 export function register() {
@@ -55,7 +55,7 @@ export function register() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="your-project/instrumentation.js" switcher
+```js:"your-project/instrumentation.js" switcher
 import { registerOTel } from '@vercel/otel'
 
 export function register() {
@@ -77,7 +77,7 @@ export function register() {
 
 먼저 OpenTelemetry 패키지를 설치해야 합니다:
 
-```bash filename="터미널"
+```bash:"터미널"
 npm install @opentelemetry/sdk-node @opentelemetry/resources \
 @opentelemetry/semantic-conventions @opentelemetry/sdk-trace-node \
 @opentelemetry/exporter-trace-otlp-http
@@ -86,7 +86,7 @@ npm install @opentelemetry/sdk-node @opentelemetry/resources \
 이제 `instrumentation.ts`에서 `NodeSDK`를 초기화 할 수 있습니다.
 OpenTelemetry API는 edge 런타임과 호환되지 않으므로 `process.env.NEXT_RUNTIME === 'nodejs'`일 때만 그것들을 가져오고 있는지 확인해야 합니다. Node를 사용할 때만 조건부로 가져오는 새로운 파일 `instrumentation.node.ts`를 생성하는 것이 좋습니다:
 
-```ts filename="instrumentation.ts" switcher
+```ts:"instrumentation.ts" switcher
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     await import('./instrumentation.node.ts')
@@ -95,7 +95,7 @@ export async function register() {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="instrumentation.js" switcher
+```js:"instrumentation.js" switcher
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     await import('./instrumentation.node.js')
@@ -104,7 +104,7 @@ export async function register() {
 ```
 </details>
 
-```ts filename="instrumentation.node.ts" switcher
+```ts:"instrumentation.node.ts" switcher
 import { NodeSDK } from '@opentelemetry/sdk-node'
 import { OTLPTraceExporter } from \
   '@opentelemetry/exporter-trace-otlp-http'
@@ -174,7 +174,7 @@ OpenTelemetry Collector 사용을 권장합니다.
 
 [OpenTelemetry API](https://opentelemetry.io/docs/instrumentation/js/instrumentation)를 사용하여 사용자 정의 span을 추가할 수 있습니다.
 
-```bash filename="터미널"
+```bash:"터미널"
 npm install @opentelemetry/api
 ```
 

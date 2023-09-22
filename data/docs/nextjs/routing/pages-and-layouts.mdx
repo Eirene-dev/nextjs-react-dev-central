@@ -18,7 +18,7 @@ Next.js 13의 App 라우터는 [페이지](#페이지), [공유 레이아웃](#�
 
 ![page.js 특별한 파일](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fpage-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-```jsx filename="app/page.tsx"
+```jsx:"app/page.tsx"
 // `app/page.tsx`는 `/` URL에 대한 UI입니다
 export default function Page() {
   return <h1>안녕, 홈 페이지!</h1>
@@ -27,7 +27,7 @@ export default function Page() {
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js"
+```jsx:"app/page.js"
 // `app/page.js`는 `/` URL에 대한 UI입니다
 export default function Page() {
   return <h1>안녕, 홈 페이지!</h1>
@@ -35,7 +35,7 @@ export default function Page() {
 ```
 </details>
 
-```tsx filename="app/dashboard/page.tsx"
+```tsx:"app/dashboard/page.tsx"
 // `app/dashboard/page.tsx`는 `/dashboard` URL에 대한 UI입니다
 export default function Page() {
   return <h1>안녕, 대시보드 페이지!</h1>
@@ -44,7 +44,7 @@ export default function Page() {
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/page.js" switcher
+```jsx:"app/dashboard/page.js" switcher
 // `app/dashboard/page.js`는 `/dashboard` URL에 대한 UI입니다
 export default function Page() {
   return <h1>안녕, 대시보드 페이지!</h1>
@@ -72,7 +72,7 @@ export default function Page() {
 
 ![layout.js 특별한 파일](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Flayout-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-```tsx filename="app/dashboard/layout.tsx" switcher
+```tsx:"app/dashboard/layout.tsx" switcher
 export default function DashboardLayout({
   children, // 페이지 또는 중첩된 레이아웃이 될 것입니다
 }: {
@@ -91,7 +91,7 @@ export default function DashboardLayout({
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/layout.js" switcher
+```jsx:"app/dashboard/layout.js" switcher
 export default function DashboardLayout({
   children, // 페이지 또는 중첩된 레이아웃이 될 것입니다
 }) {
@@ -111,7 +111,7 @@ export default function DashboardLayout({
 ### Root 레이아웃
 Root 레이아웃은 `app` 디렉터리의 최상위에서 정의되며 모든 라우트에 적용됩니다. 이 레이아웃을 사용하면 서버에서 반환되는 초기 HTML을 수정할 수 있습니다.
 
-```tsx filename="app/layout.tsx" switcher
+```tsx:"app/layout.tsx" switcher
 export default function RootLayout({
   children,
 }: {
@@ -127,7 +127,7 @@ export default function RootLayout({
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/layout.js" switcher
+```jsx:"app/layout.js" switcher
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -156,7 +156,7 @@ export default function RootLayout({ children }) {
 
 ![중첩된 레이아웃](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fnested-layout.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-```tsx filename="app/dashboard/layout.tsx" switcher
+```tsx:"app/dashboard/layout.tsx" switcher
 export default function DashboardLayout({
   children,
 }: {
@@ -168,7 +168,7 @@ export default function DashboardLayout({
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/layout.js" switcher
+```jsx:"app/dashboard/layout.js" switcher
 export default function DashboardLayout({ children }) {
   return <section>{children}</section>
 }
@@ -203,7 +203,7 @@ export default function DashboardLayout({ children }) {
 
 ![template.js 특별한 파일](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Ftemplate-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-```tsx filename="app/template.tsx" switcher
+```tsx:"app/template.tsx" switcher
 export default function Template({ children
 }: { 
     children: React.ReactNode 
@@ -213,7 +213,7 @@ export default function Template({ children
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/template.js" switcher
+```jsx:"app/template.js" switcher
 export default function Template({ children }) {
   return <div>{children}</div>
 }
@@ -222,7 +222,7 @@ export default function Template({ children }) {
 
 중첩 측면에서, `template.js`는 레이아웃과 그 자식 사이에서 렌더링됩니다. 여기에 간략한 출력이 있습니다:
 
-```jsx filename="Output"
+```jsx:"Output"
 <Layout>
   {/* 템플릿에는 고유한 키가 주어집니다. */}
   <Template key={routeParam}>{children}</Template>
@@ -236,7 +236,7 @@ export default function Template({ children }) {
 
 메타데이터는 [`layout.js`](https://nextjs.org/docs/app/api-reference/file-conventions/layout) 또는 [`page.js`](https://nextjs.org/docs/app/api-reference/file-conventions/page) 파일에서 [`metadata` 객체](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#the-metadata-object)나 [`generateMetadata` 함수](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function)를 내보내는 것으로 정의될 수 있습니다.
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -250,7 +250,7 @@ export default function Page() {
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/page.js" switcher
+```jsx:"app/page.js" switcher
 export const metadata = {
   title: 'Next.js',
 }

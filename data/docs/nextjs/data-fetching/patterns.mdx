@@ -60,7 +60,7 @@ React 컴포넌트 내에서 데이터를 가져올 때, 병렬 및 순차 데�
 
 예를 들어, `Playlists` 컴포넌트는 `artistID` 속성에 의존하기 때문에 `Artist` 컴포넌트가 데이터를 가져오는 것이 완료된 후에만 데이터를 가져오기 시작합니다:
 
-```tsx filename="app/artist/page.tsx" switcher
+```tsx:"app/artist/page.tsx" switcher
 // ...
 
 async function Playlists({ artistID }: { artistID: string }) {
@@ -115,7 +115,7 @@ export default async function Page({
 
 아래 예시에서 `getArtist`와 `getArtistAlbums` 함수는 `Page` 컴포넌트 외부에서 정의되었으며, 컴포넌트 내부에서 호출되며, 우리는 두 프로미스가 모두 해결될 때까지 기다립니다:
 
-```tsx filename="app/artist/[username]/page.tsx" switcher
+```tsx:"app/artist/[username]/page.tsx" switcher
 import Albums from './albums'
 
 async function getArtist(username: string) {
@@ -163,7 +163,7 @@ export default async function Page({
 
 데이터 로딩의 연속을 방지하기 위한 다른 방법은 사전 로딩 패턴을 사용하는 것입니다. 병렬 데이터 가져오기를 더욱 최적화하기 위해 선택적으로 `preload` 함수를 생성할 수 있습니다. 이 접근법을 사용하면 props로 프로미스를 전달할 필요가 없습니다. `preload` 함수는 패턴이므로 API가 아니기 때문에 어떤 이름으로든 가질 수 있습니다.
 
-```tsx filename="components/Item.tsx" switcher
+```tsx:"components/Item.tsx" switcher
 import { getItem } from '@/utils/get-item'
 
 export const preload = (id: string) => {
@@ -179,7 +179,7 @@ export default async function Item({ id }: { id: string }) {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="components/Item.js" switcher
+```jsx:"components/Item.js" switcher
 import { getItem } from '@/utils/get-item'
 
 export const preload = (id) => {
@@ -195,7 +195,7 @@ export default async function Item({ id }) {
 ```
 </details>
 
-```tsx filename="app/item/[id]/page.tsx" switcher
+```tsx:"app/item/[id]/page.tsx" switcher
 import Item, { preload, checkIsAvailable } from '@/components/Item'
 
 export default async function Page({
@@ -213,7 +213,7 @@ export default async function Page({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/item/[id]/page.js" switcher
+```jsx:"app/item/[id]/page.js" switcher
 import Item, { preload, checkIsAvailable } from '@/components/Item'
 
 export default async function Page({ params: { id } }) {
@@ -233,7 +233,7 @@ export default async function Page({ params: { id } }) {
 
 `cache` 함수, 사전 로딩 패턴, `server-only` 패키지를 조합하여 앱 전체에서 사용할 수 있는 데이터 가져오기 유틸리티를 생성할 수 있습니다.
 
-```ts filename="utils/get-item.ts" switcher
+```ts:"utils/get-item.ts" switcher
 import { cache } from 'react'
 import 'server-only'
 
@@ -247,7 +247,7 @@ export const getItem = cache(async (id: string) => {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="utils/get-item.js" switcher
+```js:"utils/get-item.js" switcher
 import { cache } from 'react'
 import 'server-only'
 

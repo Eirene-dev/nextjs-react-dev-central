@@ -172,7 +172,7 @@ React의 `cache` 함수를 사용하면 함수의 반환 값을 메모이제이�
 
 `fetch` 요청은 자동으로 메모이제이션되므로 React의 `cache`에 포장할 필요가 없습니다. 그러나 `fetch` API가 적합하지 않은 경우에 데이터 요청을 수동으로 메모이제이션하기 위해 `cache`를 사용할 수 있습니다. 예를 들면, 일부 데이터베이스 클라이언트, CMS 클라이언트 또는 GraphQL 클라이언트입니다.
 
-```tsx filename="utils/get-item.ts" switcher
+```tsx:"utils/get-item.ts" switcher
 import { cache } from 'react'
 import db from '@/lib/db'
 
@@ -183,7 +183,7 @@ export const getItem = cache(async (id: string) => {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx filename="utils/get-item.js" switcher
+```jsx:"utils/get-item.js" switcher
 import { cache } from 'react'
 import db from '@/lib/db'
 

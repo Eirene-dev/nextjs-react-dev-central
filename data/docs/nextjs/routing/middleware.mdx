@@ -19,7 +19,7 @@ summary: 요청이 완료되기 전에 코드를 실행하는 미들웨어의 �
 
 ## 예제
 
-```ts filename="middleware.ts" switcher
+```ts:"middleware.ts" switcher
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -35,7 +35,7 @@ export const config = {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="middleware.js" switcher
+```js:"middleware.js" switcher
 import { NextResponse } from 'next/server'
 
 // 이 함수는 내부에서 `await`를 사용하는 경우 `async`로 표시할 수 있습니다.
@@ -74,7 +74,7 @@ export const config = {
 
 `matcher`는 특정 경로에서 미들웨어를 실행하도록 필터링 할 수 있게 해줍니다.
 
-```js filename="middleware.js"
+```js:"middleware.js"
 export const config = {
   matcher: '/about/:path*',
 }
@@ -82,7 +82,7 @@ export const config = {
 
 배열 문법을 사용하여 단일 경로 또는 여러 경로와 일치시킬 수 있습니다:
 
-```js filename="middleware.js"
+```js:"middleware.js"
 export const config = {
   matcher: ['/about/:path*', '/dashboard/:path*'],
 }
@@ -90,7 +90,7 @@ export const config = {
 
 `matcher` 설정은 완전한 정규 표현식을 허용하므로 부정 전방 탐색이나 문자 매칭과 같은 매칭이 지원됩니다. 특정 경로를 제외한 모든 것과 일치하는 부정 전방 탐색의 예는 다음과 같습니다:
 
-```js filename="middleware.js"
+```js:"middleware.js"
 export const config = {
   matcher: [
     /*
@@ -121,7 +121,7 @@ export const config = {
 
 ### 조건문
 
-```ts filename="middleware.ts" switcher
+```ts:"middleware.ts" switcher
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -138,7 +138,7 @@ export function middleware(request: NextRequest) {
 
 <details>
 <summary>JavaScript</summary>
-```js filename="middleware.js" switcher
+```js:"middleware.js" switcher
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -192,7 +192,7 @@ export function middleware(request) {
 1. 들어오는 요청에 대해 `cookies`는 다음 메소드와 함께 제공됩니다: 쿠키 `get`, `getAll`, `set`, `delete`. `has`로 쿠키의 존재 여부를 확인하거나 `clear`로 모든 쿠키를 삭제할 수 있습니다.
 2. 나가는 응답에 대해서 `cookies`는 다음 메소드를 가집니다: `get`, `getAll`, `set`, `delete`.
 
-```ts filename="middleware.ts" switcher
+```ts:"middleware.ts" switcher
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -225,7 +225,7 @@ export function middleware(request: NextRequest) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="middleware.js" switcher
+```js:"middleware.js" switcher
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -263,7 +263,7 @@ export function middleware(request) {
 
 `NextResponse` API를 사용하여 요청 및 응답 헤더를 설정할 수 있습니다 (요청 헤더 설정은 Next.js v13.0.0부터 사용 가능합니다).
 
-```ts filename="middleware.ts" switcher
+```ts:"middleware.ts" switcher
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -287,7 +287,7 @@ export function middleware(request: NextRequest) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="middleware.js" switcher
+```js:"middleware.js" switcher
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -318,7 +318,7 @@ export function middleware(request) {
 
 미들웨어에서 직접 `Response` 또는 `NextResponse` 인스턴스를 반환하여 응답할 수 있습니다. ([Next.js v13.1.0](https://nextjs.org/blog/next-13-1#nextjs-advanced-middleware)부터 사용 가능합니다.)
 
-```ts filename="middleware.ts" switcher
+```ts:"middleware.ts" switcher
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthenticated } from '@lib/auth'
 
@@ -344,7 +344,7 @@ export function middleware(request: NextRequest) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="middleware.js" switcher
+```js:"middleware.js" switcher
 import { NextResponse } from 'next/server'
 import { isAuthenticated } from '@lib/auth'
 
@@ -378,13 +378,13 @@ Next.js의 `v13.1`에서는 고급 사용 사례를 처리하기 위해 두 가�
 
 `skipTrailingSlashRedirect`는 트레일링 슬래시(trailing slash)를 추가하거나 제거하기 위한 Next.js 기본 리다이렉트를 비활성화하여 미들웨어 내에서 커스텀 처리를 할 수 있습니다. 이로 인해 일부 경로에는 트레일링 슬래시를 유지하고 다른 경로에는 트레일링 슬래시를 사용하지 않게 할 수 있어 점진적인 마이그레이션이 더욱 쉬워집니다.
 
-```js filename="next.config.js"
+```js:"next.config.js"
 module.exports = {
   skipTrailingSlashRedirect: true,
 }
 ```
 
-```js filename="middleware.js"
+```js:"middleware.js"
 const legacyPrefixes = ['/docs', '/blog']
 
 export default async function middleware(req) {
@@ -407,13 +407,13 @@ export default async function middleware(req) {
 
 `skipMiddlewareUrlNormalize`는 Next.js가 직접 방문과 클라이언트 전환을 동일하게 처리하기 위해 수행하는 URL 정규화를 비활성화 할 수 있습니다. 이를 통해 원래의 URL을 사용하여 전체 제어가 필요한 몇 가지 고급 사례를 다룰 수 있습니다.
 
-```js filename="next.config.js"
+```js:"next.config.js"
 module.exports = {
   skipMiddlewareUrlNormalize: true,
 }
 ```
 
-```js filename="middleware.js"
+```js:"middleware.js"
 export default async function middleware(req) {
   const { pathname } = req.nextUrl
 

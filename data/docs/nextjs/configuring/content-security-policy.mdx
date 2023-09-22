@@ -33,7 +33,7 @@ CSP는 악의적인 스크립트를 차단하도록 설계되었지만, 인라�
 
 예를 들면:
 
-```ts filename="middleware.ts" switcher
+```ts:"middleware.ts" switcher
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
@@ -70,7 +70,7 @@ export function middleware(request: NextRequest) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="middleware.js" switcher
+```js:"middleware.js" switcher
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -111,7 +111,7 @@ export function middleware(request) {
 
 우리는 `next/link`에서의 프리페치와 CSP 헤더가 필요 없는 정적 자산의 일치를 무시하는 것을 권장합니다.
 
-```ts filename="middleware.ts" switcher
+```ts:"middleware.ts" switcher
 export const config = {
   matcher: [
     /*
@@ -133,7 +133,7 @@ export const config = {
 ```
 <details>
     <summary>JavaScript</summary>
-```js filename="middleware.js" switcher
+```js:"middleware.js" switcher
 export const config = {
   matcher: [
     /*
@@ -159,7 +159,7 @@ export const config = {
 
 이제 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)를 사용하여 [Server Component](/docs/nextjs/rendering/server-components)에서 nonce를 읽을 수 있습니다:
 
-```tsx filename="app/page.tsx" switcher
+```tsx:"app/page.tsx" switcher
 import { headers } from 'next/headers'
 import Script from 'next/script'
 
@@ -176,7 +176,7 @@ export default function Page() {
 }
 ```
 
-```jsx filename="app/page.jsx" switcher
+```jsx:"app/page.jsx" switcher
 import { headers } from 'next/headers'
 import Script from 'next/script'
 

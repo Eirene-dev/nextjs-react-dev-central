@@ -22,7 +22,7 @@ summary: Suspense 위에 구축된 로딩 UI를 통해 특정 라우트 세그�
 
 !["loading.js 특별한 파일"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Floading-special-file.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-```tsx filename="app/dashboard/loading.tsx" switcher
+```tsx:"app/dashboard/loading.tsx" switcher
 export default function Loading() {
   // 로딩 내에서 스켈레톤을 포함한 어떠한 UI도 추가할 수 있습니다.
   return <LoadingSkeleton />
@@ -31,7 +31,7 @@ export default function Loading() {
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/loading.js" switcher
+```jsx:"app/dashboard/loading.js" switcher
 export default function Loading() {
   // 로딩 내에서 스켈레톤을 포함한 어떠한 UI도 추가할 수 있습니다.
   return <LoadingSkeleton />
@@ -97,7 +97,7 @@ React와 Next.js의 SSR은 최대한 빨리 상호 작용하지 않는 페이지
 
 `<Suspense>`는 비동기 작업을 수행하는 컴포넌트(예: 데이터 가져오기)를 래핑하여 해당 작업이 진행되는 동안 대체 UI(예: 스켈레톤, 스피너)를 표시하고, 작업이 완료되면 해당 컴포넌트로 바꿉니다.
 
-```tsx filename="app/dashboard/page.tsx" switcher
+```tsx:"app/dashboard/page.tsx" switcher
 import { Suspense } from 'react'
 import { PostFeed, Weather } from './Components'
 
@@ -117,7 +117,7 @@ export default function Posts() {
 
 <details>
     <summary>JavaScript</summary>
-```jsx filename="app/dashboard/page.js" switcher
+```jsx:"app/dashboard/page.js" switcher
 import { Suspense } from 'react'
 import { PostFeed, Weather } from './Components'
 
