@@ -6,9 +6,42 @@ tags: ['Build', 'JavaScript', 'Optimization']
 images: ['/static/images/blog/10-web-api-1.jpg']
 ---
 
+<TOCInline toc={props.toc} asDisclosure />
+
 ---
 
-<TOCInline toc={props.toc} asDisclosure />
+## 배울 내용
+Boilerplate 프로젝트의 설치부터 구조 파악, 주요 코드의 세부 분석까지 심층적으로 다룹니다.
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<Card href="/example/boilerplate#nextjs-boilerplate-예제-소개">
+### Next.js Boilerplate 예제 소개
+
+Next.js에서 기본적인 Boilerplate에 대해 실행 화면과 특징을 살펴 봅니다.
+</Card>
+
+<Card href="/example/boilerplate/installation">
+### 설치하고 로컬에서 실행해보기
+
+개발 환경에 프로젝트와 필요한 패키지를 설치한 후, 로컬에서 프로젝트를 실행하고 웹 브라우저로 확인하는 과정을 학습합니다.
+</Card>
+
+<Card href="/example/boilerplate/project-structure">
+### 프로젝트 구성요소 깊게 이해하기
+
+프로젝트의 주요 구성 요소와 다양한 설정 파일들을 상세하게 살펴봅니다.
+</Card>
+
+<Card href="/example/boilerplate/app-source">
+### 핵심 코드 세부 분석하기
+
+웹 페이지의 기본 구조를 담당하는 `layout.tsx`와 `page.tsx` 파일을 깊게 탐구해봅니다.
+</Card>
+
+</div>
+
+---
 
 ## Next.js Boilerplate 예제 소개
 Next.js에서 기본적인 시작점이자 "Hello World"로 불리우는 Next.js Boilerplate 예제를 깊게 탐구하고 이해하는 시간을 가져보겠습니다.
@@ -38,14 +71,18 @@ Boilerplate의 특징은 다음과 같습니다:
 
 - 직접 체험해 보기: [https://nextjs-template.vercel.app](https://nextjs-template.vercel.app)
 
+---
+
 ## 주요 특징 및 기능
 
-1. Next.js 프로젝트로 `create-next-app`을 사용하여 초기 설정됨.
+1. Next.js 프로젝트로 `create-next-app`을 사용하여 초기 설정됩니다.
 2. 개발 서버 실행 방법:
    - npm을 사용: `npm run dev`
    - yarn을 사용: `yarn dev`
    - pnpm을 사용: `pnpm dev`
    - bun을 사용: `bun dev`
-3. 개발 서버 실행 후 브라우저에서 `http://localhost:3000` 주소로 접속하여 결과 확인 가능.
-4. `app/page.tsx` 파일을 수정하면 페이지가 자동으로 업데이트됨.
-5. 이 프로젝트는 `next/font`을 사용하여 Google의 사용자 지정 폰트인 'Inter'를 자동으로 최적화하고 로드함.
+3. 개발 서버 실행 후 브라우저에서 `http://localhost:3000` 주소로 접속하여 결과 확인 가능합니다..
+4. `app/page.tsx` 파일을 수정하면 페이지가 자동으로 업데이트됩니다.
+5. 이 프로젝트는 `next/font`을 사용하여 Google의 사용자 지정 폰트인 <StyleWarning>'Inter'</StyleWarning>를 자동으로 최적화하고 로드합니다.
+
+

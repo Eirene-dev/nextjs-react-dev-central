@@ -12,7 +12,7 @@ const ToggleContent: React.FC<ToggleContentProps> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="p-2 rounded-md bg-gray-50">
+    <div className="p-2 bg-gray-100 rounded-md">
       <button onClick={() => setIsOpen(!isOpen)} className="flex items-center">
         {isOpen ? (
           <MinusSquare size={18} strokeWidth={2} />
