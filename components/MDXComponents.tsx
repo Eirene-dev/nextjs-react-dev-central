@@ -15,6 +15,7 @@ import {
 
 import ScreenShot from '@/components/ScreenShot'
 import ToggleContent from '@/components//ToggleContent'
+import Link from 'next/link'
 
 import {
   AlertTriangle,
@@ -67,4 +68,5 @@ export const components: MDXComponents = {
   MermaidChart,
   ScreenShot,
   ToggleContent,
+  Link,
 }
