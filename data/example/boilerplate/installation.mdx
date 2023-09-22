@@ -1,0 +1,109 @@
+---
+title: "설치 및 로컬에서 실행하기"
+summary:  "Next.js Boilerplate - 설치"
+date: "2023-09-22 00:01"
+images: ['/static/images/blog/10-web-api-1.jpg']
+---
+
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 설치하기
+> 설치 관련 자세한 내용은 [가이드 문서](/docs/getting-started/nextjs-foundation/installation)를 참조해주세요.
+
+### 설치 명령어 입력
+아래 명령어를 통해 설치 합니다.
+```bash
+npx create-next-app@latest
+```
+
+실행하면 아래와 같은 프로프트가 표시 되고, 아래와 설정 하시면 됩니다.
+
+```bash
+✔ What is your project named? … boilerplate
+✔ Would you like to use TypeScript? … No / *Yes*
+✔ Would you like to use ESLint? … No / *Yes*
+✔ Would you like to use Tailwind CSS? … No / *Yes*
+✔ Would you like to use `src/` directory? … *No* / Yes
+✔ Would you like to use App Router? (recommended) … No / *Yes*
+✔ Would you like to customize the default import alias? … No / *Yes*
+✔ What import alias would you like configured? … *@*/*
+```
+> 여기에서 *Yes*, 또는 *No*를 선택 합니다. 즉, `src/` 외에는 모두 선택 하였고, `default import alias`로 `@`를 설정 하였습니다.
+
+### 설치 출력 결과 확인
+아래와 같이 되면 정상적으로 실행 되었습니다.
+```bash
+Creating a new Next.js app in /Users/Playground/60_NextJS/boilerplate.
+
+Using npm.
+
+Initializing project with template: app-tw 
+
+
+Installing dependencies:
+- react
+- react-dom
+- next
+- typescript
+- @types/react
+- @types/node
+- @types/react-dom
+- tailwindcss
+- postcss
+- autoprefixer
+- eslint
+- eslint-config-next
+
+
+added 331 packages, and audited 332 packages in 13s
+
+117 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+Initialized a git repository.
+
+Success! Created boilerplate at /Users/Playground/60_NextJS/boilerplate
+```
+
+### 소스 코드 디렉터리 이동
+이제 소스 코드가 있는 디렉터로로 이동하여 생성된 디렉터리와 파일을 살펴 봅니다.
+```bash
+cd boilerplate/
+ls
+```
+
+아래와 같은 디렉터리와 파일이 생성 되었습니다.
+```
+README.md		next-env.d.ts		node_modules		package.json		public			tsconfig.json
+app			next.config.js		package-lock.json	postcss.config.js	tailwind.config.ts
+```
+
+## 로컬에서 실행하기
+이제 아래 명령어를 통해 개발 로컬 서버에서 실행 합니다.
+```bash
+npm run dev
+```
+
+위와 같이 실행하면 아래와 같이 출력됩니다.
+```
+> boilerplate@0.1.0 dev
+> next dev
+
+  ▲ Next.js 13.5.2
+  - Local:        http://localhost:3000
+
+ ✓ Ready in 3.1s
+ ✓ Compiled /page in 2.3s (493 modules)
+ ✓ Compiled in 129ms (234 modules)
+```
+
+이제 브라우저 주소창에서 `http://localhost:3000/`를 입력하여 실행된 결과를 확인 합니다.
+<div className="flex justify-center p-0">
+  <Image src="/static/images/example/boilerplate/nextjs-boilerplate-1-xl.png" width="720" height="385" />
+</div>
+
+실행을 종료 하려면 `Ctrl+C` 입력합니다.
+
