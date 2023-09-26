@@ -14,6 +14,7 @@ import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { DashboardTableOfContents } from '@/components/toc'
 import { getTableOfContents } from '@/lib/toc'
+import UnderConstruction from '@/data/illustration/page-under-construction.svg'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const defaultLayout = 'PostSimple'
@@ -121,11 +122,14 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
       {isProduction && post && 'draft' in post && post.draft === true ? (
         <div className="mt-24 text-center">
           <PageTitle>
-            Under Construction{' '}
+            내용 업데이트 예정입니다.{' '}
             <span role="img" aria-label="roadwork sign">
               🚧
             </span>
           </PageTitle>
+          <div className="flex justify-center w-full mt-4">
+            <UnderConstruction />
+          </div>
         </div>
       ) : (
         <>

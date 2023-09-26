@@ -156,7 +156,9 @@ export default function ListLayoutWithTags({
                         </div>
                       </div>
                       <div className="relative w-full aspect-w-3 aspect-h-1 sm:w-32 md:w-48 lg:w-1/3">
-                        <Image src={displayImage} alt={title} fill className="object-cover" />
+                        <Link href={`/${path}`} className="text-gray-900 dark:text-gray-100">
+                          <Image src={displayImage} alt={title} fill className="object-cover" />
+                        </Link>
                       </div>
                     </article>
                   </li>
