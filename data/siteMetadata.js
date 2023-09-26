@@ -7,7 +7,7 @@ const siteMetadata = {
     'Your go-to resource for mastering Next.js and React development. At ReactNext Central, we offer up-to-date tutorials, articles, and supplemental resources that align with the latest industry trends. Whether you are a beginner or an experienced developer, find the insights you need to elevate your skills.',
   language: 'ko-kr',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://reactnext-central.vercel.app',
+  siteUrl: 'https://reactnext-central.xyz',
   siteRepo: 'https://github.com/Eirene-dev/nextjs-react-dev-central',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
