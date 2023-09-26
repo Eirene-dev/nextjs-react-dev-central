@@ -1,10 +1,10 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'ReactNext Central: Blog, Docs, and More',
+  title: 'ReactNext Central: 블로그, 문서, 예제 등',
   author: 'Pax Code',
-  headerTitle: 'ReactNextCentral',
+  headerTitle: 'ReactNext-Central',
   description:
-    'Your go-to resource for mastering Next.js and React development. At ReactNext Central, we offer up-to-date tutorials, articles, and supplemental resources that align with the latest industry trends. Whether you are a beginner or an experienced developer, find the insights you need to elevate your skills.',
+    'Next.js와 React 개발을 완벽하게 마스터하기 위한 당신의 필수 리소스. ReactNext Central에서는 최신 웹 트렌드와 맞춰진 최신 튜토리얼, 예제, 보충 자료를 제공합니다. 초보자든 경험 많은 개발자든, 당신의 기술을 향상시키기 위한 필요한 통찰력을 찾아보세요.',
   language: 'ko-kr',
   theme: 'system', // system, dark or light
   siteUrl: 'https://reactnext-central.xyz',
