@@ -10,8 +10,6 @@ import Bleed from 'pliny/ui/Bleed'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
-import { docsConfig } from '@/config/example'
-import { DocsSidebarNav } from '@/components/sidebar-nav'
 import { ChevronRight, ChevronDown, Plus, Minus, ChevronsRight } from 'lucide-react'
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`

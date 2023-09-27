@@ -706,67 +706,8 @@ export const docsConfig: DocsConfig = {
         },
       ],
     },
-    // {
-    //   title: "Documentation",
-    //   items: [
-    //     {
-    //       title: "Introduction",
-    //       href: "/docs/documentation",
-    //     },
-    //     {
-    //       title: "Contentlayer",
-    //       href: "/docs/in-progress",
-    //       disabled: true,
-    //     },
-    //     {
-    //       title: "Components",
-    //       href: "/docs/documentation/components",
-    //     },
-    //     {
-    //       title: "Code Blocks",
-    //       href: "/docs/documentation/code-blocks",
-    //     },
-    //     {
-    //       title: "Style Guide",
-    //       href: "/docs/documentation/style-guide",
-    //     },
-    //     {
-    //       title: "Search",
-    //       href: "/docs/in-progress",
-    //       disabled: true,
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Blog",
-    //   items: [
-    //     {
-    //       title: "Introduction",
-    //       href: "/docs/in-progress",
-    //       disabled: true,
-    //     },
-    //     {
-    //       title: "Build your own",
-    //       href: "/docs/in-progress",
-    //       disabled: true,
-    //     },
-    //     {
-    //       title: "Writing Posts",
-    //       href: "/docs/in-progress",
-    //       disabled: true,
-    //     },
-    //   ],
-    // },
   ],
   mainNav: [
-    // {
-    //   title: "Documentation",
-    //   href: "/docs",
-    // },
-    // {
-    //   title: "Guides",
-    //   href: "/guides",
-    // },
     {
       title: 'Blog',
       href: '/blog',
