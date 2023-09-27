@@ -1,10 +1,10 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Next.js & React 웹 개발 가이드: ReactNext-Central',
+  title: 'Next.js & React: 웹 개발 센터',
   author: 'Pax Code',
   headerTitle: 'ReactNextCentral',
   description:
-    'Next.js와 React로 웹 개발의 품격을 높이세요. ReactNext-Central에서는 최신 트렌드에 부합하는 실용적인 튜토리얼, 깊이 있는 예제와 블로그, 그리고 유용한 보충 자료를 제공합니다. 웹 개발 초보자든 전문가든, 여러분의 능력을 한 단계 끌어올릴 통찰력과 자료를 찾아보세요.',
+    'Next.js와 React를 활용한 최신 웹 개발 튜토리얼과 자료를 제공하는 ReactNext-Central. 초보자부터 전문가까지 필요한 모든 정보를 찾아보세요.',
   language: 'ko-kr',
   theme: 'system', // system, dark or light
   siteUrl: 'https://reactnext-central.xyz',
