@@ -4,7 +4,7 @@ const siteMetadata = {
   author: 'Pax Code',
   headerTitle: 'ReactNextCentral',
   description:
-    'Next.js와 React를 활용한 최신 웹 개발 튜토리얼과 자료를 제공하는 ReactNext-Central. 초보자부터 전문가까지 필요한 모든 정보를 찾아보세요.',
+    'eactNext-Central: Next.js & React 웹 개발 가이드. 초보부터 전문가까지 필요한 튜토리얼 제공합니다.',
   language: 'ko-kr',
   theme: 'system', // system, dark or light
   siteUrl: 'https://reactnext-central.xyz',
