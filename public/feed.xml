@@ -1,9 +1,9 @@
 
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-      <title>Next.js &amp; React 웹 개발 가이드: ReactNext-Central</title>
+      <title>Next.js &amp; React: 웹 개발 센터</title>
       <link>https://reactnext-central.xyz/blog</link>
-      <description>Next.js와 React로 웹 개발의 품격을 높이세요. ReactNext-Central에서는 최신 트렌드에 부합하는 실용적인 튜토리얼, 깊이 있는 예제와 블로그, 그리고 유용한 보충 자료를 제공합니다. 웹 개발 초보자든 전문가든, 여러분의 능력을 한 단계 끌어올릴 통찰력과 자료를 찾아보세요.</description>
+      <description>ReactNext-Central: Next.js &amp; React 웹 개발 가이드. 초보부터 전문가까지 필요한 튜토리얼 제공합니다.</description>
       <language>ko-kr</language>
       <managingEditor>paxcode.io@gmail.com (Pax Code)</managingEditor>
       <webMaster>paxcode.io@gmail.com (Pax Code)</webMaster>
@@ -28,6 +28,16 @@
     <pubDate>Fri, 15 Sep 2023 00:00:00 GMT</pubDate>
     <author>paxcode.io@gmail.com (Pax Code)</author>
     <category>Next.js 13</category><category>React 18</category><category>Next.js</category><category>App Router</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/arrow-and-regular-functions-in-javascript</guid>
+    <title>JavaScript에서 화살표 함수와 일반 함수의 차이점</title>
+    <link>https://reactnext-central.xyz/blog/arrow-and-regular-functions-in-javascript</link>
+    <description>JavaScript에서 일반 함수와 화살표 함수는 superficial하게 보면 비슷해 보일 수 있지만, 깊은 내부에서는 `this` 바인딩부터 생성자 기능, 프로토타입 객체, 그리고 문법 구조에 이르기까지 여러 중요한 차이점을 가지고 있습니다. 이러한 차이점들은 여러분의 코드가 예상한 대로 동작하도록 하는데 큰 영향을 미칠 수 있습니다.</description>
+    <pubDate>Tue, 03 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>JavaScript</category><category>ES6</category><category>Programming</category><category>Arrow-Functions</category>
   </item>
 
   <item>
@@ -58,6 +68,16 @@
     <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
     <author>paxcode.io@gmail.com (Pax Code)</author>
     <category>React</category><category>Next.js</category><category>create-react-app</category><category>Optimization</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-challenges</guid>
+    <title>Next.js 사용 시 직면할 수 있는 함정, 그리고 이를 극복하는 전략</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-challenges</link>
+    <description>Next.js의 실제 사용 시 마주칠 수 있는 여러 단점들과 함께, 실제 프로젝트에서의 구체적인 예시와 그 문제점을 해결하는 방안을 함께 고민해봅니다.</description>
+    <pubDate>Mon, 02 Oct 2023 00:01:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Nextjs-Challenges</category><category>Coding-Issues</category><category>Nextjs-Insights</category>
   </item>
 
   <item>
