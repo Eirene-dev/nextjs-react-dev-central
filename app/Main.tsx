@@ -133,7 +133,7 @@ export default function Main({ posts }) {
               </svg>
               <div className="space-y-2">
                 <h3 className="text-xl font-bold">React 18</h3>
-                <p className="text-base">
+                <p className="text-base text-muted-foreground">
                   서버/클라이언트 컴포넌트, UI 구축, 상호작용성, 상태 관리, 훅.
                 </p>
               </div>
