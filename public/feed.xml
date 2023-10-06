@@ -61,6 +61,26 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/garbage-collection-in-javascript</guid>
+    <title>JavaScript에서 메모리 관리: 가비지 컬렉션</title>
+    <link>https://reactnext-central.xyz/blog/garbage-collection-in-javascript</link>
+    <description>JavaScript 메모리 관리와 가비지 컬렉션을 이해하는 것은 효율적인 웹 애플리케이션 개발의 핵심입니다; 이 블로그에서는 그 중심 원칙과 기법을 함께 탐험해보겠습니다.</description>
+    <pubDate>Wed, 04 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>JavaScript</category><category>Memory-Management</category><category>Garbage-Collection</category><category>Performance</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/good-website-design</guid>
+    <title>2023년 웹 디자인 트렌드 기반 웹사이트 디자인의 10가지 핵심 원칙</title>
+    <link>https://reactnext-central.xyz/blog/good-website-design</link>
+    <description>2023년의 웹 디자인 트렌드를 중심으로, 사이트 사용자 경험을 최고로 만들기 위한 실용적인 조언과 팁을 살펴봅니다.</description>
+    <pubDate>Thu, 05 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>JavaScript</category><category>Memory-Management</category><category>Garbage-Collection</category><category>Performance</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/goodbye-create-react-app</guid>
     <title>React! create-react-app 작별: Next.js와 현대 React 도구로의 미래를 포옹하다</title>
     <link>https://reactnext-central.xyz/blog/goodbye-create-react-app</link>
