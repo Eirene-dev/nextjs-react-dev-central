@@ -38,7 +38,99 @@ Next.js는 이러한 현대 도시의 문제점을 해결하기 위해 설계된
 
 현대 웹 개발은 우주선을 타고 미지의 우주를 탐험하는 것과 같은 무한한 가능성을 내포하고 있습니다. 리액트와 Next.js는 이 우주선의 조종사로, 우리를 지금까지 경험하지 못한 새로운 세계로 안내할 것입니다. 기술의 끊임없는 진화 속에서, 웹은 계속해서 더 빠르고, 더 강력하며, 더 사용자 친화적인 방향으로 발전할 것입니다. 이 모험의 여정은 끝나지 않습니다.
 
+
+
 ## 리액트와 Next.js: 웹 세계의 슈퍼히어로들
+
+
+
+<MermaidChart>
+{`
+flowchart TD
+    R["리액트"]
+    VD["가상 DOM"]
+    CSR["클라이언트 사이드 렌더링 (CSR)"]
+    D1["장점: 빠른 페이지 전환, 동적 UI 업데이트"]
+    D2["한계: 로딩 속도, SEO 제약"]
+
+    NX["Next.js"]
+    SSR["서버 사이드 렌더링 (SSR) & 하이드레이션"]
+    SSG["정적 사이트 생성 (SSG)"]
+    HY[하이드레이션]
+    OC["최적화 및 개발자 편의성"]
+
+    ADV["장점: 빠른 초기 페이지 로딩"]
+    API["도전: 컴포넌트 데이터를 위한 API 호출로 인한 지연"]
+    JS["도전: 자바스크립트를 통한 모든 페이지 컴포넌트 활성화"]
+
+    R18["리액트 18"]
+    SC["서버/클라이언트 컴포넌트"]
+    ES["로딩 관리를 위한 강화된 서스펜스"]
+
+    NX134["Next.js 13.4"]
+    AR["앱 라우터 (페이지 라우터 대체)"]
+    WS["웹 스트리밍"]
+    SH["선택적 하이드레이션"]
+
+    R --> VD
+    R --> CSR
+    CSR --> D1
+    CSR --> D2
+    D2 --> NX
+    NX --> SSR
+    NX --> SSG
+    SSR --> HY
+    NX --> OC
+
+    SSR --> ADV
+    SSR --> API
+    SSR --> JS
+
+    API --> R18
+    JS --> R18
+    R18 --> SC
+    R18 --> ES
+
+    SC --> NX134
+    ES --> NX134
+    NX134 --> AR
+    NX134 --> WS
+    NX134 --> SH
+
+    subgraph "리액트 생태계"
+        R --> VD
+        R --> CSR
+    end
+
+    subgraph "Next.js 개선사항"
+        NX --> SSR
+        NX --> SSG
+        NX --> OC
+    end
+
+    subgraph "SSR & 하이드레이션의 도전 과제"
+        SSR --> ADV
+        SSR --> API
+        SSR --> JS
+    end
+
+    subgraph "리액트 18 혁신"
+        R18 --> SC
+        R18 --> ES
+    end
+
+    subgraph "Next.js 13.4 혁신"
+        NX134 --> AR
+        NX134 --> WS
+        NX134 --> SH
+    end
+
+    style SSR fill:#f9d0c4
+    style R18 fill:#c4e17f
+    style NX134 fill:#ace6ff
+`}
+</MermaidChart>
+
 
 ### 1. "리액트의 무대 등장: 초능력을 지닌 웹의 슈퍼맨"
 
