@@ -41,6 +41,16 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/comparing-nextjs-nuxt-sveltekit</guid>
+    <title>Next.js, Nuxt, 그리고 SvelteKit 비교: 올바른 프레임워크 선택하기</title>
+    <link>https://reactnext-central.xyz/blog/comparing-nextjs-nuxt-sveltekit</link>
+    <description>Next.js, Nuxt, 그리고 SvelteKit의 비교를 통해 개발자들은 어떤 프레임워크가 그들의 웹 프로젝트에 가장 적합한지에 대한 통찰을 얻을 수 있습니다. 이 블로그는 각 프레임워크의 강점, 원리, 그리고 선택 프로세스를 다루며 미래 웹 애플리케이션 개발을 위한 정보를 제공합니다.</description>
+    <pubDate>Wed, 18 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>Nuxt</category><category>SvelteKit</category><category>Framework-Comparison</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/developer-experience-in-web</guid>
     <title>웹 개발에서의 개발자 경험(DX) 이해하기</title>
     <link>https://reactnext-central.xyz/blog/developer-experience-in-web</link>
@@ -58,6 +68,16 @@
     <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
     <author>paxcode.io@gmail.com (Pax Code)</author>
     <category>Frontend</category><category>Roadmap</category><category>JavaScript</category><category>UI</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/functional-programming</guid>
+    <title>React에서의 함수형 프로그래밍: 원칙, 도구, 그리고 장점</title>
+    <link>https://reactnext-central.xyz/blog/functional-programming</link>
+    <description>React에서의 함수형 프로그래밍을 탐험해보세요: 코드의 예측 가능성, 유지 관리 용이성 및 효율성을 극대화하는 방법을 알아보는 여정입니다. 이 블로그에서는 함수형 컴포넌트, 훅, 불변성, 그리고 React와 함께 사용할 수 있는 다양한 함수형 프로그래밍 라이브러리들을 소개합니다.</description>
+    <pubDate>Wed, 18 Oct 2023 11:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Functional-Programming</category><category>React-Hooks</category><category>React-JS</category><category>Immutable-Data</category>
   </item>
 
   <item>
@@ -91,6 +111,16 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/hot-code-reloading-and-fast-refresh</guid>
+    <title>React &amp; Next.js 시대의 효율적인 웹 개발: 핫 코드 리로딩과 패스트 리프레시 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/hot-code-reloading-and-fast-refresh</link>
+    <description>React 및 Next.js 개발의 다이나믹한 세계로 당신을 초대합니다: 핫 코드 리로딩과 패스트 리프레시의 마법을 풀어내어 코딩 효율성과 사용자 경험을 한 차원 높여보세요!</description>
+    <pubDate>Tue, 10 Oct 2023 06:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Hot-Code-Reloading</category><category>Fast-Refresh</category><category>Coding-Efficiency</category><category>Dev-Tips</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/nextjs-challenges</guid>
     <title>Next.js 사용 시 직면할 수 있는 함정, 그리고 이를 극복하는 전략</title>
     <link>https://reactnext-central.xyz/blog/nextjs-challenges</link>
@@ -98,6 +128,46 @@
     <pubDate>Mon, 02 Oct 2023 00:01:00 GMT</pubDate>
     <author>paxcode.io@gmail.com (Pax Code)</author>
     <category>Nextjs-Challenges</category><category>Coding-Issues</category><category>Nextjs-Insights</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-evolution</guid>
+    <title>리액트와 Next.js: 웹의 역사와 웹 세계의 슈퍼히어로들</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-evolution</link>
+    <description>리액트와 Next.js는 웹 개발 역사의 획기적인 변화를 주도하는 슈퍼히어로들로, 고대의 단순한 구조에서 시작하여 현대의 복잡한 도시 구조를 탐험하고, 미래의 미지의 가능성으로 우리를 안내합니다.</description>
+    <pubDate>Tue, 10 Oct 2023 07:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Nextjs-Revolution</category><category>Web-Development-History</category><category>Dynamic-Web-Experience</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-success-story</guid>
+    <title>Next.js의 혁명: 4개 대형 프로젝트에서의 승리!</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-success-story</link>
+    <description>Next.js의 놀라운 여정을 함께 탐험해보세요: Adobe, Hashnode, Basement.studio, 그리고 Plex가 어떻게 이 혁신적인 프레임워크로 웹 경험을 혁명적으로 변화시켰는지 알아보는 시간입니다!</description>
+    <pubDate>Tue, 10 Oct 2023 05:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Nextjs-Revolution</category><category>Nextjs-SuccessStory</category><category>Nextjs-CaseStudies</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/performance-nextjs-script-optimization</guid>
+    <title>Next.js에서 외부 스크립트(3rd-party Script) 최적화로 성능 발휘하기</title>
+    <link>https://reactnext-central.xyz/blog/performance-nextjs-script-optimization</link>
+    <description>스크립트 최적화를 통해 Next.js 애플리케이션의 성능과 사용자 경험을 향상시키는 전략에 대해 깊이 파고들어 보세요.</description>
+    <pubDate>Mon, 23 Oct 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Web-Performance</category><category>Script-Optimization</category><category>User-Experience</category><category>Nextjs</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/responsive-desing-in-nextjs</guid>
+    <title>Next.js에서 반응형 웹 디자인 마스터하기</title>
+    <link>https://reactnext-central.xyz/blog/responsive-desing-in-nextjs</link>
+    <description>Next.js 환경을 활용하여 반응형 웹 디자인을 탐구해보세요. 핵심 원칙부터 브레이크포인트 설정, 그리고 웹사이트 성능까지 최적화하는 데 필요한 전략적인 팁까지 상세하게 살펴보며, 모든 장치에서 완벽하게 동작하는 웹 애플리케이션 구축의 비밀을 알아봅니다.</description>
+    <pubDate>Sun, 08 Oct 2023 11:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Responsive-Design</category><category>Breakpoints</category><category>Mobile-First</category>
   </item>
 
   <item>
@@ -118,6 +188,16 @@
     <pubDate>Fri, 01 Sep 2023 00:00:00 GMT</pubDate>
     <author>paxcode.io@gmail.com (Pax Code)</author>
     <category>ECMAScript</category><category>JavaScript</category><category>Tool</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/understanding-isr-in-nextjs</guid>
+    <title>Next.js에서 증분적 정적 재생성(ISR) 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/understanding-isr-in-nextjs</link>
+    <description>Next.js에서 증분적 정적 재생성(ISR)을 통해 웹 애플리케이션의 성능을 향상시키고 동적 데이터를 업데이트하는 강력한 기술을 살펴보겠습니다. 이 블로그에서는 ISR이 무엇이며, 작동 방식과 이를 구현하는 방법을 간결하게 소개합니다.</description>
+    <pubDate>Wed, 18 Oct 2023 10:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>ISR</category><category>SSG</category><category>SSR</category><category>SERVER-RENDERING</category>
   </item>
 
   <item>
@@ -158,6 +238,16 @@
     <pubDate>Fri, 22 Sep 2023 00:00:00 GMT</pubDate>
     <author>paxcode.io@gmail.com (Pax Code)</author>
     <category>Web-Rendering</category><category>Browser-Mechanics</category><category>HTML</category><category>CSS</category><category>JavaScript</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/what-is-nextjs</guid>
+    <title>Next.js 정의와 아키텍처: 리액트 기반 프레임워크의 혁신</title>
+    <link>https://reactnext-central.xyz/blog/what-is-nextjs</link>
+    <description>Next.js는 풀스택 웹 애플리케이션을 구축하기 위한 리액트 프레임워크입니다. 이 글은 최첨단 웹 개발의 핵심으로 떠오르는 Next.js의 본질과 구조적 특성을 밝혀, 현대 웹의 미래를 이끌 혁신적 기술을 철저히 분석합니다.</description>
+    <pubDate>Wed, 11 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.io@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>React-Framework</category><category>Web-Architecture</category><category>SSR</category>
   </item>
 
     </channel>
