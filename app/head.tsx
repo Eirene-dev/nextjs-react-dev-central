@@ -16,11 +16,12 @@ export default function Head() {
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <meta content="width=device-width, initial-scale=1" name="viewport" />
       <Script
-        id="script-component-ad"
+        id="script-auto-ad"
         data-ad-client="ca-pub-1194474024149121"
         async
         strategy="lazyOnload"
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+        crossOrigin="anonymous"
       />
     </>
   )
