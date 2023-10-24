@@ -234,6 +234,8 @@ export default function Main({ posts }) {
   )
 }
 
+// TODO: Remove this code
+// FIXME: This code
 // export default function Home({ posts }) {
 //   return (
 //     <>

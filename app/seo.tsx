@@ -5,6 +5,11 @@ interface PageSEOProps {
   title: string
   description?: string
   image?: string
+  // * Important
+  // ! Alerts
+  // ? Questions
+  // TODO: Hello
+  // FIXME: Fixme
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
