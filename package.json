@@ -23,6 +23,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@theguild/remark-mermaid": "^0.0.5",
     "@vercel/analytics": "^1.0.2",
+    "@vercel/speed-insights": "^1.0.1",
     "autoprefixer": "^10.4.13",
     "chart.js": "^4.4.0",
     "class-variance-authority": "^0.7.0",
