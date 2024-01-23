@@ -5,6 +5,8 @@ import { DocsSidebarNav } from '@/components/sidebar-nav'
 import { useState } from 'react'
 import { Icons } from '@/components/icons'
 
+import Script from 'next/script'
+
 interface DocsLayoutProps {
   children: React.ReactNode
 }
