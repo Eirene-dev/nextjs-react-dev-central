@@ -85,6 +85,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+      <Script
+        async
+        strategy="lazyOnload"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1194474024149121"
+        crossOrigin="anonymous"
+      />
       <body className="antialiased text-black bg-white dark:bg-gray-950 dark:text-white">
         <ThemeProviders>
           {/* <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} /> */}
@@ -100,6 +106,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ThemeProviders>
         <Analytics />
         <WebVitals />
+        <Script
+          async
+          strategy="lazyOnload"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1194474024149121"
+          crossOrigin="anonymous"
+        />
       </body>
     </html>
   )
