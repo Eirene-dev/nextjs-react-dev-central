@@ -8,13 +8,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // 추가: AdSense 스크립트 출처를 script-src에 포함
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is https://pagead2.googlesyndication.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is https://pagead2.googlesyndication.com https://tpc.googlesyndication.com;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data:;
   media-src *.s3.amazonaws.com;
   connect-src *;
   font-src 'self';
-  frame-src giscus.app
+  frame-src giscus.app https://googleads.g.doubleclick.net;  // 여기에 추가
 `
 
 const securityHeaders = [
