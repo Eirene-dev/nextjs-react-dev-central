@@ -1,0 +1,180 @@
+---
+title: "Next.js에서 환경 변수 활용 완벽 가이드"
+summary: "Next.js에서 환경 변수의 중요성과 구현 방법에 대해 탐색하는 이 블로그 포스트에서는 보안 강화와 코드 유연성 향상에 필수적인 요소를 발견할 수 있습니다. 개발자가 소스 코드에서 민감한 정보를 안전하게 분리하면서 다양한 환경에서의 적응성을 유지하는 방법을 배우게 될 것입니다."
+tags: ['Env-Variables', 'Secure-Coding', 'Code-Quality']
+images: ['/static/images/blog/nextjs/environment-variables-in-nextjs-1.jpg']
+date: "2023-10-24 10:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## Next.js에서 환경 변수는 무엇인가?
+[Next.js에서 환경 변수](/docs/nextjs/configuring/environment-variables)는 어플리케이션을 구성하는 동안 또는 어플리케이션이 실행 중일 때 사용되는 외부 구성 옵션입니다. 이러한 변수들은 보안 정보(예: API 키), 연결 설정, 플래그 및 다양한 실행 환경에 대한 세부 정보와 같은 중요한 데이터를 저장하는 데 사용됩니다. 환경 변수의 사용은 소스 코드 내에 구성 데이터를 하드코딩하는 것을 방지하고, 보안을 강화하며, 개발 및 프로덕션 환경 간에 쉽게 전환할 수 있는 능력을 제공합니다. 
+
+Next.js는 `.env.local` 파일에서 환경 변수를 로드하는 내장 지원을 제공하여 개발자가 쉽게 환경별 구성을 관리할 수 있도록 돕습니다. 또한, `NEXT_PUBLIC_` 접두사를 사용하여 클라이언트 측 코드에서 안전하게 접근할 수 있는 변수를 지정할 수 있습니다. 이러한 접근 방식은 코드의 유연성을 증가시키고, 개발자가 어플리케이션을 보다 안전하고 효율적으로 관리할 수 있도록 합니다.
+
+### 왜 무엇이 중요한가?
+웹 애플리케이션을 구축하면서 민감한 정보와 구성 세부 사항을 관리하는 것은 보안에 취약해질 수 있으므로, 이를 안전하게 처리하지 않으면 큰 문제가 발생할 수 있습니다. 여기서 Next.js의 환경 변수가 중요한 역할을 합니다. API 키 및 데이터베이스 자격 증명과 같은 민감한 정보를 안전하게 유지하고 구성을 적응시킬 수 있는 강력한 해결책을 제공하기 때문입니다. 환경 변수를 사용해야 하는 이유와 Next.js 프로젝트에서 이를 어떻게 구현할 수 있는지 살펴보겠습니다.
+
+## 하드코딩 된 민감한 정보의 위험성
+
+소스 코드에 민감한 정보를 하드코딩하면 무단 액세스 또는 데이터 유출과 같은 여러 보안 위험이 발생할 수 있습니다. 소스 코드에 직접 추가해서는 안 되는 항목은 다음과 같습니다:
+
+1. **API 키:** 비밀번호처럼 취급하고 소스 코드 밖에 보관해야 합니다. 노출되면 무단 사용자가 서비스에 액세스할 수 있습니다.
+2. **데이터베이스 자격 증명:** 자격 증명이 내장된 연결 문자열은 소스 코드가 손상된 경우 공격자에게 큰 이점을 제공할 수 있습니다.
+3. **비밀 토큰:** 이들은 종종 인증 및 기타 보안 조치에 사용됩니다. 노출되면 다양한 보안 취약점이 발생할 수 있습니다.
+4. **구성 세부 정보:** 서비스 엔드포인트 및 타사 URL과 같은 정보는 잘못된 손에 들어가면 악의적으로 사용될 수 있습니다.
+5. **암호화 키:** 데이터를 보호하는 데 사용되며, 노출되면 누구나 해당 데이터를 해독하고 액세스할 수 있습니다.
+
+### 보안에 문제가 있는 코드와 개선 코드 사례
+Next.js 프로젝트에서 보안을 강화하는 중요한 방법 중 하나는 환경 변수를 통해 민감한 정보를 관리하는 것입니다. 아래에서는 소스 코드에 직접 포함되면 안 되는 몇 가지 항목과 이러한 정보를 환경 변수로 어떻게 옮길 수 있는지에 대한 코드 예제를 제공합니다.
+
+1. **API 키:**
+
+    **보안에 문제 있는 코드:**
+    ```javascript
+    const apiKey = 'YOUR_API_KEY';
+    ```
+
+    **환경 변수를 통한 개선 코드:**
+    ```javascript
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+    ```
+    `.env.local` 파일에 API 키를 추가하세요:
+    ```
+    NEXT_PUBLIC_API_KEY=your_actual_api_key
+    ```
+
+2. **데이터베이스 자격 증명:**
+
+    **보안에 문제 있는 코드:**
+    ```javascript
+    const dbUser = 'db_user';
+    const dbPassword = 'db_password';
+    ```
+
+    **환경 변수를 통한 개선 코드:**
+    ```javascript
+    const dbUser = process.env.DB_USER;
+    const dbPassword = process.env.DB_PASSWORD;
+    ```
+    `.env.local` 파일에 데이터베이스 자격 증명을 추가하세요:
+    ```
+    DB_USER=your_db_user
+    DB_PASSWORD=your_db_password
+    ```
+
+3. **비밀 토큰:**
+
+    **보안에 문제 있는 코드:**
+    ```javascript
+    const secretToken = 'YOUR_SECRET_TOKEN';
+    ```
+
+    **환경 변수를 통한 개선 코드:**
+    ```javascript
+    const secretToken = process.env.SECRET_TOKEN;
+    ```
+    `.env.local` 파일에 비밀 토큰을 추가하세요:
+    ```
+    SECRET_TOKEN=your_secret_token
+    ```
+
+4. **구성 세부 정보:**
+
+    **보안에 문제 있는 코드:**
+    ```javascript
+    const serviceEndpoint = 'http://your-service-endpoint.com';
+    ```
+
+    **환경 변수를 통한 개선 코드:**
+    ```javascript
+    const serviceEndpoint = process.env.NEXT_PUBLIC_SERVICE_ENDPOINT;
+    ```
+    `.env.local` 파일에 서비스 엔드포인트를 추가하세요:
+    ```
+    NEXT_PUBLIC_SERVICE_ENDPOINT=http://your-service-endpoint.com
+    ```
+
+5. **암호화 키:**
+
+    **보안에 문제 있는 코드:**
+    ```javascript
+    const encryptionKey = 'YOUR_ENCRYPTION_KEY';
+    ```
+
+    **환경 변수를 통한 개선 코드:**
+    ```javascript
+    const encryptionKey = process.env.ENCRYPTION_KEY;
+    ```
+    `.env.local` 파일에 암호화 키를 추가하세요:
+    ```
+    ENCRYPTION_KEY=your_encryption_key
+    ```
+
+위의 예제에서 볼 수 있듯이, 환경 변수를 사용하여 이러한 민감한 정보를 관리하는 것은 보안을 강화하고 코드의 유지 관리를 더 쉽게 만듭니다. 하지만, 이러한 환경 변수들 역시 안전하게 보관되어야 하며, 절대 버전 관리 시스템에 커밋되어서는 안 됩니다. `.env.local` 파일은 `.gitignore`에 포함시켜 소스 코드 저장소에 추가되지 않도록 해야 합니다.
+
+## 환경 변수를 사용해야 하는 이유?
+
+위에서 언급한 정보를 처리하기 위해 환경 변수를 사용하면 여러 가지 이점이 있습니다:
+
+1. **보안:** 민감한 정보가 버전 제어 시스템에 노출되지 않아 응용 프로그램을 잠재적인 위협으로부터 보호할 수 있습니다.
+2. **환경 구분:** 다양한 환경(예: 개발, 생산)에 대해 코드베이스를 변경하지 않고도 다른 설정을 사용할 수 있습니다. 이를 통해 쉬운 전환과 일관된 성능을 달성할 수 있습니다.
+3. **코드 이식성 및 깔끔함:** 구성 세부 사항이 내장되지 않은 코드는 더 깔끔하고 논리에 집중됩니다. 이로 인해 코드의 가독성이 향상되고 동일한 코드베이스를 다른 환경에서 다른 구성으로 사용할 수 있어 이식성이 높아집니다.
+4. **변경의 용이성:** 비밀 또는 구성이 변경된 경우 코드를 변경하고 응용 프로그램을 다시 배포하는 것보다 환경 변수를 업데이트하는 것이 훨씬 쉽고 안전합니다.
+
+## Next.js에서 환경 변수 사용 방법
+
+Next.js는 환경 변수를 사용하기 위한 간단한 시스템을 제공합니다. 다음은 환경 변수를 설정하는 방법입니다:
+
+1. **변수 정의:**
+   프로젝트 루트에 `.env.local` 파일을 만들고 환경별 변수를 추가합니다:
+   ```plaintext
+   DB_USER=mydatabaseuser
+   DB_PASS=mydatabasepass
+   ```
+   프로덕션의 경우 이러한 내용을 호스팅 환경에 정의해야 합니다. `.env.local` 파일은 버전 제어에서 추적되지 않아야 하므로 민감한 정보가 보호됩니다.
+
+2. **브라우저에 변수 노출:**
+   브라우저에서 사용되는 변수는 `NEXT_PUBLIC_` 접두사를 붙여야 합니다. 그러나 이러한 변수는 공개적으로 접근할 수 있으므로 민감한 정보를 담지 않아야 합니다.
+   ```javascript
+   console.log(process.env.NEXT_PUBLIC_ANALYTICS_ID);
+   ```
+
+3. **환경 변수에 액세스:**
+   Next.js 응용 프로그램 내에서 이러한 변수에는 `process.env` 네임스페이스를 사용하여 액세스할 수 있습니다. `getStaticProps`와 같은 서버 측 코드 또는 서버 측 렌더링(SSR) 메서드에서는 모든 환경 변수에 액세스할 수 있습니다.
+   ```javascript
+   const dbUser = process.env.DB_USER;
+   ```
+
+4. **환경별 파일:**
+   개발 주기의 다른 단계에 대해 별도의 환경 파일(`.env.development`, `.env.production`, `.env.test`)을 가질 수 있습니다. Next.js는 `NODE_ENV` 값에 기초하여 적절한 파일을 자동으로 선택합니다.
+
+   ```plaintext
+   // .env.development
+   API_URL=http://localhost:5000
+
+   // .env.production
+   API_URL=https://api.mysite.com
+   ```
+
+5. **단위 테스트:**
+   단위 테스트를 실행할 때, `@next/env` 패키지에서 `loadEnvConfig` 함수를 사용하여 환경 변수를 로드할 수 있습니다. 이렇게 하면 테스트가 필요한 환경 컨텍스트에 액세스할 수 있습니다.
+
+   ```javascript
+   import { loadEnvConfig } from '@next/env'
+
+   export default async () => {
+     const projectDir = process.cwd()
+     loadEnvConfig(projectDir)
+   }
+   ```
+
+### 환경 변수를 넘어서는 보안
+
+환경 변수는 보안을 유지하는 강력한 도구이지만, 보다 광범위한 보안 전략의 일부일 뿐입니다. 정기적인 의존성 업데이트, HTTPS 사용, 적절한 비밀 관리 기술 채택과 같은 다른 모범 사례도 항상 따라야 합니다.
+
+---
+## 결론
+Next.js 프로젝트에서 환경 변수를 구현하면 보안이 강화될 뿐만 아니라 다양한 환경에서 응용 프로그램의 적응성이 향상됩니다. 모든 개발자가 응용 프로그램을 보호하고 효율적인 워크플로우를 유지하기 위해 채택해야 하는 기본적인 모범 사례입니다.

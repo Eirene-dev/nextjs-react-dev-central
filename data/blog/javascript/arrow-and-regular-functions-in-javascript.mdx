@@ -1,0 +1,353 @@
+---
+title: "JavaScript에서 화살표 함수와 일반 함수의 차이점"
+summary: "JavaScript에서 일반 함수와 화살표 함수는 superficial하게 보면 비슷해 보일 수 있지만, 깊은 내부에서는 `this` 바인딩부터 생성자 기능, 프로토타입 객체, 그리고 문법 구조에 이르기까지 여러 중요한 차이점을 가지고 있습니다. 이러한 차이점들은 여러분의 코드가 예상한 대로 동작하도록 하는데 큰 영향을 미칠 수 있습니다."
+tags: ['JavaScript', 'ECMA', 'Functional']
+images: ['/static/images/blog/javascript/arrow-and-regular-functions-in-javascript-1.jpg']
+date: "2023-10-03 18:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+Next.js와 React에서 웹 애플리케이션을 개발하며 JavaScript의 중요한 기능 중 하나로 여겨지는 화살표 함수와 일반 함수의 차이를 알아봅시다.
+
+JavaScript에서 함수는 특정 작업을 수행하기 위해 디자인된 코드 블록입니다. 함수를 활용하면 개발자들은 큰 프로그램을 여러 개의 작고 관리하기 쉬운 컴포넌트로 분리할 수 있습니다. 따라서 동일한 코드를 반복해서 작성할 필요가 없게 됩니다.
+JavaScript에서 사용할 수 있는 함수의 유형은 크게 두 가지입니다.
+1. 일반 함수
+2. 화살표 함수 (ES6[^1]에서 도입됨)
+
+[^1]: ES6는 ECMAScript 2015로도 알려져 있으며, JavaScript의 주요 업데이트 버전으로 화살표 함수, 클래스, 프로미스와 같은 새로운 기능들을 도입한 표준입니다.
+
+## 일반 함수
+일반 함수는 주로 두 가지 방식, 즉 함수 선언과 함수 표현식을 통해 작성됩니다.
+
+```js
+// 함수 선언 방식
+function add(a, b) {
+  return a + b;
+}
+// 함수 표현식 방식
+const sum = function (a, b) {
+  return a + b;
+  add(2, 3); // 5
+  sum(2, 3); // 5
+}
+```
+
+함수 선언과 함수 표현식 사이의 핵심 차이점은, `add(2,3)` 같은 함수는 선언되기 전에도 호출할 수 있다는 것입니다. 그러나 `sum(2,3)`과 같은 함수는 정의된 후에만 호출할 수 있습니다.
+
+
+
+## 화살표 함수 (Arrow Functions)의 7가지 다른점
+
+화살표 함수(또는 fat arrow 함수라고도 함)는 ES6에서 새롭게 소개된 기능으로, 함수 표현식을 작성하기 위한 더 간결한 문법을 제공합니다. 일반 함수에 비해 훨씬 깔끔하게 함수를 생성할 수 있습니다. 여기에서는 선언 방식을 사용하지 않고, 함수 표현식만을 사용하여 작성할 수 있습니다.
+
+```js
+// 화살표 함수 표현식
+const add = (a, b) => {
+  return a + b;
+}
+// 간결한 문법
+const add = (a, b) => a + b;
+```
+
+화살표 함수와 일반 함수 사이에는 몇 가지 차이점이 있습니다:
+- 문법
+- `arguments` 객체의 부재
+- 화살표 함수에는 `prototype` 객체가 없음
+- `new` 키워드로 호출할 수 없음 (생성자 함수가 아님)
+- 자체적인 `this`가 없음
+- 생성자 함수로 사용할 수 없음
+- 중복된 이름의 매개변수가 허용되지 않음
+
+각 항목에 대해 자세히 알아보겠습니다.
+
+### 1. 문법
+함수 내에 하나의 표현식만 있는 경우 중괄호는 필요 없으며, 해당 결과는 함수에서 암시적으로 반환됩니다.
+
+```js
+const add = (a, b) => {
+  return a + b;
+}
+// 간결한 문법
+const add = (a, b) => a + b;
+  // 매개변수가 하나만 있을 경우 괄호 생략
+  const square = a => a * a;
+```
+
+### 2. 화살표 함수에서의 arguments 객체
+함수에 전달되는 인수의 수가 알려져 있지 않은 경우, `arguments`라는 단일 변수로 모든 매개변수를 얻을 수 있습니다.
+
+화살표 함수 내에서는 arguments를 사용할 수 없습니다. 화살표 함수에서 arguments에 접근하려고 하면 오류가 발생합니다.
+
+```js
+const arrowFun = () => {
+  console.log(arguments);
+  // 오류 발생: arguments가 정의되지 않음
+}
+```
+
+하지만 대신 "rest 매개변수"를 사용하여 일반 배열 객체를 얻을 수 있습니다.
+
+<ToggleContent title="Rest 매개변수">
+**Rest 매개변수**는 함수에 전달된 인수들 중 나머지 인수들을 배열로 수집할 때 사용하는 JavaScript의 문법입니다. `...` 세 개의 점으로 표현됩니다.
+
+예제:
+
+```javascript
+function printNames(...names) {
+    for (let name of names) {
+        console.log(name);
+    }
+}
+
+printNames("Alice", "Bob", "Charlie", "David");
+```
+
+위의 예제에서 `printNames` 함수는 몇 개의 인수든 받아들일 수 있으며, 그 모든 인수들은 `names`라는 배열 내에 저장됩니다. 결과적으로 함수는 각각의 이름("Alice", "Bob", "Charlie", "David")을 출력할 것입니다.
+</ToggleContent>
+
+```js
+// 화살표 함수에서의 rest 연산자와 간결한 문법
+const findMaxNumber = (...numbers) => Math.max(...numbers);
+findMaxNumber(1, 2, 3, 4); // 4
+```
+
+### 3. 화살표 함수와 프로토타입 객체
+일반 함수와 달리 화살표 함수에는 "프로토타입 객체"가 없습니다. 화살표 함수의 프로토타입을 접근하려고 시도하면 `undefined`를 반환합니다.
+
+<ToggleContent title="프로토타입 객체">
+**프로토타입 객체**는 JavaScript의 핵심 개념 중 하나로, 객체 지향 프로그래밍에서 상속을 가능하게 하는 메커니즘입니다. 각 객체는 `prototype`이라는 링크를 가지고 있어, 해당 객체에 존재하지 않는 속성이나 메소드를 참조하려고 할 때, JavaScript는 이 `prototype` 링크를 통해 해당 속성이나 메소드를 찾습니다.
+
+예제:
+
+```javascript
+function Person(name) {
+    this.name = name;
+}
+
+Person.prototype.sayHello = function() {
+    console.log("Hello, my name is " + this.name);
+};
+
+let alice = new Person("Alice");
+alice.sayHello();  // "Hello, my name is Alice"
+
+let bob = new Person("Bob");
+bob.sayHello();    // "Hello, my name is Bob"
+```
+
+위의 예제에서 `sayHello` 메소드는 `Person`의 프로토타입 객체에 추가되었습니다. 따라서 `alice`와 `bob` 객체에는 직접 `sayHello` 메소드가 없지만, 그들의 프로토타입인 `Person.prototype`을 통해 접근하여 메소드를 실행할 수 있습니다.
+</ToggleContent>
+
+```js
+// 일반적인 JavaScript 함수
+function traditionalFunction() {}
+
+// ES6 화살표 함수
+const arrowFn = () => {};
+
+console.log(traditionalFunction.prototype); // {constructor: f}
+console.log(arrowFn.prototype); // undefined
+```
+
+### 4. new 키워드로 호출 불가능
+화살표 함수는 생성자가 없기 때문에 new 키워드로 호출할 수 없습니다. "new 키워드로 인스턴스화"하려고 시도하면 오류가 발생합니다.
+<ToggleContent title="new 키워드로 인스턴스화">
+**`new` 키워드로 인스턴스화**는 JavaScript에서 객체 지향 프로그래밍의 핵심 개념 중 하나입니다. `new` 키워드를 사용하여 함수(생성자 함수)를 호출하면, 해당 함수의 프로토타입을 기반으로 새로운 객체를 생성하게 됩니다. 이렇게 생성된 객체를 **인스턴스**라고 합니다.
+
+예제:
+
+```javascript
+function Car(make, model) {
+    this.make = make;
+    this.model = model;
+}
+
+Car.prototype.drive = function() {
+    console.log(this.make + " " + this.model + " is driving!");
+};
+
+let myCar = new Car("Toyota", "Camry");
+myCar.drive();  // "Toyota Camry is driving!"
+```
+
+위의 예제에서 `Car` 함수는 생성자 함수입니다. `new Car("Toyota", "Camry")`를 호출하면, `Car`의 프로토타입을 기반으로 새로운 `Car` 객체(인스턴스)가 생성됩니다. 생성된 `myCar` 인스턴스는 `Car` 프로토타입의 모든 속성 및 메소드에 접근할 수 있습니다.
+</ToggleContent>
+
+```js
+const UserDetails = (name) => {
+  this.name = name;
+};
+const user1 = new UserDetails("jaya");
+// 오류: UserDetails는 생성자가 아님
+```
+
+### 5. 자체적인 this 없음 (call, apply, bind는 예상대로 동작하지 않음)
+전통적인 함수에서 내부적인 `this` 값은 동적입니다. 이는 함수가 어떻게 호출되는지에 따라 달라집니다.
+```js
+const user = {
+  username: "Jayanth",
+  getUserName: function() {
+    return this.username;
+  }
+};
+const getName = user.getUserName; 
+console.log(getName()); // undefined
+console.log(user.getUserName()); // Jayanth
+```
+
+일반 함수와는 달리, 화살표 함수는 자체적인 `this` 바인딩이 없습니다. 화살표 함수 내에서 this를 접근하면 가장 가까운 화살표 함수가 아닌 부모 함수의 this를 반환합니다.
+
+<ToggleContent title="`this` 바인딩">
+**`this` 바인딩**은 JavaScript에서 함수가 호출되는 방식에 따라 `this` 키워드가 가리키는 객체(컨텍스트)를 결정하는 프로세스를 말합니다. `this`는 현재 실행되는 코드의 컨텍스트에 따라 동적으로 결정됩니다.
+
+예제:
+
+1. **전역 컨텍스트에서의 `this`**:
+   ```javascript
+   console.log(this);  // Window 객체 (브라우저 환경에서)
+   ```
+
+2. **객체의 메소드에서의 `this`**:
+   ```javascript
+   const person = {
+     name: "John",
+     sayName: function() {
+       console.log(this.name);
+     }
+   };
+
+   person.sayName();  // "John"
+   ```
+
+   여기서 `this`는 `person` 객체를 가리킵니다.
+
+3. **생성자 함수에서의 `this`**:
+   ```javascript
+   function Car(make, model) {
+     this.make = make;
+     this.model = model;
+   }
+
+   const myCar = new Car("Toyota", "Camry");
+   console.log(myCar.make);  // "Toyota"
+   ```
+
+   `new` 키워드를 사용하여 생성자 함수를 호출할 때, `this`는 새로 생성된 객체 인스턴스를 가리킵니다.
+
+4. **이벤트 핸들러에서의 `this`**:
+   ```html
+   <!-- HTML -->
+   <button id="myButton">Click me</button>
+   ```
+
+   ```javascript
+   // JavaScript
+   document.getElementById('myButton').addEventListener('click', function() {
+     console.log(this);  // <button id="myButton">...</button>
+   });
+   ```
+
+   이벤트 핸들러 내에서 `this`는 이벤트를 발생시킨 DOM 요소를 가리킵니다.
+
+5. **`call`, `apply`, `bind`를 사용한 `this`의 명시적 바인딩**:
+   ```javascript
+   function introduce() {
+     console.log(`Hello, I am ${this.name}`);
+   }
+
+   const person = { name: "Alice" };
+   introduce.call(person);  // "Hello, I am Alice"
+   ```
+
+   `call`, `apply`, `bind` 메서드를 사용하면 함수의 `this` 값을 명시적으로 설정할 수 있습니다.
+
+이와 같이 `this` 바인딩은 함수가 어떻게 호출되었는지에 따라 다르게 결정되며, JavaScript 개발에서 중요한 개념입니다.
+</ToggleContent>
+
+```js
+const user = {
+  username: "Jayanth",
+  getUserName: () => {
+    return this.username;
+  }
+};
+const getName = user.getUserName; 
+console.log(getName()); // undefined
+console.log(user.getUserName()); // undefined
+```
+
+화살표 함수의 `this` 값은 선언 시점에 결정되며, 이후에 변경되지 않습니다. 따라서 `call`, `apply`, `bind`는 화살표 함수의 `this` 값을 변경할 수 없습니다.
+
+### 6. 생성자 함수로 사용 불가능
+<ToggleContent title="생성자 함수">
+**자바스크립트 생성자 함수**는 객체를 생성하고 초기화하기 위한 특별한 유형의 함수입니다. 생성자 함수는 일반적으로 첫 글자를 대문자로 시작합니다. `new` 키워드와 함께 호출되면, 생성자 함수는 새 객체를 생성하고, 이 객체를 `this`로 바인딩한 후, 이 객체를 반환합니다.
+
+예제:
+
+```javascript
+function Person(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+
+  this.getFullName = function() {
+    return `${this.firstName} ${this.lastName}`;
+  };
+}
+
+const johnDoe = new Person('John', 'Doe');
+console.log(johnDoe.getFullName());  // "John Doe"
+```
+
+위 예제에서:
+
+- `Person`은 생성자 함수입니다.
+- `johnDoe`는 `Person` 생성자 함수를 사용하여 생성된 새 객체입니다.
+- `new Person('John', 'Doe')`를 호출하면, 새로운 `Person` 객체가 생성되고 그 객체의 `firstName`과 `lastName` 속성이 초기화됩니다.
+
+생성자 함수를 사용하여 객체를 생성하면 해당 객체는 생성자의 프로토타입을 상속받게 됩니다. 이를 통해 여러 객체가 같은 생성자로부터 동일한 메서드나 속성을 공유할 수 있습니다.
+</ToggleContent>
+
+[MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*)에 따르면
+> `function*` 문장은 생성기 함수를 정의합니다.
+
+`yield` 키워드는 화살표 함수의 본문에서 사용될 수 없습니다. 결과적으로 화살표 함수는 생성기로 사용될 수 없습니다. 
+<ToggleContent title="`yield` 키워드">
+**`yield` 키워드**는 제너레이터 함수 내부에서 사용되며, 해당 제너레이터의 실행을 일시 중단하고 값을 반환합니다. 제너레이터는 이후에 다시 시작할 수 있으며, 다음 `yield`까지 실행하거나 함수의 끝에 도달할 때까지 계속됩니다. 
+
+예제:
+
+```javascript
+function* numbersGenerator() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+const generateNumbers = numbersGenerator();
+
+console.log(generateNumbers.next().value);  // 1
+console.log(generateNumbers.next().value);  // 2
+console.log(generateNumbers.next().value);  // 3
+console.log(generateNumbers.next().value);  // undefined
+```
+
+위 예제에서:
+
+- `numbersGenerator`는 `function*` 선언을 사용하여 제너레이터 함수로 정의됩니다.
+- `generateNumbers`는 제너레이터 객체입니다.
+- `next()` 메서드는 제너레이터 함수를 다음 `yield`까지 실행하거나 함수가 종료될 때까지 실행시킵니다.
+- 각 `yield`문이 실행될 때마다 해당 값을 반환하며 함수 실행이 일시 중단됩니다. 
+
+제너레이터 함수는 반복 가능한 객체를 생성하므로, for...of 루프와 같은 반복 메커니즘에도 사용될 수 있습니다.
+</ToggleContent>
+
+### 7. 중복된 이름의 매개변수 허용 안 됨
+비 엄격 모드에서는 일반 함수는 중복된 이름의 매개변수를 사용할 수 있습니다. 하지만 엄격 모드에서는 허용되지 않습니다.
+
+화살표 함수는 엄격 모드 또는 비 엄격 모드 모두에서 중복 매개변수를 허용하지 않습니다. 중복 매개변수는 Syntax Error를 발생시킵니다.
+
+## 결론
+
+JavaScript는 웹 개발의 핵심 언어로, 그 안에 다양한 기능과 특징을 가지고 있습니다. 이 글에서는 그 중에서도 Next.js와 React 개발에 있어서 중요한 역할을 하는 일반 함수와 화살표 함수의 차이점에 대해 깊게 파헤쳤습니다. 두 함수의 다양한 특성, 예를 들면 `this` 바인딩 방식이나 문법적인 차이, 그리고 화살표 함수의 간결함 등은 단순히 코드를 작성하는 것 이상의 의미를 가지며, 이를 통해 보다 효율적이고 유지 보수가 쉬운 애플리케이션을 구축할 수 있습니다. 특히 Next.js와 React를 활용하는 개발자들에게는 이러한 지식이 더욱 중요합니다. 컴포넌트 기반의 개발 방식에서 함수의 역할과 특성을 정확히 이해하고 활용하는 것은 애플리케이션의 성능과 구조에 큰 영향을 미칩니다. 그렇기에 이 글을 통해 얻은 지식을 잘 활용하여, 각 상황에 맞는 최적의 함수 선택과 활용법을 마스터하는 것이 Next.js와 React 개발의 성공 키가 될 것입니다.

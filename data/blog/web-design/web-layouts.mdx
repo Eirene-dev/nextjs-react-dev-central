@@ -1,0 +1,95 @@
+---
+title: "웹 레이아웃의 여러 가지 유형 알아보기"
+summary: 웹 디자인에서 다양한 레이아웃을 구성하기 위한 여러 가지 기술과 접근 방식을 소개합니다.
+tags: ['CSS', 'Web-Design']
+images: ['/static/images/blog/web-design/blog-post-web-layout.jpg']
+date: "2023-09-01"
+---
+<TOCInline toc={props.toc} asDisclosure />
+
+웹 디자인에서 다양한 레이아웃을 구성하기 위한 여러 가지 기술과 접근 방식이 있습니다. 이러한 레이아웃 기술들은 각자 특정 문제를 해결하거나 특정 유형의 레이아웃을 더 쉽게 만들기 위해 설계되었습니다.
+
+## 1. Block Layout
+
+가장 기본적인 레이아웃 형태로, HTML 요소가 문서의 흐름에 따라 위에서 아래로 쌓입니다.
+
+```html
+<div>Block 1</div>
+<div>Block 2</div>
+```
+
+## 2. Inline Layout
+
+텍스트 같은 인라인 요소들이 수평으로 배열됩니다.
+
+```html
+<span>Inline 1</span>
+<span>Inline 2</span>
+```
+
+## 3. Table Layout
+
+HTML `<table>` 태그 또는 CSS의 `display: table` 속성을 사용하여 테이블 형식의 레이아웃을 구성합니다.
+
+```html
+<table>
+  <tr>
+    <td>Cell 1</td>
+    <td>Cell 2</td>
+  </tr>
+</table>
+```
+
+
+## 4. Flexbox Layout
+
+한 방향(수평/수직)의 레이아웃을 유연하게 구성할 수 있습니다.
+
+```html
+<div style="display: flex;">
+  <div>Item 1</div>
+  <div>Item 2</div>
+</div>
+```
+
+
+## 5. Grid Layout
+
+CSS Grid를 사용하여 더 복잡한 2차원 레이아웃을 만들 수 있습니다.
+
+```html
+<div style="display: grid; grid-template-columns: 1fr 1fr;">
+  <div>Item 1</div>
+  <div>Item 2</div>
+</div>
+```
+
+
+
+## 6. Multi-column Layout
+
+텍스트나 다른 콘텐츠를 여러 열로 나누어 표시합니다.
+
+```html
+<div style="column-count: 2;">
+  <p>Paragraph 1</p>
+  <p>Paragraph 2</p>
+</div>
+```
+
+## 7. Positioned Layout
+
+`position` 속성을 사용하여 요소를 문서의 특정 위치에 직접 배치합니다.
+
+```html
+<div style="position: absolute; top: 0; left: 0;">
+  Positioned Element
+</div>
+```
+
+이 외에도 다양한 레이아웃 유형이 있으므로, 프로젝트의 요구 사항에 따라 적절한 레이아웃 기술을 선택하는 것이 중요합니다.
+
+## 결론
+
+각 레이아웃 유형은 그 자체의 장점과 단점, 그리고 적합한 사용 사례가 있습니다. 따라서 프로젝트의 요구 사항과 목적에 따라 다양한 레이아웃을 적절하게 활용해야 합니다.
+

@@ -1,0 +1,53 @@
+---
+title: "트리 쉐이킹(Tree Shaking): JavaScript 번들 최적화의 핵심 기법"
+summary: 트리 쉐이킹은 불필요한 코드를 제거하여 JavaScript 번들의 크기를 줄이는 최적화 기법입니다. 이로 인해 앱의 로딩 속도와 성능이 향상됩니다.
+tags: ['JavaScript', 'Optimization']
+images: ['/static/images/blog/javascript/blog-post-tree-shaking.png']
+date: "2023-09-01"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 트리 쉐이킹이란?
+
+트리 쉐이킹(Tree Shaking)은 모던 자바스크립트 번들러들에서 사용되는 코드 최적화 기법 중 하나입니다. 이 기법은 애플리케이션에서 실제로 사용되지 않는 코드(dead code)를 자동으로 제거합니다. 결과적으로, 최종적으로 빌드된 파일의 크기가 줄어들어, 앱의 로딩 속도와 실행 성능이 향상됩니다.
+
+### 작동 원리
+
+트리 쉐이킹은 ES6 모듈 문법을 활용하여 작동합니다. ES6 모듈은 정적 구조를 가지기 때문에, 컴파일 타임에 어떤 코드가 사용되는지, 어떤 코드가 사용되지 않는지를 쉽게 판단할 수 있습니다.
+
+예를 들어, 다음과 같은 코드가 있다고 가정해 봅시다.
+
+```javascript
+// math.js
+export function add(a, b) {
+  return a + b;
+}
+
+export function multiply(a, b) {
+  return a * b;
+}
+```
+
+```javascript
+// app.js
+import { add } from './math';
+
+console.log(add(1, 2));
+```
+
+여기서 `multiply` 함수는 `app.js`에서 호출되지 않았습니다. 트리 쉐이킹을 적용하면, 최종 번들에서 이 `multiply` 함수는 제거됩니다.
+
+### 트리 쉐이킹을 지원하는 도구
+
+- Webpack
+- Rollup
+- Parcel
+
+### 주의사항
+
+트리 쉐이킹은 주로 ES6 모듈 문법을 사용하는 코드에 효과적입니다. CommonJS 같은 동적 모듈 시스템에서는 트리 쉐이킹이 제한적으로만 작동하거나 아예 작동하지 않을 수 있습니다.
+
+## 결론
+
+트리 쉐이킹은 자바스크립트 앱의 성능을 향상시키는 중요한 최적화 기법입니다. 모던 자바스크립트 개발 환경에서는 이 기법을 활용하여 더 효율적이고 빠른 애플리케이션을 구현할 수 있습니다.

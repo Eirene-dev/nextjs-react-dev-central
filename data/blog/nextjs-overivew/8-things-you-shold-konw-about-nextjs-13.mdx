@@ -1,0 +1,263 @@
+---
+title: "Next.js 13에 대해 알아야 할 8가지: 더 강력해진 웹 개발의 미래"
+summary: "Next.js 13의 새로운 바람! 최근 업데이트에서는 React 18과의 깊은 통합을 통해 서버와 클라이언트 간 렌더링의 경계를 허문 새로운 모습을 확인할 수 있습니다. 이번 포스팅에서는 Next.js 13의 핵심 변화와 함께 여러분을 미래의 웹 개발 트렌드로 안내해 드리겠습니다. 함께 차세대 웹의 풍경을 만나보아요!"
+tags: ['Nextjs', 'Next.js', 'App-Router']
+images: ['/static/images/blog/nextjs-overivew/8-things-you-shold-konw-about-nextjs-13-1.jpg']
+date: "2023-09-15"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+이 글에서는 Next.js 13의 여러 가지 주요 특징에 대해 알아보겠습니다. 준비하시고 웹 개발의 미래로의 흥미진진한 여행을 함께 시작해봅시다.
+
+> Next.js 13의 출시와 함께 웹 개발의 새로운 장이 시작되었습니다. 이 최신 버전은 React 18과의 밀접한 통합을 통해 서버와 클라이언트의 렌더링을 더욱 효율적으로 만들었습니다. 특히, React 서버 컴포넌트의 도입과 실시간 데이터 리로드 기능은 개발자들에게 더욱 유연한 개발 환경을 제공합니다. 이로써 Next.js는 웹 개발의 새로운 표준을 제시하게 되었습니다.
+
+## 1. React 서버 컴포넌트 (RSC)
+<Callout type="warning">
+"Next.js 13와 React 18의 협업으로 도입된 React 서버 컴포넌트(RSC)는 `"use client"`와 `"use server"` 지시어를 통해 파일 레벨에서 컴포넌트의 렌더링 위치를 제어하며, 이를 통해 빌드 시간에 서버에서 더 많은 부분을 렌더링하는 것을 목표로 합니다."
+</Callout>
+
+새로운 Next.js 13 App 라우터는 React 18과 밀접한 협업하에 개발되었습니다. React 18의 주요 새로운 기능 중 하나는 React 서버 컴포넌트(RSC)입니다. Next.js 13에서 작업을 시작하려면 이 새로운 패러다임을 이해해야 합니다.
+과거에는 React는 주로 클라이언트 측 UI 렌더링 라이브러리였습니다. RSCs의 도입으로 서버에서 가능한 많은 부분을 빌드 시간에 렌더링하는 것이 목표가 되었습니다.
+
+React 18에서는 `"use client"`와 `"use server"`라는 두 개의 새로운 지시어가 추가되어 파일 레벨에서 컴포넌트가 어디에서 렌더링되는지 제어할 수 있게 되었습니다. 이 새로운 지시어들은 Next.js 13에서 코드가 클라이언트 측 번들에 포함될지 여부를 제어하는 데 사용됩니다.
+"Use server" 지시어를 사용하면, 클라이언트가 로드하는 번들에 해당 컴포넌트를 포함할 필요가 없음을 나타낼 수 있습니다. 해당 컴포넌트는 빌드 또는 실행 시간에 서버에서 렌더링됩니다.
+아래 코드에서 볼 수 있듯이, 서버 컴포넌트에서는 데이터를 로드할 때 `async await`를 사용할 수 있습니다.
+
+```tsx
+// ServerComponent.ts
+"use server"
+
+export default async function ServerComponent() {
+  const data = await fetchData()
+
+  return //...
+}
+```
+컴포넌트가 React Hooks, 예를 들어 `useEffect`를 사용하거나 브라우저 API에 접근해야 하는 경우 `"use client"` 지시어를 사용하여 해당 컴포넌트가 클라이언트 번들에 포함되어야 함을 나타낼 수 있습니다.
+
+```tsx
+// ClientComponent.tsx
+// use client는 React hooks와 브라우저의 localStorage API에 접근하기 때문에 필요합니다.
+"use client"
+export default function ClientComponent() {
+  const [todos, setTodos] = useState([])
+  useEffect(() => {
+    const cachedTodos = localStorage.get('todos')
+    setTodos(todos)
+  })
+
+  return (
+    <>
+      {todos.map(todo => <Todo {...todo} />)}
+    </>
+  )
+}
+```
+이러한 지시어들이 제안된 원래의 React RFC를 참고하십시오: https://github.com/reactjs/rfcs/pull/227
+
+## 2. Next.js에서의 서버 컴포넌트 기반으로 SSR은 기본으로 수행
+<Callout type="warning">
+"Next.js 13에서는 서버 컴포넌트가 기본이며, 대부분의 컴포넌트에서 지시어를 사용할 필요가 없으나, 경계 컴포넌트를 생성할 때는 필요합니다."
+</Callout>
+
+Next.js 13의 세계에서는 서버 컴포넌트가 기본이 되었습니다. 따라서 대부분의 컴포넌트에서 `"use server"` 또는 `"use client"` 지시어를 사용할 필요가 없어야 합니다.
+이러한 지시어를 사용해야 하는 유일한 경우는 경계 컴포넌트를 만들 때입니다.
+
+```tsx
+// page.tsx
+// React 서버 컴포넌트로, 클라이언트에 포함되지 않을 것입니다.
+export default function Page() {
+
+  return (
+    <Provider>
+      <TodoList />
+    </Provider>
+  )
+}
+
+// TodoList.tsx
+// React hooks를 사용하기 때문에 여기서 "use client"가 필요합니다.
+"use client"
+export default function TodoList() {
+  useEffect(() => {})
+
+  return (
+    <>
+      {todos.map(todo => <Todo {...todo} />)}
+    </>
+  )
+}
+
+// TodoList.tsx
+// 다른 클라이언트 컴포넌트 내에서만 렌더링되기 때문에 여기서는 "use client"가 필요하지 않습니다.
+export default function Todo() {
+  useEffect(() => {})
+
+  return (
+    <>
+      {todos.map(todo => <Todo {...todo} />)}
+    </>
+  )
+}
+```
+## 3. 클라이언트 컴포넌트도 서버에서 렌더링됩니다!
+<Callout type="warning">
+"'use client' 지시어를 사용한 클라이언트 컴포넌트도 대부분 서버에서 렌더링되며, 서버에서 렌더링되지 않게 하려면 특별한 처리가 필요합니다."
+</Callout>
+
+'use client' 지시어를 사용해 클라이언트 컴포넌트를 만들 때, 이것이 오직 클라이언트 측에서만 렌더링됨을 의미하지는 않습니다. 사실, 대부분의 클라이언트 컴포넌트는 서버 측 렌더링(SSR)이나 정적 사이트 생성(SSG)을 할 때 서버에서 렌더링됩니다.
+클라이언트 컴포넌트가 서버에서 렌더링되지 않을 때는 사용자가 그렇게 지시할 경우입니다. 이를 수행하는 한 가지 방법은 `ssr: false` 옵션을 가진 `next/dynamic`을 사용하는 것입니다 (참고: Vercel은 `next/dynamic` 대신 `React.lazy`와 `Suspense`를 직접 사용하는 것을 권장합니다):
+
+```tsx
+import dynamic from 'next/dynamic';
+ 
+const DynamicHeader = dynamic(() => import('../components/header'), {
+  ssr: false,
+});
+```
+이것은 Next.js가 진정으로 하이브리드 프레임워크가 될 수 있게 만들고, 가능한 한 많은 내용을 정적으로 렌더링하고 클라이언트에 필요한 내용만 포함하는 Next의 목표를 촉진합니다.
+이는 클라이언트 컴포넌트가 서버에서 어떻게 렌더링될지에 대해 고민해야 함을 의미합니다. 이를 테스트하는 방법은 브라우저에서 자바스크립트를 비활성화하고 페이지가 어떻게 렌더링되는지 확인하는 것입니다. 그 결과, 페이지가 완전히 렌더링되지만 상호 작용 요소는 비활성화되어야 합니다.
+요소가 상호작용 가능해질 때 레이아웃 이동이 발생하지 않도록 해야하므로, 자바스크립트가 활성화되기 전에 컴포넌트가 잘 렌더링되는지 확인하세요. 이는 기본적으로 내용을 렌더링하거나 스켈레톤을 사용함으로써 수행할 수 있습니다.
+
+## 4. 클라이언트와 서버 컴포넌트 조합하기
+<Callout type="warning">
+"Next.js 13은 서버 컴포넌트와 클라이언트 컴포넌트를 유연하게 조합할 수 있어, 높은 상호 운용성과 코드 재사용성을 제공합니다."
+</Callout>
+
+Next.js 13은 컴포넌트를 조합할 때 더욱 향상된 유연성을 제공합니다. 서버 컴포넌트는 다른 서버 컴포넌트와 클라이언트 컴포넌트를 렌더링할 수 있습니다. 반면, 클라이언트 컴포넌트는 다른 클라이언트 컴포넌트를 렌더링할 수 있으며 `prop`으로 전달되는 경우에만 서버 컴포넌트를 렌더링할 수 있습니다. 이 계층적인 조합 모델은 높은 수준의 상호 운용성과 코드 재사용성을 허용합니다.
+위의 단락이 다소 어려울 수 있다는 것을 이해합니다. 아래는 이 개념을 더 잘 시각화하는 데 도움을 주기 위해 Vercel 팀이 만든 다이어그램입니다.
+
+![Server Component](https://user-images.githubusercontent.com/2290276/202918095-fb78e706-d815-45e2-8b1c-628a7ebafa01.png)
+
+
+## 5. Next.js 13 렌더링 모드
+<Callout type="warning">
+"Next.js 13에서는 다양한 렌더링 환경과 모드를 통해 앱의 각 컴포넌트에 대해 최적의 렌더링 전략을 선택할 수 있으며, 이전 버전의 용어와 새로운 용어 간의 관계를 이해하는 것이 중요합니다."
+</Callout>
+
+Next.js 13에서는 다양한 렌더링 환경과 모드를 도입하여 앱의 컴포넌트별로 최적의 렌더링 전략을 선택할 수 있습니다.
+내용은 두 개의 독립된 환경에서 렌더링됩니다:
+
+- 클라이언트 측 — 클라이언트 컴포넌트는 서버에서 사전 렌더링되고 캐시됩니다. 클라이언트 컴포넌트에서 사용되는 데이터를 위해 JSON이 생성되며 React에서 <StyleWarning>하이드레이션 과정(Hydration)</StyleWarning> 동안 전달됩니다.
+- 서버 측 — 내용은 서버에서 React에 의해 렌더링되고 정적 HTML이 생성됩니다. React는 클라이언트에 추가 JavaScript가 필요하지 않도록 브라우저에서 정적 HTML을 사용하여 수화합니다.
+
+서버에서 사용되는 두 가지 다른 렌더링 모드가 있습니다:
+
+- 정적 — 클라이언트와 서버 컴포넌트 모두 빌드 시간에 정적 HTML로 렌더링됩니다. 정적 콘텐츠는 재검증할 수 있으며, 데이터 원본과 동기화를 유지하기 위해 페이지별로 업데이트될 수 있습니다. 정적으로 생성된 콘텐츠는 캐싱하기 쉽고, 성능, 사용자 경험 및 검색 엔진 최적화를 향상시킵니다.
+- 동적 — 클라이언트와 서버 컴포넌트 모두 요청이 있을 때 서버에서 렌더링됩니다. 콘텐츠는 캐시되지 않습니다.
+
+이전 버전의 Next.js에서는 이러한 개념을 위해 사용되는 다른 용어들이 있었습니다. 아래에 그것들을 포함시켜 Next.js 13의 새로운 용어와 어떻게 관련되는지 보여줍니다.
+
+- <StyleBlueBold>정적 사이트 생성(SSG)</StyleBlueBold>: 정적 렌더링 모드
+- <StyleBlueBold>점진적 정적 재생성(ISR)</StyleBlueBold>: 재검증과 함께하는 정적 렌더링 모드
+- <StyleBlueBold>서버 사이드 렌더링(SSR)</StyleBlueBold>: 동적 렌더링 모드
+- <StyleBlueBold>클라이언트 사이드 렌더링(CSR)</StyleBlueBold>: 클라이언트 컴포넌트
+
+이 주제에 관한 Next.js 문서 사이트를 확인하는 것을 잊지 마세요.
+
+
+## 6. 배럴 파일들의 문제점
+<Callout type="warning">
+"배럴 파일을 사용할 때 Next.js 13에서는 서버 전용 코드가 클라이언트로 실수로 유출될 위험이 있으므로, 클라이언트와 서버용 모듈을 정확하게 구분하고 직접 경로에서 가져오는 것이 중요합니다."
+</Callout>
+
+과거에는 더 깔끔한 임포트를 위해 모듈에 인덱스 파일을 추가하는 것이 일반적인 관행이었고, 이러한 파일을 배럴 파일이라고도 했습니다. 이를 통해 모듈에서 어떤 것을 내보내는지 더 잘 제어할 수 있었습니다. 예를 들어, 여러 유틸리티가 있는 utils/ 디렉터리를 가지고 있을 수 있습니다:
+
+```bash
+.
+└── utils/
+    ├── api.ts
+    ├── dom.ts
+    ├── formatter.ts
+    ├── parser.ts
+    └── index.ts
+```
+
+이 경우의 index.ts 파일은 다음과 같이 보일 수 있습니다:
+
+```tsx
+export { default as parser } from './parser'
+export { default as formatter } from './formatter'
+export * from './api'
+```
+
+이를 통해 utils 중 하나를 다음과 같이 가져올 수 있습니다:
+
+```tsx
+import { parser } from 'utils'
+// 대신에:
+import parser from 'utils/parser'
+```
+
+하지만 이 패턴은 조심하지 않으면 Next.js 13에서는 서버 전용 코드가 실수로 클라이언트로 유출될 수 있는 문제가 있습니다. Next.js에는 모듈의 상단에 `import "server-only"`를 추가하여 클라이언트 번들로 로딩하는 것을 방지하는 유용한 유틸리티가 있습니다. 배럴 파일에서 이 기능을 사용하고 클라이언트 측 유틸리티를 그들의 직접 경로에서 가져오는 것이 권장됩니다. 또한 클라이언트와 서버용 모듈이 섞이지 않도록 별도의 "client-only" 배럴 파일을 추가할 수도 있습니다.
+
+## 7. 라이브러리 통합: 진행 중인 작업
+<Callout type="warning">
+"Next.js 13에서는 MUI, Emotion, Styled Components, Apollo GraphQL과 같은 일부 라이브러리들과 완전한 통합이 아직 이루어지지 않아 특정 문제와 불규칙성을 경험할 수 있습니다."
+</Callout>
+
+오픈소스 커뮤니티는 큰 진전을 이룩하였지만, 아직 완벽하게 통합되지 않은 라이브러리들이 있습니다. 예를 들어, MUI, Emotion, Styled Components, 그리고 Apollo GraphQL은 모두 Next.js 13 앱 라우터와 약간의 문제점이나 불규칙성이 있습니다.
+
+예를 들어, Material UI (MUI)를 사용할 때, 대부분의 컴포넌트를 클라이언트 컴포넌트로 지정하는 대안으로서, 다소 "비정상적인" 로직에 의존해야 할 상황에 처하게 될 수 있습니다. 이 특정 문제에 대한 더 깊은 이해를 위해서는 다음 GitHub 토론을 참고하는 것을 강력히 권장합니다.
+
+Apollo를 사용하는 경우, 클라이언트와 서버 양쪽 모두에서 동일한 데이터를 가져와야 하는 상황에 직면할 수 있습니다. 이 문제의 해결책은 Apollo의 캐시를 리하이드레이션하는 것에 있습니다만, 이는 다소 노력이 필요합니다. 다행히도, Apollo는 이 문제를 도와줄 실험적인 패키지를 출시하였습니다; 이에 대한 자세한 내용은 여기서 알아볼 수 있으며, 그들의 공식 발표도 읽어보실 수 있습니다.
+
+
+## 8. 라우트 그룹
+<Callout type="warning">
+"Next.js 13의 라우트 그룹 기능은 앱의 서로 다른 부분에 여러 루트 레이아웃을 적용하게 해서 특정 페이지에 추가적인 `<head>` 내용을 유연하게 관리할 수 있게 합니다."
+</Callout>
+
+라우트 그룹은 특히 앱에 여러 루트 레이아웃이 필요할 때 유용한 기능으로 Next.js 13에서 도입되었습니다. Next.js 13.3에서는 deprecated된 `head.js` 특별 파일을 제거하고 `generateMetadata` API로 대체했습니다. 이 방법의 한 가지 단점은 다른 내용을 가진 페이지에서 `<head>`에 스크립트와 같은 것들을 추가하기 어려워졌다는 것입니다.
+
+예를 들어, 앱의 일부에 API에서 로드되는 네비게이션이 있다고 가정해봅시다. API는 스크립트 의존성을 위한 `<head>` 내용을 반환합니다. 라우트 그룹은 자신만의 루트 레이아웃을 가진 다른 폴더로 앱의 부분을 분할할 수 있게 해서 이 문제에 대한 해결책을 제공합니다.
+
+```bash
+.
+├── (navigation)/
+│   ├── dashboard/
+│   │   └── page.tsx
+│   └── layout.tsx
+└── (navless)/
+    ├── auth/
+    │   └── page.tsx
+    └── layout.tsx
+```
+
+위의 예시에서, 대시보드 페이지는 API에서 로드된 추가적인 `<head>` 내용을 포함할 수 있는 자신만의 루트 레이아웃을 갖습니다:
+
+```tsx
+import { PropsWithChildren } from 'react'
+
+export default async function Layout({ children }: PropsWithChildren) {
+  const { head, header, footer } = await fetchNavigationMarkup()
+
+  return (
+    <html>
+      <head>
+        {head}
+      </head>
+      <body>
+        {header}
+        {children}
+        {footer}
+      </body>
+    </html>
+  )
+}
+```
+
+
+<Callout icon="마무리">
+<StyleBlueBold>Next.js 13</StyleBlueBold>은 <StyleUnderline>웹 개발의 새로운 시대</StyleUnderline>를 열고 있습니다. 
+
+이 버전에서는 <StyleImportant>컴포넌트 조합의 유연성과 렌더링 모드의 확장성을 중점적으로 강화</StyleImportant>하였습니다. 하지만 도구와 프레임워크의 진화에는 <StyleWarning>끊임없는 학습과 주의가 필요</StyleWarning>합니다. 
+
+특히 <StyleUnderline>배럴 파일의 사용이나 라이브러리 통합과 같은 문제점</StyleUnderline>들이 지적되었습니다. 그렇지만, 이러한 문제점들도 해결을 위한 다양한 자원과 커뮤니티의 도움으로 극복될 수 있습니다. 
+그리고 <StyleImportant>라우트 그룹과 같은 신기능은 앱의 구조와 확장성</StyleImportant>을 더욱 강화하였습니다. 
+
+이 모든 변화와 기능은 <StyleUnderline>웹 앱의 성능, 사용자 경험, 그리고 개발의 효율성</StyleUnderline>을 높이기 위한 것입니다. 
+Next.js 13의 도입은 개발자들에게 더 나은 웹을 만드는 데 필요한 도구와 기술을 제공함으로써 그들의 여정을 지원하고 있습니다.
+
+</Callout>

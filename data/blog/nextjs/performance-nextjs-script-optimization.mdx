@@ -1,0 +1,196 @@
+---
+title: "Next.js에서 외부 스크립트(3rd-party Script) 최적화로 성능 발휘하기"
+summary: "스크립트 최적화를 통해 Next.js 애플리케이션의 성능과 사용자 경험을 향상시키는 전략에 대해 깊이 파고들어 보세요."
+tags: ['Performance', 'Optimization', 'UX', 'Nextjs']
+images: ['/static/images/blog/nextjs/performance-nextjs-script-optimization-1.jpg']
+date: "2023-10-23 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+웹 개발의 변화하는 환경에서 성능은 사용자 경험의 핵심이 되었습니다. Next.js는 이를 인식하고, 제3자 스크립트를 최적화하기 위해 만들어진 내장 스크립트 컴포넌트를 제공합니다. Next.js 개발자라면, 권장된 스크립트 구문을 따르는 것이 단순히 좋은 습관이 아니라 애플리케이션 성능을 극대화할 수 있는 길이라는 것을 알아야 합니다. 왜 그런지 알아봅시다.
+
+## 외부 스크립트(third-party scripts)란?
+
+Next.js에서의 "외부 스크립트(third-party scripts)"는 보통 웹사이트나 웹 애플리케이션에 추가 기능이나 서비스를 제공하기 위해 외부 소스에서 로드되는 JavaScript 파일을 지칭합니다. 이러한 스크립트는 보통 다음과 같은 용도로 사용됩니다:
+
+1. **분석 도구**: Google Analytics, Amplitude, Mixpanel 등과 같은 트래픽 분석 도구. 이들은 사용자의 활동을 추적하고 웹사이트 사용에 대한 통계를 제공합니다.
+2. **광고 네트워크**: Google AdSense, DoubleClick, AdRoll 등의 광고 스크립트. 이들은 웹사이트에 광고를 배치하고, 광고 성과를 추적합니다.
+3. **소셜 미디어 플러그인**: 페이스북 "좋아요" 버튼, 트위터의 "트윗하기" 버튼 또는 다른 소셜 공유 기능 등.
+4. **지도 및 위치 서비스**: Google Maps, Mapbox 등의 지도 통합.
+5. **비디오 플랫폼**: YouTube, Vimeo 등의 비디오 호스팅 플랫폼 스크립트.
+6. **지불 게이트웨이**: PayPal, Stripe 등의 결제 처리 서비스.
+7. **보안 및 식별 도구**: reCAPTCHA, OAuth 등의 인증 및 보안 관련 스크립트.
+
+제3자 스크립트는 기능과 편의성을 제공하지만, 때로는 추가적인 성능 비용이 발생할 수 있으며, 때로는 사용자의 개인 정보 보호 문제를 일으킬 수 있습니다. Next.js의 스크립트 최적화 기능은 이러한 제3자 스크립트의 로드와 실행을 효율적으로 관리하며, 애플리케이션의 성능을 향상시키고 사용자 경험을 개선하는 데 도움을 줍니다.
+
+
+## Next.js에서 외부 스크립트 최적화
+
+### Next.js 스크립팅에서 구문의 중요성
+
+Next.js는 우수성을 위해 고안되었습니다. 스크립트에 대한 권장 구문은 렌더링을 차단하는 리소스를 피하고, 브라우저 기능을 활용하며, 스크립트가 효율적으로 로드되도록 보장합니다. 이를 따르지 않으면 로딩 시간이 느려지고, 프레임워크의 성능 이점이 사라질 수 있습니다.
+
+
+```jsx
+// 잘못된 예:
+// 이렇게 하면 렌더링을 차단하는 스크립트가 됩니다.
+<script src="big-script.js"></script>
+
+// 올바른 예:
+// Next.js의 Script 컴포넌트를 사용하여 성능 문제를 방지합니다.
+import Script from 'next/script'
+
+function MyComponent() {
+  return (
+    <div>
+      <Script src="big-script.js" />
+      {/* 나머지 컴포넌트 */}
+    </div>
+  )
+}
+```
+Next.js에서는 기본 `<script>` 태그 대신 `next/script`를 사용하여 성능 이슈를 방지하는 것이 중요합니다. 위의 코드에서 볼 수 있듯이, 이 방식은 브라우저가 스크립트를 미리 불러오도록 하여 렌더링 성능을 저해하는 것을 방지합니다.
+
+### 스크립트를 사용한 전략 마스터하기
+
+Next.js의 Script 컴포넌트 내 `strategy` 속성은 게임 체인저입니다. 
+스크립트의 중요도와 사용자 상호 작용 필요에 따라 다양한 로딩 전략(`beforeInteractive`, `afterInteractive`, `lazyOnload`)을 적용할 수 있습니다. 예를 들어, 채팅 지원 스크립트는 브라우저가 유휴 상태일 때 로드하기 위해 `lazyOnload`를 사용할 수 있으며, 중요한 above-the-fold 컨텐츠 스크립트는 가능한 빨리 준비되도록 `beforeInteractive`를 사용할 수 있습니다.
+
+```jsx
+// 다양한 로딩 전략을 사용하여 사용자 경험 최적화
+import Script from 'next/script'
+
+function MyComponent() {
+  return (
+    <div>
+      <Script src="critical-script.js" strategy="beforeInteractive" />
+      <Script src="non-critical-script.js" strategy="lazyOnload" />
+      {/* 나머지 컴포넌트 */}
+    </div>
+  )
+}
+```
+여러 로딩 전략을 혼합하여 사용하면, 중요한 스크립트는 더 빨리 로드되고, 그렇지 않은 스크립트는 브라우저가 유휴 상태일 때 로드되도록 할 수 있습니다. 이는 자원을 효율적으로 사용하면서 최상의 사용자 경험을 제공합니다.
+
+<Callout type="warning" icon="Script Strategy">
+`next/script`의 기본 동작은 어떤 페이지나 레이아웃에서든 제3자 스크립트를 로드할 수 있게 해주지만, `strategy` 속성을 사용함으로써 로딩 방식을 세부 조정할 수 있습니다:
+
+- `beforeInteractive`: Next.js 코드 및 페이지가 hydrate 되기 전에 스크립트를 로드합니다.
+- `afterInteractive`: (**기본값**) 페이지의 일부가 hydrate 된 후에 조금 더 빨리 스크립트를 로드합니다.
+- `lazyOnload`: 브라우저의 유휴 시간 동안 스크립트를 나중에 로드합니다.
+- `worker`: (실험적 기능) 웹 워커 내에서 스크립트를 로드합니다.
+
+각 전략에 대해 더 자세히 알아보고 사용 사례를 확인하려면 [`next/script`](https://nextjs.org/docs/app/api-reference/components/script#strategy) API 참조 문서를 참고하세요.
+</Callout>
+
+### 스크립트 최적화와 성능: 이 둘 사이의 관계
+
+최적화된 스크립트는 더 빠른 컨텐츠 전달, 더 빠른 상호 작용 준비 및 더 부드러운 사용자 경험을 의미합니다. Next.js의 Script 컴포넌트를 사용하면 개발자가 스크립트가 로드되는 시기와 방법을 제어할 수 있습니다. 이 세심한 조정은 사용자가 애플리케이션과 얼마나 빠르게 상호 작용할 수 있는지에 직접적으로 연관되어 있으며, 전반적인 만족도와 SEO 순위에 영향을 미칩니다.
+
+```jsx
+// 스크립트 로딩 전략을 제어하여 성능을 향상시킵니다.
+import Script from 'next/script'
+
+function MyComponent() {
+  return (
+    <div>
+      <Script src="my-script.js" strategy="lazyOnload" />
+      {/* 나머지 컴포넌트 */}
+    </div>
+  )
+}
+```
+`strategy` 속성을 사용하면 스크립트의 로딩 방식을 세밀하게 제어할 수 있습니다. `lazyOnload` 전략은 사용자의 브라우저가 유휴 상태일 때 스크립트를 로드하므로, 초기 페이지 로드 시간에 미치는 영향을 최소화합니다.
+
+### 최적화를 통한 사용자 경험 향상
+
+스크립트 최적화는 속도뿐만 아니라 사용자가 애플리케이션을 인식하는 방식에 관한 것입니다. 최적화된 스크립트 로딩 전략은 첫 컨텐츠 페인트(FCP), 상호작용 시간(TTI)을 크게 향상시킬 수 있고 누적 레이아웃 이동(CLS)을 줄여, 로딩 시간이 길거나 버벅거림이 없는 원활한 사용자 경험을 제공합니다.
+
+```jsx
+// 사용자 경험을 개선하기 위해 스크립트 로딩을 지연시킵니다.
+import Script from 'next/script'
+
+function MyComponent() {
+  return (
+    <div>
+      <Script src="analytics.js" strategy="afterInteractive" />
+      {/* 나머지 컴포넌트 */}
+    </div>
+  )
+}
+```
+`afterInteractive` 전략은 페이지가 사용자와 상호작용할 준비가 되면 스크립트를 로드합니다. 이는 페이지 로드 시간에 영향을 주지 않으면서도, 필요한 스크립트를 가능한 빨리 사용할 수 있도록 합니다.
+
+
+### 인라인 스크립트와 이벤트 핸들러로 스마트 코딩하기
+
+Next.js는 인라인 스크립트를 지원하며, 특정 이벤트 후 추가 코드를 실행할 수 있는 고급 이벤트 핸들러(`onLoad`, `onReady`, `onError`)를 제공합니다. 이 기능은 애플리케이션이 다양한 스크립트 로딩 시나리오에 대해 지능적이고 효율적으로 반응하도록 보장하여 성능과 사용자 경험을 더욱 향상시킵니다.
+
+```jsx
+// 이벤트 핸들러를 사용한 인라인 스크립트
+import Script from 'next/script'
+
+function MyComponent() {
+  return (
+    <Script onLoad={() => console.log('Script loaded!')}>
+      {`console.log('Inline script executed!')`}
+    </Script>
+  )
+}
+```
+`onLoad`와 같은 이벤트 핸들러를 사용하여 스크립트 로딩 상태를 모니터링할 수 있습니다. 이를 통해 스크립트가 언제 실행되었는지, 어떤 작업을 했는지 등의 정보를 정확하게 알 수 있습니다.
+
+
+### 추가 속성의 예술
+
+Next.js를 사용하는 개발자들은 `<script>` 요소에 여러 DOM 속성을 할당할 수 있어, `nonce` 또는 사용자 정의 데이터 속성과 같은 속성을 사용하여 스크립트 실행을 향상시킬 수 있습니다. 이러한 기능들은 Next.js 애플리케이션에서 스크립트 실행에 대한 추가적인 보안 및 유연성을 제공합니다.
+
+```jsx
+// nonce 또는 사용자 정의 데이터 속성을 이용한 보안 강화
+import Script from 'next/script'
+
+function MyComponent() {
+  return (
+    <Script 
+      src="https://example.com/script.js" 
+      nonce="randomNonce123"
+      data-custom-attribute="value"
+    />
+  )
+}
+```
+`nonce` 속성을 사용하면, 인라인 스크립트가 Content Security Policy(CSP) 위반 없이 실행될 수 있도록 합니다. 또한, `data-` 속성을 사용하여 스크립트에 추가 정보를 제공할 수 있습니다. 이는 보안을 강화하고, 스크립트가 예상대로 작동하도록 도와줍니다.
+
+
+## Google AdSense와 Next.js: 모범 사례
+
+Google AdSense를 Next.js와 함께 구현하려면 수익과 사용자 경험 사이의 균형을 잡는 전략이 필요합니다. `lazyOnload` 전략을 사용하여 필요할 때만 광고를 로드하고, 애플리케이션이 활발하게 유지되도록 합니다. 또한, 사용자 뷰포트를 고려하여 전략적으로 광고를 로드하고, 사용자 경험을 향상시키면서 광고 가시성을 유지합니다.
+
+```jsx
+// Google AdSense와 함께 사용할 때의 최적 전략
+import Script from 'next/script'
+
+function MyComponent() {
+  return (
+    <div>
+      <Script 
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" 
+        strategy="lazyOnload"
+      />
+      {/* 나머지 컴포넌트 */}
+    </div>
+  )
+}
+```
+Google AdSense 스크립트와 같은 광고 스크립트는 `lazyOnload` 전략을 사용하여 로드를 지연시키는 것이 좋습니다. 이렇게 하면 광고 스크립트가 페이지 로딩 시간에 영향을 주지 않아 사용자 경험을 저해하지 않습니다.
+
+> 참고: Vercel의 예제코드: [바로가기](https://github.com/vercel/examples/blob/main/solutions/script-component-ad/pages/_app.tsx#L16)
+
+---
+
+## 결론
+Next.js에서의 스크립트 최적화는 단순한 기능이 아니라 강력한 도구 세트입니다. 이러한 관행을 이해하고 구현함으로써 개발자들은 단순히 빠른 것뿐만 아니라 직관적이고, 매력적이며 디지털 공간에서 두드러지는 경험을 만들 수 있습니다. 이러한 전략들을 활용하고 웹 성능과 사용자 만족도에서 새로운 기준을 설정할 시간입니다. 🚀
+
+[Next.js로 이러한 전략들과 더 많은 것을 탐험해보세요!](https://reactnext-central.xyz/blog/script-optimization) #Nextjs #WebPerformance #ScriptOptimization #UserExperience #WebDevelopment 🌟
