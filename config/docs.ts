@@ -666,46 +666,46 @@ export const docsConfig: DocsConfig = {
             },
           ],
         },
-        {
-          title: '서버/클라이언트 컴포넌트',
-          href: '/docs/react/server-client-components',
-          disabled: false,
-        },
+        // {
+        //   title: '서버/클라이언트 컴포넌트',
+        //   href: '/docs/react/server-client-components',
+        //   disabled: false,
+        // },
       ],
     },
-    {
-      title: 'TypeScript',
-      href: '/docs/typescript',
-      items: [
-        {
-          title: 'Introduction',
-          href: '/docs/typescript',
-          disabled: true,
-        },
-      ],
-    },
-    {
-      title: 'JavaScript',
-      href: '/docs/javascript',
-      items: [
-        {
-          title: 'Introduction',
-          href: '/docs/javascript',
-          disabled: true,
-        },
-      ],
-    },
-    {
-      title: 'CSS',
-      href: '/docs/css',
-      items: [
-        {
-          title: 'Introduction',
-          href: '/docs/css',
-          disabled: true,
-        },
-      ],
-    },
+    // {
+    //   title: 'TypeScript',
+    //   href: '/docs/typescript',
+    //   items: [
+    //     {
+    //       title: 'Introduction',
+    //       href: '/docs/typescript',
+    //       disabled: true,
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'JavaScript',
+    //   href: '/docs/javascript',
+    //   items: [
+    //     {
+    //       title: 'Introduction',
+    //       href: '/docs/javascript',
+    //       disabled: true,
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'CSS',
+    //   href: '/docs/css',
+    //   items: [
+    //     {
+    //       title: 'Introduction',
+    //       href: '/docs/css',
+    //       disabled: true,
+    //     },
+    //   ],
+    // },
   ],
   mainNav: [
     {
