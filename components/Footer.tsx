@@ -2,6 +2,7 @@ import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
 import { Icons } from '@/components/icons'
+import GoogleAdUnit from 'nextjs13_google_adsense'
 
 export default function Footer() {
   return (
@@ -50,6 +51,16 @@ export default function Footer() {
           <span className="align-middle">{`- Licensed under MIT`}</span>
         </div>
       </div>
+      <GoogleAdUnit>
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'block', width: '100%' }}
+          data-ad-client="ca-pub-1194474024149121"
+          data-ad-slot="3651755184"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+      </GoogleAdUnit>
     </footer>
   )
 }

@@ -4,7 +4,7 @@ import { slug } from 'github-slugger'
 import tagData from 'app/tag-data.json'
 import { genPageMetadata } from 'app/seo'
 import WomanWithALaptop from '@/data/illustration/woman-with-a-laptop.svg'
-import GoogleAdUnit from 'nextjs13_google_adsense'
+// import GoogleAdUnit from 'nextjs13_google_adsense'
 
 export const metadata = genPageMetadata({ title: 'Tags', description: 'Things I blog about' })
 
@@ -41,7 +41,7 @@ export default async function Page() {
       <div className="flex justify-center w-full mt-4">
         <WomanWithALaptop />
       </div>
-      <GoogleAdUnit>
+      {/* <GoogleAdUnit>
         <ins
           className="adsbygoogle"
           style={{ display: 'block', width: '100%' }}
@@ -50,7 +50,7 @@ export default async function Page() {
           data-ad-format="auto"
           data-full-width-responsive="true"
         ></ins>
-      </GoogleAdUnit>
+      </GoogleAdUnit> */}
     </>
   )
 }
