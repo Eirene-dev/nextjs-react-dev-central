@@ -20,16 +20,23 @@ interface DocsSidebarNavItemsProps {
   expanded: string[]
   handleToggle: (title: string) => void
   onClose?: () => void
+  isButtonVisible: boolean
 }
 
 export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
   const [expanded, setExpanded] = useState<string[]>([])
   const pathname = usePathname()
+  const [isButtonVisible, setIsButtonVisible] = useState(true) // 버튼의 보임/안 보임 상태
 
   const handleToggle = (title: string) => {
     setExpanded((prev: string[]) =>
       prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]
     )
+
+    // 버튼을 클릭하면 3초 후에 버튼을 숨기는 타이머 설정
+    setTimeout(() => {
+      setIsButtonVisible(false)
+    }, 3000)
   }
 
   return items.length ? (
@@ -38,7 +45,7 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
         <div key={index} className={cn('pb-3')}>
           <div className="flex items-center">
             <button
-              className="px-0 py-1 text-sm font-medium rounded-md cursor-pointer"
+              className="px-0 py-1 text-base font-medium rounded-md cursor-pointer"
               onClick={() => handleToggle(item.title)}
             >
               {expanded.includes(item.title) ? (
@@ -47,10 +54,22 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
                 <ChevronRight size={18} strokeWidth={1} />
               )}
             </button>
+            {isButtonVisible && (
+              <button
+                className="px-0 py-1 text-base font-medium rounded-md cursor-pointer"
+                onClick={() => handleToggle(item.title)}
+              >
+                {expanded.includes(item.title) ? (
+                  <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-gray-100 rounded-md">축소</span>
+                ) : (
+                  <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-white border border-pink-600 rounded-md">확대</span>
+                )}
+              </button>
+            )}
             {item.href ? (
               <Link
                 href={item.href}
-                className={cn('text-sm flex items-center rounded-md p-2 hover:underline', {
+                className={cn('text-base flex items-center rounded-md p-2 hover:underline', {
                   'bg-muted': pathname === item.href,
                 })}
                 target={item.external ? '_blank' : ''}
@@ -60,8 +79,10 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
                 <span className="font-semibold text-pink-600">{item.title}</span>
               </Link>
             ) : (
-              <span className="flex items-center p-2 text-sm rounded-md">[ {item.title} ]</span>
+              <span className="flex items-center p-2 text-base rounded-md">[ {item.title} ]</span>
             )}
+
+
           </div>
 
           {expanded.includes(item.title) && item.items ? (
@@ -71,6 +92,7 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
               expanded={expanded}
               handleToggle={handleToggle}
               onClose={onClose}
+              isButtonVisible={isButtonVisible}
             />
           ) : null}
         </div>
@@ -85,16 +107,17 @@ export function DocsSidebarNavItems({
   expanded,
   handleToggle,
   onClose,
+  isButtonVisible,
 }: DocsSidebarNavItemsProps) {
   return items?.length ? (
-    <div className="grid grid-flow-row text-sm auto-rows-max">
+    <div className="grid grid-flow-row text-base auto-rows-max">
       {items.map((item, index) => {
         if (item.items) {
           return (
             <div key={index} className="pb-2">
               <div className="flex items-center">
                 <button
-                  className="px-2 py-1 text-sm font-medium rounded-md cursor-pointer"
+                  className="px-2 py-1 text-base font-medium rounded-md cursor-pointer"
                   onClick={() => handleToggle(item.title)}
                 >
                   {expanded.includes(item.title) ? (
@@ -103,10 +126,22 @@ export function DocsSidebarNavItems({
                     <Plus size={13} strokeWidth={1} />
                   )}
                 </button>
+                {isButtonVisible && (
+                  <button
+                    className="px-0 py-1 text-base font-medium rounded-md cursor-pointer"
+                    onClick={() => handleToggle(item.title)}
+                  >
+                    {expanded.includes(item.title) ? (
+                      <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-gray-100 rounded-md">축소</span>
+                    ) : (
+                      <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-white border border-pink-600 rounded-md">확대</span>
+                    )}
+                  </button>
+                )}
                 {item.href ? (
                   <Link
                     href={item.href}
-                    className={cn('text-sm flex items-center rounded-md p-1 hover:underline', {
+                    className={cn('text-base flex items-center rounded-md p-1 hover:underline', {
                       'bg-muted': pathname === item.href,
                     })}
                     target={item.external ? '_blank' : ''}
@@ -116,7 +151,7 @@ export function DocsSidebarNavItems({
                     <span className="font-semibold text-pink-400">{item.title} </span>
                   </Link>
                 ) : (
-                  <span className="flex items-center p-1 text-sm rounded-md">[ {item.title} ]</span>
+                  <span className="flex items-center p-1 text-base rounded-md">[ {item.title} ]</span>
                 )}
               </div>
               {expanded.includes(item.title) && item.items ? (
@@ -126,6 +161,7 @@ export function DocsSidebarNavItems({
                   expanded={expanded}
                   handleToggle={handleToggle}
                   onClose={onClose}
+                  isButtonVisible={isButtonVisible}
                 />
               ) : null}
             </div>
