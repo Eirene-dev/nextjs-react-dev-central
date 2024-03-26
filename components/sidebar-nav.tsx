@@ -60,9 +60,13 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
                 onClick={() => handleToggle(item.title)}
               >
                 {expanded.includes(item.title) ? (
-                  <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-gray-100 rounded-md">축소</span>
+                  <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-gray-100 rounded-md">
+                    축소
+                  </span>
                 ) : (
-                  <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-white border border-pink-600 rounded-md">확대</span>
+                  <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-white border border-pink-600 rounded-md">
+                    확대
+                  </span>
                 )}
               </button>
             )}
@@ -81,8 +85,6 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
             ) : (
               <span className="flex items-center p-2 text-base rounded-md">[ {item.title} ]</span>
             )}
-
-
           </div>
 
           {expanded.includes(item.title) && item.items ? (
@@ -132,9 +134,13 @@ export function DocsSidebarNavItems({
                     onClick={() => handleToggle(item.title)}
                   >
                     {expanded.includes(item.title) ? (
-                      <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-gray-100 rounded-md">축소</span>
+                      <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-gray-100 rounded-md">
+                        축소
+                      </span>
                     ) : (
-                      <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-white border border-pink-600 rounded-md">확대</span>
+                      <span className="inline-block px-1 py-0 text-xs text-pink-600 bg-white border border-pink-600 rounded-md">
+                        확대
+                      </span>
                     )}
                   </button>
                 )}
@@ -151,7 +157,9 @@ export function DocsSidebarNavItems({
                     <span className="font-semibold text-pink-400">{item.title} </span>
                   </Link>
                 ) : (
-                  <span className="flex items-center p-1 text-base rounded-md">[ {item.title} ]</span>
+                  <span className="flex items-center p-1 text-base rounded-md">
+                    [ {item.title} ]
+                  </span>
                 )}
               </div>
               {expanded.includes(item.title) && item.items ? (
