@@ -43,7 +43,7 @@
     "next-contentlayer": "0.3.4",
     "next-themes": "^0.2.1",
     "nextjs13_google_adsense": "^1.0.8",
-    "pliny": "0.1.2",
+    "pliny": "^0.1.7",
     "postcss": "^8.4.24",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
