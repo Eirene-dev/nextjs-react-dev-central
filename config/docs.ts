@@ -31,7 +31,7 @@ export const docsConfig: DocsConfig = {
             //   disabled: false,
             // },
             {
-              title: 'v13.4(\'23.05): 앱 라우터',
+              title: '앱 라우터',
               href: '/docs/getting-started/nextjs-foundation/app-router',
               disabled: false,
             },

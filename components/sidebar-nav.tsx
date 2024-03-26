@@ -45,7 +45,7 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
         <div key={index} className={cn('pb-3')}>
           <div className="flex items-center">
             <button
-              className="px-0 py-1 text-base font-medium rounded-md cursor-pointer"
+              className="px-0 py-1 text-lg font-medium rounded-md cursor-pointer md:text-sm"
               onClick={() => handleToggle(item.title)}
             >
               {expanded.includes(item.title) ? (
@@ -56,7 +56,7 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
             </button>
             {isButtonVisible && (
               <button
-                className="px-0 py-1 text-base font-medium rounded-md cursor-pointer"
+                className="px-0 py-1 text-lg font-medium rounded-md cursor-pointer md:text-sm"
                 onClick={() => handleToggle(item.title)}
               >
                 {expanded.includes(item.title) ? (
@@ -73,9 +73,12 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
             {item.href ? (
               <Link
                 href={item.href}
-                className={cn('text-base flex items-center rounded-md p-2 hover:underline', {
-                  'bg-muted': pathname === item.href,
-                })}
+                className={cn(
+                  'text-lg md:text-sm flex items-center rounded-md p-2 hover:underline',
+                  {
+                    'bg-muted': pathname === item.href,
+                  }
+                )}
                 target={item.external ? '_blank' : ''}
                 rel={item.external ? 'noreferrer' : ''}
                 onClick={onClose}
@@ -83,7 +86,9 @@ export function DocsSidebarNav({ items, onClose }: DocsSidebarNavProps) {
                 <span className="font-semibold text-pink-600">{item.title}</span>
               </Link>
             ) : (
-              <span className="flex items-center p-2 text-base rounded-md">[ {item.title} ]</span>
+              <span className="flex items-center p-2 text-lg rounded-md md:text-sm">
+                [ {item.title} ]
+              </span>
             )}
           </div>
 
@@ -112,14 +117,14 @@ export function DocsSidebarNavItems({
   isButtonVisible,
 }: DocsSidebarNavItemsProps) {
   return items?.length ? (
-    <div className="grid grid-flow-row text-base auto-rows-max">
+    <div className="grid grid-flow-row text-lg md:text-sm auto-rows-max">
       {items.map((item, index) => {
         if (item.items) {
           return (
             <div key={index} className="pb-2">
               <div className="flex items-center">
                 <button
-                  className="px-2 py-1 text-base font-medium rounded-md cursor-pointer"
+                  className="px-2 py-1 text-lg font-medium rounded-md cursor-pointer md:text-sm"
                   onClick={() => handleToggle(item.title)}
                 >
                   {expanded.includes(item.title) ? (
@@ -130,7 +135,7 @@ export function DocsSidebarNavItems({
                 </button>
                 {isButtonVisible && (
                   <button
-                    className="px-0 py-1 text-base font-medium rounded-md cursor-pointer"
+                    className="px-0 py-1 text-lg font-medium rounded-md cursor-pointer md:text-sm"
                     onClick={() => handleToggle(item.title)}
                   >
                     {expanded.includes(item.title) ? (
@@ -147,9 +152,12 @@ export function DocsSidebarNavItems({
                 {item.href ? (
                   <Link
                     href={item.href}
-                    className={cn('text-base flex items-center rounded-md p-1 hover:underline', {
-                      'bg-muted': pathname === item.href,
-                    })}
+                    className={cn(
+                      'text-lg md:text-sm flex items-center rounded-md p-1 hover:underline',
+                      {
+                        'bg-muted': pathname === item.href,
+                      }
+                    )}
                     target={item.external ? '_blank' : ''}
                     rel={item.external ? 'noreferrer' : ''}
                     onClick={onClose}
@@ -157,7 +165,7 @@ export function DocsSidebarNavItems({
                     <span className="font-semibold text-pink-400">{item.title} </span>
                   </Link>
                 ) : (
-                  <span className="flex items-center p-1 text-base rounded-md">
+                  <span className="flex items-center p-1 text-lg rounded-md md:text-sm">
                     [ {item.title} ]
                   </span>
                 )}

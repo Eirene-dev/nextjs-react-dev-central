@@ -1,22 +1,21 @@
 ---
 title: Next.js 기초
 date: '2023-01-01 01:00'
-summary: Next.js 효과적으로 학습하는 기본 가이드와 팁.
+summary: Next.js 효과적으로 학습하는 기본 가이드와 팁
 ---
 
 ## Next.js란?
 
-Next.js는 전체 스택 웹 애플리케이션을 구축하기 위한 React 프레임워크입니다. React 컴포넌트를 사용하여 사용자 인터페이스를 구축하고, Next.js로 추가 기능과 최적화를 수행합니다.
+Next.js는 풀 스택 웹 애플리케이션을 구축하기 위한 리액트 프레임워크입니다. 리액트 컴포넌트를 사용하여 사용자 인터페이스를 구축하고 Next.js로 추가 기능과 최적화를 수행합니다.
 
-내부적으로 Next.js는 React를 위해 필요한 도구들, 예를 들면 번들링, 컴파일 등을 자동으로 추상화 및 설정합니다. 이로 인해 개발자는 설정에 시간을 보내지 않고 애플리케이션 구축에 중점을 둘 수 있습니다.
+내부적으로 Next.js는 리액트를 위해 필요한 도구인 번들링, 컴파일 등을 자동으로 설정합니다. 이로 인해 개발자는 설정에 시간을 보내지 않고 애플리케이션 구축에 중점을 둘 수 있습니다.
 
-개인 개발자이든 큰 팀의 일원이든, Next.js는 대화형, 동적이며 빠른 React 애플리케이션을 구축하는 데 도움을 줄 수 있습니다.
+개인 개발자이든 큰 팀의 일원이든 Next.js는 대화형이며 동적인 빠른 리액트 애플리케이션을 구축하는 데 도움을 줄 수 있습니다.
 
 
-아래는 간단한 Next.js와 React로 만든 컴포넌트의 예시입니다:
+아래는 간단한 Next.js와 리액트로 만든 컴포넌트의 예시입니다.
 
 ```jsx showLineNumbers
-// pages/index.js
 import React from 'react';
 
 function HomePage() {
@@ -28,29 +27,30 @@ export default HomePage;
 
 ### 주요 기능
 
-Next.js의 주요 기능은 다음과 같습니다:
+Next.js의 주요 기능은 다음과 같습니다.
 
 | 기능 | 설명 |
 | --- | --- |
 | [라우팅](/docs/nextjs/routing) | 서버 컴포넌트를 기반으로 한 파일 시스템 기반 라우터로 레이아웃, 중첩 라우팅, 로딩 상태, 오류 처리 등을 지원합니다. |
 | [렌더링](/docs/nextjs/rendering) | 클라이언트-사이드 및 서버-사이드 렌더링 지원. Next.js와 함께 서버에서 정적 및 동적 렌더링을 최적화하며, Edge 및 Node.js 런타임에서 스트리밍합니다. |
 | [데이터 가져오기](/docs/nextjs/data-fetching) | 서버 컴포넌트에서의 비동기/대기를 사용하여 간소화된 데이터 가져오기, 그리고 요청 메모이제이션, 데이터 캐싱 및 재검증을 위한 확장된 `fetch` API를 제공합니다. |
-| [스타일링](/docs/nextjs/styling) | CSS 모듈, Tailwind CSS, CSS-in-JS를 포함한 선호하는 스타일링 방법 지원. |
-| [최적화](/docs/nextjs/optimizing) | 애플리케이션의 핵심 웹 품질과 사용자 경험을 개선하기 위한 이미지, 글꼴, 스크립트 최적화. |
+| [스타일링](/docs/nextjs/styling) | CSS 모듈, Tailwind CSS, CSS-in-JS를 포함한 선호하는 스타일링 방법 지원합니다. |
+| [최적화](/docs/nextjs/optimizing) | 애플리케이션의 핵심 웹 품질과 사용자 경험을 개선하기 위한 이미지, 글꼴, 스크립트 최적화를 지원합니다. |
 | [TypeScript](/docs/nextjs/configuring/typescript) | 향상된 TypeScript 지원, 더 나은 타입 검사 및 더 효율적인 컴파일, 그리고 사용자 정의 TypeScript 플러그인 및 타입 검사기를 제공합니다. |
-
 
 
 ## Next.js 학습 가이드
 
-이제 여러분은 웹 프론트엔드의 미래로 불리는 Next.js를 학습하려는 중요한 기회를 얻게 되었습니다. 세계에서 가장 선도적인 기업들은 사용자 중심의 경험을 제공하기 위해 Next.js를 선택하고 있습니다. 그렇기 때문에 이 기술을 습득하는 것은 여러분의 개발 경력에 있어서 큰 전환점이 될 수 있습니다. 단순히 코드를 작성하는 것이 아닌, 성능, 접근성, 그리고 사용자 경험에 중점을 둔 웹 애플리케이션을 구축하는 능력을 키울 수 있는 시기입니다. 이 가이드는 그 첫 걸음을 돕기 위해 준비되었습니다. 
+이제 여러분은 웹 프론트엔드의 미래로 불리는 Next.js를 학습하려는 중요한 기회를 얻게 되었습니다. 세계에서 가장 선도적인 기업들은 사용자 중심의 경험을 제공하기 위해 Next.js를 선택하고 있습니다.
+그렇기 때문에 이 기술을 습득하는 것은 여러분의 개발 경력에 있어서 큰 전환점이 될 수 있습니다. 단순히 코드를 작성하는 것이 아닌 성능, 접근성, 그리고 사용자 경험에 중점을 둔 웹 애플리케이션을 구축하는 능력을 키울 수 있는 시기입니다.
+이 가이드는 그 첫 걸음을 돕기 위해 준비되었습니다.
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
 <Card href="/docs/getting-started/nextjs-foundation/about-nextjs">
 ### Next.js 개요
 
-Next.js와 웹 애플리케이션의 구성 요소를 탐구하며, React와의 연관성도 함께 알아봅니다.
+Next.js와 웹 애플리케이션의 구성 요소를 살펴보고 리액트와의 연관성도 함께 알아봅니다.
 </Card>
 {/* 
 <Card href="/docs/getting-started/nextjs-foundation/from-javascript-to-react">
@@ -71,19 +71,28 @@ React 코드를 Next.js 앱으로 마이그레이션 후, 개발 서버 실행 �
 개발 환경에서 운영 환경으로 전환하는 과정, Next.js의 컴파일링, 미니파이, 번들링, 코드 스플리팅 같은 핵심 컴파일러 기술들을 소개하고, 어떻게 클라이언트와 서버 간에 렌더링이 이루어지는지, 그리고 네트워크의 다양한 구성 요소와 그들의 역할에 대해 설명합니다.
 </Card> */}
 
-</div>
-
-<div className="grid grid-cols-1 sm:grid-cols-1 gap-4 mt-4">
 <Card href="/docs/getting-started/nextjs-foundation/app-router">
-### 'v13.4(\'23.05): App 라우터
-
-Next.js 13.4 릴리즈에서는 App 라우터를 공식화하며, 설정 없이 파일시스템을 API로 사용하고, 모든 것이 함수 기반의 자바스크립트로 제공되며, 자동 서버 렌더링 및 코드 분할 기능을 포함하고 있습니다.
+### 앱 라우터
+Next.js 13.4에서 공식화된 앱 라우터(App Router)에 대해 알아 봅니다.
 </Card>
 
+<Card href="/docs/getting-started/nextjs-foundation/installation">
+### 설치하기
+
+create-next-app을 사용하여 새로운 애플리케이션을 만들고 타입스크립트와 스타일 등 설정합니다.
+</Card>
+
+<Card href="/docs/getting-started/nextjs-foundation/project-structure">
+### 프로젝트 구조
+Next.js 프로젝트에서의 폴더 및 파일 규칙 리스트에 대해 알아 봅니다.
+</Card>
+
+
 </div>
 
-
-
-[참고] [Next.js 13 버전 별 특징](https://nextjs.org/blog)
+<p />
+<ToggleContent title="Next.js 13 버전 별 특징">
+[링크: Next.js 13 버전 별 특징](https://nextjs.org/blog)
 
 ![Releases](/static/images/doc/nextjs-foundation-1.png)
+</ToggleContent>
