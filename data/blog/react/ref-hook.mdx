@@ -1,0 +1,314 @@
+---
+title: "리액트에서의 Ref 활용하기: DOM 접근부터 고급 기술까지"
+summary: "리액트의 Ref는 DOM 요소나 클래스 컴포넌트에 직접 접근할 수 있는 강력한 도구입니다. 이 글에서는 Ref의 생성, 사용, 전달 방법과 다양한 사용 사례를 통해 Ref의 이점과 모범 사례를 살펴보겠습니다."
+tags: ['React', 'DOM', 'Hook']
+images: ['/static/images/blog/react/ref-hook.jpg']
+date: "2024-03-25 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 서론
+리액트 개발을 하다 보면 때때로 선언적 프레임워크의 경계를 넘어서 직접적으로 DOM 요소에 접근해야 할 필요가 생깁니다. 이때 리액트가 제공하는 Ref 훅이 큰 역할을 합니다.
+
+### 리액트와 DOM 요소의 상호작용 필요성
+
+리액트는 사용자 인터페이스를 구축하기 위한 선언적 자바스크립트 라이브러리입니다. 일반적으로 리액트를 사용하면 데이터가 변경될 때 자동으로 UI를 업데이트할 수 있습니다. 하지만 때로는 직접 DOM 요소에 접근해야 하는 상황이 발생합니다.
+예를 들어, 입력 필드에 자동으로 포커스를 맞추거나 외부 DOM 라이브러리를 사용해야 할 때가 그러합니다. 이런 경우에 리액트만의 선언적 패러다임으로는 한계가 있어 직접적인 DOM 조작이 필요하게 됩니다.
+
+### Ref의 탄생 배경
+
+이러한 필요성으로 인해 리액트는 Ref라는 개념을 도입했습니다. Ref는 리액트 요소의 실제 DOM 노드에 "참조"를 만들어 주는 역할을 합니다.
+이를 통해 개발자는 리액트의 데이터 흐름 바깥에서도 특정 DOM 요소를 직접 조작할 수 있게 되었습니다.
+Ref의 주요 사용 사례로는 포커스 관리, 텍스트 선택, 미디어 재생 관리 등이 있습니다.
+리액트에서 Ref의 사용은 필요한 경우에 한해 제한적으로 사용되어야 하며 리액트의 선언적인 특성을 최대한 유지하면서 필요한 경우에만 명령적인 DOM 접근 방식을 허용하는 것입니다.
+
+### 코드 예시: 입력 필드에 포커스 맞추기
+
+```jsx
+import React, { useRef, useEffect } from 'react';
+
+function AutofocusInput() {
+  const inputEl = useRef(null);
+
+  useEffect(() => {
+    // 컴포넌트가 마운트된 직후 입력 필드에 포커스를 자동으로 맞춤
+    inputEl.current.focus();
+  }, []);
+
+  return <input ref={inputEl} type="text" />;
+}
+```
+
+이 코드 예시에서는 `useRef`를 사용해 입력 필드에 대한 참조를 생성하고 `useEffect`를 통해 컴포넌트가 마운트된 직후 해당 입력 필드에 자동으로 포커스를 맞춥니다. 이처럼 Ref를 사용함으로써 리액트에서도 필요에 따라 직접 DOM 요소에 접근하고 조작할 수 있는 유연성을 갖출 수 있습니다.
+
+Ref는 리액트의 선언적 UI 구축 방식과 함께 필요한 경우 명령적인 접근을 가능하게 하여 리액트 애플리케이션의 개발을 보다 유연하게 만듭니다.
+
+<ToggleContent title="DOM 요소의 이해">
+웹 개발에서 DOM(Document Object Model)은 웹 페이지의 구조를 나타내는 중요한 개념입니다. HTML과 CSS로 구성된 페이지를 브라우저가 이해할 수 있는 구조로 변환하며 자바스크립트를 통해 이 구조에 접근하고 수정할 수 있게 합니다.
+이러한 특성 때문에 DOM은 사용자 인터랙션 반응, 페이지 동적 변경 등 웹 애플리케이션의 동적인 요소를 구현하는 데 핵심적인 역할을 합니다.
+</ToggleContent>
+
+
+## Ref 훅 이해하기
+### Ref의 두 가지 형태: useRef와 createRef
+
+리액트는 `useRef`와 `createRef` 두 가지 방법으로 Ref를 생성할 수 있습니다. `useRef`는 함수형 컴포넌트에서, `createRef`는 클래스 컴포넌트에서 사용됩니다. 
+
+```jsx
+import React, { useRef } from 'react'; // 함수형 컴포넌트에서 useRef 사용
+
+function MyFunctionalComponent() {
+  const myRef = useRef(null);
+  // Ref 사용
+}
+```
+
+```jsx
+import React, { Component, createRef } from 'react'; // 클래스 컴포넌트에서 createRef 사용
+
+class MyClassComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.myRef = createRef();
+  }
+  // Ref 사용
+}
+```
+
+두 메서드의 가장 큰 차이점은 `useRef`는 컴포넌트의 전체 생명주기 동안 동일한 Ref 객체를 유지한다는 점입니다. 반면 `createRef`는 컴포넌트가 렌더링될 때마다 새로운 Ref 객체를 생성합니다.
+
+### Ref 사용 동기
+
+Ref의 주된 사용 동기는 리액트의 데이터 흐름에 맞지 않는 직접적인 DOM 접근이 필요한 경우입니다. 예를 들어서 특정 입력 필드에 자동으로 포커스를 맞추거나 외부 라이브러리를 사용해야 하는 경우가 이에 해당합니다.
+
+Ref는 리액트 세계에서 "탈출구"와 같은 역할을 합니다. 리액트가 추구하는 선언적 UI 구축 방식과는 다소 거리가 있지만 특정 상황에서는 이러한 명령적 접근이 불가피하게 필요합니다.
+
+### Ref 훅의 역할
+
+Ref 훅은 리액트 내에서 두 가지 주요 역할을 합니다. 첫째, DOM 요소에 직접 접근할 수 있는 방법을 제공합니다. 이를 통해 개발자는 DOM API를 활용해 요소에 직접적인 조작을 할 수 있습니다. 둘째, 컴포넌트 간에 데이터를 "전달"하는 역할을 할 수 있습니다. 특히, 자식 컴포넌트의 메서드나 상태에 부모 컴포넌트가 접근해야 할 때 유용합니다.
+
+
+> `useRef`와 `createRef`는 리액트 개발에 있어 꼭 필요한 도구입니다. 명령적 프로그래밍이 필요한 예외적인 상황에서 Ref를 효과적으로 사용할 수 있으며 이를 통해 리액트 애플리케이션의 다양한 상황에 대응할 수 있습니다. Ref의 사용은 신중하게 이루어져야 하며, 리액트의 선언적 패러다임을 최대한 유지하면서 필요한 경우에만 활용하는 것이 좋습니다.
+
+
+## Ref 전달하기
+
+리액트에서 Ref를 전달하는 방법은 컴포넌트 계층을 넘어 특정 DOM 요소나 컴포넌트 인스턴스에 직접 접근할 수 있게 해줍니다. 이 과정에서 `forwardRef`와 `useImperativeHandle`을 사용해야 합니다.
+
+### forwardRef 사용하기
+
+`forwardRef`는 부모 컴포넌트로부터 받은 Ref를 자식 컴포넌트에게 전달할 수 있도록 해주는 함수입니다. 이를 통해 부모 컴포넌트는 자식 컴포넌트 내부의 DOM 요소에 직접 접근할 수 있게 됩니다.
+
+```jsx {3, 8, 16}
+import React, { forwardRef } from 'react';
+
+const FancyInput = forwardRef((props, ref) => (
+  <input ref={ref} className="fancy-input" />
+));
+
+function ParentComponent() {
+  const inputRef = React.useRef(null);
+
+  const focusInput = () => {
+    inputRef.current.focus();
+  };
+
+  return (
+    <>
+      <FancyInput ref={inputRef} />
+      <button onClick={focusInput}>포커스</button>
+    </>
+  );
+}
+```
+
+이 예제에서 `FancyInput` 컴포넌트는 `forwardRef`를 사용하여 부모 컴포넌트에서 받은 Ref를 내부 `<input>` 요소에 연결합니다. 부모 컴포넌트에서는 이 Ref를 사용하여 자식 컴포넌트의 입력 필드에 포커스를 맞출 수 있습니다.
+
+### useImperativeHandle 사용하기
+
+`useImperativeHandle`은 자식 컴포넌트에서 부모 컴포넌트로 Ref를 전달할 때 부모 컴포넌트가 접근할 수 있는 함수를 커스터마이징할 수 있게 해줍니다. 이는 부모 컴포넌트가 자식 컴포넌트의 내부 메서드를 직접 호출할 수 있게 만들어줍니다.
+
+```jsx {6}
+import React, { useRef, useImperativeHandle, forwardRef } from 'react';
+
+const FancyInput = forwardRef((props, ref) => {
+  const inputRef = useRef();
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus();
+    },
+  }));
+
+  return <input ref={inputRef} className="fancy-input" />;
+});
+
+function ParentComponent() {
+  const fancyInputRef = useRef(null);
+
+  const activateFocus = () => {
+    fancyInputRef.current.focus();
+  };
+
+  return (
+    <>
+      <FancyInput ref={fancyInputRef} />
+      <button onClick={activateFocus}>포커스</button>
+    </>
+  );
+}
+```
+
+`FancyInput` 컴포넌트는 `useImperativeHandle`과 `forwardRef`를 사용하여 부모 컴포넌트가 호출할 수 있는 `focus` 메서드를 정의합니다. 이 방법을 통해 부모 컴포넌트는 자식 컴포넌트의 특정 기능을 직접 호출할 수 있게 됩니다.
+
+
+> `forwardRef`와 `useImperativeHandle`을 사용한 Ref 전달 기법은 리액트에서 컴포넌트 간의 상호작용을 더욱 유연하게 만들어 줍니다. 이러한 방법을 통해 개발자는 컴포넌트의 추상화 수준을 유지하면서도 필요한 경우에 한해 내부 요소나 기능에 접근할 수 있는 강력한 방법을 갖게 됩니다. 이를 통해 리액트 애플리케이션의 상호작용성과 사용성을 크게 향상시킬 수 있습니다.
+
+
+## Ref의 사용 시나리오와 예시
+
+Ref는 리액트에서 DOM 요소나 컴포넌트 인스턴스에 직접 접근해야 할 때 사용합니다. 이러한 접근은 일반적으로 리액트의 데이터 흐름에 어긋나지만 특정 상황에서는 필수적일 수 있습니다.
+
+### 주요 사용 시나리오
+
+1. **자동 포커스 설정**: 사용자 인터페이스에서 특정 입력 필드에 페이지 로드 시 자동으로 포커스를 맞추고 싶은 경우가 있습니다. 이는 사용자 경험을 개선하는 데 도움이 됩니다.
+2. **애니메이션 제어**: DOM 요소의 애니메이션을 직접 제어해야 할 때 Ref를 사용할 수 있습니다. 예를 들어, 애니메이션 라이브러리와 함께 작업할 때 유용합니다.
+3. **외부 라이브러리와의 통합**: DOM을 직접 조작하는 외부 라이브러리와 리액트 컴포넌트를 통합할 때 Ref가 필요할 수 있습니다.
+
+### 실제 사용 예시
+
+### 폼 요소 포커스 설정
+
+폼 요소에 자동으로 포커스를 맞추는 것은 사용자 경험을 향상시키는 간단하면서도 효과적인 방법입니다. 예를 들어서 로그인 페이지에서 이메일 입력 필드에 페이지 로드 시 자동으로 포커스를 설정할 수 있습니다.
+
+```jsx
+import React, { useRef, useEffect } from 'react';
+
+function LoginForm() {
+  const emailInputRef = useRef(null);
+
+  useEffect(() => {
+    emailInputRef.current.focus();
+  }, []);
+
+  return (
+    <form>
+      <input ref={emailInputRef} type="email" placeholder="이메일" />
+      <input type="password" placeholder="비밀번호" />
+      <button type="submit">로그인</button>
+    </form>
+  );
+}
+```
+
+### 사용자 입력값 처리
+
+Ref를 사용하여 사용자 입력값을 처리하는 경우도 많습니다. 예를 들어, 검색 입력 필드에서 사용자가 입력한 텍스트 값을 가져와서 검색 결과를 표시할 수 있습니다.
+
+```jsx
+import React, { useRef } from 'react';
+
+function SearchForm() {
+  const searchInputRef = useRef(null);
+
+  const handleSearch = () => {
+    alert(`검색어: ${searchInputRef.current.value}`);
+  };
+
+  return (
+    <div>
+      <input ref={searchInputRef} type="text" placeholder="검색어를 입력하세요" />
+      <button onClick={handleSearch}>검색</button>
+    </div>
+  );
+}
+```
+
+### 미디어 제어
+
+Ref는 비디오나 오디오 컨트롤과 같은 미디어 요소를 제어하는 데에도 사용됩니다. 예를 들어, 비디오 플레이어에서 재생, 일시 정지, 볼륨 조절 등의 기능을 구현할 때 유용합니다.
+
+```jsx
+import React, { useRef } from 'react';
+
+function VideoPlayer() {
+  const videoRef = useRef(null);
+
+  const playVideo = () => {
+    videoRef.current.play();
+  };
+
+  const pauseVideo = () => {
+    videoRef.current.pause();
+  };
+
+  return (
+    <div>
+      <video ref={videoRef} width="320" height="240" controls>
+        <source src="movie.mp4" type="video/mp4" />
+      </video>
+      <button onClick={playVideo}>재생</button>
+      <button onClick={pauseVideo}>일시 정지</button>
+    </div>
+  );
+}
+```
+
+### 외부 라이브러리와의 통합
+
+리액트 컴포넌트에서 외부 라이브러리를 사용하여 DOM 요소를 직접 조작하는 경우입니다.
+
+```jsx
+import React, { useRef, useEffect } from 'react';
+import { initExternalLibrary } from 'some-external-library';
+
+function ExternalLibIntegration() {
+  const divRef = useRef(null);
+
+  useEffect(() => {
+    if (divRef.current) {
+      initExternalLibrary(divRef.current);
+    }
+  }, []);
+
+  return <div ref={divRef} />;
+}
+```
+
+여기서는 `useRef`를 사용해 `div` 요소에 대한 참조를 생성하고 `useEffect` 훅 내에서 외부 라이브러리의 초기화 함수에 이 `div`를 인자로 전달합니다. 이를 통해 외부 라이브러리가 리액트 컴포넌트 내의 DOM 요소를 직접 조작할 수 있게 됩니다.
+
+### 실제 애플리케이션에서의 사례 분석
+
+이러한 Ref의 활용 사례들은 사용자 인터페이스를 더 동적이고 상호작용이 풍부하게 만드는 데 큰 역할을 합니다.
+특히 복잡한 애플리케이션에서 Ref는 다양한 사용자 인터랙션과 원활한 데이터 처리를 가능하게 해줍니다.
+예를 들어, 대규모 양식이 있는 웹사이트에서 사용자가 다음 필드로 자동으로 이동할 수 있게 하거나 사용자가 스크롤 없이도 중요한 콘텐츠에 집중할 수 있게 하는 등의 기능을 구현할 때 Ref가 활용됩니다.
+
+> Ref는 리액트 개발에서 강력한 도구이지만 남용하지 않도록 주의해야 합니다. 주로 DOM 접근이 필수적인 경우나 리액트의 데이터 흐름을 벗어나는 명령적인 작업이 필요한 경우에 한정하여 사용하는 것이 좋습니다.
+이를 통해 리액트 애플리케이션의 성능을 최적화하고 유지 관리성을 높일 수 있습니다.
+
+
+## Ref 활용의 모범 사례와 주의 사항
+
+리액트에서 Ref는 매우 강력한 기능을 제공하지만 이를 사용할 때는 주의가 필요합니다. 올바르게 사용되지 않으면 애플리케이션의 성능 저하나 예측 불가능한 버그를 초래할 수 있기 때문입니다.
+여기에서는 Ref 사용 시 지켜야 할 모범 사례와 주의 사항에 대해 알아보겠습니다.
+
+### 모범 사례
+
+- **필요한 경우에만 사용:** Ref는 직접적인 DOM 접근이 필요할 때 사용해야 합니다. 예를 들어서 포커스 설정, 텍스트 선택, 미디어 재생 제어와 같이 선언적인 방식으로 해결할 수 없는 작업에 사용하세요.
+- **컴포넌트 내부에서만 사용:** Ref는 컴포넌트 내부에서만 사용하고 외부로 노출시키지 마세요. 컴포넌트의 내부 구현을 외부로 유출시키면 컴포넌트의 재사용성과 유지 보수성이 떨어집니다.
+- **상태 업데이트에는 사용하지 않기:** Ref를 사용해 상태 업데이트와 같은 리액트의 데이터 흐름을 우회하는 것은 피해야 합니다. 상태 관리는 `useState`나 `useReducer`와 같은 상태 관리 훅을 사용하세요.
+
+### 주의 사항
+
+- **Ref 남용 방지:** 모든 상호 작용이나 DOM 조작에 Ref를 사용하는 것은 피해야 합니다. 리액트의 선언적 UI 구성 방식과 잘 어우러지지 않으며 애플리케이션의 복잡성을 높일 수 있습니다.
+- **함수형 컴포넌트에서의 useRef 우선 사용:** 클래스 컴포넌트에서는 `createRef`를 함수형 컴포넌트에서는 `useRef`를 사용하는 것이 권장됩니다. 함수형 컴포넌트와 훅을 사용하는 현대 리액트 개발 패러다임에 더 잘 부합합니다.
+- **동적 Ref 사용 시 주의:** 여러 요소에 대한 Ref를 동적으로 생성하고 관리해야 할 때 문자열 대신 함수를 사용하거나 `Map` 객체를 활용하는 등의 방법으로 관리하는 것이 좋습니다.
+
+### 최적의 활용 전략
+
+- **Ref와 상태의 적절한 조합:** 때로는 Ref와 리액트의 상태를 조합해 사용하는 것이 효과적일 수 있습니다. 예를 들어서 입력 필드에 포커스가 있는지 여부를 상태로 관리하면서 실제 포커스 조작은 Ref를 통해 수행하는 식입니다.
+- **커스텀 훅을 통한 추상화:** 공통적으로 사용되는 DOM 조작 로직이 있다면 이를 커스텀 훅으로 추상화해 재사용성을 높이세요. 이 방법을 통해 코드의 가독성과 유지 보수성을 향상시킬 수 있습니다.
+- **코드 리뷰와 테스트:** Ref를 사용한 코드는 특히 주의 깊게 리뷰하고 테스트해야 합니다. 코드 리뷰를 통해 불필요한 Ref 사용을 줄이고 적절한 테스트를 통해 예상치 못한 사이드 이펙트가 없는지 확인하세요.
+
+> Ref는 리액트 애플리케이션에서 강력한 기능을 제공하지만 그 사용법을 잘 이해하고 신중하게 활용해야 합니다. 모범 사례를 따르고 주의 사항을 유의하여 깔끔하고 유지 보수가 용이한 코드를 작성하는 것이 중요합니다.
