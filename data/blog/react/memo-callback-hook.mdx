@@ -1,0 +1,500 @@
+---
+title: "리액트 성능 최적화: useMemo, React.memo, useCallback 활용하기"
+summary: "웹 성능 저하를 막고 최적화하는 방법에는 여러 가지가 있으며 useMemo, React.memo, useCallback은 그 중 핵심적인 훅과 고차 컴포넌트입니다. 이 글에서는 각각의 사용 시나리오, 차이점 및 사용법을 실제 예제와 함께 살펴봄으로써 렌더링 성능을 향상시키는 방법을 알아봅니다."
+tags: ['React', 'Performance', 'Hook']
+images: ['/static/images/blog/react/memo-callback-hook.jpg']
+date: "2024-03-25 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 서론
+
+### 리액트 성능 최적화의 필수성
+
+리액트로 개발할 때 누구나 마주치게 되는 중요한 과제 중 하나는 바로 성능 최적화입니다. 사용자 경험을 향상시키고 애플리케이션의 반응 속도를 높이며 자원을 효율적으로 사용하기 위해 성능 최적화는 필수입니다.
+리액트 애플리케이션에서 성능 최적화는 불필요한 렌더링을 줄이고 계산 비용이 높은 작업을 최소화하여 애플리케이션의 전반적인 효율을 높이는 것을 목표로 합니다.
+
+### 성능 저하의 주요 원인
+
+성능 저하를 일으키는 요인은 다양하지만 리액트에서는 특히 몇 가지 주요 원인이 있습니다.
+- 첫째, 불필요한 렌더링이 가장 일반적인 문제 중 하나입니다. 컴포넌트의 상태가 변경될 때마다 리액트는 렌더링 과정을 거치게 되는데 이 과정 중에 변화가 없는 컴포넌트까지 불필요하게 렌더링 되는 경우가 종종 발생합니다.
+- 둘째, 복잡한 계산이나 데이터 처리는 애플리케이션의 반응 속도를 늦출 수 있습니다. 사용자의 입력에 실시간으로 반응해야 하는 인터페이스에서는 이러한 계산으로 인한 지연이 사용자 경험을 저해할 수 있습니다.
+
+### 코드 예제: 불필요한 렌더링 발생
+
+아래 코드의 예시는 컴포넌트가 부모 컴포넌트로부터 받은 props나 자신의 상태 변경으로 인해 불필요하게 빈번하게 리렌더링 되는 상황입니다. 이 코드는 부모 컴포넌트의 상태 변경 때마다 자식 컴포넌트가 불필요하게 리렌더링 되는 문제를 보여줍니다.
+
+```jsx
+import React, { useState } from 'react';
+
+const ChildComponent = ({ count }) => {
+  console.log('ChildComponent 렌더링...');
+
+  return <div>부모 컴포넌트 카운터 값: {count}</div>;
+};
+
+const ParentComponent = () => {
+  const [count, setCount] = useState(0);
+  const [inputValue, setInputValue] = useState('');
+
+  console.log('ParentComponent 렌더링...');
+
+  return (
+    <div>
+      <p>카운터: {count}</p>
+      <button onClick={() => setCount(count + 1)}>증가</button>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <ChildComponent count={count} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+```
+
+이 예제에서 `ParentComponent`의 상태인 `inputValue`가 변경될 때마다 `ParentComponent`와 함께 `ChildComponent`도 리렌더링 됩니다. 이는 `ChildComponent`가 `count` 값을 prop으로 받고 있으며 부모 컴포넌트의 상태 변경 때문에 자식 컴포넌트까지 불필요하게 리렌더링되는 상황입니다. `ChildComponent`는 `count` 값에 의존하지만 `inputValue`의 변경은 `ChildComponent`에 영향을 주지 않아야 합니다. 이러한 불필요한 리렌더링은 애플리케이션의 성능 저하를 일으킬 수 있습니다.
+
+
+<MermaidChart className="justify-center p-0">
+{`
+sequenceDiagram
+    participant 사용자 as 사용자
+    participant 부모 컴포넌트 as ParentComponent
+    participant 자식 컴포넌트 as ChildComponent
+
+    사용자->>+부모 컴포넌트: 입력값 변경 (inputValue)
+    부모 컴포넌트->>-부모 컴포넌트: 상태 업데이트
+
+    Note over 부모 컴포넌트: 상태 변경으로 인한 리렌더링
+
+    부모 컴포넌트->>+자식 컴포넌트: props 전달 (count)
+    Note over 자식 컴포넌트: 불필요한 리렌더링 발생
+
+    자식 컴포넌트->>-자식 컴포넌트: 리렌더링 처리
+
+    Note over 부모 컴포넌트,자식 컴포넌트: 상태 변경이 자식 컴포넌트의 리렌더링을 초래
+`}
+</MermaidChart>
+
+> 성능을 개선하기 위해선 `React.memo`를 사용하거나 `useCallback`, `useMemo` 같은 훅을 활용하여 불필요한 계산과 리렌더링을 최소화해야 합니다.
+
+<ToggleContent title="React.memo를 사용한 성능 개선된 코드">
+성능 개선을 위해 `React.memo`를 사용하여 `ChildComponent`가 필요할 때만 렌더링되도록 수정할 수 있습니다. 이는 `count` prop이 변경될 때만 `ChildComponent`를 다시 렌더링하고 `ParentComponent`에서 다른 상태 변경(예: `inputValue`의 변경)이 발생해도 `ChildComponent`는 영향을 받지 않게 합니다.
+
+```jsx
+import React, { useState, memo } from 'react';
+
+const ChildComponent = memo(({ count }) => {
+  console.log('ChildComponent 렌더링...');
+
+  return <div>부모 컴포넌트 카운터 값: {count}</div>;
+});
+
+const ParentComponent = () => {
+  const [count, setCount] = useState(0);
+  const [inputValue, setInputValue] = useState('');
+
+  console.log('ParentComponent 렌더링...');
+
+  return (
+    <div>
+      <p>카운터: {count}</p>
+      <button onClick={() => setCount(count + 1)}>증가</button>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <ChildComponent count={count} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+```
+
+이 예제에서 `ChildComponent`는 `React.memo`로 래핑되어 있습니다. 이는 `ChildComponent`의 props가 변경되지 않는 한, 부모 컴포넌트 `ParentComponent`의 렌더링에 의해 불필요하게 다시 렌더링되지 않도록 합니다. 따라서 `inputValue`의 변경으로 인한 `ParentComponent`의 렌더링이 `ChildComponent`에 영향을 주지 않게 됩니다. 이는 특히 복잡한 애플리케이션에서 성능 개선에 큰 도움이 될 수 있습니다.
+</ToggleContent>
+
+
+
+
+
+## 리액트의 성능 최적화 도구
+
+리액트 애플리케이션에서 성능 최적화는 필수적인 과정입니다. 특히 대규모 애플리케이션에서는 렌더링 최적화 없이는 원활한 사용자 경험을 제공하기 어렵습니다. 리액트는 이러한 성능 최적화를 위해 `useMemo`, `React.memo`, `useCallback`과 같은 도구를 제공합니다.
+
+### useMemo와 useCallback의 소개 및 동기
+
+`useMemo`와 `useCallback`은 컴포넌트의 불필요한 렌더링을 방지하기 위해 사용됩니다. `useMemo`는 값의 계산을 메모이제이션(캐싱)하여 성능을 개선하고, `useCallback`은 함수를 메모이제이션하여 함수가 필요할 때만 생성되도록 합니다. 이러한 훅은 리액트의 렌더링 성능을 최적화하는 데 중요한 역할을 합니다.
+
+예를 들어, 복잡한 계산이 필요한 컴포넌트나 자주 업데이트되는 컴포넌트에서 이 훅을 사용하면 불필요한 계산이나 렌더링을 줄일 수 있습니다.
+
+```jsx
+import React, { useMemo } from 'react';
+
+function ExpensiveComponent({ items }) {
+  const processedItems = useMemo(() => {
+    return items.map(item => expensiveCalculation(item));
+  }, [items]);
+
+  return (
+    <div>
+      {processedItems.map(item => (
+        <div key={item.id}>{item.value}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+### React.memo의 소개 및 동기
+
+`React.memo`는 컴포넌트를 메모이징하여 속성이 변경되었을 때만 컴포넌트가 다시 렌더링되도록 합니다. 이는 특히 속성이 변경되지 않았을 때 불필요한 렌더링을 방지하여 성능을 개선합니다.
+
+```jsx
+const MemoizedComponent = React.memo(function MyComponent(props) {
+  /* 컴포넌트 구현 */
+});
+```
+
+### 성능 저하의 다양한 상황
+
+리액트 애플리케이션에서는 여러 상황에서 성능 저하가 발생할 수 있습니다. 대표적으로는 대량의 데이터를 처리할 때 빈번한 상태 업데이트가 발생할 때 복잡한 컴포넌트 구조에서 불필요한 렌더링이 일어날 때 등이 있습니다.
+
+이러한 성능 저하를 해결하기 위해 `useMemo`, `React.memo`, `useCallback`을 적절히 활용하여 필요한 계산만 수행하고 필요한 렌더링만 발생하도록 조정해야 합니다.
+
+리액트에서 제공하는 성능 최적화 도구를 활용함으로써 개발자는 사용자에게 더 나은 경험을 제공할 수 있는 더 빠르고 반응적인 애플리케이션을 구축할 수 있습니다.
+
+
+## useMemo 상세히 알아보기
+
+리액트 애플리케이션 개발 시 성능 최적화는 중요한 고려 사항 중 하나입니다. 이때 `useMemo` 훅은 무거운 계산 작업의 결과를 메모리에 저장함으로써 애플리케이션의 효율성을 높이는 데 도움을 줍니다. `useMemo`는 계산 비용이 많이 드는 함수의 결과값을 재활용함으로써 불필요한 재계산을 방지하고 성능을 개선합니다.
+
+### useMemo의 작동 원리
+
+`useMemo`는 첫 번째 인자로 콜백 함수를, 두 번째 인자로 의존성 배열을 받습니다. 의존성 배열 내의 값이 변경되면 콜백 함수가 다시 실행되어 계산이 이루어지고 그 결과가 메모리에 저장됩니다. 변경이 없다면 이전에 메모리에 저장된 값을 재사용합니다.
+
+### 사용 시나리오
+
+`useMemo`는 다음과 같은 상황에서 유용하게 사용됩니다.
+
+- 계산 비용이 높은 함수의 결과를 재사용할 때
+- 렌더링 과정에서 동일한 결과를 여러 번 계산해야 하는 경우
+- 참조 동일성을 유지해야 하는 복잡한 객체를 다룰 때
+
+### 예제 코드: 성능 개선 전
+
+```jsx {20}
+import React, { useState } from 'react';
+
+const calculatePrimeNumbers = (max) => {
+  // 소수를 계산하는 비용이 높은 함수
+  let primes = [];
+  for (let i = 2; i <= max; i++) {
+    let isPrime = true;
+    for (let j = 2; j < i; j++) {
+      if (i % j === 0) {
+        isPrime = false;
+        break;
+      }
+    }
+    if (isPrime) primes.push(i);
+  }
+  return primes;
+};
+
+const PrimeNumbers = ({ max }) => {
+  const primes = calculatePrimeNumbers(max);
+  return (
+    <div>
+      <p>{max} 이하의 소수: {primes.join(', ')}</p>
+    </div>
+  );
+};
+
+const App = () => {
+  const [max, setMax] = useState(10);
+  return (
+    <div>
+      <input
+        type="number"
+        value={max}
+        onChange={(e) => setMax(Number(e.target.value))}
+      />
+      <PrimeNumbers max={max} />
+    </div>
+  );
+};
+
+export default App;
+```
+
+### 성능 개선 후: useMemo 사용
+
+```jsx {8}
+import React, { useState, useMemo } from 'react';
+
+const calculatePrimeNumbers = (max) => {
+  // 소수 계산 로직은 동일
+};
+
+const PrimeNumbers = ({ max }) => {
+  const primes = useMemo(() => calculatePrimeNumbers(max), [max]);
+  return (
+    <div>
+      <p>{max} 이하의 소수: {primes.join(', ')}</p>
+    </div>
+  );
+};
+
+// App 컴포넌트는 동일
+```
+
+### 성능 개선 전후 비교
+
+`useMemo` 사용 전에는 입력 값이 변경될 때마다 `calculatePrimeNumbers` 함수가 재실행되어 소수를 계산했습니다. 이는 불필요한 계산으로 인해 애플리케이션의 반응 속도가 느려질 수 있습니다. 반면, `useMemo`를 사용한 후에는 입력 값이 변경되지 않는 한 이전에 계산된 소수 목록을 재사용하여 성능을 향상시킬 수 있습니다. 이를 통해 애플리케이션이 더 빠르고 효율적으로 동작하게 됩니다.
+
+
+
+
+## React.memo로 컴포넌트 최적화하기
+
+리액트에서 `React.memo`는 컴포넌트의 불필요한 렌더링을 방지해 성능을 향상시키는 고차 컴포넌트입니다. 특히 props의 변경 없이 부모 컴포넌트가 렌더링될 때 자식 컴포넌트도 함께 렌더링되는 것을 방지합니다.
+
+### React.memo의 작동 원리
+
+`React.memo`는 컴포넌트의 props가 변경되었는지 확인하고 변경되지 않았다면 이전 렌더링 결과를 재사용합니다. 이는 불필요한 렌더링을 줄여 성능을 개선하는 효과를 가집니다.
+
+### 사용 시나리오
+
+- 자주 업데이트되지 않는 props를 가진 컴포넌트
+- 부모 컴포넌트의 상태 변경에 따라 불필요하게 렌더링되는 경우
+- 렌더링 최적화가 필요한 대규모 리스트나 테이블
+
+### 예제 코드: 성능 개선 전
+
+```jsx {3}
+import React, { useState } from 'react';
+
+const ChildComponent = ({ count }) => {
+  console.log('ChildComponent 렌더링...');
+  return <div>Count: {count}</div>;
+};
+
+const ParentComponent = () => {
+  const [count, setCount] = useState(0);
+  const [inputValue, setInputValue] = useState('');
+
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>증가</button>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <ChildComponent count={count} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+```
+
+### 성능 개선 후: React.memo 사용
+
+```jsx {3}
+import React, { useState } from 'react';
+
+const ChildComponent = React.memo(({ count }) => {
+  console.log('ChildComponent 렌더링...');
+  return <div>Count: {count}</div>;
+});
+
+const ParentComponent = () => {
+  const [count, setCount] = useState(0);
+  const [inputValue, setInputValue] = useState('');
+
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>증가</button>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <ChildComponent count={count} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+```
+
+### 성능 개선 전후 비교
+
+`React.memo`를 적용하기 전에는 부모 컴포넌트에서 상태가 변경될 때마다 자식 컴포넌트도 함께 렌더링되어 성능 저하가 발생했습니다. `React.memo` 적용 후에는 `count` prop이 변경되지 않으면 `ChildComponent`의 렌더링이 발생하지 않습니다. 이로 인해 불필요한 렌더링을 방지하고 애플리케이션의 성능을 향상시킬 수 있습니다.
+
+
+## useCallback의 자세히 알아보기
+
+리액트에서 `useCallback` 훅은 함수를 메모이제이션하여 컴포넌트의 불필요한 재렌더링을 방지하는 데 중요한 역할을 합니다. 이 훅은 특히 함수를 props로 하위 컴포넌트에 전달할 때 유용하게 사용됩니다.
+
+### useCallback의 작동 원리
+
+`useCallback`은 함수를 메모리에 저장하고 의존성 배열에 명시된 변수들의 값이 변경될 때만 함수를 새로 생성합니다. 이를 통해 컴포넌트가 재렌더링되더라도 동일한 함수 참조를 유지할 수 있어서 성능을 개선할 수 있습니다.
+
+### 사용 시나리오
+
+- 이벤트 핸들러 함수를 자식 컴포넌트에 props로 전달할 때
+- 렌더링 최적화가 필요한 대규모 리스트나 테이블에서 항목의 이벤트 처리
+- 빈번하게 업데이트되는 상태나 props에 의존하는 함수에서
+
+### 예제 코드: 성능 개선 전
+
+```jsx {11}
+import React, { useState } from 'react';
+
+const ChildComponent = React.memo(({ onIncrement }) => {
+  console.log('ChildComponent 렌더링...');
+  return <button onClick={onIncrement}>증가</button>;
+});
+
+const ParentComponent = () => {
+  const [count, setCount] = useState(0);
+
+  const handleIncrement = () => {
+    setCount((prevCount) => prevCount + 1);
+  };
+
+  return (
+    <div>
+      <p>카운터: {count}</p>
+      <ChildComponent onIncrement={handleIncrement} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+```
+
+### 성능 개선 후: useCallback 사용
+
+```jsx {11}
+import React, { useState, useCallback } from 'react';
+
+const ChildComponent = React.memo(({ onIncrement }) => {
+  console.log('ChildComponent 렌더링...');
+  return <button onClick={onIncrement}>증가</button>;
+});
+
+const ParentComponent = () => {
+  const [count, setCount] = useState(0);
+
+  const handleIncrement = useCallback(() => {
+    setCount((prevCount) => prevCount + 1);
+  }, []);
+
+  return (
+    <div>
+      <p>카운터: {count}</p>
+      <ChildComponent onIncrement={handleIncrement} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+```
+
+### 성능 개선 전후 비교
+
+`useCallback`을 적용하기 전에는 `ParentComponent`가 재렌더링될 때마다 `handleIncrement` 함수가 새로 생성되어 `ChildComponent`도 불필요하게 재렌더링되었습니다. `useCallback`을 적용한 후에는 `handleIncrement` 함수의 참조가 변경되지 않기 때문에 `ChildComponent`의 재렌더링이 방지되어 전체적인 성능이 향상됩니다. 이러한 방식으로 `useCallback`은 리액트 애플리케이션에서 성능 최적화의 중요한 도구로 자리 잡고 있습니다.
+
+
+
+## 성능 최적화를 위한 추가적인 고려 사항
+
+리액트 애플리케이션의 성능 최적화는 단순한 컴포넌트 렌더링의 효율성을 넘어서는 개념입니다. 상태 관리 및 업데이트 전략의 깊이 있는 이해와 적용은 애플리케이션의 반응 속도와 사용자 경험을 극대화합니다.
+
+### 상태 관리의 깊이 있는 접근
+
+상태 관리는 리액트 애플리케이션의 핵심입니다. 효과적인 상태 관리 전략은 불필요한 상태 업데이트를 최소화하고 상태 변경이 애플리케이션의 다른 부분에 어떻게 영향을 미치는지 명확히 이해하는 데서 시작됩니다.
+
+### 상태 업데이트 전략
+
+- **분산된 상태 vs 중앙 집중식 상태**: 애플리케이션의 규모와 복잡성에 따라 상태를 컴포넌트 내부에 분산시킬지 아니면 Redux나 Context API와 같은 중앙 집중식 상태 관리 라이브러리를 사용할지 결정해야 합니다.
+- **불변성의 유지**: 상태를 업데이트할 때는 항상 불변성을 유지하는 방식으로 접근해야 합니다. 이는 성능 최적화를 위한 리액트의 기본 전제입니다.
+- **비동기 상태 업데이트**: 데이터 패칭이나 복잡한 계산과 같은 비동기 작업을 상태 업데이트와 결합할 때는 `useEffect` 훅과 같은 수단을 통해 업데이트 전략을 명확히 해야 합니다.
+
+### 예제 코드: 상태 관리와 업데이트 전략
+
+```jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const DataFetchingComponent = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get('https://api.example.com/data');
+      setData(response.data);
+    };
+
+    fetchData();
+  }, []); // 의존성 배열을 빈 배열로 설정하여 마운트 시 단 한 번만 데이터를 패칭
+
+  return (
+    <div>
+      {data ? <div>{data}</div> : <div>데이터 로딩 중...</div>}
+    </div>
+  );
+};
+
+export default DataFetchingComponent;
+```
+
+## 결론: 리액트 성능 최적화의 결정적 순간
+
+리액트 애플리케이션의 성능 최적화는 단순히 빠른 애플리케이션을 만드는 것 이상의 의미를 지닙니다. 사용자 경험의 질을 높이고 애플리케이션의 신뢰성을 강화하는 과정입니다.
+
+### 성능 최적화의 핵심 요약
+
+- **불필요한 렌더링 방지**: `React.memo`, `useMemo`, `useCallback`을 활용하여 컴포넌트의 불필요한 렌더링을 최소화합니다.
+- **상태 관리 전략**: 상태 관리 및 업데이트 전략을 명확히 하여 애플리케이션의 반응성을 극대화합니다.
+- **성능 분석 도구 활용**: 리액트 개발자 도구와 같은 성능 분석 도구를 활용하여 성능 저하의 원인을 파악하고 개선합니다.
+
+### 예제 코드: 성능 분석 도구 사용 예시
+
+```jsx
+// 성능 분석 도구를 활용해 컴포넌트 렌더링 시간 측정
+import React, { Profiler } from 'react';
+
+const onRenderCallback = (
+  id, // 방금 커밋된 Profiler 트리의 "id"
+  phase, // "mount" (트리가 처음 마운트된 경우) 혹은 "update" (트리가 재렌더링된 경우)
+  actualDuration, // 커밋 단계를 완료하는 데 걸린 시간
+  baseDuration, // 예상 렌더링 시간
+  startTime, // React가 언제 이 업데이트를 렌더링하기 시작했는지
+  commitTime, // React가 이 업데이트를 언제 커밋했는지
+  interactions // 이 업데이트에 속한 상호작용의 집합
+) => {
+  console.log(`렌더링 시간: ${actualDuration}`);
+};
+
+const MyComponent = () => {
+  return (
+    <Profiler id="MyComponent" onRender={onRenderCallback}>
+      {/* 컴포넌트 내용 */}
+    </Profiler>
+  );
+};
+```
+
+리액트 성능 최적화는 단순한 목표 달성이 아니라 지속적인 과정입니다. 새로운 기술과 도구를 사용하고 실험을 통해 최적의 성능을 도출하는 과정에서 리액트 개발자로서의 깊이와 폭을 넓힐 수 있습니다. 이 과정은 끊임없는 발전을 통해 사용자에게 더 나은 경험을 제공하는 길로 이끕니다.

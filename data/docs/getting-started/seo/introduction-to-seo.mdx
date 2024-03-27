@@ -1,61 +1,62 @@
 ---
 title: SEO 소개
 date: '2023-01-01 03:01'
-summary: SEO의 정의와 중요성, 최적화의 핵심 세 가지 기둥, 검색 시스템의 원리, 웹 크롤러의 역할, 그리고 Googlebot의 작동 방식에 대해 설명합니다.
+summary: SEO의 정의와 최적화의 핵심인 검색 시스템의 원리, 웹 크롤러의 역할, Googlebot의 작동 방식에 대해 설명합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
 ## SEO란 무엇인가요?
-SEO는 Search Engine Optimization의 약자입니다. SEO의 목표는 검색 엔진 결과에서의 순위를 높이는 전략을 만드는 것입니다. 순위가 높을수록 웹사이트로의 유기적 트래픽이 늘어나게 되며, 결국 당신의 비즈니스에 더 큰 이익을 가져다 줍니다!
+SEO는 Search Engine Optimization의 약자입니다. SEO의 목표는 검색 엔진 결과에서의 순위를 높이는 전략을 만드는 것입니다. 순위가 높을수록 웹사이트로의 유기적 트래픽이 늘어나게 되며 결국 비즈니스에 더 큰 이익을 가져다 줍니다!
 
 ## SEO는 왜 중요한가요?
-<span className="text-blue-600 font-bold">SEO</span>는 <span className="font-semibold bg-yellow-100">전환율을 높이고 브랜드에 대한 신뢰를 강화하는 핵심</span>입니다. 더 높은 검색 순위는 더 많은 유기적 방문자를 의미합니다. 검색 엔진의 유기적 트래픽 – 검색 엔진의 결과를 클릭하여 사이트에 방문하는 방문자 –는 다음과 같은 세 가지 이유로 많은 비즈니스에 중요합니다:
+<span className="text-blue-600 font-bold">SEO</span>는 <span className="font-semibold bg-yellow-100">전환율을 높이고 브랜드에 대한 신뢰를 강화하는 핵심</span>입니다. 더 높은 검색 순위는 더 많은 유기적 방문자를 의미합니다.
+검색 엔진의 결과를 클릭하여 사이트에 방문하는 방문자를 말하는 검색 엔진의 유기적 트래픽은 다음과 같은 세 가지 이유로 많은 비즈니스에 중요합니다.
 
-1. <span className="font-bold underline">질적</span> – 방문자가 고객으로 전환될 가능성이 높아집니다.
-2. <span className="font-bold underline">신뢰성</span> – 브랜드나 사명에 대한 높은 신뢰도.
-3. <span className="font-bold underline">저렴한 비용</span> – 소비되는 시간과 노력을 제외하면, 검색 엔진 순위를 높이는 좋은 SEO 실무는 무료입니다. <span className="text-red-600 font-bold">유기적 검색 결과의 상단에 표시되는 데 직접적인 비용은 들지 않습니다.</span>
+1. <span className="font-bold underline">질적</span>: 방문자가 고객으로 전환될 가능성이 높아집니다.
+2. <span className="font-bold underline">신뢰성</span>: 브랜드나 사명에 대한 높은 신뢰도가 상승합니다.
+3. <span className="font-bold underline">저렴한 비용</span>: 소비되는 시간과 노력을 제외하면 검색 엔진 순위를 높이는 좋은 SEO 실무는 무료입니다. <span className="text-red-600 font-bold">유기적 검색 결과의 상단에 표시되는 데 직접적인 비용은 들지 않습니다.</span>
 
 검색 엔진 최적화는 검색 엔진 마케팅(SEM)[^1]과 다르며, 검색 결과의 상단에 있는 콘텐츠는 100% 유료이며 Sponsored 라벨로 유기적 결과와 구분됩니다.
-[^1]: 검색 엔진 마케팅(Search Engine Marketing, SEM)은 웹사이트의 가시성을 향상시키기 위해 검색 엔진에서 광고를 구매하는 온라인 마케팅 전략입니다. 이는 종종 페이드 검색 광고(Paid Search Advertising) 또는 PPC(Pay-Per-Click) 광고와 동일시되곤 합니다. SEM의 주요 목표는 웹사이트에 더 많은 트래픽을 유도하는 것입니다.
+[^1]: 검색 엔진 마케팅(Search Engine Marketing, SEM)은 웹사이트의 가시성을 향상시키기 위해 검색 엔진에서 광고를 구매하는 온라인 마케팅 전략입니다. 이는 페이드 검색 광고(Paid Search Advertising) 또는 PPC(Pay-Per-Click) 광고와 동일시되곤 합니다. SEM의 주요 목표는 웹사이트에 더 많은 트래픽을 유도하는 것입니다.
 
-## 최적화의 세 가지 기둥
-웹사이트를 최적화하는 과정은 다음 세 가지 주요 기둥으로 나눌 수 있습니다:
+## 최적화의 세 가지 핵심
+웹사이트를 최적화하는 과정은 다음 세 가지 주요 핵심으로 나눌 수 있습니다.
 
-1. <span className="font-bold underline">기술적</span> – 크롤링 및 웹 성능에 대한 웹사이트 최적화.
-2. <span className="font-bold underline">창작</span> – 특정 키워드를 대상으로하는 콘텐츠 전략 생성.
-3. <span className="font-bold underline">인기도</span> – 검색 엔진이 당신을 신뢰할 만한 출처로 알 수 있도록 사이트의 온라인 존재를 강화합니다. 이는 다른 사이트들이 당신의 사이트로 링크하는 백링크 사용을 통해 이루어집니다.
+1. <span className="font-bold underline">기술적</span>: 크롤링 및 웹 성능에 대한 웹사이트 최적화합니다.
+2. <span className="font-bold underline">창작</span>: 특정 키워드를 대상으로하는 콘텐츠 전략 생성합니다.
+3. <span className="font-bold underline">인기도</span>: 검색 엔진이 당신을 신뢰할 만한 출처로 알 수 있도록 사이트의 온라인 존재를 강화합니다. 이는 다른 사이트들이 당신의 사이트로 링크하는 백링크 사용을 통해 이루어집니다.
 
 SEO 분야는 넓고 다양한 측면이 있지만, Next.js 개발자로서 첫걸음은 어떻게 웹 앱을 SEO 준비가 되게 할 수 있는지에 대한 모범 사례를 이해하는 것입니다.
 
 ## 검색 시스템
 <span className="text-blue-600 font-bold">검색 시스템</span>이란 일반적으로 Google, Bing, DuckDuckGo 등과 같은 검색 엔진을 말합니다. 이것은 기술 역사에서 가장 큰 도전을 다루는 대규모 복잡한 시스템입니다.
 
-검색 시스템은 네 가지 주요 책임이 있습니다:
+검색 시스템은 네 가지 주요 책임이 있습니다.
 
-1. <span className="font-bold underline">크롤링</span> – <span className="font-semibold bg-yellow-100">웹을 통해 모든 웹사이트의 콘텐츠를 파싱하는 과정</span>입니다. 3억 5천만 개 이상의 도메인이 있기 때문에 이는 대규모 작업입니다.
-2. <span className="font-bold underline">인덱싱</span> – 크롤링 단계에서 수집된 모든 데이터를 저장할 <span className="font-semibold bg-yellow-100">위치를 찾아 액세스</span>할 수 있게 합니다.
-3. <span className="font-bold underline">렌더링</span> – 사이트의 특징을 강화하고 콘텐츠를 풍부하게 하는 <span className="font-semibold bg-yellow-100">JavaScript와 같은 페이지의 리소스를 실행</span>합니다. 이 과정은 크롤링된 모든 페이지에 대해 발생하지 않고, 때로는 콘텐츠가 실제로 인덱싱되기 전에 발생합니다. 렌더링은 작업을 수행할 사용 가능한 리소스가 없을 경우 인덱싱 후에 발생할 수 있습니다.
-4. <span className="font-bold underline">랭킹</span> – 사용자 입력을 기반으로 관련 결과 페이지를 만들기 위해 <span className="font-semibold bg-yellow-100">데이터를 쿼리</span>합니다. 이는 검색 엔진이 <span className="text-red-600 font-bold">사용자의 의도를 충족시키기 위해 최고의 답변을 제공하기 위해 다양한 랭킹 기준이 적용</span>되는 곳입니다.
+1. <span className="font-bold underline">크롤링</span>: <span className="font-semibold bg-yellow-100">웹을 통해 모든 웹사이트의 콘텐츠를 파싱하는 과정</span>입니다. 3억 5천만 개 이상의 도메인이 있기 때문에 이는 대규모 작업입니다.
+2. <span className="font-bold underline">인덱싱</span>: 크롤링 단계에서 수집된 모든 데이터를 저장할 <span className="font-semibold bg-yellow-100">위치를 찾아 액세스</span>할 수 있게 합니다.
+3. <span className="font-bold underline">렌더링</span>: 사이트의 특징을 강화하고 콘텐츠를 풍부하게 하는 <span className="font-semibold bg-yellow-100">JavaScript와 같은 페이지의 리소스를 실행</span>합니다. 이 과정은 크롤링된 모든 페이지에 대해 발생하지 않고 때로는 콘텐츠가 실제로 인덱싱되기 전에 발생합니다. 렌더링은 작업을 수행할 사용 가능한 리소스가 없을 경우 인덱싱 후에 발생할 수 있습니다.
+4. <span className="font-bold underline">랭킹</span>: 사용자 입력을 기반으로 관련 결과 페이지를 만들기 위해 <span className="font-semibold bg-yellow-100">데이터를 쿼리</span>합니다. 이는 검색 엔진이 <span className="text-red-600 font-bold">사용자의 의도를 충족시키기 위해 최고의 답변을 제공하기 위해 다양한 랭킹 기준이 적용</span>되는 곳입니다.
 
-다음 섹션에서는 Googlebot이 어떻게 작동하는지 구체적으로 알아봅니다. Googlebot은 검색 결과를 제공하기 위한 거대한 콘텐츠 데이터베이스를 만들기 위해 필요한 모든 정보를 수집하는 Google의 인터넷 크롤러의 일부입니다.
+이제 Googlebot이 어떻게 작동하는지 구체적으로 알아봅니다. Googlebot은 검색 결과를 제공하기 위한 거대한 콘텐츠 데이터베이스를 만들기 위해 필요한 모든 정보를 수집하는 Google의 인터넷 크롤러의 일부입니다.
 
 ## 웹 크롤러란 무엇인가요?
 웹사이트가 검색 결과에 나타나기 위해서는 Google(및 Bing, Yandex, Baidu, Naver, Yahoo 또는 DuckDuckGo와 같은 기타 검색 엔진)이 웹 크롤러를 사용하여 웹사이트를 탐색하고 웹사이트와 그 웹 페이지를 발견합니다.
 
 각 국가마다 다른 검색 엔진이 다른 시장 점유율을 가지고 있습니다.
 
-> 이 가이드에서는 대부분의 국가에서 가장 큰 검색 엔진인 Google에 대해 다룹니다. 그렇지만 대한민국에서는 네이버나 다음의의 가이드라인을 확인하고 싶을 수 있습니다.  
-> 랭킹 및 렌더링과 관련하여 약간의 차이가 있을 수 있지만, 크롤링 및 인덱싱과 관련하여 대부분의 검색 엔진은 매우 유사한 방식으로 작동합니다.
+> 이 가이드에서는 대부분의 국가에서 가장 큰 검색 엔진인 Google에 대해 다룹니다. 그렇지만 한국에서는 네이버나 다음의 가이드라인을 확인하고 싶을 수 있습니다.
+> 랭킹 및 렌더링과 관련하여 약간의 차이가 있을 수 있지만 크롤링 및 인덱싱과 관련하여 대부분의 검색 엔진은 매우 유사한 방식으로 작동합니다.
 
-웹 크롤러는 사용자를 에뮬레이션하고 웹사이트에서 찾은 링크를 통해 탐색하여 페이지를 인덱싱하는 봇의 한 유형입니다. 웹 크롤러는 맞춤 사용자 에이전트를 사용하여 자신을 식별합니다. Google에는 여러 웹 크롤러가 있지만, 가장 자주 사용되는 것들은 
+웹 크롤러는 사용자를 에뮬레이션하고 웹사이트에서 찾은 링크를 통해 탐색하여 페이지를 인덱싱하는 봇의 한 유형입니다. 웹 크롤러는 맞춤 사용자 에이전트를 사용하여 자신을 식별합니다. Google에는 여러 웹 크롤러가 있지만 가장 자주 사용되는 것들은 
 <span className="text-blue-600 font-bold">Googlebot Desktop</span> 및 <span className="text-blue-600 font-bold">Googlebot Smartphone</span>입니다.
 
 ## Googlebot은 어떻게 작동하나요?
 
 ![Googlebot](https://nextjs.org/_next/image?url=%2Fstatic%2Fimages%2Flearn%2Fseo%2Fgooglebot.png&w=1920&q=75&dpl=dpl_5zJsHSsexKDoARtzKyP8sceFSRHK)
 
-과정의 일반적인 개요는 다음과 같습니다:
+과정의 일반적인 개요는 다음과 같습니다.
 
 1. <span className="font-bold underline">URL 찾기</span>: Google은 **Google Search Console**, **웹사이트 간의 링크** 또는 **XML 사이트맵**을 포함한 많은 곳에서 URL을 출처로 합니다.
 2. <span className="font-bold underline">크롤 대기열에 추가</span>: 이러한 URL은 Googlebot이 처리하기 위해 크롤 대기열에 추가됩니다. 크롤 대기열에 있는 URL은 대개 몇 초 동안 머무르지만, 특히 페이지가 렌더링되거나 인덱싱되어야 하거나 URL이 이미 인덱싱된 경우 새로 고쳐져야하는 경우 몇 일까지 걸릴 수 있습니다. 페이지는 그 후 렌더링 대기열로 들어갑니다.
@@ -65,8 +66,8 @@ SEO 분야는 넓고 다양한 측면이 있지만, Next.js 개발자로서 첫�
     - 40X - 오류를 기록하고 HTML을 로드하지 않습니다.
     - 50X - 상태 코드가 변경되었는지 확인하기 위해 나중에 다시 확인할 수 있습니다.
 4. <span className="font-bold underline">렌더링 대기열</span>: 검색 시스템의 다양한 서비스와 구성 요소는 HTML을 처리하고 콘텐츠를 파싱합니다. 
-페이지에 JavaScript 클라이언트 측 기반 콘텐츠가 있는 경우, URL은 렌더링 대기열에 추가될 수 있습니다. 
+페이지에 JavaScript 클라이언트 측 기반 콘텐츠가 있는 경우에는 URL은 렌더링 대기열에 추가될 수 있습니다. 
 렌더링 대기열은 Google이 JavaScript를 렌더링하기 위해 더 많은 리소스를 사용해야 하기 때문에 비용이 더 많이 듭니다. 
 따라서 <span className="text-red-600 font-bold">렌더링된 URL은 인터넷에 있는 전체 페이지 수의 작은 백분율</span>입니다. 
-일부 기타 검색 엔진은 Google과 동일한 렌더링 능력을 가지고 있지 않을 수 있으며, <span className="font-semibold bg-yellow-100">이것은 Next.js가 렌더링 전략을 도와줄 수 있는 부분</span>입니다.
+일부 기타 검색 엔진은 Google과 동일한 렌더링 능력을 가지고 있지 않을 수 있으며 <span className="font-semibold bg-yellow-100">이것은 Next.js가 렌더링 전략을 도와줄 수 있는 부분</span>입니다.
 5. <span className="font-bold underline">인덱싱 준비 완료</span>: 모든 기준이 충족되면 페이지는 검색 결과에 표시될 자격이 있을 수 있습니다.
