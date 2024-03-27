@@ -3,7 +3,7 @@ import { DocsConfig } from 'types'
 export const docsConfig: DocsConfig = {
   sidebarNav: [
     {
-      title: 'Getting Started',
+      title: '시작하기',
       href: '/docs',
       items: [
         {
