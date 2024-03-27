@@ -18,7 +18,7 @@ summary: 이 문서에서는 useState에서 useReducer로 상태 관리 로직�
 
 ## 리듀서로 상태 로직 통합하기
 
-컴포넌트가 복잡해지면 한눈에 컴포넌트의 상태가 어떻게 업데이트되는지 파악하기 어려워집니다. 예를 들어, 아래의 TaskApp 컴포넌트는 상태로 작업 배열을 보유하고 작업을 추가, 제거 및 편집하는 세 가지 다른 이벤트 핸들러를 사용합니다:
+컴포넌트가 복잡해지면 한눈에 컴포넌트의 상태가 어떻게 업데이트되는지 파악하기 어려워집니다. 예를 들어, 아래의 TaskApp 컴포넌트는 상태로 작업 배열을 보유하고 작업을 추가, 제거 및 편집하는 세 가지 다른 이벤트 핸들러를 사용합니다.
 
 [![Edit quirky-chihiro-t7jwxq](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/quirky-chihiro-t7jwxq?fontsize=14&hidenavigation=1&theme=dark)
 
@@ -64,7 +64,7 @@ function handleDeleteTask(taskId) {
 }
 ```
 
-상태 설정 로직을 모두 제거합니다. 남아있는 것은 세 가지 이벤트 핸들러입니다:
+상태 설정 로직을 모두 제거합니다. 남아있는 것은 세 가지 이벤트 핸들러입니다.
 
 - 사용자가 "추가" 버튼을 누를 때 `handleAddTask(text)`가 호출됩니다.
 - 사용자가 작업을 토글하거나 "저장" 버튼을 누를 때 `handleChangeTask(task)`가 호출됩니다.
@@ -132,17 +132,17 @@ dispatch({
 
 ```jsx
 function yourReducer(state, action) {
-  // React에서 설정할 다음 상태를 반환
+  // 리액트에서 설정할 다음 상태를 반환
 }
 ```
 
-리듀서에서 반환한 값을 React가 상태로 설정합니다.
+리듀서에서 반환한 값을 리액트가 상태로 설정합니다.
 
 이 예제에서 상태 설정 로직을 이벤트 핸들러에서 리듀서 함수로 이동하기 위해 다음 작업을 수행합니다.
 
 1. 첫 번째 인수로 현재 상태(tasks)를 선언합니다.
 2. 두 번째 인수로 액션 객체를 선언합니다.
-3. 리듀서에서 다음 상태를 반환합니다. (React가 상태를 설정할 것입니다.)
+3. 리듀서에서 다음 상태를 반환합니다. (리액트가 상태를 설정할 것입니다.)
 
 모든 상태 설정 로직을 리듀서 함수로 마이그레이션한 코드입니다.
 
@@ -237,17 +237,17 @@ const sum = arr.reduce(
 ); // 1 + 2 + 3 + 4 + 5
 ```
 
-reduce에 전달하는 함수는 "리듀서"라고 알려져 있습니다. 이 함수는 지금까지의 결과와 현재 항목을 받아 다음 결과를 반환합니다. React의 리듀서도 동일한 개념입니다. 현재 상태와 액션을 받아 다음 상태를 반환합니다. 이렇게 하여 액션을 시간에 따라 상태로 누적합니다.
+reduce에 전달하는 함수는 "리듀서"라고 알려져 있습니다. 이 함수는 지금까지의 결과와 현재 항목을 받아 다음 결과를 반환합니다. 리액트의 리듀서도 동일한 개념입니다. 현재 상태와 액션을 받아 다음 상태를 반환합니다. 이렇게 하여 액션을 시간에 따라 상태로 누적합니다.
 
 [![Edit zen-firefly-l4ef58](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/zen-firefly-l4ef58?fontsize=14&hidenavigation=1&theme=dark)
 
    
-initialState와 액션 배열을 전달하여 리듀서 함수를 사용하여 최종 상태를 계산하는 reduce() 메서드를 실제로 사용할 일은 거의 없을 것입니다. 하지만 이것은 React가 하는 것과 유사합니다!
+initialState와 액션 배열을 전달하여 리듀서 함수를 사용하여 최종 상태를 계산하는 reduce() 메서드를 실제로 사용할 일은 거의 없을 것입니다. 하지만 이것은 리액트가 하는 것과 유사합니다!
 </details>
 
 ### 단계 3: 컴포넌트에서 리듀서 사용하기
 
-마지막으로, tasksReducer를 컴포넌트에 연결해야 합니다. React에서 useReducer Hook을 import합니다.
+마지막으로, tasksReducer를 컴포넌트에 연결해야 합니다. 리액트에서 useReducer Hook을 import합니다.
 
 ```jsx
 import { useReducer } from 'react';

@@ -1,7 +1,7 @@
 ---
 title: 'Effect: Event를 분리'
 date: '2023-07-07'
-summary: React에서 이벤트 핸들러와 효과(Effect)의 차이를 설명하고, 언제 어떤 것을 선택해야 하는지, 이펙트 코드 일부를 반응형으로 만들지 않는 방법, 그리고 이펙트를 사용하여 최신 프롭과 상태를 읽는 방법에 대해 다룹니다.
+summary: 리액트에서 이벤트 핸들러와 효과(Effect)의 차이를 설명하고, 언제 어떤 것을 선택해야 하는지, 이펙트 코드 일부를 반응형으로 만들지 않는 방법, 그리고 이펙트를 사용하여 최신 프롭과 상태를 읽는 방법에 대해 다룹니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
@@ -97,7 +97,7 @@ function ChatRoom({ roomId }) {
 이와 같은 반응형 값은 다시 렌더링으로 인해 변경될 수 있습니다. 예를 들어 사용자가 메시지를 편집하거나 드롭다운에서 다른 roomId을 선택할 수 있습니다. 이벤트 핸들러와 이펙트는 변경 사항에 다르게 반응합니다.
 
 -   **이벤트 핸들러 내의 로직은 반응형이 아닙니다.** 사용자가 동일한 상호작용(예: 클릭)을 다시 수행하지 않는 한 다시 실행되지 않습니다. 이벤트 핸들러는 변경 사항에 "반응"하지 않고 반응형 값들을 읽을 수 있습니다.
--   **이펙트 내의 로직은 반응형입니다.** 이펙트가 반응형 값을 읽는 경우, [의존성으로 지정해야 합니다.](https://react.dev/learn/lifecycle-of-reactive-effects#effects-react-to-reactive-values) 그런 다음, 재렌더링으로 인해 해당 값이 변경되면 React는 새 값으로 이펙트의 로직을 다시 실행합니다.
+-   **이펙트 내의 로직은 반응형입니다.** 이펙트가 반응형 값을 읽는 경우, [의존성으로 지정해야 합니다.](https://react.dev/learn/lifecycle-of-reactive-effects#effects-react-to-reactive-values) 그런 다음, 재렌더링으로 인해 해당 값이 변경되면 리액트는 새 값으로 이펙트의 로직을 다시 실행합니다.
 
 이전 예제를 다시 살펴보면 이 차이점을 설명하는 데 도움이 됩니다.
 
@@ -201,7 +201,7 @@ roomId가 변경되면 채팅이 예상대로 다시 연결됩니다. 그러나 
 
 > 작성 중입니다.
 
-이 섹션은 아직 안정 버전의 React에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
+이 섹션은 아직 안정 버전의 리액트에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
 
 비반응형 로직을 이펙트에서 분리하기 위해 [useEffectEvent](https://react.dev/reference/react/experimental_useEffectEvent)라는 특별한 훅을 사용할 수 있습니다.
 
@@ -249,7 +249,7 @@ function ChatRoom({ roomId, theme }) {
 
 > 작성 중입니다.
 
-이 섹션은 아직 안정 버전의 React에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
+이 섹션은 아직 안정 버전의 리액트에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
 
 이펙트 이벤트를 사용하면 종속성 린터를 억제하려는 유혹에 빠질 수 있는 많은 패턴을 수정할 수 있습니다.
 
@@ -270,7 +270,7 @@ function Page() {
 function Page({ url }) {
   useEffect(() => {
     logVisit(url);
-    // 🔴 React Hook useEffect has a missing dependency: 'url'
+    // 🔴 리액트 Hook useEffect has a missing dependency: 'url'
   }, []); 
   // ...
 }
@@ -297,7 +297,7 @@ function Page({ url }) {
 
   useEffect(() => {
     logVisit(url, numberOfItems);
-    // 🔴 React Hook useEffect has a missing dependency: 'numberOfItems'
+    // 🔴 리액트 Hook useEffect has a missing dependency: 'numberOfItems'
   }, [url]); 
   // ...
 }
@@ -377,7 +377,7 @@ function Page({ url }) {
 }
 ```
 
-이런 경우 종속성 린터가 문제를 경고하지 않게 됩니다. 이펙트가 코드 변경 시 새로운 반응형 종속성에 "반응"해야 하는 경우 React는 그에 대해 경고하지 않게 됩니다. 앞의 예에서 url을 의존성에 추가하려는 경우에 대해 React가 알려준 것과 같은 알림을 향후 편집에서 이펙트에 대해 받지 못하게 됩니다. 이는 버그를 야기할 수 있습니다.
+이런 경우 종속성 린터가 문제를 경고하지 않게 됩니다. 이펙트가 코드 변경 시 새로운 반응형 종속성에 "반응"해야 하는 경우 리액트는 그에 대해 경고하지 않게 됩니다. 앞의 예에서 url을 의존성에 추가하려는 경우에 대해 리액트가 알려준 것과 같은 알림을 향후 편집에서 이펙트에 대해 받지 못하게 됩니다. 이는 버그를 야기할 수 있습니다.
 
 종속성 린터를 억제하는 것에 의한 혼란스러운 버그 예를 살펴보겠습니다. 이 예에서 handleMove 함수는 도트가 커서를 따라가야 할지 여부를 결정하기 위해 현재의 canMove 상태 변수 값을 읽습니다. 그러나 handleMove 내부에서 항상 canMove이 true입니다.
 
@@ -388,7 +388,7 @@ function Page({ url }) {
 
 이 코드의 문제점은 종속성 린터를 억제하는 것입니다. 억제를 제거하면 handleMove 함수에 의존해야 한다는 것을 알 수 있습니다. 이는 의미가 있습니다. handleMove는 컴포넌트 본문에서 선언되므로 반응형 값입니다. 모든 반응형 값은 종속성으로 지정되거나 시간이 지남에 따라 구식으로 될 수 있습니다!
 
-원래 코드의 작성자는 이펙트가 어떤 반응형 값에도 의존하지 않는다고 "거짓말"을 한 것입니다. 이는 React가 canMove이 변경된 후에 이펙트를 다시 동기화하지 않았기 때문에 handleMove이벤트에 첨부된 handleMove 함수가 초기 렌더링 중에 생성된 handleMove 함수일 것입니다. 초기 렌더링 시에 canMove가 true이기 때문입니다.
+원래 코드의 작성자는 이펙트가 어떤 반응형 값에도 의존하지 않는다고 "거짓말"을 한 것입니다. 이는 리액트가 canMove이 변경된 후에 이펙트를 다시 동기화하지 않았기 때문에 handleMove이벤트에 첨부된 handleMove 함수가 초기 렌더링 중에 생성된 handleMove 함수일 것입니다. 초기 렌더링 시에 canMove가 true이기 때문입니다.
 
 **린터를 억제하지 않으면 구식 값으로 인해 문제가 발생하지 않습니다.**
 
@@ -403,9 +403,9 @@ useEffectEvent를 사용하면 linter에 "거짓말"을 하지 않아도 되며 
 ### 이펙트 이벤트의 제한 사항
 
 
-이 섹션은 아직 안정 버전의 React에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
+이 섹션은 아직 안정 버전의 리액트에 포함되지 않은 **실험적인 API**에 대해 설명합니다.
 
-이펙트 이벤트는 다음과 같은 제한 사항이 있습니다:
+이펙트 이벤트는 다음과 같은 제한 사항이 있습니다.
 
 - **이펙트 내에서만 호출합니다.**
 - **다른 컴포넌트나 훅에 전달하지 마세요.**
@@ -455,7 +455,7 @@ function useTimer(callback, delay) {
 
   useEffect(() => {
     const id = setInterval(() => {
-      onTick(); // ✅ 좋습니다: 이펙트 내에서 로컬로만 호출됨
+      onTick(); // ✅ 좋습니다. 이펙트 내에서 로컬로만 호출됨
     }, delay);
     return () => {
       clearInterval(id);

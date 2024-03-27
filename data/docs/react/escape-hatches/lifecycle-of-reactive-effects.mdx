@@ -1,13 +1,13 @@
 ---
 title: 'Effect: 라이프사이클'
 date: '2023-07-06'
-summary: 효과(Effect)는 React 컴포넌트의 라이프사이클과는 다르게, 데이터 동기화를 시작하고 중지하는 역할을 하는데 사용되며, 올바른 종속성 설정을 통해 최신 데이터를 유지합니다.
+summary: 효과(Effect)는 리액트 컴포넌트의 라이프사이클과는 다르게, 데이터 동기화를 시작하고 중지하는 역할을 하는데 사용되며, 올바른 종속성 설정을 통해 최신 데이터를 유지합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
 
-효과(Effect)는 컴포넌트의 라이프사이클과 다른 라이프사이클을 가지고 있습니다. 컴포넌트는 마운트, 업데이트, 언마운트가 발생할 수 있지만, 효과는 두 가지 작업만 수행할 수 있습니다: 무언가를 동기화하기 시작하고, 나중에 동기화를 중지하는 것입니다. 이러한 사이클은 효과가 시간에 따라 변화하는 프롭(prop)과 상태(state)에 의존하는 경우에 여러 번 발생할 수 있습니다. React는 효과의 종속성(dependencies)이 올바르게 지정되었는지 확인하기 위한 린터 규칙을 제공합니다. 이를 통해 효과가 최신의 프롭과 상태와 동기화되도록 유지할 수 있습니다.
+효과(Effect)는 컴포넌트의 라이프사이클과 다른 라이프사이클을 가지고 있습니다. 컴포넌트는 마운트, 업데이트, 언마운트가 발생할 수 있지만, 효과는 두 가지 작업만 수행할 수 있습니다. 무언가를 동기화하기 시작하고, 나중에 동기화를 중지하는 것입니다. 이러한 사이클은 효과가 시간에 따라 변화하는 프롭(prop)과 상태(state)에 의존하는 경우에 여러 번 발생할 수 있습니다. 리액트는 효과의 종속성(dependencies)이 올바르게 지정되었는지 확인하기 위한 린터 규칙을 제공합니다. 이를 통해 효과가 최신의 프롭과 상태와 동기화되도록 유지할 수 있습니다.
 
 학습 내용
 
@@ -17,12 +17,12 @@ summary: 효과(Effect)는 React 컴포넌트의 라이프사이클과는 다르
 - 효과의 종속성이 어떻게 결정되는지
 - 값이 반응적인 것을 의미하는 것
 - 빈 종속성 배열이 의미하는 것
-- React가 린터를 통해 올바른 종속성을 검증하는 방법
+- 리액트가 린터를 통해 올바른 종속성을 검증하는 방법
 - 린터와의 의견 충돌 시 어떻게 해야 하는지
 
 ## 효과의 라이프사이클
 
-모든 React 컴포넌트는 동일한 라이프사이클을 거칩니다:
+모든 리액트 컴포넌트는 동일한 라이프사이클을 거칩니다.
 
 - 컴포넌트가 화면에 추가될 때 컴포넌트가 마운트됩니다.
 - 컴포넌트는 새로운 프롭이나 상태를 받아들일 때 업데이트됩니다. 일반적으로 상호작용에 응답하여 발생합니다.
@@ -30,7 +30,7 @@ summary: 효과(Effect)는 React 컴포넌트의 라이프사이클과는 다르
 
 **이것은 컴포넌트에 대해 생각하는 좋은 방법이지만, 효과에 대해서는 그렇지 않습니다.** 대신, 각 효과를 컴포넌트의 라이프사이클과는 독립적으로 생각하는 것이 좋습니다. 효과는 외부 시스템을 현재의 프롭과 상태와 동기화하는 방법을 설명합니다. 코드가 변경됨에 따라 동기화가 더 자주 또는 덜 자주 발생해야 할 것입니다.
 
-이 점을 설명하기 위해, 컴포넌트를 채팅 서버에 연결하는 이 효과를 살펴보겠습니다:
+이 점을 설명하기 위해, 컴포넌트를 채팅 서버에 연결하는 이 효과를 살펴보겠습니다.
 
 ```jsx
 const serverUrl = 'https://localhost:1234';
@@ -47,7 +47,7 @@ function ChatRoom({ roomId }) {
 }
 ```
 
-효과의 본문은 **동기화를 시작하는 방법**을 지정합니다:
+효과의 본문은 **동기화를 시작하는 방법**을 지정합니다.
 
 ```jsx
    // ...
@@ -59,7 +59,7 @@ function ChatRoom({ roomId }) {
     // ...
 ```
 
-효과가 반환하는 정리(clean-up) 함수는 **동기화를 중지하는 방법**을 지정합니다:
+효과가 반환하는 정리(clean-up) 함수는 **동기화를 중지하는 방법**을 지정합니다.
 
 ```jsx
     // ...
@@ -71,16 +71,16 @@ function ChatRoom({ roomId }) {
     // ...
 ```
 
-직관적으로 생각하면 React가 컴포넌트가 마운트될 때 **동기화를 시작**하고 컴포넌트가 언마운트될 때 **동기화를 중지**할 것으로 예상할 수 있습니다. 하지만 이는 이야기의 끝이 아닙니다! 때로는 컴포넌트가 마운트된 상태에서 **여러 번 동기화를 시작하고 중지해야 할 수도** 있습니다.
+직관적으로 생각하면 리액트가 컴포넌트가 마운트될 때 **동기화를 시작**하고 컴포넌트가 언마운트될 때 **동기화를 중지**할 것으로 예상할 수 있습니다. 하지만 이는 이야기의 끝이 아닙니다! 때로는 컴포넌트가 마운트된 상태에서 **여러 번 동기화를 시작하고 중지해야 할 수도** 있습니다.
 
 이것이 왜 필요한지, 언제 발생하는지, 이 동작을 제어하는 방법에 대해 알아보겠습니다.
 
 > 참고  
-일부 효과는 정리(clean-up) 함수를 반환하지 않습니다. [대부분의 경우,](https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development) 정리 함수를 반환하는 것이 좋지만, 반환하지 않으면 React는 빈 정리 함수가 반환된 것처럼 동작합니다.
+일부 효과는 정리(clean-up) 함수를 반환하지 않습니다. [대부분의 경우,](https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development) 정리 함수를 반환하는 것이 좋지만, 반환하지 않으면 리액트는 빈 정리 함수가 반환된 것처럼 동작합니다.
 
 ### 왜 동기화가 한 번 이상 발생해야 할 수 있는지
 
-상상해보세요. 이 ChatRoom 컴포넌트는 사용자가 드롭다운에서 선택한 `roomId` prop을 받습니다. 일단 사용자가 "general" 방을 `roomId`로 선택한 경우를 가정해보겠습니다. 앱은 "general" 채팅방을 표시합니다:
+상상해보세요. 이 ChatRoom 컴포넌트는 사용자가 드롭다운에서 선택한 `roomId` prop을 받습니다. 일단 사용자가 "general" 방을 `roomId`로 선택한 경우를 가정해보겠습니다. 앱은 "general" 채팅방을 표시합니다.
 
 ```jsx
 const serverUrl = 'https://localhost:1234';
@@ -91,7 +91,7 @@ function ChatRoom({ roomId /* "general" */ }) {
 }
 ```
 
-UI가 표시된 후에 React는 **동기화를 시작하기 위해** 효과를 실행합니다. "general" 방에 연결합니다:
+UI가 표시된 후에 리액트는 **동기화를 시작하기 위해** 효과를 실행합니다. "general" 방에 연결합니다.
 
 ```jsx
 function ChatRoom({ roomId /* "general" */ }) {
@@ -109,7 +109,7 @@ function ChatRoom({ roomId /* "general" */ }) {
 
 지금까지 문제 없이 진행되었습니다.
 
-나중에 사용자가 드롭다운에서 다른 방을 선택합니다(예: "travel"). 먼저, React는 UI를 업데이트합니다:
+나중에 사용자가 드롭다운에서 다른 방을 선택합니다(예: "travel"). 먼저, 리액트는 UI를 업데이트합니다.
 
 ```jsx
 function ChatRoom({ roomId /* "travel" */ }) {
@@ -120,18 +120,18 @@ function ChatRoom({ roomId /* "travel" */ }) {
 
 이제 어떤 일이 발생해야 하는지 생각해보세요. 사용자는 UI에서 "travel"이 선택된 채팅방을 볼 수 있습니다. 그러나 마지막으로 실행된 효과는 여전히 "general" 방에 연결되어 있습니다. **`roomId` prop이 변경되었으므로 이전에 효과가 수행한 작업(즉, "general" 방에 연결)이 더 이상 UI와 일치하지 않습니다.**
 
-이 시점에서 React가 수행해야 할 두 가지 작업이 있습니다:
+이 시점에서 리액트가 수행해야 할 두 가지 작업이 있습니다.
 
 1.  이전의 `roomId`와 동기화 중지하기( "general" 방과의 연결 해제)
 2.  새로운 `roomId`와 동기화 시작하기( "travel" 방과의 연결 시작)
 
-**다행히도, 이미 React에 이러한 작업을 수행하는 방법을 가르쳤습니다!** 효과의 본문은 동기화 시작 방법을 지정하고, 정리 함수는 동기화 중지 방법을 지정합니다. 이제 React는 올바른 순서와 올바른 props 및 상태로 이들을 호출하기만 하면 됩니다. 정확히 어떻게 이루어지는지 알아보겠습니다.
+**다행히도, 이미 리액트에 이러한 작업을 수행하는 방법을 가르쳤습니다!** 효과의 본문은 동기화 시작 방법을 지정하고, 정리 함수는 동기화 중지 방법을 지정합니다. 이제 리액트는 올바른 순서와 올바른 props 및 상태로 이들을 호출하기만 하면 됩니다. 정확히 어떻게 이루어지는지 알아보겠습니다.
 
-### React가 효과를 다시 동기화하는 방법
+### 리액트가 효과를 다시 동기화하는 방법
 
-ChatRoom 컴포넌트가 새로운 `roomId` prop의 값으로 업데이트되었습니다. 이전 값은 "general"이었고 이제 "travel"입니다. React는 효과를 다시 동기화하여 다른 방에 다시 연결해야 합니다.
+ChatRoom 컴포넌트가 새로운 `roomId` prop의 값으로 업데이트되었습니다. 이전 값은 "general"이었고 이제 "travel"입니다. 리액트는 효과를 다시 동기화하여 다른 방에 다시 연결해야 합니다.
 
-**동기화를 중지**하기 위해 React는 효과가 반환한 정리 함수를 호출합니다. 이전에 "general" 방과 연결되었으므로 정리 함수는 "general" 방과의 연결을 해제합니다:
+**동기화를 중지**하기 위해 리액트는 효과가 반환한 정리 함수를 호출합니다. 이전에 "general" 방과 연결되었으므로 정리 함수는 "general" 방과의 연결을 해제합니다.
 
 ```jsx
 function ChatRoom({ roomId /* "general" */ }) {
@@ -146,7 +146,7 @@ function ChatRoom({ roomId /* "general" */ }) {
     // ...
 ```
 
-그런 다음 React는 이번 렌더링에서 제공한 효과를 실행합니다. 이번에는 `roomId`가 "travel"이므로 "travel" 채팅방에 **동기화를 시작**합니다(마침내 정리 함수도 호출될 때까지):
+그런 다음 리액트는 이번 렌더링에서 제공한 효과를 실행합니다. 이번에는 `roomId`가 "travel"이므로 "travel" 채팅방에 **동기화를 시작**합니다(마침내 정리 함수도 호출될 때까지):
 
 ```jsx
 function ChatRoom({ roomId /* "travel" */ }) {
@@ -159,28 +159,28 @@ function ChatRoom({ roomId /* "travel" */ }) {
 
 이제 UI에서 사용자가 선택한 방과 연결되어 있습니다. 재안의 재앙이 피해갔습니다!
 
-컴포넌트가 다른 `roomId`로 재렌더링된 경우마다 효과가 다시 동기화됩니다. 예를 들어, 사용자가 `roomId`를 "travel"에서 "music"으로 변경한다고 가정해보겠습니다. React는 다시 정리 함수를 호출하여 효과의 **동기화를 중지**하고("travel" 방과의 연결 해제), 새로운 `roomId` prop과 함께 본문을 실행하여 **다시 동기화를 시작**합니다("music" 방에 연결).
+컴포넌트가 다른 `roomId`로 재렌더링된 경우마다 효과가 다시 동기화됩니다. 예를 들어, 사용자가 `roomId`를 "travel"에서 "music"으로 변경한다고 가정해보겠습니다. 리액트는 다시 정리 함수를 호출하여 효과의 **동기화를 중지**하고("travel" 방과의 연결 해제), 새로운 `roomId` prop과 함께 본문을 실행하여 **다시 동기화를 시작**합니다("music" 방에 연결).
 
-마지막으로, 사용자가 다른 화면으로 이동하면 ChatRoom이 언마운트됩니다. 이제 연결할 필요가 없습니다. React는 **마지막으로 동기화를 중지**하고 "music" 채팅방과의 연결을 해제합니다.
+마지막으로, 사용자가 다른 화면으로 이동하면 ChatRoom이 언마운트됩니다. 이제 연결할 필요가 없습니다. 리액트는 **마지막으로 동기화를 중지**하고 "music" 채팅방과의 연결을 해제합니다.
 
 
 ### 효과(Efffect)의 관점에서 생각하기
 
-ChatRoom 컴포넌트의 관점에서 발생한 모든 일에 대해 다시 한번 되짚어 보겠습니다:
+ChatRoom 컴포넌트의 관점에서 발생한 모든 일에 대해 다시 한번 되짚어 보겠습니다.
 
 1. ChatRoom가 마운트되었고 `roomId`가 "general"로 설정되었습니다.
 2. ChatRoom가 업데이트되어 `roomId`가 "travel"로 설정되었습니다.
 3. ChatRoom가 업데이트되어 `roomId`가 "music"로 설정되었습니다.
 4. ChatRoom가 언마운트되었습니다.
 
-컴포넌트의 라이프사이클의 각 시점에서, 효과(Efffect)가 다른 동작을 수행했습니다:
+컴포넌트의 라이프사이클의 각 시점에서, 효과(Efffect)가 다른 동작을 수행했습니다.
 
 1. 효과가 "general" 방에 연결되었습니다.
 2. 효과가 "general" 방과의 연결을 해제하고 "travel" 방에 연결되었습니다.
 3. 효과가 "travel" 방과의 연결을 해제하고 "music" 방에 연결되었습니다.
 4. 효과가 "music" 방과의 연결을 해제했습니다.
 
-이제 효과(Efffect) 자체의 관점에서 발생한 일에 대해 생각해 보겠습니다:
+이제 효과(Efffect) 자체의 관점에서 발생한 일에 대해 생각해 보겠습니다.
 
 ```jsx
   useEffect(() => {
@@ -194,7 +194,7 @@ ChatRoom 컴포넌트의 관점에서 발생한 모든 일에 대해 다시 한�
   }, [roomId]);
 ```
 
-이 코드의 구조를 통해 겹치지 않는 시간 단위의 연속으로 생각할 수 있습니다:
+이 코드의 구조를 통해 겹치지 않는 시간 단위의 연속으로 생각할 수 있습니다.
 
 1. 효과가 "general" 방에 연결되었습니다(해제할 때까지)
 2. 효과가 "travel" 방에 연결되었습니다(해제할 때까지)
@@ -204,32 +204,32 @@ ChatRoom 컴포넌트의 관점에서 발생한 모든 일에 대해 다시 한�
 
 **대신, 항상 한 번에 하나의 시작/중지 주기에 집중하세요. 컴포넌트가 마운트, 업데이트, 언마운트되는지 여부는 중요하지 않습니다. 동기화를 시작하는 방법과 중지하는 방법만 설명하면 됩니다. 이를 잘 수행한다면, 효과(Efffect)는 필요한만큼 여러 번 시작되고 중지될 수 있는 견고성을 갖게 됩니다.**
 
-이것은 컴포넌트의 렌더링 로직을 작성할 때 컴포넌트가 마운트되거나 업데이트되는지를 고려하지 않는 방식과 유사합니다. 화면에 표시해야 할 내용을 설명하면, React가 나머지 부분을 [자동으로 처리합니다.](https://react.dev/learn/reacting-to-input-with-state)
+이것은 컴포넌트의 렌더링 로직을 작성할 때 컴포넌트가 마운트되거나 업데이트되는지를 고려하지 않는 방식과 유사합니다. 화면에 표시해야 할 내용을 설명하면, 리액트가 나머지 부분을 [자동으로 처리합니다.](https://react.dev/learn/reacting-to-input-with-state)
 
-### React가 효과(Efffect)가 다시 동기화할 수 있는지 확인하는 방법
+### 리액트가 효과(Efffect)가 다시 동기화할 수 있는지 확인하는 방법
 
 다음은 직접 테스트할 수 있는 라이브 예제입니다. "Open chat"을 눌러 ChatRoom 컴포넌트를 마운트해 보세요:
 
 [![Edit recursing-dan-brsbuh](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/recursing-dan-brsbuh?fontsize=14&hidenavigation=1&theme=dark)
 
 
-컴포넌트가 처음 마운트될 때, 3개의 로그가 표시됩니다:
+컴포넌트가 처음 마운트될 때, 3개의 로그가 표시됩니다.
 
 1. ✅ "general" 방에 https://localhost:1234로 연결 중... (개발 중에만 표시됨)
 2. ❌ "general" 방에서 연결 해제됨: https://localhost:1234. (개발 중에만 표시됨)
 3. ✅ "general" 방에 https://localhost:1234로 연결 중...
 
-첫 두 개의 로그는 개발 중에만 표시됩니다. 개발 모드에서 React는 항상 각 컴포넌트를 한 번 더 마운트합니다.
+첫 두 개의 로그는 개발 중에만 표시됩니다. 개발 모드에서 리액트는 항상 각 컴포넌트를 한 번 더 마운트합니다.
 
-**React는 효과(Efffect)가 재동기화될 수 있는지 확인하기 위해 개발 중에 즉시 그것을 강제합니다.** 이는 문을 여는 것과 문 자물쇠가 작동하는지 확인하기 위해 문을 열고 한 번 더 닫는 것을 연상시킬 수 있습니다. React는 개발 중에 효과(Efffect)를 한 번 더 시작하고 중지하여 [정리 함수를 올바르게 구현했는지 확인합니다.](https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development)
+**리액트는 효과(Efffect)가 재동기화될 수 있는지 확인하기 위해 개발 중에 즉시 그것을 강제합니다.** 이는 문을 여는 것과 문 자물쇠가 작동하는지 확인하기 위해 문을 열고 한 번 더 닫는 것을 연상시킬 수 있습니다. 리액트는 개발 중에 효과(Efffect)를 한 번 더 시작하고 중지하여 [정리 함수를 올바르게 구현했는지 확인합니다.](https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development)
 
 효과(Efffect)가 실제로 다시 동기화되는 주요 이유는 사용하는 일부 데이터가 변경되었을 때입니다. 위의 샌드박스에서 선택한 채팅 방을 변경해 보세요. `roomId`가 변경되면 효과가 다시 동기화되는 것을 확인할 수 있습니다.
 
-그러나 다시 동기화가 필요한 더 극적인 경우도 있습니다. 예를 들어, 샌드박스에서 `serverUrl`을 편집해 보세요. 코딩을 편집하면 효과가 동기화되는 것을 확인할 수 있습니다. 미래에는 React가 다시 동기화를 의존하는 더 많은 기능을 추가할 수도 있습니다.
+그러나 다시 동기화가 필요한 더 극적인 경우도 있습니다. 예를 들어, 샌드박스에서 `serverUrl`을 편집해 보세요. 코딩을 편집하면 효과가 동기화되는 것을 확인할 수 있습니다. 미래에는 리액트가 다시 동기화를 의존하는 더 많은 기능을 추가할 수도 있습니다.
 
-### React가 효과(Efffect)를 다시 동기화해야 한다는 것을 어떻게 알까요?
+### 리액트가 효과(Efffect)를 다시 동기화해야 한다는 것을 어떻게 알까요?
 
-`roomId`가 변경된 후에 React가 효과(Efffect)를 다시 동기화해야 한다는 것을 어떻게 알았을까요? 바로 `roomId`를 의존성 목록에 포함시켜 React에게 알려주었기 때문입니다. 
+`roomId`가 변경된 후에 리액트가 효과(Efffect)를 다시 동기화해야 한다는 것을 어떻게 알았을까요? 바로 `roomId`를 의존성 목록에 포함시켜 리액트에게 알려주었기 때문입니다. 
 
 ```jsx
 // roomId 프롭이 시간이 지남에 따라 변경될 수 있습니다
@@ -241,20 +241,20 @@ function ChatRoom({ roomId }) {
     return () => {
       connection.disconnect();
     };
-  // 따라서 이 효과가 roomId에 "의존한다"고 React에게 알려줍니다
+  // 따라서 이 효과가 roomId에 "의존한다"고 리액트에게 알려줍니다
   }, [roomId]);
   // ...
 ```
 
-작동 방식은 다음과 같습니다:
+작동 방식은 다음과 같습니다.
 
 1.  `roomId`가 프롭이고, 시간이 지남에 따라 변경될 수 있다는 사실을 알고 있습니다.
 2.  효과가 `roomId`를 읽는다는 것을 알고 있습니다(따라서 로직은 나중에 변경될 수 있는 값을 의존합니다).
-3.  따라서 이를 효과의 의존성으로 지정하여 (`roomId`가 변경될 때 효과가 다시 동기화되도록) React에게 알려줍니다.
+3.  따라서 이를 효과의 의존성으로 지정하여 (`roomId`가 변경될 때 효과가 다시 동기화되도록) 리액트에게 알려줍니다.
 
-컴포넌트가 다시 렌더링된 후마다 React는 전달한 의존성 배열을 확인합니다. 배열 내의 값 중 어떤 값이 이전 렌더링 때 전달한 값과 다른 경우, React는 효과(Efffect)를 다시 동기화합니다.
+컴포넌트가 다시 렌더링된 후마다 리액트는 전달한 의존성 배열을 확인합니다. 배열 내의 값 중 어떤 값이 이전 렌더링 때 전달한 값과 다른 경우, 리액트는 효과(Efffect)를 다시 동기화합니다.
 
-예를 들어, 초기 렌더링 시에 \["general"\]을 전달하고, 다음 렌더링에서 \["travel"\]을 전달한다면, React는 "general"과 "travel"을 비교합니다. 이 값들은 다른 값입니다([Object.is](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)를 사용하여 비교), 따라서 React는 효과를 다시 동기화합니다. 반대로, 컴포넌트가 다시 렌더링되었지만 `roomId`가 변경되지 않았다면, 효과는 여전히 같은 방에 연결된 상태를 유지할 것입니다.
+예를 들어, 초기 렌더링 시에 \["general"\]을 전달하고, 다음 렌더링에서 \["travel"\]을 전달한다면, 리액트는 "general"과 "travel"을 비교합니다. 이 값들은 다른 값입니다([Object.is](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)를 사용하여 비교), 따라서 리액트는 효과를 다시 동기화합니다. 반대로, 컴포넌트가 다시 렌더링되었지만 `roomId`가 변경되지 않았다면, 효과는 여전히 같은 방에 연결된 상태를 유지할 것입니다.
 
 ### 각 효과(Efffect)는 별개의 동기화 과정을 나타냅니다
 
@@ -274,7 +274,7 @@ function ChatRoom({ roomId }) {
 }
 ```
 
-그러나 나중에 연결을 다시 설정해야 하는 추가 종속성을 이 효과에 추가하게 되면, 이 효과가 다시 동기화될 때 같은 방에 대해 `logVisit(roomId)`가 호출되기 때문에 의도하지 않은 결과가 발생할 수 있습니다. 방문 기록 남기기는 연결과는 **별개의 과정**입니다. 이 두 개의 효과로 나누는 것이 좋습니다:
+그러나 나중에 연결을 다시 설정해야 하는 추가 종속성을 이 효과에 추가하게 되면, 이 효과가 다시 동기화될 때 같은 방에 대해 `logVisit(roomId)`가 호출되기 때문에 의도하지 않은 결과가 발생할 수 있습니다. 방문 기록 남기기는 연결과는 **별개의 과정**입니다. 이 두 개의 효과로 나누는 것이 좋습니다.
 
 ```jsx
 function ChatRoom({ roomId }) {
@@ -297,7 +297,7 @@ function ChatRoom({ roomId }) {
 
 ## 효과(Effect)는 반응형 값에 "반응"합니다
 
-당신의 효과는 두 개의 변수(`serverUrl`과 `roomId`)를 읽지만, 의존성으로서 `roomId`만 지정했습니다:
+당신의 효과는 두 개의 변수(`serverUrl`과 `roomId`)를 읽지만, 의존성으로서 `roomId`만 지정했습니다.
 
 ```jsx
 const serverUrl = 'https://localhost:1234';
@@ -318,9 +318,9 @@ function ChatRoom({ roomId }) {
 
 그 이유는 `serverUrl`은 다시 렌더링으로 인해 변경되지 않기 때문입니다. 컴포넌트가 몇 번이고 다시 렌더링되는 동안 `serverUrl`은 항상 동일합니다. `serverUrl`은 변경되지 않으므로 의존성으로 지정하는 것은 의미가 없습니다. 결국, 의존성은 시간이 지남에 따라 값이 변경될 때에만 동작하는 것입니다!
 
-반면에 `roomId`는 다시 렌더링할 때마다 다를 수 있습니다. **프롭, 상태 및 컴포넌트 내에서 선언된 기타 값은 렌더링 중에 계산되고 React 데이터 플로우에 참여하기 때문에 반응형입니다.**
+반면에 `roomId`는 다시 렌더링할 때마다 다를 수 있습니다. **프롭, 상태 및 컴포넌트 내에서 선언된 기타 값은 렌더링 중에 계산되고 리액트 데이터 플로우에 참여하기 때문에 반응형입니다.**
 
-만약 `serverUrl`이 상태 변수였다면, 반응형이 될 것입니다. 반응형 값은 의존성에 포함되어야 합니다:
+만약 `serverUrl`이 상태 변수였다면, 반응형이 될 것입니다. 반응형 값은 의존성에 포함되어야 합니다.
 
 ```jsx
 // 프롭은 시간이 지나면 변경될 수 있습니다
@@ -335,7 +335,7 @@ function ChatRoom({ roomId }) {
     return () => {
       connection.disconnect();
     };
-  // 따라서 이 효과가 프롭과 상태에 "의존한다"고 React에게 알려줍니다
+  // 따라서 이 효과가 프롭과 상태에 "의존한다"고 리액트에게 알려줍니다
   }, [roomId, serverUrl]); 
   // ...
 }
@@ -372,7 +372,7 @@ function ChatRoom() {
 
 이제 효과의 코드는 반응형 값이 전혀 사용되지 않으므로, 의존성은 비어 있는 (\[\]) 상태일 수 있습니다.
 
-컴포넌트의 관점에서 생각해보면, 비어 있는 \[\] 의존성 배열은 이 효과가 컴포넌트가 마운트될 때만 채팅방에 연결되고, 컴포넌트가 언마운트될 때만 연결을 해제한다는 의미입니다. (React는 여전히 [개발 중에 한 번 더 동기화](https://react.dev/learn/lifecycle-of-reactive-effects#how-react-verifies-that-your-effect-can-re-synchronize)하기 위해 효과를 테스트합니다.)
+컴포넌트의 관점에서 생각해보면, 비어 있는 \[\] 의존성 배열은 이 효과가 컴포넌트가 마운트될 때만 채팅방에 연결되고, 컴포넌트가 언마운트될 때만 연결을 해제한다는 의미입니다. (리액트는 여전히 [개발 중에 한 번 더 동기화](https://react.dev/learn/lifecycle-of-reactive-effects#how-react-verifies-that-your-effect-can-re-synchronize)하기 위해 효과를 테스트합니다.)
 
 [![Edit adoring-monad-ch0uj1](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/adoring-monad-ch0uj1?fontsize=14&hidenavigation=1&theme=dark)
 
@@ -417,22 +417,22 @@ function ChatRoom({ roomId, selectedServerUrl }) {
 
 가변 값(전역 변수를 포함한)은 반응형이 아닙니다.
 
-**[location.pathname](https://developer.mozilla.org/en-US/docs/Web/API/Location/pathname)과 같은 가변 값은 의존성이 될 수 없습니다.** 이 값은 가변이므로 React 렌더링 데이터 플로우 외부에서 언제든지 변경될 수 있습니다. 이를 변경해도 컴포넌트가 다시 렌더링되지 않습니다. 따라서 의존성에 지정해도 React는 값이 변경될 때 효과를 다시 동기화해야 한다는 사실을 알지 못합니다. 이는 또한 React의 규칙을 위반하는 것입니다. 렌더링 중(의존성을 계산하는 시점)에 가변 데이터를 읽는 것은 [렌더링의 순수성](https://react.dev/learn/keeping-components-pure)을 깨뜨립니다. 대신 [useSyncExternalStore](https://react.dev/learn/you-might-not-need-an-effect#subscribing-to-an-external-store)를 사용하여 외부 가변 값에 대해 읽고 구독해야 합니다.
+**[location.pathname](https://developer.mozilla.org/en-US/docs/Web/API/Location/pathname)과 같은 가변 값은 의존성이 될 수 없습니다.** 이 값은 가변이므로 리액트 렌더링 데이터 플로우 외부에서 언제든지 변경될 수 있습니다. 이를 변경해도 컴포넌트가 다시 렌더링되지 않습니다. 따라서 의존성에 지정해도 리액트는 값이 변경될 때 효과를 다시 동기화해야 한다는 사실을 알지 못합니다. 이는 또한 리액트의 규칙을 위반하는 것입니다. 렌더링 중(의존성을 계산하는 시점)에 가변 데이터를 읽는 것은 [렌더링의 순수성](https://react.dev/learn/keeping-components-pure)을 깨뜨립니다. 대신 [useSyncExternalStore](https://react.dev/learn/you-might-not-need-an-effect#subscribing-to-an-external-store)를 사용하여 외부 가변 값에 대해 읽고 구독해야 합니다.
 
-**[ref.current](https://react.dev/reference/react/useRef#reference)와 같은 가변 값이나 그 값에서 읽은 것들도 의존성이 될 수 없습니다.** useRef에 의해 반환된 ref 객체 자체는 의존성이 될 수 있지만, 그 current 속성은 일부로 가변적으로 유지됩니다. 이를 통해 [다시 렌더링을 트리거하지 않고 무언가를 추적](https://react.dev/learn/referencing-values-with-refs)할 수 있습니다. 그러나 변경해도 다시 렌더링을 트리거하지 않으므로 반응형 값이 아니며, React는 값이 변경될 때 효과를 다시 실행할 지 알지 못합니다.
+**[ref.current](https://react.dev/reference/react/useRef#reference)와 같은 가변 값이나 그 값에서 읽은 것들도 의존성이 될 수 없습니다.** useRef에 의해 반환된 ref 객체 자체는 의존성이 될 수 있지만, 그 current 속성은 일부로 가변적으로 유지됩니다. 이를 통해 [다시 렌더링을 트리거하지 않고 무언가를 추적](https://react.dev/learn/referencing-values-with-refs)할 수 있습니다. 그러나 변경해도 다시 렌더링을 트리거하지 않으므로 반응형 값이 아니며, 리액트는 값이 변경될 때 효과를 다시 실행할 지 알지 못합니다.
 
 이 페이지에서 아래에서 알아보겠지만, 린터가 이러한 문제를 자동으로 확인합니다.
 </details>
 
 
-### React는 모든 반응형 값이 의존성으로 선언되었는지 확인합니다
+### 리액트는 모든 반응형 값이 의존성으로 선언되었는지 확인합니다
 
-만약 린터가 [React로 구성된 경우](https://react.dev/learn/editor-setup#linting), Effect의 코드에서 사용하는 모든 반응형 값이 해당 의존성으로 선언되어 있는지 확인합니다. 예를 들어, 다음은 린터 오류입니다. 왜냐하면 `roomId`와 `serverUrl` 모두 반응형이기 때문입니다.
+만약 린터가 [리액트로 구성된 경우](https://react.dev/learn/editor-setup#linting), Effect의 코드에서 사용하는 모든 반응형 값이 해당 의존성으로 선언되어 있는지 확인합니다. 예를 들어, 다음은 린터 오류입니다. 왜냐하면 `roomId`와 `serverUrl` 모두 반응형이기 때문입니다.
 
 [![Edit eager-field-f7vpbl](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/eager-field-f7vpbl?fontsize=14&hidenavigation=1&theme=dark)
 
 
-이는 React의 오류처럼 보일 수 있지만, 실제로는 React가 코드에서 버그를 가리키고 있습니다. `roomId`와 `serverUrl`은 시간이 지남에 따라 변경될 수 있지만, 변경 사항이 발생할 때 Effect를 다시 동기화하지 않고 있습니다. UI에서 사용자가 다른 값을 선택해도 초기의 `roomId`와 `serverUrl`에 연결된 상태로 남게 됩니다.
+이는 리액트의 오류처럼 보일 수 있지만, 실제로는 리액트가 코드에서 버그를 가리키고 있습니다. `roomId`와 `serverUrl`은 시간이 지남에 따라 변경될 수 있지만, 변경 사항이 발생할 때 Effect를 다시 동기화하지 않고 있습니다. UI에서 사용자가 다른 값을 선택해도 초기의 `roomId`와 `serverUrl`에 연결된 상태로 남게 됩니다.
 
 이 버그를 수정하려면 린터의 제안에 따라 Effect의 의존성으로 `roomId`와 `serverUrl`을 지정하세요.
 
@@ -456,7 +456,7 @@ function ChatRoom({ roomId }) {
 위의 예시를 상단의 샌드박스에서 시도해 보세요. 린터 오류가 해결되고 필요할 때마다 채팅이 다시 연결되는지 확인하세요.
 
 > 참고  
-일부 경우에는 React가 컴포넌트 내부에 선언되었지만 절대로 변경되지 않는 값을 알고 있습니다. 예를 들어, useState에서 반환된 [set 함수](https://react.dev/reference/react/useState#setstate)와 useRef에서 반환된 ref 객체는 안정적인(stable) 값입니다. 즉, 다시 렌더링될 때 변경되지 않는 것이 보장됩니다. 안정적인 값은 반응형이 아니므로 의존성 목록에서 생략할 수 있습니다. 포함시키는 것도 허용됩니다. 값이 변경되지 않기 때문에 중요하지 않습니다.
+일부 경우에는 리액트가 컴포넌트 내부에 선언되었지만 절대로 변경되지 않는 값을 알고 있습니다. 예를 들어, useState에서 반환된 [set 함수](https://react.dev/reference/react/useState#setstate)와 useRef에서 반환된 ref 객체는 안정적인(stable) 값입니다. 즉, 다시 렌더링될 때 변경되지 않는 것이 보장됩니다. 안정적인 값은 반응형이 아니므로 의존성 목록에서 생략할 수 있습니다. 포함시키는 것도 허용됩니다. 값이 변경되지 않기 때문에 중요하지 않습니다.
 
 ### 다시 동기화를 원하지 않을 때는 어떻게 해야 할까요?
 

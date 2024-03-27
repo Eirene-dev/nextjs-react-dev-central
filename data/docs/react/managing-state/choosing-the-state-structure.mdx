@@ -1,7 +1,7 @@
 ---
 title: State 구조 선택
 date: '2023-06-03'
-summary: 이 글에서는 React 애플리케이션에서 상태를 구조화하고 관리하는데 유용한 원칙과 팁을 소개합니다.
+summary: 이 글에서는 리액트 애플리케이션에서 상태를 구조화하고 관리하는데 유용한 원칙과 팁을 소개합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
@@ -148,7 +148,7 @@ function Message({ initialColor }) {
 
 
 
-현재 선택한 항목을 selectedItem 상태 변수에 객체로 저장합니다. 그러나 이는 좋지 않습니다: **selectedItem의 내용은 items 목록 내의 항목과 동일한 객체입니다.** 이는 항목 자체에 대한 정보가 두 곳에서 중복됨을 의미합니다.
+현재 선택한 항목을 selectedItem 상태 변수에 객체로 저장합니다. 그러나 이는 좋지 않습니다. **selectedItem의 내용은 items 목록 내의 항목과 동일한 객체입니다.** 이는 항목 자체에 대한 정보가 두 곳에서 중복됨을 의미합니다.
 
 이것이 문제인 이유를 알아봅시다. 각 항목을 편집할 수 있도록 해 보겠습니다.
 
@@ -189,7 +189,7 @@ selectedItem도 업데이트할 수 있지만, 더 쉬운 해결책은 중복을
 
 **상태가 너무 깊게 중첩되어 업데이트하기 어려운 경우, "평평하게" 만드는 것을 고려하세요.** 이 데이터를 다시 구조화하는 방법을 살펴보겠습니다. 각 장소가 자식 장소의 배열을 보유하는 트리와 같은 구조 대신, 각 장소가 자식 장소 ID의 배열을 보유하도록 변경하고, 각 장소 ID에 해당하는 장소와의 매핑을 저장합니다.
 
-이 데이터 구조화는 데이터베이스 테이블을 보는 것과 유사합니다:
+이 데이터 구조화는 데이터베이스 테이블을 보는 것과 유사합니다.
 [![Edit beautiful-solomon-pz7l98](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/beautiful-solomon-pz7l98?fontsize=14&hidenavigation=1&theme=dark)
 
 

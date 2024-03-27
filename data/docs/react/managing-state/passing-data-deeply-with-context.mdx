@@ -1,7 +1,7 @@
 ---
 title: "Context: 데이터 깊이 전달"
 date: '2023-06-07'
-summary: 이 글은 React 컨텍스트를 사용하여 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달하는 방법에 대한 내용을 다루고 있습니다.
+summary: 이 글은 리액트 컨텍스트를 사용하여 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달하는 방법에 대한 내용을 다루고 있습니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
@@ -24,17 +24,17 @@ summary: 이 글은 React 컨텍스트를 사용하여 부모 컴포넌트에서
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_lifting_state.png&w=640&q=75" alt="React Sharing Data" width="400" height="auto" />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_lifting_state.png&w=640&q=75" alt="리액트 Sharing Data" width="400" height="auto" />
     <p style={{ margin: 0 }}>상태를 상위로 끌어올리기</p>
   </div>
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_prop_drilling.png&w=640&q=75" alt="React Sharing Data" width="400" height="auto" />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_prop_drilling.png&w=640&q=75" alt="리액트 Sharing Data" width="400" height="auto" />
     <p style={{ margin: 0 }}>Prop 드릴링</p>
   </div>
 </div>
 
 
-props를 전달하지 않고도 데이터를 필요로 하는 컴포넌트로 데이터를 "전송"할 수 있는 방법이 있으면 좋지 않을까요? React의 컨텍스트 기능을 사용하면 이를 할 수 있습니다!
+props를 전달하지 않고도 데이터를 필요로 하는 컴포넌트로 데이터를 "전송"할 수 있는 방법이 있으면 좋지 않을까요? 리액트의 컨텍스트 기능을 사용하면 이를 할 수 있습니다!
 
 ### 컨텍스트: props 전달의 대체재
 
@@ -46,7 +46,7 @@ props를 전달하지 않고도 데이터를 필요로 하는 컴포넌트로 �
 [![Edit adoring-snowflake-wkp959](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/adoring-snowflake-wkp959?fontsize=14&hidenavigation=1&theme=dark)
 
 
-현재 각 `<Heading>`에 별도로 level prop를 전달하고 있습니다:
+현재 각 `<Heading>`에 별도로 level prop를 전달하고 있습니다.
 
 ```jsx
 <Section>
@@ -56,7 +56,7 @@ props를 전달하지 않고도 데이터를 필요로 하는 컴포넌트로 �
 </Section>
 ```
 
-대신, level prop를 `<Section>` 컴포넌트에 전달하고 `<Heading>`에서 제거하는 것이 좋을 것입니다. 이렇게 하면 동일한 섹션의 모든 제목이 동일한 크기를 갖도록 강제할 수 있습니다:
+대신, level prop를 `<Section>` 컴포넌트에 전달하고 `<Heading>`에서 제거하는 것이 좋을 것입니다. 이렇게 하면 동일한 섹션의 모든 제목이 동일한 크기를 갖도록 강제할 수 있습니다.
 
 ```jsx
 <Section level={3}>
@@ -78,11 +78,11 @@ props만으로는 할 수 없습니다. 여기서 컨텍스트가 필요해집�
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_context_close.png&w=640&q=75" alt="React Sharing Data" width="400" height="auto" />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_context_close.png&w=640&q=75" alt="리액트 Sharing Data" width="400" height="auto" />
     <p style={{ margin: '0' }}>가까운 자식에서 컨텍스트 사용하기</p>
   </div>
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_context_far.png&w=640&q=75" alt="React Sharing Data" width="400" height="auto" />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpassing_data_context_far.png&w=640&q=75" alt="리액트 Sharing Data" width="400" height="auto" />
     <p style={{ margin: '0' }}>먼 자식에서 컨텍스트 사용하기</p>
   </div>
 </div>
@@ -98,14 +98,14 @@ createContext의 유일한 인수는 기본 값입니다. 여기에서는 1이 �
 
 #### 단계 2: 컨텍스트 사용
 
-React에서 useContext Hook과 컨텍스트를 가져옵니다:
+리액트에서 useContext Hook과 컨텍스트를 가져옵니다.
 
 ```jsx
 import { useContext } from 'react';
 import { LevelContext } from './LevelContext.js';
 ```
 
-현재 Heading 컴포넌트는 props에서 level을 읽습니다:
+현재 Heading 컴포넌트는 props에서 level을 읽습니다.
 
 ```jsx
 export default function Heading({ level, children }) {
@@ -113,7 +113,7 @@ export default function Heading({ level, children }) {
 }
 ```
 
-대신, level prop을 제거하고 방금 가져온 LevelContext에서 값을 읽도록 변경합니다:
+대신, level prop을 제거하고 방금 가져온 LevelContext에서 값을 읽도록 변경합니다.
 
 ```jsx
 export default function Heading({ children }) {
@@ -122,9 +122,9 @@ export default function Heading({ children }) {
 }
 ```
 
-useContext는 Hook입니다. useState와 useReducer와 마찬가지로 Hook은 React 컴포넌트 내에서만 즉시 호출할 수 있습니다(루프나 조건문 내에서는 호출할 수 없습니다). **useContext는 Heading 컴포넌트가 LevelContext를 읽고자 한다는 것을 React에 알려줍니다.**
+useContext는 Hook입니다. useState와 useReducer와 마찬가지로 Hook은 리액트 컴포넌트 내에서만 즉시 호출할 수 있습니다(루프나 조건문 내에서는 호출할 수 없습니다). **useContext는 Heading 컴포넌트가 LevelContext를 읽고자 한다는 것을 리액트에 알려줍니다.**
 
-Heading 컴포넌트에 level prop이 없으므로 다음과 같이 JSX에서 Heading에 level prop을 더 이상 전달할 필요가 없습니다:
+Heading 컴포넌트에 level prop이 없으므로 다음과 같이 JSX에서 Heading에 level prop을 더 이상 전달할 필요가 없습니다.
 
 ```jsx
 <Section>
@@ -134,7 +134,7 @@ Heading 컴포넌트에 level prop이 없으므로 다음과 같이 JSX에서 He
 </Section>
 ```
 
-대신, JSX를 업데이트하여 Section이 level prop을 전달받도록 변경합니다:
+대신, JSX를 업데이트하여 Section이 level prop을 전달받도록 변경합니다.
 
 ```jsx
 <Section level={4}>
@@ -151,7 +151,7 @@ Heading 컴포넌트에 level prop이 없으므로 다음과 같이 JSX에서 He
 
 ### 단계 3: 컨텍스트 제공
 
-Section 컴포넌트는 현재 자식을 렌더링합니다:
+Section 컴포넌트는 현재 자식을 렌더링합니다.
 
 ```jsx
 export default function Section({ children }) {
@@ -163,7 +163,7 @@ export default function Section({ children }) {
 }
 ```
 
-컨텍스트 프로바이더로 자식을 감싸 컨텍스트(LevelContext)를 제공합니다:
+컨텍스트 프로바이더로 자식을 감싸 컨텍스트(LevelContext)를 제공합니다.
 
 ```jsx
 import { LevelContext } from './LevelContext.js';
@@ -179,12 +179,12 @@ export default function Section({ level, children }) {
 }
 ```
 
-이렇게 하면 React에게 "이 `<Section>` 내부의 모든 컴포넌트가 LevelContext를 요청하면 해당 level을 제공하세요." 라고 알려줍니다. 컴포넌트는 UI 트리에서 가장 가까운 `<LevelContext.Provider>`의 값으로 사용합니다.
+이렇게 하면 리액트에게 "이 `<Section>` 내부의 모든 컴포넌트가 LevelContext를 요청하면 해당 level을 제공하세요." 라고 알려줍니다. 컴포넌트는 UI 트리에서 가장 가까운 `<LevelContext.Provider>`의 값으로 사용합니다.
 
 [![Edit vibrant-worker-pthbl3](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/vibrant-worker-pthbl3?fontsize=14&hidenavigation=1&theme=dark)
 
 
-원래 코드와 동일한 결과이지만, 각 Heading 컴포넌트에 level prop을 전달할 필요가 없었습니다! 대신, Heading은 그 위에 있는 가장 가까운 Section에게 레벨을 "알아내기" 위해 요청했습니다:
+원래 코드와 동일한 결과이지만, 각 Heading 컴포넌트에 level prop을 전달할 필요가 없었습니다! 대신, Heading은 그 위에 있는 가장 가까운 Section에게 레벨을 "알아내기" 위해 요청했습니다.
 
 1. level prop을 `<Section>`에 전달합니다.
 2. Section은 자식을 `<LevelContext.Provider value={level}>`로 감쌉니다.
@@ -193,7 +193,7 @@ export default function Section({ level, children }) {
 
 ## 동일한 컴포넌트에서 컨텍스트 사용과 제공
 
-현재는 각 섹션의 레벨을 수동으로 지정해야 합니다:
+현재는 각 섹션의 레벨을 수동으로 지정해야 합니다.
 
 ```jsx
 export default function Page() {
@@ -206,7 +206,7 @@ export default function Page() {
           ...
 ```
 
-컨텍스트를 사용하면 각 Section이 이전 Section에서 레벨을 읽고 레벨 + 1을 자동으로 전달할 수 있습니다. 다음과 같이 수행할 수 있습니다:
+컨텍스트를 사용하면 각 Section이 이전 Section에서 레벨을 읽고 레벨 + 1을 자동으로 전달할 수 있습니다. 다음과 같이 수행할 수 있습니다.
 
 ```jsx
 import { useContext } from 'react';
@@ -224,7 +224,7 @@ export default function Section({ children }) {
 }
 ```
 
-이 변경 사항으로 `<Section>` 또는 `<Heading>`에 level prop을 전달할 필요가 없어졌습니다:
+이 변경 사항으로 `<Section>` 또는 `<Heading>`에 level prop을 전달할 필요가 없어졌습니다.
 [![Edit nice-albattani-j0w3hj](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/nice-albattani-j0w3hj?fontsize=14&hidenavigation=1&theme=dark)
 
 이제 Heading과 Section은 자신의 주변 상황에 따라 어떻게 표시되는지 조정하기 위해 LevelContext를 읽습니다. 그리고 Section은 자식을 LevelContext로 감싸 어떤 것이 "더 깊은" 레벨인지를 지정합니다.
@@ -237,16 +237,16 @@ export default function Section({ children }) {
 
 컨텍스트를 제공하는 컴포넌트와 사용하는 컴포넌트 사이에 원하는 만큼 많은 컴포넌트를 삽입할 수 있습니다. 이에는 `<div>`와 같은 내장 컴포넌트와 직접 작성한 컴포넌트 모두 포함됩니다.
 
-이 예에서는 동일한 Post 컴포넌트(점선 테두리)가 서로 다른 중첩 레벨에서 렌더링됩니다. 그 내부의 `<Heading>`은 가장 가까운 `<Section>`에서 자동으로 레벨을 얻습니다:
+이 예에서는 동일한 Post 컴포넌트(점선 테두리)가 서로 다른 중첩 레벨에서 렌더링됩니다. 그 내부의 `<Heading>`은 가장 가까운 `<Section>`에서 자동으로 레벨을 얻습니다.
 [![Edit vibrant-gauss-t457ob](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/vibrant-gauss-t457ob?fontsize=14&hidenavigation=1&theme=dark)
 
 이것을 작동시키기 위해 특별히 할 것은 없습니다. Section은 내부 트리에 대한 컨텍스트를 지정하므로 `<Heading>`을 어디에든 삽입할 수 있고 올바른 크기를 가집니다. 상단의 샌드박스에서 확인해보세요!
 
 **컨텍스트를 사용하면 컴포넌트를 "주변에 맞게 조정"하여 렌더링되는 위치(다시 말해, 어떤 컨텍스트에서 렌더링되는지)에 따라 다르게 표시할 수 있습니다.**
 
-컨텍스트가 동작 방식이 [CSS 속성 상속](https://developer.mozilla.org/en-US/docs/Web/CSS/inheritance)을 연상시킬 수 있습니다. CSS에서는 `<div>`에 `color: blue`를 지정하면 얼마든지 깊게 위치한 DOM 노드도 다른 DOM 노드가 중간에 `color: green`으로 재정의하지 않는 한 해당 색상을 상속합니다. 마찬가지로 React에서도 위에서 내려오는 컨텍스트를 재정의하는 유일한 방법은 다른 값을 가진 컨텍스트 제공자로 자식을 감싸는 것입니다.
+컨텍스트가 동작 방식이 [CSS 속성 상속](https://developer.mozilla.org/en-US/docs/Web/CSS/inheritance)을 연상시킬 수 있습니다. CSS에서는 `<div>`에 `color: blue`를 지정하면 얼마든지 깊게 위치한 DOM 노드도 다른 DOM 노드가 중간에 `color: green`으로 재정의하지 않는 한 해당 색상을 상속합니다. 마찬가지로 리액트에서도 위에서 내려오는 컨텍스트를 재정의하는 유일한 방법은 다른 값을 가진 컨텍스트 제공자로 자식을 감싸는 것입니다.
 
-CSS에서 색상(color)과 배경색(background-color)과 같은 다른 속성은 서로를 덮어쓰지 않습니다. 모든 `<div>`의 색상을 red로 설정하면 배경색에는 영향을 주지 않습니다. 마찬가지로 **다른 React 컨텍스트도 서로를 덮어쓰지 않습니다.** `createContext()`로 만든 각 컨텍스트는 완전히 다른 것으로 간주되며 해당 컨텍스트를 사용하거나 제공하는 컴포넌트를 연결시킵니다. 한 컴포넌트가 문제없이 여러 다른 컨텍스트를 사용하거나 제공할 수 있습니다.
+CSS에서 색상(color)과 배경색(background-color)과 같은 다른 속성은 서로를 덮어쓰지 않습니다. 모든 `<div>`의 색상을 red로 설정하면 배경색에는 영향을 주지 않습니다. 마찬가지로 **다른 리액트 컨텍스트도 서로를 덮어쓰지 않습니다.** `createContext()`로 만든 각 컨텍스트는 완전히 다른 것으로 간주되며 해당 컨텍스트를 사용하거나 제공하는 컴포넌트를 연결시킵니다. 한 컴포넌트가 문제없이 여러 다른 컨텍스트를 사용하거나 제공할 수 있습니다.
 
 
 
@@ -254,7 +254,7 @@ CSS에서 색상(color)과 배경색(background-color)과 같은 다른 속성�
 
 컨텍스트는 사용하면 매우 유혹적입니다! 그러나 이것은 동시에 너무 쉽게 과용할 수 있는 것을 의미합니다. **일부 props를 여러 수준으로 전달해야 한다고 해서 그 정보를 컨텍스트에 넣어야 하는 것은 아닙니다.**
 
-컨텍스트를 사용하기 전에 고려해야 할 몇 가지 대안이 있습니다:
+컨텍스트를 사용하기 전에 고려해야 할 몇 가지 대안이 있습니다.
 
 1. **우선은 [props를 전달](https://react.dev/learn/passing-props-to-a-component)해 보세요.** 컴포넌트가 간단하지 않은 경우 수십 개의 props를 수십 개의 컴포넌트를 통해 전달하는 것은 보통입니다. 번거롭게 느껴질 수 있지만, 어떤 데이터를 사용하는지를 명확히 표시하여 코드를 유지보수하는 사람에게 큰 도움이 될 것입니다.
     3. children을 `<MyContext.Provider value={...}>`로 감싸서 상위에서 제공합니다.
@@ -271,7 +271,7 @@ CSS에서 색상(color)과 배경색(background-color)과 같은 다른 속성�
 - **라우팅:** 대부분의 라우팅 솔루션은 현재 경로를 저장하기 위해 내부적으로 컨텍스트를 사용합니다. 이것은 링크가 활성화되었는지 여부를 알기 위해 필요합니다. 직접 라우터를 작성하는 경우 이와 같이 사용할 수 있습니다.
 - **상태 관리:** 앱이 커지면 상태가 앱의 상위에 가까이 있게 될 수 있습니다. 그 아래에 있는 많은 먼 컴포넌트가 상태를 변경해야 할 수도 있습니다. 복잡한 상태를 관리하고 너무 많은 문제 없이 먼 컴포넌트에 전달하기 위해 일반적으로 [리듀서와 컨텍스트를 함께 사용](https://react.dev/learn/scaling-up-with-reducer-and-context)합니다.
 
-컨텍스트는 정적인 값에만 제한되지 않습니다. 다음 렌더링에 다른 값을 전달하면 React가 아래에서 해당 값을 읽는 모든 컴포넌트를 업데이트합니다. 이러한 이유로 컨텍스트는 종종 상태와 결합하여 사용됩니다.
+컨텍스트는 정적인 값에만 제한되지 않습니다. 다음 렌더링에 다른 값을 전달하면 리액트가 아래에서 해당 값을 읽는 모든 컴포넌트를 업데이트합니다. 이러한 이유로 컨텍스트는 종종 상태와 결합하여 사용됩니다.
 
 일반적으로 트리의 여러 부분에서 필요로 하는 정보가 있다면 컨텍스트가 도움이 될 수 있습니다.
 

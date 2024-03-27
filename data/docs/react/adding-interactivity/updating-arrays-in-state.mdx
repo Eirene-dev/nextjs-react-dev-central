@@ -1,26 +1,26 @@
 ---
 title: State에서 배열 업데이트
 date: '2023-05-08'
-summary: React에서 배열을 업데이트할 때는 상태를 직접 변이시키지 말고 새로운 배열을 생성하여 상태를 업데이트해야 합니다.
+summary: 리액트에서 배열을 업데이트할 때는 상태를 직접 변이시키지 말고 새로운 배열을 생성하여 상태를 업데이트해야 합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-JavaScript에서 배열은 가변(mutable)이지만, React의 상태에 저장할 때는 불변(immutable)으로 취급해야 합니다. 객체와 마찬가지로, 상태에 저장된 배열을 업데이트할 때는 새로운 배열을 생성하고 상태를 새 배열로 설정해야 합니다.
+JavaScript에서 배열은 가변(mutable)이지만, 리액트의 상태에 저장할 때는 불변(immutable)으로 취급해야 합니다. 객체와 마찬가지로, 상태에 저장된 배열을 업데이트할 때는 새로운 배열을 생성하고 상태를 새 배열로 설정해야 합니다.
 
 배울 내용
 
-- React 상태에서 배열에 아이템을 추가, 제거, 변경하는 방법
+- 리액트 상태에서 배열에 아이템을 추가, 제거, 변경하는 방법
 - 배열 내부의 객체를 업데이트하는 방법
 - Immer를 사용하여 배열 복사를 더 간결하게 하는 방법
 
 ## 변이를 사용하지 않고 배열 업데이트하기
 
-JavaScript에서 배열은 객체의 한 종류입니다. [객체와 마찬가지로](https://react.dev/learn/updating-objects-in-state), React 상태에서 배열은 읽기 전용으로 취급해야 합니다. 이는 `arr[0] = 'bird'`와 같이 배열의 항목을 재할당하거나, `push()`와 `pop()`과 같이 배열을 변이시키는 메서드를 사용해서는 안 된다는 의미입니다.
+JavaScript에서 배열은 객체의 한 종류입니다. [객체와 마찬가지로](https://react.dev/learn/updating-objects-in-state), 리액트 상태에서 배열은 읽기 전용으로 취급해야 합니다. 이는 `arr[0] = 'bird'`와 같이 배열의 항목을 재할당하거나, `push()`와 `pop()`과 같이 배열을 변이시키는 메서드를 사용해서는 안 된다는 의미입니다.
 
 대신, 배열을 업데이트하고자 할 때마다 상태 설정 함수에 새 배열을 전달해야 합니다. 이를 위해 상태의 원래 배열에서 filter()와 map()과 같은 변이하지 않는 메서드를 호출하여 새 배열을 생성한 다음, 상태를 새 배열로 설정합니다.
 
-다음은 일반적인 배열 작업에 대한 참조 표입니다. React 상태 내부에서 배열을 다룰 때, 왼쪽 열에 있는 메서드는 피하고, 오른쪽 열에 있는 메서드를 사용하는 것이 좋습니다:
+다음은 일반적인 배열 작업에 대한 참조 표입니다. 리액트 상태 내부에서 배열을 다룰 때, 왼쪽 열에 있는 메서드는 피하고, 오른쪽 열에 있는 메서드를 사용하는 것이 좋습니다.
 
 |  | 피하기(배열을 변이시킴) | 선호하기(새 배열 반환) | 
 | --- | --- | --- |
@@ -33,24 +33,24 @@ JavaScript에서 배열은 객체의 한 종류입니다. [객체와 마찬가�
 
 <Callout type="warning">
 
-유감스럽게도, [slice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice)와 [splice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice)는 이름은 비슷하지만 매우 다릅니다:
+유감스럽게도, [slice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice)와 [splice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice)는 이름은 비슷하지만 매우 다릅니다.
 
 - slice는 배열 또는 배열의 일부를 복사합니다.
 - splice는 배열을 변이시킵니다(아이템을 삽입하거나 삭제합니다).
 
-React에서는 배열을 변이시키지 않으므로 slice(마지막 문자 'p'가 없음)를 훨씬 더 자주 사용하게 됩니다. [객체 업데이트하기](https://react.dev/learn/updating-objects-in-state)에서 변이(mutation)가 무엇이며 상태에 권장되지 않는 이유에 대해 설명합니다.
+리액트에서는 배열을 변이시키지 않으므로 slice(마지막 문자 'p'가 없음)를 훨씬 더 자주 사용하게 됩니다. [객체 업데이트하기](https://react.dev/learn/updating-objects-in-state)에서 변이(mutation)가 무엇이며 상태에 권장되지 않는 이유에 대해 설명합니다.
 </Callout>
 
 
 ### 배열에 추가하기
 
-`push()`는 배열을 변이시키므로 사용하면 안됩니다:
+`push()`는 배열을 변이시키므로 사용하면 안됩니다.
 
 [![Edit nice-shannon-1vkb9e](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/nice-shannon-1vkb9e?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
 
 
-대신, 기존 아이템과 새 아이템을 포함한 새 배열을 생성합니다. 이를 위해 여러 가지 방법이 있지만, 가장 간단한 방법은 ... [배열 스프레드 구문](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#spread_in_array_literals)을 사용하는 것입니다:
+대신, 기존 아이템과 새 아이템을 포함한 새 배열을 생성합니다. 이를 위해 여러 가지 방법이 있지만, 가장 간단한 방법은 ... [배열 스프레드 구문](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#spread_in_array_literals)을 사용하는 것입니다.
 
 ```jsx
 setArtists( // 상태를 바꿉니다
@@ -61,13 +61,13 @@ setArtists( // 상태를 바꿉니다
 );
 ```
 
-이제 제대로 작동합니다:
+이제 제대로 작동합니다.
 
 [![Edit elastic-tereshkova-m1jpw3](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/elastic-tereshkova-m1jpw3?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
 
 
-배열 스프레드 구문은 `...artists`를 원래 배열 앞에 배치함으로써 아이템을 앞에 추가할 수도 있습니다:
+배열 스프레드 구문은 `...artists`를 원래 배열 앞에 배치함으로써 아이템을 앞에 추가할 수도 있습니다.
 
 ```jsx
 setArtists([
@@ -100,7 +100,7 @@ setArtists(
 
 배열의 일부 또는 모든 아이템을 변경하고자 할 때는 `map()`을 사용하여 **새로운** 배열을 생성할 수 있습니다. map에 전달하는 함수는 데이터나 인덱스(또는 둘 모두)를 기반으로 각 아이템에 대해 수행할 작업을 결정할 수 있습니다.
 
-이 예제에서는 배열이 두 개의 원과 한 개의 사각형의 좌표를 보유하고 있습니다. 버튼을 누를 때, 원만 아래로 50픽셀 이동합니다. 이를 위해 `map()`을 사용하여 데이터를 기반으로 새로운 배열을 생성합니다:
+이 예제에서는 배열이 두 개의 원과 한 개의 사각형의 좌표를 보유하고 있습니다. 버튼을 누를 때, 원만 아래로 50픽셀 이동합니다. 이를 위해 `map()`을 사용하여 데이터를 기반으로 새로운 배열을 생성합니다.
 
 [![Edit new-dew-crvphm](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/new-dew-crvphm?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
@@ -109,7 +109,7 @@ setArtists(
 
 일부 또는 모든 아이템을 교체하고자 하는 경우, 배열을 변이시키는 할당(`arr[0] = 'bird'`)과 같은 방식은 사용해서는 안 됩니다. 대신 map을 사용하여 교체할 수 있습니다.
 
-아이템을 교체하기 위해, map과 함께 새 배열을 생성합니다. map 호출 내부에서 첫 번째 인수로 전달되는 아이템을 반환할지 또는 다른 것을 반환할지를 결정하기 위해 두 번째 인수로 아이템 인덱스를 사용합니다:
+아이템을 교체하기 위해, map과 함께 새 배열을 생성합니다. map 호출 내부에서 첫 번째 인수로 전달되는 아이템을 반환할지 또는 다른 것을 반환할지를 결정하기 위해 두 번째 인수로 아이템 인덱스를 사용합니다.
 
 [![Edit kind-architecture-5qhfff](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/kind-architecture-5qhfff?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
@@ -119,7 +119,7 @@ setArtists(
 
 때로는 시작이나 끝이 아닌 특정 위치에 아이템을 삽입하고 싶을 수 있습니다. 이를 위해 ... 배열 스프레드 구문과 slice() 메서드를 함께 사용할 수 있습니다. slice() 메서드는 배열을 "슬라이스"하여 자를 수 있습니다. 아이템을 삽입하기 위해, 삽입 지점 이전의 슬라이스, 그리고 새로운 아이템, 그리고 원래 배열의 나머지를 포함하는 배열을 생성합니다.
 
-이 예제에서 "Insert" 버튼은 항상 인덱스 1에 삽입합니다:
+이 예제에서 "Insert" 버튼은 항상 인덱스 1에 삽입합니다.
 
 [![Edit infallible-rgb-z0pqn3](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/infallible-rgb-z0pqn3?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
@@ -155,7 +155,7 @@ nextList와 list는 두 개의 다른 배열이지만, **nextList\[0\]과 list\[
 
 **중첩된 상태를 업데이트할 때는 업데이트하려는 지점부터 최상위까지 복사본을 생성해야 합니다.** 이 작업이 어떻게 이루어지는지 살펴봅시다.
 
-이 예제에서 두 개의 별도의 작품 목록이 동일한 초기 상태를 가지고 있습니다. 이들은 격리되어야 하지만 변이로 인해 상태가 실수로 공유되어 하나의 목록에서 체크박스를 선택하면 다른 목록에도 영향을 미칩니다:
+이 예제에서 두 개의 별도의 작품 목록이 동일한 초기 상태를 가지고 있습니다. 이들은 격리되어야 하지만 변이로 인해 상태가 실수로 공유되어 하나의 목록에서 체크박스를 선택하면 다른 목록에도 영향을 미칩니다.
 
 [![Edit trusting-wescoff-env1fs](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/trusting-wescoff-env1fs?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
@@ -187,7 +187,7 @@ setMyList(myList.map(artwork => {
 
 여기서 `...`은 객체 스프레드 구문을 사용하여 객체의 사본을 [생성하는](https://react.dev/learn/updating-objects-in-state#copying-objects-with-the-spread-syntax) 것입니다.
 
-이 방법을 사용하면 기존 상태 항목을 변이시키지 않으며 버그가 수정됩니다:
+이 방법을 사용하면 기존 상태 항목을 변이시키지 않으며 버그가 수정됩니다.
 
 [![Edit competent-cohen-q21nk7](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/competent-cohen-q21nk7?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
@@ -202,13 +202,13 @@ setMyList(myList.map(artwork => {
 - 일반적으로 상태를 몇 단계까지 업데이트할 필요는 없습니다. 상태 객체가 매우 깊다면 [다른 방식으로 구조를 재조정](https://react.dev/learn/choosing-the-state-structure#avoid-deeply-nested-state)하여 평평하게 만드는 것이 좋습니다.
 - 상태 구조를 변경하지 않으려면 편리하지만 변이 구문을 사용할 수 있는 [Immer](https://github.com/immerjs/use-immer)를 사용하는 것이 좋습니다. 이를 통해 변이 구문을 사용하여 코드를 작성하고, 복사본 생성을 Immer가 처리해줍니다.
 
-다음은 Immer를 사용하여 다시 작성한 Art Bucket List 예제입니다:
+다음은 Immer를 사용하여 다시 작성한 Art Bucket List 예제입니다.
 
 [![Edit beautiful-chaum-mfvh7f](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/beautiful-chaum-mfvh7f?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
 
 
-Immer를 사용하면 `artwork.seen = nextSeen`과 같은 변이가 가능합니다:
+Immer를 사용하면 `artwork.seen = nextSeen`과 같은 변이가 가능합니다.
 
 ```jsx
 updateMyTodos(draft => {

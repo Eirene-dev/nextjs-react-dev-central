@@ -1,7 +1,7 @@
 ---
 title: 컴포넌트간 State 공유
 date: '2023-06-04'
-summary: 이 글에서는 React 애플리케이션에서 컴포넌트 간 상태 공유를 위해 상태를 공통 부모 컴포넌트로 "위로 올리는" 방법을 다룹니다.
+summary: 이 글에서는 리액트 애플리케이션에서 컴포넌트 간 상태 공유를 위해 상태를 공통 부모 컴포넌트로 "위로 올리는" 방법을 다룹니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
@@ -16,7 +16,7 @@ summary: 이 글에서는 React 애플리케이션에서 컴포넌트 간 상태
 
 ## 예시를 통한 상태를 위로 올리기
 
-이 예시에서 부모인 Accordion 컴포넌트는 두 개의 별도 패널을 Panel합니다:
+이 예시에서 부모인 Accordion 컴포넌트는 두 개의 별도 패널을 Panel합니다.
 
 - Accordion
   - Panel
@@ -34,11 +34,11 @@ summary: 이 글에서는 React 애플리케이션에서 컴포넌트 간 상태
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <div>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_child.png&w=640&q=75" alt="React Sharing Data" width={320} />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_child.png&w=640&q=75" alt="리액트 Sharing Data" width={320} />
     <p style={{ margin: 0 }}>처음에는 각 Panel의 isActive 상태가 false이므로, 두 패널 모두 축소된 상태로 나타납니다.</p>
   </div>
   <div>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_child_clicked.png&w=640&q=75" alt="React Sharing Data" width={320} />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_child_clicked.png&w=640&q=75" alt="리액트 Sharing Data" width={320} />
     <p style={{ margin: 0 }}>Panel 버튼을 클릭하면 해당 Panel의 isActive 상태만 업데이트됩니다. 다른 Panel의 isActive 상태는 변경되지 않습니다.</p>
   </div>
 </div>
@@ -46,7 +46,7 @@ summary: 이 글에서는 React 애플리케이션에서 컴포넌트 간 상태
 
 **하지만 이제 한 번에 하나의 패널만 확장되도록 변경하고 싶다고 가정해 봅시다.** 이 디자인에서는 두 번째 패널을 확장하면 첫 번째 패널이 축소되어야 합니다. 이를 어떻게 해야 할까요?
 
-이러한 두 패널을 조율하기 위해 상태를 "위로 올려" 공통 부모 컴포넌트로 이동해야 합니다. 이를 위해 다음 세 단계를 따릅니다:
+이러한 두 패널을 조율하기 위해 상태를 "위로 올려" 공통 부모 컴포넌트로 이동해야 합니다. 이를 위해 다음 세 단계를 따릅니다.
 
 1. **자식 컴포넌트에서 상태를 제거**합니다.
 2. **공통 부모에서 하드코딩된 데이터를 전달**합니다.
@@ -56,13 +56,13 @@ summary: 이 글에서는 React 애플리케이션에서 컴포넌트 간 상태
 
 ### 단계 1: 자식 컴포넌트에서 상태 제거
 
-Panel의 isActive를 부모 컴포넌트에게 제어권을 넘깁니다. 즉, 부모 컴포넌트는 isActive를 Panel에게 props로 전달합니다. 먼저 Panel 컴포넌트에서 다음 줄을 **제거**합니다:
+Panel의 isActive를 부모 컴포넌트에게 제어권을 넘깁니다. 즉, 부모 컴포넌트는 isActive를 Panel에게 props로 전달합니다. 먼저 Panel 컴포넌트에서 다음 줄을 **제거**합니다.
 
 ```javascript
 const [isActive, setIsActive] = useState(false);
 ```
 
-그리고 isActive를 Panel의 props 목록에 추가합니다:
+그리고 isActive를 Panel의 props 목록에 추가합니다.
 
 ```javascript
 function Panel({ title, children, isActive }) {
@@ -72,7 +72,7 @@ function Panel({ title, children, isActive }) {
 
 ### 단계 2: 공통 부모로부터 하드코딩된 데이터 전달
 
-상태를 위로 올리려면 조율하려는 두 자식 컴포넌트의 가장 가까운 공통 부모 컴포넌트를 찾아야 합니다:
+상태를 위로 올리려면 조율하려는 두 자식 컴포넌트의 가장 가까운 공통 부모 컴포넌트를 찾아야 합니다.
 
 - Accordion (가장 가까운 공통 부모)
   - Panel
@@ -90,7 +90,7 @@ Accordion 컴포넌트에서 하드코딩된 isActive 값을 수정해보고, �
 
 상태를 위로 올리면서 상태의 성격이 변경될 수 있습니다.
 
-이 경우에는 한 번에 하나의 패널만 활성화되어야 합니다. 이는 Accordion 공통 부모 컴포넌트가 현재 활성화된 패널의 인덱스를 추적해야 함을 의미합니다. 불리언 값 대신에 상태 변수의 일부로서 활성 패널의 인덱스로 사용할 수 있습니다:
+이 경우에는 한 번에 하나의 패널만 활성화되어야 합니다. 이는 Accordion 공통 부모 컴포넌트가 현재 활성화된 패널의 인덱스를 추적해야 함을 의미합니다. 불리언 값 대신에 상태 변수의 일부로서 활성 패널의 인덱스로 사용할 수 있습니다.
 
 
 ```javascript
@@ -101,7 +101,7 @@ activeIndex가 0일 때는 첫 번째 패널이 활성화되고, 1일 때는 두
 
 Panel의 "Show" 버튼을 클릭하여 Accordion에서 활성 인덱스를 변경해야 합니다. Panel은 직접 activeIndex 상태를 설정할 수 없습니다. 왜냐하면 activeIndex는 Accordion 내부에 정의되어 있기 때문입니다. Panel 컴포넌트가 부모의 상태를 변경할 수 있도록 부모가 이
 
-벤트 핸들러를 전달해야 합니다. [이벤트 핸들러를 props로 전달하는 방법](https://react.dev/learn/responding-to-events#passing-event-handlers-as-props)을 사용하여 다음과 같이 Accordion 컴포넌트 내부에서 Panel 컴포넌트에 전달합니다:
+벤트 핸들러를 전달해야 합니다. [이벤트 핸들러를 props로 전달하는 방법](https://react.dev/learn/responding-to-events#passing-event-handlers-as-props)을 사용하여 다음과 같이 Accordion 컴포넌트 내부에서 Panel 컴포넌트에 전달합니다.
 
 ```javascript
 <>
@@ -120,7 +120,7 @@ Panel의 "Show" 버튼을 클릭하여 Accordion에서 활성 인덱스를 변�
 </>
 ```
 
-Panel 내부의 `<button>`은 이제 onShow prop을 클릭 이벤트 핸들러로 사용합니다:
+Panel 내부의 `<button>`은 이제 onShow prop을 클릭 이벤트 핸들러로 사용합니다.
 
 [![Edit upbeat-satoshi-4wsn52](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/upbeat-satoshi-4wsn52?fontsize=14&hidenavigation=1&theme=dark)
 
@@ -128,11 +128,11 @@ Panel 내부의 `<button>`은 이제 onShow prop을 클릭 이벤트 핸들러�
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <div>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_parent.png&w=640&q=75" alt="React Sharing Data" width="320" height="auto"/>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_parent.png&w=640&q=75" alt="리액트 Sharing Data" width="320" height="auto"/>
     <p style={{ margin: 0 }}>초기에 Accordion의 activeIndex 값은 0이므로 첫 번째 Panel은 isActive 값이 true로 설정됩니다.</p>
   </div>
   <div>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_parent_clicked.png&w=640&q=75" alt="React Sharing Data" width="320" height="auto"/>
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fsharing_state_parent_clicked.png&w=640&q=75" alt="리액트 Sharing Data" width="320" height="auto"/>
     <p style={{ margin: 0 }}>Accordion의 activeIndex 상태가 1로 변경되면 두 번째 Panel은 isActive 값이 true로 설정됩니다.</p>
   </div>
 </div>
@@ -155,13 +155,13 @@ Panel 내부의 `<button>`은 이제 onShow prop을 클릭 이벤트 핸들러�
 
 ## 각 상태에 대한 단일 소스(컴포넌트)
 
-React 애플리케이션에서는 많은 컴포넌트가 자체적인 상태를 가집니다. 어떤 상태는 입력과 같은 리프 컴포넌트 근처에 "거주"할 수 있습니다. 다른 상태는 앱의 상위 부분에 더 "거주"할 수 있습니다. 예를 들어, 클라이언트 측 라우팅 라이브러리는 보통 현재 경로를 React 상태에 저장하고, 이를 props로 전달하여 구현됩니다!
+리액트 애플리케이션에서는 많은 컴포넌트가 자체적인 상태를 가집니다. 어떤 상태는 입력과 같은 리프 컴포넌트 근처에 "거주"할 수 있습니다. 다른 상태는 앱의 상위 부분에 더 "거주"할 수 있습니다. 예를 들어, 클라이언트 측 라우팅 라이브러리는 보통 현재 경로를 리액트 상태에 저장하고, 이를 props로 전달하여 구현됩니다!
 
 **고유한 각 상태에 대해 해당 상태를 "소유"하는 컴포넌트를 선택합니다.** 이 원칙은 [“단일 진실의 원천(single source of truth)”](https://en.wikipedia.org/wiki/Single_source_of_truth)이라고도 알려져 있습니다. 모든 상태가 한 곳에 존재해야 한다는 의미는 아니지만, 각 상태의 정보를 보유하는 특정 컴포넌트가 있어야 합니다. 상태를 공유하기 위해 컴포넌트 간에 공유 상태를 복제하는 대신, 공유 상태를 공통 부모 컴포넌트로 올리고 필요한 하위 컴포넌트에 전달합니다.
 
 앱을 개발하면서 상태의 "소유자"를 찾는 과정에서 상태를 하위로 이동시키거나 다시 상위로 올리는 경우가 있을 수 있습니다. 이 모두 프로세스의 일부입니다!
 
-더 많은 컴포넌트와 함께 실제로 어떻게 느껴지는지 확인하려면 [React로 생각하기](https://react.dev/learn/thinking-in-react)를 읽어보세요.
+더 많은 컴포넌트와 함께 실제로 어떻게 느껴지는지 확인하려면 [리액트로 생각하기](https://react.dev/learn/thinking-in-react)를 읽어보세요.
 
 ## 요약
 

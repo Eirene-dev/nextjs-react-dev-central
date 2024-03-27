@@ -432,15 +432,15 @@ export const docsConfig: DocsConfig = {
       ],
     },
     {
-      title: 'React',
+      title: '리액트',
       href: '/docs/react',
       items: [
         {
-          title: 'React 시작하기',
+          title: '리액트 시작하기',
           href: '/docs/react/learn',
           items: [
             {
-              title: 'React 개요',
+              title: '리액트 개요',
               href: '/docs/react/learn/overview',
               disabled: false,
             },
@@ -455,7 +455,7 @@ export const docsConfig: DocsConfig = {
               disabled: false,
             },
             {
-              title: 'React로 생각하기',
+              title: '리액트로 생각하기',
               href: '/docs/react/learn/thinking-in-react',
               disabled: false,
             },
@@ -481,12 +481,12 @@ export const docsConfig: DocsConfig = {
               disabled: false,
             },
             {
-              title: 'TypeScript',
+              title: '타입스크립트',
               href: '/docs/react/installation/typescript',
               disabled: false,
             },
             {
-              title: 'React 개발자 도구',
+              title: '리액트 개발자 도구',
               href: '/docs/react/installation/react-developer-tools',
               disabled: false,
             },

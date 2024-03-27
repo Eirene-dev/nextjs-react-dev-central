@@ -1,7 +1,7 @@
 ---
 title: 컴포넌트 가져오기/내보내기
 date: '2023-04-03'
-summary: 이 글은 React 애플리케이션에서 컴포넌트를 가져오고 내보내는 방법을 설명하고, 기본 내보내기와 명명된 내보내기를 사용하여 컴포넌트를 다루는 방법을 안내합니다.
+summary: 이 글은 리액트 애플리케이션에서 컴포넌트를 가져오고 내보내는 방법을 설명하고, 기본 내보내기와 명명된 내보내기를 사용하여 컴포넌트를 다루는 방법을 안내합니다.
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
@@ -42,13 +42,10 @@ summary: 이 글은 React 애플리케이션에서 컴포넌트를 가져오고 
 ```jsx showLineNumbers
 import Gallery from './Gallery';
 ```
-React에서는 './Gallery.js' 또는 './Gallery' 둘 다 작동하지만, 전자는 네이티브 ES 모듈 동작에 더 가깝습니다.
+리액트에서는 './Gallery.js' 또는 './Gallery' 둘 다 작동하지만, 전자는 네이티브 ES 모듈 동작에 더 가깝습니다.
 
-<details className="bg-gray-100 p-2 rounded-md">
-  <summary>자세히 알아보기: **기본 내보내기 vs 명명된 내보내기**</summary>
-
-
-JavaScript에서 값들을 내보내는 데에는 두 가지 기본적인 방법이 있습니다: 기본 내보내기(default exports)와 명명된 내보내기(named exports). 지금까지의 예제에서는 기본 내보내기만 사용했습니다. 하지만 동일한 파일에서 하나 이상의 방법을 함께 사용할 수도 있습니다. **파일은 기본 내보내기를 하나만 가질 수 있지만, 명명된 내보내기는 원하는 만큼 가질 수 있습니다.**
+<ToggleContent title="기본 내보내기 vs 명명된 내보내기">
+자바스크립트에서 값들을 내보내는 데에는 두 가지 기본적인 방법이 있습니다: 기본 내보내기(default exports)와 명명된 내보내기(named exports). 지금까지의 예제에서는 기본 내보내기만 사용했습니다. 하지만 동일한 파일에서 하나 이상의 방법을 함께 사용할 수도 있습니다. **파일은 기본 내보내기를 하나만 가질 수 있지만, 명명된 내보내기는 원하는 만큼 가질 수 있습니다.**
 
 ![내보내기 구문과 가져오기 구문의 비교](https://react.dev/images/docs/illustrations/i_import-export.svg)
 
@@ -62,7 +59,7 @@ JavaScript에서 값들을 내보내는 데에는 두 가지 기본적인 방법
 기본 가져오기를 작성할 때에는 import 뒤에 어떤 이름을 사용해도 상관 없습니다. 예를 들어, `import Banana from './Button.js'`와 같이 작성해도 동일한 기본 내보내기가 제공됩니다. 반면, 명명된 가져오기는 이름이 양쪽에서 일치해야 합니다. 이것이 명명된 가져오기라고 불리는 이유입니다!
 
 **하나의 파일에서 하나의 컴포넌트만 내보낼 경우에는 기본 내보내기를 사용하고, 여러 컴포넌트와 값들을 내보낼 경우에는 명명된 내보내기를 사용하는 경향이 있습니다.** 어떤 코딩 스타일을 선호하든지, 항상 컴포넌트 함수와 해당 파일에 의미있는 이름을 부여하는 것이 좋습니다. `export default () => {}`와 같이 이름이 없는 컴포넌트는 디버깅을 어렵게 만들기 때문에 권장되지 않습니다.
-</details>
+</ToggleContent>
 
 
 ## 동일한 파일에서 여러 컴포넌트 내보내고 가져오기
@@ -117,9 +114,7 @@ export default function App() {
 - `default` 및 `named import` 및 `export`를 언제 어떻게 사용하는지
 - 동일한 파일에서 여러 컴포넌트를 내보내는 방법
 
-<details className="bg-gray-100 p-2 rounded-md">
-  <summary>자세히 알아보기: **도전 과제: 컴포넌트를 더 세분화하기**</summary>
-
+<ToggleContent title="도전 과제: 컴포넌트를 더 세분화하기">
 현재, Gallery.js 파일에서는 Profile과 Gallery 두 개의 컴포넌트를 내보내는데, 조금 혼동스럽습니다.
 
 Profile 컴포넌트를 자체적인 Profile.js 파일로 이동시킨 후, App 컴포넌트를 수정하여 `<Profile />`와 `<Gallery />`를 연이어 렌더링하도록 변경하세요.
@@ -130,9 +125,9 @@ Profile에 대해서는 기본 내보내기(`default export`) 또는 명명된 �
 ---|---|---
 기본 내보내기|`export default function Button() {}`|`import Button from './Button.js';`
 명명된 내보내기|`export function Button() {}`|`import { Button } from './Button.js';`  
-  
+
 [![Edit determined-shape-vkkovt](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/determined-shape-vkkovtt?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
 한 종류의 내보내기 방식으로 작동하는 것을 확인한 후, 다른 종류의 내보내기 방식으로도 작동하도록 만들어보세요.
 
-</details>
+</ToggleContent>

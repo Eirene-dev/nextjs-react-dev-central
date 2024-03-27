@@ -1,129 +1,129 @@
 ---
 title: State 보존과 재설정
 date: '2023-06-05'
-summary: 이 문서는 React에서 컴포넌트 간 상태를 보존하고 리셋하는 방법에 대한 설명을 제공합니다.
+summary: 이 문서는 리액트에서 컴포넌트 간 상태를 보존하고 리셋하는 방법에 대한 설명을 제공합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
 
-상태는 컴포넌트 간에 격리되어 있습니다. React는 UI 트리 내의 위치를 기반으로 어떤 상태가 어떤 컴포넌트에 속하는지 추적합니다. 상태를 언제 보존하고 언제 리셋할지를 제어할 수 있습니다.
+상태는 컴포넌트 간에 격리되어 있습니다. 리액트는 UI 트리 내의 위치를 기반으로 어떤 상태가 어떤 컴포넌트에 속하는지 추적합니다. 상태를 언제 보존하고 언제 리셋할지를 제어할 수 있습니다.
 
 배울 내용
 
-- React가 컴포넌트 구조를 "보는" 방식
-- React가 상태를 보존하거나 리셋하는 시점
-- React에게 컴포넌트 상태를 강제로 리셋시키는 방법
+- 리액트가 컴포넌트 구조를 "보는" 방식
+- 리액트가 상태를 보존하거나 리셋하는 시점
+- 리액트에게 컴포넌트 상태를 강제로 리셋시키는 방법
 - 키와 타입이 상태 보존 여부에 어떤 영향을 미치는지
 
 ## UI 트리
 
 브라우저는 UI를 모델링하기 위해 여러 트리 구조를 사용합니다. [DOM](https://developer.mozilla.org/docs/Web/API/Document_Object_Model/Introduction)은 HTML 요소를 나타내고, [CSSOM](https://developer.mozilla.org/docs/Web/API/CSS_Object_Model)은 CSS를 나타냅니다. 심지어 [접근성 트리](https://developer.mozilla.org/docs/Glossary/Accessibility_tree)도 있습니다!
 
-React도 UI를 관리하고 모델링하기 위해 트리 구조를 사용합니다. React는 JSX로부터 **UI 트리**를 만듭니다. 그런 다음 React DOM은 브라우저 DOM 요소를 해당 UI 트리와 일치하도록 업데이트합니다. (React Native는 이러한 트리를 모바일 플랫폼에 특화된 요소로 변환합니다.)
+리액트도 UI를 관리하고 모델링하기 위해 트리 구조를 사용합니다. 리액트는 JSX로부터 **UI 트리**를 만듭니다. 그런 다음 리액트 DOM은 브라우저 DOM 요소를 해당 UI 트리와 일치하도록 업데이트합니다. (리액트 Native는 이러한 트리를 모바일 플랫폼에 특화된 요소로 변환합니다.)
 <div style={{ textAlign: "center" }}>
   <img 
     src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_dom_tree.png&w=1080&q=75" 
-    alt="React Sharing Data" 
+    alt="리액트 Sharing Data" 
     width="100%" 
     style={{ height: "auto" }}
   />
-  <p>컴포넌트로부터, React는 UI 트리를 생성하고 React DOM은 이를 사용하여 DOM을 렌더링합니다.</p>
+  <p>컴포넌트로부터, 리액트는 UI 트리를 생성하고 리액트 DOM은 이를 사용하여 DOM을 렌더링합니다.</p>
 </div>
 
 ## 상태는 트리 내의 위치에 연결됩니다
 
-컴포넌트에 상태를 제공할 때, 상태가 컴포넌트 내에 "존재"한다고 생각할 수 있습니다. 하지만 실제로 상태는 React 내부에 보관됩니다. React는 상태 조각을 컴포넌트가 UI 트리 내의 어떤 위치에 있는지에 따라 올바른 컴포넌트와 연결합니다.
+컴포넌트에 상태를 제공할 때, 상태가 컴포넌트 내에 "존재"한다고 생각할 수 있습니다. 하지만 실제로 상태는 리액트 내부에 보관됩니다. 리액트는 상태 조각을 컴포넌트가 UI 트리 내의 어떤 위치에 있는지에 따라 올바른 컴포넌트와 연결합니다.
 
-여기에서는 `<Counter />` JSX 태그가 하나만 있지만, 서로 다른 위치에 두 개의 별도의 Counter가 렌더링됩니다:
+여기에서는 `<Counter />` JSX 태그가 하나만 있지만, 서로 다른 위치에 두 개의 별도의 Counter가 렌더링됩니다.
 [![Edit elated-frog-zcc3dp](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/elated-frog-zcc3dp?fontsize=14&hidenavigation=1&theme=dark)
 
-이것이 트리로 표시된 모습입니다:
+이것이 트리로 표시된 모습입니다.
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_tree.png&w=640&q=75" alt="React Sharing Data" style={{ width: '360px' }} />
-  <p>React 트리</p>
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_tree.png&w=640&q=75" alt="리액트 Sharing Data" style={{ width: '360px' }} />
+  <p>리액트 트리</p>
 </div>
 
-**이것은 두 개의 별도의 카운터입니다. 각각은 고유한 위치에 렌더링되기 때문입니다.** React를 사용할 때는 일반적으로 이러한 위치를 고려할 필요는 없지만, 작동 방식을 이해하는 데 유용할 수 있습니다.
+**이것은 두 개의 별도의 카운터입니다. 각각은 고유한 위치에 렌더링되기 때문입니다.** 리액트를 사용할 때는 일반적으로 이러한 위치를 고려할 필요는 없지만, 작동 방식을 이해하는 데 유용할 수 있습니다.
 
-React에서 화면의 각 컴포넌트는 완전히 격리된 상태를 가지고 있습니다. 예를 들어, 두 개의 Counter 컴포넌트를 옆에 렌더링한다면, 각각에는 독립적인 점수(score)와 호버(hover) 상태가 있게 됩니다.
+리액트에서 화면의 각 컴포넌트는 완전히 격리된 상태를 가지고 있습니다. 예를 들어, 두 개의 Counter 컴포넌트를 옆에 렌더링한다면, 각각에는 독립적인 점수(score)와 호버(hover) 상태가 있게 됩니다.
 
 두 개의 카운터를 모두 클릭해보고, 서로에게 영향을 주지 않는다는 점을 확인하세요:
 
 [![Edit inspiring-pike-3jz97w](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/inspiring-pike-3jz97w?fontsize=14&hidenavigation=1&theme=dark)
 
 
-보시다시피 한 컴포넌트가 업데이트될 때 해당 컴포넌트의 상태만 업데이트됩니다:
+보시다시피 한 컴포넌트가 업데이트될 때 해당 컴포넌트의 상태만 업데이트됩니다.
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_increment.png&w=640&q=75" alt="React Sharing Data" width="360" height="auto" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_increment.png&w=640&q=75" alt="리액트 Sharing Data" width="360" height="auto" />
   <p>상태 업데이트</p>
 </div>
 
-React는 동일한 컴포넌트가 동일한 위치에서 렌더링되는 한 상태를 계속 유지합니다. 이를 확인하려면 두 개의 카운터를 증가시킨 다음 "두 번째 카운터 렌더링" 확인란을 선택 해제하여 두 번째 컴포넌트를 제거한 다음 다시 선택하여 추가하세요:
+리액트는 동일한 컴포넌트가 동일한 위치에서 렌더링되는 한 상태를 계속 유지합니다. 이를 확인하려면 두 개의 카운터를 증가시킨 다음 "두 번째 카운터 렌더링" 확인란을 선택 해제하여 두 번째 컴포넌트를 제거한 다음 다시 선택하여 추가하세요:
 
 [![Edit romantic-wildflower-wxsc2o](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/romantic-wildflower-wxsc2o?fontsize=14&hidenavigation=1&theme=dark)
 
 
-두 번째 카운터를 더 이상 렌더링하지 않게되면, 해당 상태가 완전히 사라집니다. 그 이유는 React가 컴포넌트를 제거할 때 상태를 파괴하기 때문입니다.
+두 번째 카운터를 더 이상 렌더링하지 않게되면, 해당 상태가 완전히 사라집니다. 그 이유는 리액트가 컴포넌트를 제거할 때 상태를 파괴하기 때문입니다.
 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_remove_component.png&w=640&q=75" alt="React Sharing Data" width="360" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_remove_component.png&w=640&q=75" alt="리액트 Sharing Data" width="360" />
   <p>컴포넌트 삭제</p>
 </div>
 
-React는 동일한 컴포넌트가 UI 트리에서 동일한 위치에 렌더링되는 한 상태를 유지합니다.
+리액트는 동일한 컴포넌트가 UI 트리에서 동일한 위치에 렌더링되는 한 상태를 유지합니다.
 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_add_component.png&w=640&q=75" alt="React Sharing Data" width="360" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_add_component.png&w=640&q=75" alt="리액트 Sharing Data" width="360" />
   <p>컴포넌트 추가</p>
 </div>
 
 
 ## 동일한 위치에 있는 동일한 컴포넌트는 상태를 보존합니다
 
-이 예제에서는 두 개의 다른 `<Counter />` 태그가 있습니다:
+이 예제에서는 두 개의 다른 `<Counter />` 태그가 있습니다.
 [![Edit bold-einstein-8swdmv](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/bold-einstein-8swdmv?fontsize=14&hidenavigation=1&theme=dark)
 
-체크박스를 선택하거나 선택 해제할 때, 카운터 상태는 리셋되지 않습니다. isFancy가 true이든 false이든, 항상 root App 컴포넌트에서 반환된 div의 첫 번째 자식으로 `<Counter />`가 있습니다:
+체크박스를 선택하거나 선택 해제할 때, 카운터 상태는 리셋되지 않습니다. isFancy가 true이든 false이든, 항상 root App 컴포넌트에서 반환된 div의 첫 번째 자식으로 `<Counter />`가 있습니다.
 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_same_component.png&w=640&q=75" alt="React Sharing Data" width="480" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_same_component.png&w=640&q=75" alt="리액트 Sharing Data" width="480" />
   <p>앱 상태를 업데이트해도 Counter는 리셋되지 않습니다. 이는 Counter가 동일한 위치에 남아 있기 때문입니다.</p>
 </div>
 
-React의 관점에서 동일한 컴포넌트이므로 구분됩니다.
+리액트의 관점에서 동일한 컴포넌트이므로 구분됩니다.
 
 <Callout type="warning">
 **주의하기**
 
-React에서 중요한 점은 **JSX 마크업이 아니라 UI 트리 내의 위치가 중요하다는 것입니다!** 이 컴포넌트는 if문 내부와 외부에 서로 다른 `<Counter />` JSX 태그를 포함하는 두 개의 return 절이 있습니다:
+리액트에서 중요한 점은 **JSX 마크업이 아니라 UI 트리 내의 위치가 중요하다는 것입니다!** 이 컴포넌트는 if문 내부와 외부에 서로 다른 `<Counter />` JSX 태그를 포함하는 두 개의 return 절이 있습니다.
 </Callout>
 
 
 [![Edit nostalgic-alex-18c6we](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/nostalgic-alex-18c6we?fontsize=14&hidenavigation=1&theme=dark)
 
 
-체크박스를 선택할 때 상태가 리셋될 것으로 예상할 수 있지만, 그렇지 않습니다! 이는 **이 두 개의 `<Counter />` 태그가 동일한 위치에서 렌더링되기 때문입니다.** React는 함수 내에서 조건을 어디에 두었는지 알지 못합니다. React가 "보는" 것은 반환한 트리뿐입니다.
+체크박스를 선택할 때 상태가 리셋될 것으로 예상할 수 있지만, 그렇지 않습니다! 이는 **이 두 개의 `<Counter />` 태그가 동일한 위치에서 렌더링되기 때문입니다.** 리액트는 함수 내에서 조건을 어디에 두었는지 알지 못합니다. 리액트가 "보는" 것은 반환한 트리뿐입니다.
 
-두 경우 모두 App 컴포넌트가 `<Counter />`를 첫 번째 자식으로 포함하는 `<div>`를 반환합니다. React는 이 두 카운터가 동일한 "주소"를 가지고 있다고 간주합니다. 즉, root의 첫 번째 자식의 첫 번째 자식입니다. 이것은 React가 이전과 다음 렌더링 사이에서 이들을 일치시키기 위해 사용하는 방법이며, 로직을 구조화하는 방식과 상관없이 동작합니다.
+두 경우 모두 App 컴포넌트가 `<Counter />`를 첫 번째 자식으로 포함하는 `<div>`를 반환합니다. 리액트는 이 두 카운터가 동일한 "주소"를 가지고 있다고 간주합니다. 즉, root의 첫 번째 자식의 첫 번째 자식입니다. 이것은 리액트가 이전과 다음 렌더링 사이에서 이들을 일치시키기 위해 사용하는 방법이며, 로직을 구조화하는 방식과 상관없이 동작합니다.
 
 ## 동일한 위치에 있는 다른 컴포넌트는 상태를 리셋합니다
 
-이 예제에서는 체크박스를 선택하면 `<Counter>`를 `<p>`로 바꿉니다:
+이 예제에서는 체크박스를 선택하면 `<Counter>`를 `<p>`로 바꿉니다.
 
 [![Edit sharp-pine-6gbws5](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/sharp-pine-6gbws5?fontsize=14&hidenavigation=1&theme=dark)
 
 
-여기에서 동일한 위치에서 다른 컴포넌트 유형으로 전환합니다. 초기에는 `<div>`의 첫 번째 자식에 Counter가 포함되어 있습니다. 그러나 p로 교체할 때, React는 Counter를 UI 트리에서 제거하고 해당 상태를 파괴합니다.
+여기에서 동일한 위치에서 다른 컴포넌트 유형으로 전환합니다. 초기에는 `<div>`의 첫 번째 자식에 Counter가 포함되어 있습니다. 그러나 p로 교체할 때, 리액트는 Counter를 UI 트리에서 제거하고 해당 상태를 파괴합니다.
 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_pt1.png&w=828&q=75" alt="React Sharing Data" width="600" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_pt1.png&w=828&q=75" alt="리액트 Sharing Data" width="600" />
   <p>Counter가 p로 변경되면 Counter는 삭제되고 p가 추가됩니다.</p>
 </div>
 
   
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_pt2.png&w=828&q=75" alt="React Sharing Data" width="600" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_pt2.png&w=828&q=75" alt="리액트 Sharing Data" width="600" />
   <p>다시 전환할 때, p가 삭제되고 Counter가 추가됩니다.</p>
 </div>
 
@@ -136,18 +136,18 @@ React에서 중요한 점은 **JSX 마크업이 아니라 UI 트리 내의 위�
 체크박스를 클릭하면 카운터 상태가 리셋됩니다. Counter를 렌더링하더라도, 첫 번째 자식 div가 div에서 section으로 변경되면서 하위 트리 전체(카운터 및 해당 상태 포함)가 파괴됩니다.
 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_same_pt1.png&w=828&q=75" alt="React Sharing Data" width="600" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_same_pt1.png&w=828&q=75" alt="리액트 Sharing Data" width="600" />
   <p>section이 div로 변경될 때, section은 삭제되고 새로운 div가 추가됩니다.</p>
 </div>
 
 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_same_pt2.png&w=828&q=75" alt="React Sharing Data" width="600" />
+  <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_same_pt2.png&w=828&q=75" alt="리액트 Sharing Data" width="600" />
   <p>다시 전환할 때, div는 삭제되고 새로운 section이 추가됩니다.</p>
 </div>
 
 
-일반적으로 **재렌더링 사이에서 상태를 보존하려면 트리의 구조가 한 렌더링에서 다른 렌더링으로 "일치"해야 합니다.** 구조가 다르면 React는 컴포넌트를 트리에서 제거할 때 상태를 파괴합니다.
+일반적으로 **재렌더링 사이에서 상태를 보존하려면 트리의 구조가 한 렌더링에서 다른 렌더링으로 "일치"해야 합니다.** 구조가 다르면 리액트는 컴포넌트를 트리에서 제거할 때 상태를 파괴합니다.
 
 <Callout type="warning">
 **주의하기**
@@ -155,33 +155,33 @@ React에서 중요한 점은 **JSX 마크업이 아니라 UI 트리 내의 위�
 이것이 컴포넌트 함수 정의를 중첩해서 사용하지 않아야 하는 이유입니다.
 </Callout>
 
-여기에서 MyTextField 컴포넌트 함수가 MyComponent 내에서 정의되었습니다:
+여기에서 MyTextField 컴포넌트 함수가 MyComponent 내에서 정의되었습니다.
 [![Edit lucid-napier-0p1vil](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/lucid-napier-0p1vil?fontsize=14&hidenavigation=1&theme=dark)
 
 
 
-버튼을 클릭할 때마다 입력 상태가 사라집니다! 이는 MyComponent의 각 렌더링마다 다른 MyTextField 함수가 생성되기 때문입니다. 동일한 위치에서 다른 컴포넌트를 렌더링하고 있으므로 React는 하위 모든 상태를 리셋합니다. 이는 버그와 성능 문제를 유발합니다. 이 문제를 피하기 위해 항상 컴포넌트 함수를 최상위 수준에서 선언하고 중첩하여 정의하지 않도록 해야 합니다.
+버튼을 클릭할 때마다 입력 상태가 사라집니다! 이는 MyComponent의 각 렌더링마다 다른 MyTextField 함수가 생성되기 때문입니다. 동일한 위치에서 다른 컴포넌트를 렌더링하고 있으므로 리액트는 하위 모든 상태를 리셋합니다. 이는 버그와 성능 문제를 유발합니다. 이 문제를 피하기 위해 항상 컴포넌트 함수를 최상위 수준에서 선언하고 중첩하여 정의하지 않도록 해야 합니다.
 
 ## 동일한 위치에서 상태를 리셋하기
 
-기본적으로 React는 동일한 위치에서 컴포넌트가 유지되는 동안 해당 컴포넌트의 상태를 보존합니다. 보통 이것이 원하는 동작이므로 기본 동작으로 의미가 있습니다. 그러나 때로는 컴포넌트의 상태를 리셋해야 할 수도 있습니다. 각 턴마다 두 플레이어의 점수를 기록할 수 있는 이 앱을 생각해보세요:
+기본적으로 리액트는 동일한 위치에서 컴포넌트가 유지되는 동안 해당 컴포넌트의 상태를 보존합니다. 보통 이것이 원하는 동작이므로 기본 동작으로 의미가 있습니다. 그러나 때로는 컴포넌트의 상태를 리셋해야 할 수도 있습니다. 각 턴마다 두 플레이어의 점수를 기록할 수 있는 이 앱을 생각해보세요:
 
 [![Edit zen-sunset-fi5b4y](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/zen-sunset-fi5b4y?fontsize=14&hidenavigation=1&theme=dark)
 
 
 
-현재, 플레이어를 변경하면 점수가 보존됩니다. 두 개의 Counters는 동일한 위치에 나타나므로 React는 동일한 Counter로 인식합니다.
+현재, 플레이어를 변경하면 점수가 보존됩니다. 두 개의 Counters는 동일한 위치에 나타나므로 리액트는 동일한 Counter로 인식합니다.
 
 그러나 개념적으로 이 앱에서는 두 개의 별도 카운터가 있어야 합니다. UI에서 동일한 위치에 표시될 수 있지만, 하나는 Taylor의 점수를, 다른 하나는 Sarah의 점수를 나타냅니다.
 
-이들 간에 상태를 리셋하는 두 가지 방법이 있습니다:
+이들 간에 상태를 리셋하는 두 가지 방법이 있습니다.
 
 1.  서로 다른 위치에 컴포넌트 렌더링하기
 2.  각 컴포넌트에 key를 명시적으로 부여하기
 
 ### 옵션 1: 서로 다른 위치에 컴포넌트 렌더링하기
 
-이 두 Counters가 독립적이기를 원한다면, 두 개의 서로 다른 위치에 렌더링할 수 있습니다:
+이 두 Counters가 독립적이기를 원한다면, 두 개의 서로 다른 위치에 렌더링할 수 있습니다.
 
 [![Edit gallant-nobel-pzdeny](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/gallant-nobel-pzdeny?fontsize=14&hidenavigation=1&theme=dark)
 
@@ -192,15 +192,15 @@ React에서 중요한 점은 **JSX 마크업이 아니라 UI 트리 내의 위�
 
 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
   <div>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_position_p1.png&w=640&q=75" alt="React Sharing Data" width="320" height="auto" />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_position_p1.png&w=640&q=75" alt="리액트 Sharing Data" width="320" height="auto" />
     <p style={{ margin: 0 }}><center>초기상태</center></p>
   </div>
   <div>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_position_p2.png&w=640&q=75" alt="React Sharing Data" width="320" height="auto" />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_position_p2.png&w=640&q=75" alt="리액트 Sharing Data" width="320" height="auto" />
     <p style={{ margin: 0 }}><center>"다음" 클릭</center></p>
   </div>
   <div>
-    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_position_p3.png&w=640&q=75" alt="React Sharing Data" width="320" height="auto" />
+    <img src="https://react.dev/_next/image?url=%2Fimages%2Fdocs%2Fdiagrams%2Fpreserving_state_diff_position_p3.png&w=640&q=75" alt="리액트 Sharing Data" width="320" height="auto" />
     <p style={{ margin: 0 }}><center>다시, "다음" 클릭</center></p>
   </div>
 </div>
@@ -214,15 +214,15 @@ React에서 중요한 점은 **JSX 마크업이 아니라 UI 트리 내의 위�
 
 상태를 키를 사용하여 리셋하는 더 일반적인 방법도 있습니다.
 
-리스트를 렌더링할 때 키를 사용하는 것을 본 적이 있을 것입니다. 키는 리스트에만 해당하는 것이 아닙니다! 키를 사용하여 React에게 컴포넌트 간의 구별을 알려줄 수 있습니다. 기본적으로 React는 부모 내에서 순서("첫 번째 카운터", "두 번째 카운터")를 사용하여 컴포넌트를 구별합니다. 그러나 키를 사용하면 이것이 그냥 첫 번째 카운터나 두 번째 카운터가 아니라 특정한 카운터(예: Taylor의 카운터)임을 React에게 알릴 수 있습니다. 이렇게 하면 React는 트리의 어느 위치에 나타나더라도 Taylor의 카운터로 인식합니다!
+리스트를 렌더링할 때 키를 사용하는 것을 본 적이 있을 것입니다. 키는 리스트에만 해당하는 것이 아닙니다! 키를 사용하여 리액트에게 컴포넌트 간의 구별을 알려줄 수 있습니다. 기본적으로 리액트는 부모 내에서 순서("첫 번째 카운터", "두 번째 카운터")를 사용하여 컴포넌트를 구별합니다. 그러나 키를 사용하면 이것이 그냥 첫 번째 카운터나 두 번째 카운터가 아니라 특정한 카운터(예: Taylor의 카운터)임을 리액트에게 알릴 수 있습니다. 이렇게 하면 리액트는 트리의 어느 위치에 나타나더라도 Taylor의 카운터로 인식합니다!
 
-이 예제에서는 JSX에서 동일한 위치에 나타나지만 각 `<Counter />`가 상태를 공유하지 않습니다:
+이 예제에서는 JSX에서 동일한 위치에 나타나지만 각 `<Counter />`가 상태를 공유하지 않습니다.
 import React from 'react';
 
 [![Edit little-framework-vlg047](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/little-framework-vlg047?fontsize=14&hidenavigation=1&theme=dark)
 
 
-Taylor와 Sarah 사이를 전환해도 상태가 보존되지 않습니다. 이는 **서로 다른 키를 부여했기 때문입니다:**
+Taylor와 Sarah 사이를 전환해도 상태가 보존되지 않습니다. 이는 **서로 다른 키를 부여했기 때문입니다.**
 
 ```javascript
 {isPlayerA ? (
@@ -232,7 +232,7 @@ Taylor와 Sarah 사이를 전환해도 상태가 보존되지 않습니다. 이�
 )}
 ```
 
-키를 명시하면 React가 순서 대신 키 자체를 위치의 일부로 사용하도록 지시합니다. 이렇게 하면 JSX에서 동일한 위치에 렌더링되지만 React는 두 개의 다른 카운터로 인식하므로 상태를 공유하지 않습니다. 카운터가 화면에 나타날 때마다 해당 상태가 생성됩니다. 제거될 때마다 해당 상태가 파괴됩니다. 상태를 반복해서 리셋합니다.
+키를 명시하면 리액트가 순서 대신 키 자체를 위치의 일부로 사용하도록 지시합니다. 이렇게 하면 JSX에서 동일한 위치에 렌더링되지만 리액트는 두 개의 다른 카운터로 인식하므로 상태를 공유하지 않습니다. 카운터가 화면에 나타날 때마다 해당 상태가 생성됩니다. 제거될 때마다 해당 상태가 파괴됩니다. 상태를 반복해서 리셋합니다.
 
 > 참고
 키는 전역적으로 고유할 필요가 없습니다. 키는 부모 내에서 위치를 지정하는 데 사용됩니다.
@@ -241,7 +241,7 @@ Taylor와 Sarah 사이를 전환해도 상태가 보존되지 않습니다. 이�
 
 키를 사용하여 상태를 리셋하는 것은 폼을 다룰 때 특히 유용합니다.
 
-이 채팅 앱에서 `<Chat>` 컴포넌트는 텍스트 입력 상태를 포함합니다:
+이 채팅 앱에서 `<Chat>` 컴포넌트는 텍스트 입력 상태를 포함합니다.
 import React from 'react';
 
 [![Edit silent-hill-e2gbfe](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silent-hill-e2gbfe?fontsize=14&hidenavigation=1&theme=dark)
@@ -256,7 +256,7 @@ import React from 'react';
 <Chat key={to.id} contact={to} />
 ```
 
-이렇게하면 다른 수신자를 선택할 때마다 Chat 컴포넌트가 처음부터 다시 생성되며, 해당 트리 아래에있는 모든 상태와 함께 재생성됩니다. React는 또한 DOM 요소를 재생성하게 됩니다.
+이렇게하면 다른 수신자를 선택할 때마다 Chat 컴포넌트가 처음부터 다시 생성되며, 해당 트리 아래에있는 모든 상태와 함께 재생성됩니다. 리액트는 또한 DOM 요소를 재생성하게 됩니다.
 
 이제 수신자를 전환하면 항상 텍스트 필드가 지워집니다.
 
@@ -270,14 +270,14 @@ import React from 'react';
 
 - 모든 채팅을 렌더링하고 CSS로 모든 다른 채팅을 숨깁니다. 채팅은 트리에서 제거되지 않으므로 로컬 상태가 보존됩니다. 이 방법은 단순한 UI에는 잘 작동하지만, 숨겨진 트리가 크고 DOM 노드가 많은 경우에는 매우 느려질 수 있습니다.
 - 상태를 상위 컴포넌트로 "올리고" 각 수신자에 대한 보류 중인 메시지를 부모 컴포넌트에 보관합니다. 이렇게하면 하위 컴포넌트가 제거되어도 상관없습니다. 중요한 정보를 유지하는 것은 부모 컴포넌트입니다. 이것이 가장 일반적인 솔루션입니다.
-- React 상태 외에도 다른 소스를 사용할 수도 있습니다. 예를 들어, 사용자가 실수로 페이지를 닫아도 메시지 초안이 유지되기를 원할 것입니다. 이를 구현하기 위해 Chat 컴포넌트는 [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)에서 읽어 상태를 초기화하고 초안을 저장할 수 있습니다.
+- 리액트 상태 외에도 다른 소스를 사용할 수도 있습니다. 예를 들어, 사용자가 실수로 페이지를 닫아도 메시지 초안이 유지되기를 원할 것입니다. 이를 구현하기 위해 Chat 컴포넌트는 [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)에서 읽어 상태를 초기화하고 초안을 저장할 수 있습니다.
 
 어떤 전략을 선택하든, Alice와의 대화는 Bob과의 대화와 개념적으로 다른 것이므로 현재 수신자를 기준으로 `<Chat>` 트리에 키를 부여하는 것이 합리적입니다.
 </details>
 
 ## 요약
 
-- React는 동일한 컴포넌트가 동일한 위치에 렌더링되는 한 상태를 유지합니다.
+- 리액트는 동일한 컴포넌트가 동일한 위치에 렌더링되는 한 상태를 유지합니다.
 - 상태는 JSX 태그에 저장되는 것이 아닙니다. JSX에 배치한 위치와 관련이 있습니다.
 - 다른 키를 부여하여 하위 트리를 강제로 리셋시킬 수 있습니다.
 - 컴포넌트 정의를 중첩하지 마세요. 그렇게 하면 실수로 상태가 리셋됩니다.

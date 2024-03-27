@@ -1,24 +1,24 @@
 ---
 title: 컴포넌트에 Props 전달
 date: '2023-04-06'
-summary: 이 글은 React 컴포넌트에서 props를 전달하고 활용하는 방법에 대한 설명을 포함하고 있습니다.
+summary: 이 글은 리액트 컴포넌트에서 props를 전달하고 활용하는 방법에 대한 설명을 포함하고 있습니다.
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
 
-React 컴포넌트는 서로 통신하기 위해 props를 사용합니다. 부모 컴포넌트는 자식 컴포넌트에 props를 제공하여 정보를 전달할 수 있습니다. Props는 HTML 속성을 생각나게 할 수도 있지만, 객체, 배열 및 함수와 같은 모든 JavaScript 값으로 props를 통해 전달할 수 있습니다.
+리액트 컴포넌트는 서로 통신하기 위해 props를 사용합니다. 부모 컴포넌트는 자식 컴포넌트에 props를 제공하여 정보를 전달할 수 있습니다. Props는 HTML 속성을 생각나게 할 수도 있지만, 객체, 배열 및 함수와 같은 모든 JavaScript 값으로 props를 통해 전달할 수 있습니다.
 
 ## 익숙한 props
 
-props는 JSX 태그에 전달하는 정보입니다. 예를 들어, className, src, alt, width, height는 `<img>`에 전달할 수 있는 일부 props입니다:
+props는 JSX 태그에 전달하는 정보입니다. 예를 들어, className, src, alt, width, height는 `<img>`에 전달할 수 있는 일부 props입니다.
 
 [![Edit silly-moon-2nuz15](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silly-moon-2nuz15?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
-`<img>` 태그에 전달할 수 있는 props는 미리 정의되어 있습니다 (ReactDOM은 [HTML 표준](https://www.w3.org/TR/html52/semantics-embedded-content.html#the-img-element)을 준수합니다). 하지만 `<Avatar>`와 같이 직접 만든 컴포넌트에도 다양한 props를 전달할 수 있습니다. 다음은 그 방법입니다!
+`<img>` 태그에 전달할 수 있는 props는 미리 정의되어 있습니다 (리액트DOM은 [HTML 표준](https://www.w3.org/TR/html52/semantics-embedded-content.html#the-img-element)을 준수합니다). 하지만 `<Avatar>`와 같이 직접 만든 컴포넌트에도 다양한 props를 전달할 수 있습니다. 다음은 그 방법입니다!
 
 ## 컴포넌트에 props 전달하기
 
-다음 코드에서 Profile 컴포넌트는 자식 컴포넌트인 Avatar에 어떤 props도 전달하지 않고 있습니다:
+다음 코드에서 Profile 컴포넌트는 자식 컴포넌트인 Avatar에 어떤 props도 전달하지 않고 있습니다.
 
 ```jsx showLineNumbers
 export default function Profile() {
@@ -33,7 +33,7 @@ Avatar에 일부 props를 전달할 수 있습니다.
 
 ### 단계 1: 자식 컴포넌트에 props 전달하기
 
-먼저, Avatar에 일부 props를 전달하세요. 예를 들어, `person (객체)`와 `size (숫자)`라는 두 가지 props를 전달해 보겠습니다:
+먼저, Avatar에 일부 props를 전달하세요. 예를 들어, `person (객체)`와 `size (숫자)`라는 두 가지 props를 전달해 보겠습니다.
 
 ```jsx showLineNumbers
 export default function Profile() {
@@ -72,7 +72,7 @@ person과 size props를 사용하여 렌더링하는 데 필요한 로직을 Ava
 
 Props를 사용하면 부모와 자식 컴포넌트를 독립적으로 생각할 수 있습니다. 예를 들어, Profile 내에서 person 또는 size props를 변경하더라도 Avatar가 이를 사용하는 방식을 생각할 필요가 없습니다. 마찬가지로, Avatar가 이러한 props를 사용하는 방법을 변경할 수 있으며 Profile을 확인하지 않아도 됩니다.
 
-Props를 "버튼"으로 생각할 수 있습니다. 함수의 인수와 마찬가지로, props는 컴포넌트의 유일한 인수입니다! React 컴포넌트 함수는 단일 인수, 즉 props 객체를 허용합니다.
+Props를 "버튼"으로 생각할 수 있습니다. 함수의 인수와 마찬가지로, props는 컴포넌트의 유일한 인수입니다! 리액트 컴포넌트 함수는 단일 인수, 즉 props 객체를 허용합니다.
 
 ```jsx showLineNumbers
 function Avatar(props) {
@@ -176,7 +176,7 @@ function Profile(props) {
 </Card>
 ```
 
-JSX 태그 내에 콘텐츠를 중첩할 때, 부모 컴포넌트는 해당 콘텐츠를 children이라는 prop으로 수신합니다. 예를 들어, 아래의 Card 컴포넌트는 children prop으로 `<Avatar />`를 받아서 래퍼 div 안에서 렌더링합니다:
+JSX 태그 내에 콘텐츠를 중첩할 때, 부모 컴포넌트는 해당 콘텐츠를 children이라는 prop으로 수신합니다. 예를 들어, 아래의 Card 컴포넌트는 children prop으로 `<Avatar />`를 받아서 래퍼 div 안에서 렌더링합니다.
 
 [![Edit clever-herschel-e3k6xg](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/clever-herschel-e3k6xg?autoresize=1&fontsize=14&hidenavigation=1&theme=dark)
 
@@ -188,7 +188,7 @@ JSX 태그 내에 콘텐츠를 중첩할 때, 부모 컴포넌트는 해당 콘�
 
 ## props가 시간에 따라 어떻게 변경되는지
 
-아래의 Clock 컴포넌트는 부모 컴포넌트로부터 두 가지 props를 받습니다: color와 time (부모 컴포넌트의 코드는 생략되었습니다. 이 코드는 [상태](https://react.dev/learn/state-a-components-memory)를 사용하며, 현재는 자세히 설명하지 않을 예정입니다.)
+아래의 Clock 컴포넌트는 부모 컴포넌트로부터 두 가지 props를 받습니다. color와 time (부모 컴포넌트의 코드는 생략되었습니다. 이 코드는 [상태](https://react.dev/learn/state-a-components-memory)를 사용하며, 현재는 자세히 설명하지 않을 예정입니다.)
 
 아래의 선택 상자에서 색상을 변경해 보세요:
 
