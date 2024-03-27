@@ -12,18 +12,18 @@ summary: Next.js 애플리케이션에 Tailwind CSS를 사용하여 스타일링
 
 ## Tailwind 설치하기
 
-Tailwind CSS 패키지를 설치하고 `init` 명령어를 실행하여 `tailwind.config.js`와 `postcss.config.js` 파일을 모두 생성합니다:
+Tailwind CSS 패키지를 설치하고 `init` 명령어를 실행하여 `tailwind.config.js`와 `postcss.config.js` 파일을 모두 생성합니다.
 
-```bash:"터미널"
+```bash:터미널
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 ```
 
 ## Tailwind 설정하기
 
-`tailwind.config.js` 내부에서 Tailwind CSS 클래스 이름을 사용할 파일의 경로를 추가합니다:
+`tailwind.config.js` 내부에서 Tailwind CSS 클래스 이름을 사용할 파일의 경로를 추가합니다.
 
-```js:"tailwind.config.js"
+```js:tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -49,7 +49,7 @@ module.exports = {
 
 애플리케이션의 [글로벌 스타일시트](/docs/nextjs/styling/css-modules#전역-스타일)에 Tailwind가 생성한 스타일을 주입하기 위해 사용하는 [Tailwind CSS 지시어](https://tailwindcss.com/docs/functions-and-directives#directives)를 추가하세요. 예를 들면:
 
-```css:"app/globals.css"
+```css:app/globals.css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,7 +57,7 @@ module.exports = {
 
 애플리케이션의 모든 라우트에 스타일을 적용하기 위해 [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃) (`app/layout.tsx`) 내에서 `globals.css` 스타일시트를 임포트하세요.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import type { Metadata } from 'next'
 
 // 이 스타일은 애플리케이션의 모든 라우트에 적용됩니다.
@@ -80,9 +80,11 @@ export default function RootLayout({
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 // 이 스타일은 애플리케이션의 모든 라우트에 적용됩니다.
 import './globals.css'
 
@@ -103,16 +105,18 @@ export default function RootLayout({ children }) {
 
 ## 클래스 사용하기
 
-Tailwind CSS를 설치하고 글로벌 스타일을 추가한 후, 애플리케이션에서 Tailwind의 유틸리티 클래스를 사용할 수 있습니다.
+Tailwind CSS를 설치하고 글로벌 스타일을 추가한 후 애플리케이션에서 Tailwind의 유틸리티 클래스를 사용할 수 있습니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 export default function Page() {
   return <h1 className="text-3xl font-bold underline">안녕, Next.js!</h1>
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/page.js" switcher
+
+```jsx:app/page.js
 export default function Page() {
   return <h1 className="text-3xl font-bold underline">안녕, Next.js!</h1>
 }
@@ -121,4 +125,4 @@ export default function Page() {
 
 ## Turbopack과 함께 사용하기
 
-Next.js 13.1 버전부터, Tailwind CSS와 PostCSS는 [Turbopack](https://turbo.build/pack/docs/features/css#tailwind-css)과 함께 지원됩니다.
+Next.js 13.1 버전부터 Tailwind CSS와 PostCSS는 [Turbopack](https://turbo.build/pack/docs/features/css#tailwind-css)과 함께 지원됩니다.

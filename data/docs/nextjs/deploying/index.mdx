@@ -12,14 +12,14 @@ summary: Next.js 앱을 관리되거나 자체 호스팅으로 제품 환경에 
 
 ## Next.js 빌드 API
 
-`next build`는 제품 환경을 위해 최적화된 버전의 애플리케이션을 생성합니다. 이 표준 출력에는 다음이 포함됩니다:
+`next build`는 제품 환경을 위해 최적화된 버전의 애플리케이션을 생성합니다. 이 표준 출력에는 다음이 포함됩니다.
 
 - `getStaticProps` 또는 자동 정적 최적화를 사용하는 페이지의 HTML 파일
 - 전역 스타일 또는 개별적으로 범위가 지정된 스타일에 대한 CSS 파일
 - Next.js 서버에서 동적 콘텐츠를 사전 렌더링하기 위한 JavaScript
 - React를 통한 클라이언트 측에서의 상호 작용을 위한 JavaScript
 
-이 출력은 `.next` 폴더 안에 생성됩니다:
+이 출력은 `.next` 폴더 안에 생성됩니다.
 
 - `.next/static/chunks/pages` - 이 폴더 내의 각 JavaScript 파일은 동일한 이름의 라우트와 관련이 있습니다. 예를 들어, `.next/static/chunks/pages/about.js`는 애플리케이션에서 `/about` 라우트를 보는 경우 로드되는 JavaScript 파일이 됩니다.
 - `.next/static/media` – `next/image`에서 정적으로 가져온 이미지는 여기에 해싱되어 복사됩니다.
@@ -35,10 +35,9 @@ summary: Next.js 앱을 관리되거나 자체 호스팅으로 제품 환경에 
 ## Vercel로 관리되는 Next.js
 
 [Vercel](https://vercel.com?utm_source=next-site&utm_medium=docs&utm_campaign=next-website)은 설정 없이 Next.js 애플리케이션을 배포하는 가장 빠른 방법입니다.
+Vercel에 배포할 때 플랫폼은 [Next.js를 자동으로 감지](https://vercel.com/solutions/nextjs?utm_source=next-site&utm_medium=docs&utm_campaign=next-website)하고 `next build`를 실행하며 변경되지 않은 경우 배포간에 캐시된 자산을 유지하는 등의 최적화 작업을 포함하여 빌드 출력을 최적화해줍니다.
 
-Vercel에 배포할 때, 플랫폼은 [Next.js를 자동으로 감지](https://vercel.com/solutions/nextjs?utm_source=next-site&utm_medium=docs&utm_campaign=next-website)하고, `next build`를 실행하며, 변경되지 않은 경우 배포간에 캐시된 자산을 유지하는 등의 최적화 작업을 포함하여 빌드 출력을 최적화해줍니다.
-
-추가로, Vercel은 다음과 같은 기능을 제공합니다:
+추가로, Vercel은 다음과 같은 기능을 제공합니다.
 
 - [Next.js Speed Insights](https://vercel.com/analytics?utm_source=next-site&utm_medium=docs&utm_campaign=next-website)와 함께 자동 성능 모니터링
 - 자동 HTTPS 및 SSL 인증서
@@ -53,11 +52,11 @@ Next.js는 [Docker](https://www.docker.com/) 컨테이너를 지원하는 모든
 1. 컨테이너 빌드: `docker build -t nextjs-docker .`
 1. 컨테이너 실행: `docker run -p 3000:3000 nextjs-docker`
 
-여러 환경에서 다른 환경 변수를 사용해야 하는 경우, [with-docker-multi-env](https://github.com/vercel/next.js/tree/canary/examples/with-docker-multi-env) 예제를 참고하세요.
+> 여러 환경에서 다른 환경 변수를 사용해야 하는 경우 [with-docker-multi-env](https://github.com/vercel/next.js/tree/canary/examples/with-docker-multi-env) 예제를 참고하세요.
 
 ### 정적 HTML 내보내기
 
-Next.js 앱의 정적 HTML 내보내기를 원한다면, [정적 HTML 내보내기 문서](/docs/nextjs/deploying/static-exports)의 지침을 따르세요.
+Next.js 앱의 정적 HTML 내보내기를 원한다면 [정적 HTML 내보내기 문서](/docs/nextjs/deploying/static-exports)의 지침을 따르세요.
 
 ---
 
@@ -74,7 +73,7 @@ Next.js 앱의 정적 HTML 내보내기를 원한다면, [정적 HTML 내보내�
 - [Railway](https://docs.railway.app/getting-started)
 - [Render](https://render.com/docs/deploy-nextjs-app)
 
-> **알아두면 좋아요**: 위에서 보여준 [예제](#docker-image)처럼 Dockerfile을 사용할 수 있는 관리 플랫폼도 있습니다.
+> 위에서 보여준 [예제](#docker-image)처럼 Dockerfile을 사용할 수 있는 관리 플랫폼도 있습니다.
 
 ### 정적만 지원
 
@@ -94,29 +93,27 @@ Next.js 앱의 정적 HTML 내보내기를 원한다면, [정적 HTML 내보내�
 - [Terraform](https://github.com/milliHQ/terraform-aws-next-js)
 - [SST](https://docs.sst.dev/start/nextjs)
 
-> **알아두면 좋아요**: 모든 서버리스 제공 업체가 `next start`로부터 [Next.js Build API](#nextjs-빌드-api)를 구현하지는 않습니다. 지원되는 기능이 무엇인지 제공 업체에게 확인하십시오.
+> 모든 서버리스 제공 업체가 `next start`로부터 [Next.js Build API](#nextjs-빌드-api)를 구현하지는 않습니다. 지원되는 기능이 무엇인지 제공 업체에게 확인하십시오.
 
 ---
 
 ## 자동 업데이트
 
 Next.js 애플리케이션을 배포할 때, 새로고침 없이 최신 버전을 보려고 합니다.
-
 Next.js는 라우팅할 때 배경에서 애플리케이션의 최신 버전을 자동으로 로드합니다. 클라이언트 측 탐색에 대해 `next/link`는 일시적으로 일반 `<a>` 태그로 작동합니다.
 
-> **알아두면 좋아요**: 새 페이지(이전 버전과 함께)가 이미 `next/link`에 의해 미리 가져온 경우, Next.js는 이전 버전을 사용합니다. 미리 가져오지 않은 페이지로 탐색하거나 CDN 레벨에서 캐시되지 않은 경우 최신 버전을 로드합니다.
+> 새 페이지(이전 버전과 함께)가 이미 `next/link`에 의해 미리 가져온 경우, Next.js는 이전 버전을 사용합니다. 미리 가져오지 않은 페이지로 탐색하거나 CDN 레벨에서 캐시되지 않은 경우 최신 버전을 로드합니다.
 
 ---
 
-## 수동적인 우아한 종료
+## 수동적인 종료
 
 자체 호스팅을 할 때, 서버가 `SIGTERM` 또는 `SIGINT` 신호로 종료될 때 코드를 실행하려고 할 수 있습니다.
-
 환경 변수 `NEXT_MANUAL_SIG_HANDLE`를 `true`로 설정한 다음 `_document.js` 파일 내에서 해당 신호에 대한 핸들러를 등록할 수 있습니다. 환경 변수는 `.env` 파일이 아닌 `package.json` 스크립트에 직접 등록해야 합니다.
 
-> **알아두면 좋아요**: 수동 신호 처리는 `next dev`에서 사용할 수 없습니다.
+> 수동 신호 처리는 `next dev`에서 사용할 수 없습니다.
 
-```json:"package.json"
+```json:package.json
 {
   "scripts": {
     "dev": "next dev",
@@ -126,9 +123,9 @@ Next.js는 라우팅할 때 배경에서 애플리케이션의 최신 버전을 
 }
 ```
 
-```js:"pages/_document.js"
+```js:pages/_document.js
 if (process.env.NEXT_MANUAL_SIG_HANDLE) {
-  // 여러분의 사용자 정의
+  // 사용자 정의
 
  _document에 추가해야 합니다.
   process.on('SIGTERM', () => {
@@ -148,7 +145,7 @@ if (process.env.NEXT_MANUAL_SIG_HANDLE) {
 <Card href="/docs/nextjs/deploying/static-exports">
 ### 정적 내보내기
 
-Next.js는 정적 사이트나 싱글 페이지 애플리케이션(SPA)로 시작할 수 있게 해주며, 나중에 서버가 필요한 기능을 선택적으로 사용하도록 업그레이드할 수 있습니다.
+Next.js는 정적 사이트나 싱글 페이지 애플리케이션(SPA)로 시작할 수 있게 해주며 나중에 서버가 필요한 기능을 선택적으로 사용하도록 업그레이드할 수 있습니다.
 </Card>
 
 

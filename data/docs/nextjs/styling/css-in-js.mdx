@@ -6,12 +6,13 @@ summary: Next.js에서 CSS-in-JS 라이브러리 사용하기
 
 <TOCInline toc={props.toc} asDisclosure />
 
+<Callout type="warning" icon="경고">
+런타임 JavaScript가 필요한 CSS-in-JS 라이브러리는 현재 서버 컴포넌트에서 지원되지 않습니다. 서버 컴포넌트 및 스트리밍과 같은 새로운 리액트 기능과 함께 CSS-in-JS를 사용하려면 라이브러리 제작자가 [동시성 렌더링](https://react.dev/blog/2022/03/29/react-v18#what-is-concurrent-react)을 포함하여 리액트의 최신 버전을 지원해야 합니다.
 
-> **경고:** 런타임 JavaScript가 필요한 CSS-in-JS 라이브러리는 현재 서버 컴포넌트에서 지원되지 않습니다. 서버 컴포넌트 및 스트리밍과 같은 새로운 React 기능과 함께 CSS-in-JS를 사용하려면 라이브러리 제작자가 [동시 렌더링](https://react.dev/blog/2022/03/29/react-v18#what-is-concurrent-react)을 포함하여 React의 최신 버전을 지원해야 합니다.
->
-> Next.js는 현재 React Server 컴포넌트 및 스트리밍 아키텍처를 지원하는 CSS와 JavaScript 자산을 처리하기 위한 상위 API에 대한 React 팀과 함께 작업하고 있습니다.
+Next.js는 현재 리액트 서버 컴포넌트 및 스트리밍 아키텍처를 지원하는 CSS와 자바스크립트를 처리하기 위한 상위 API에 대한 리액트 팀과 함께 작업하고 있습니다.
+</Callout>
 
-다음 라이브러리는 `app` 디렉토리 내의 클라이언트 컴포넌트에서 지원됩니다 (알파벳 순):
+다음 라이브러리는 `app` 디렉토리 내의 클라이언트 컴포넌트에서 지원됩니다.
 
 - [`kuma-ui`](https://kuma-ui.com)
 - [`@mui/material`](https://mui.com/material-ui/guides/next-js-app-router/)
@@ -23,21 +24,21 @@ summary: Next.js에서 CSS-in-JS 라이브러리 사용하기
 - [`tss-react`](https://tss-react.dev/)
 - [`vanilla-extract`](https://github.com/vercel/next.js/tree/canary/examples/with-vanilla-extract)
 
-다음은 현재 지원 작업 중입니다:
+다음은 현재 지원 작업 중입니다.
 
 - [`emotion`](https://github.com/emotion-js/emotion/issues/2928)
 
-> **알아두세요**: 다양한 CSS-in-JS 라이브러리를 테스트 중이며, React 18 기능 및/또는 `app` 디렉토리를 지원하는 라이브러리에 대한 예제를 더 추가할 예정입니다.
+> 다양한 CSS-in-JS 라이브러리를 테스트 중이며 리액트 18 기능 및/또는 `app` 디렉토리를 지원하는 라이브러리에 대한 예제를 더 추가할 예정입니다.
 
 서버 컴포넌트를 스타일링하려면 [CSS 모듈](/docs/nextjs/styling/css-modules) 또는 PostCSS나 [Tailwind CSS](/docs/nextjs/styling/tailwind-css)와 같은 CSS 파일을 출력하는 다른 솔루션을 사용하는 것이 좋습니다.
 
 ## `app`에서 CSS-in-JS 구성하기
 
-CSS-in-JS를 구성하는 것은 세 단계의 선택 과정을 포함합니다:
+CSS-in-JS를 구성하는 것은 세 단계의 선택 과정을 포함합니다.
 
-1. 렌더링 중 모든 CSS 규칙을 수집하는 **스타일 레지스트리**.
-2. 해당 규칙을 사용할 수 있는 콘텐츠 이전에 규칙을 주입하는 새로운 `useServerInsertedHTML` 훅.
-3. 초기 서버 측 렌더링 중 앱을 스타일 레지스트리로 감싸는 클라이언트 컴포넌트.
+1. 렌더링 중 모든 CSS 규칙을 수집하는 **스타일 레지스트리**
+2. 해당 규칙을 사용할 수 있는 콘텐츠 이전에 규칙을 주입하는 새로운 `useServerInsertedHTML` 훅
+3. 초기 서버 측 렌더링 중 앱을 스타일 레지스트리로 감싸는 클라이언트 컴포넌트
 
 
 
@@ -45,7 +46,7 @@ CSS-in-JS를 구성하는 것은 세 단계의 선택 과정을 포함합니다:
 
 클라이언트 컴포넌트에서 `styled-jsx`를 사용하려면 `v5.1.0`이 필요합니다. 먼저 새로운 레지스트리를 만듭니다:
 
-```tsx:"app/registry.tsx" switcher
+```tsx:app/registry.tsx
 'use client'
 
 import React, { useState } from 'react'
@@ -74,9 +75,11 @@ export default function StyledJsxRegistry({
   </StyleRegistry>
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/registry.js" switcher
+
+```jsx:app/registry.js
 'use client'
 
 import React, { useState } from 'react'
@@ -103,9 +106,9 @@ export default function StyledJsxRegistry({ children }) {
 ```
 </details>
 
-그런 다음, 레지스트리로 [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃)을 감싸십시오:
+그런 다음 레지스트리로 [루트 레이아웃](/docs/nextjs/routing/pages-and-layouts#root-레이아웃)을 감싸십시오.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import StyledJsxRegistry from './registry'
 
 export default function RootLayout({
@@ -122,9 +125,11 @@ export default function RootLayout({
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 import StyledJsxRegistry from './registry'
 
 export default function RootLayout({ children }) {
@@ -139,16 +144,16 @@ export default function RootLayout({ children }) {
 ```
 </details>
 
-[여기에서 예제를 확인하세요](https://github.com/vercel/app-playground/tree/main/app/styling/styled-jsx).
+> [여기에서 예제를 확인하세요](https://github.com/vercel/app-playground/tree/main/app/styling/styled-jsx).
 
 
 ### Styled Components
 
-다음은 `styled-components@6` 또는 그 이후 버전을 설정하는 방법의 예입니다:
+다음은 `styled-components@6` 또는 그 이후 버전을 설정하는 방법의 예입니다.
 
 먼저 `styled-components` API를 사용하여 렌더링 중 생성된 모든 CSS 스타일 규칙을 수집하는 전역 레지스트리 컴포넌트와 해당 규칙을 반환하는 함수를 생성합니다. 그런 다음 `useServerInsertedHTML` 훅을 사용하여 레지스트리에 수집된 스타일을 루트 레이아웃의 `<head>` HTML 태그에 주입합니다.
 
-```tsx:"lib/registry.tsx" switcher
+```tsx:lib/registry.tsx
 'use client'
 
 import React, { useState } from 'react'
@@ -182,9 +187,9 @@ export default function StyledComponentsRegistry({
 }
 ```
 
-루트 레이아웃의 `children`을 스타일 레지스트리 컴포넌트로 감싸세요:
+루트 레이아웃의 `children`을 스타일 레지스트리 컴포넌트로 감싸세요.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import StyledComponentsRegistry from './lib/registry'
 
 export default function RootLayout({
@@ -202,10 +207,8 @@ export default function RootLayout({
 }
 ```
 
-[여기에서 예제를 확인하세요](https://github.com/vercel/app-playground/tree/main/app/styling/styled-components).
+> [여기에서 예제를 확인하세요](https://github.com/vercel/app-playground/tree/main/app/styling/styled-components).
 
-> **알아두면 좋은 점**:
->
-> - 서버 렌더링 중에 스타일은 전역 레지스트리로 추출되어 HTML의 `<head>`에 삽입됩니다. 이렇게 하면 스타일 규칙이 해당 규칙을 사용할 수 있는 내용보다 앞에 배치됩니다. 앞으로는 React의 새로운 기능을 사용하여 스타일을 주입할 위치를 결정할 수 있습니다.
+> - 서버 렌더링 중에 스타일은 전역 레지스트리로 추출되어 HTML의 `<head>`에 삽입됩니다. 이렇게 하면 스타일 규칙이 해당 규칙을 사용할 수 있는 내용보다 앞에 배치됩니다. 앞으로는 리액트의 새로운 기능을 사용하여 스타일을 주입할 위치를 결정할 수 있습니다.
 > - 스트리밍 중 각 청크의 스타일은 수집되어 기존 스타일에 추가됩니다. 클라이언트 측 수화가 완료되면 `styled-components`는 평상시대로 이를 수행하고 추가 동적 스타일을 주입합니다.
 > - 스타일 레지스트리의 경우 트리의 최상위에서 클라이언트 컴포넌트를 특별히 사용하는 이유는 이 방법으로 CSS 규칙을 추출하는 것이 더 효율적이기 때문입니다. 이렇게 하면 후속 서버 렌더링에서 스타일을 다시 생성하는 것을 방지하고 서버 컴포넌트 페이로드에 포함되지 않게 합니다.

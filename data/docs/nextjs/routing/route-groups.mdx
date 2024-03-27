@@ -7,10 +7,9 @@ summary: 라우트 그룹을 사용하여 Next.js 애플리케이션을 다양�
 
 
 `app` 디렉터리에서는 중첩된 폴더가 일반적으로 URL 경로에 매핑됩니다. 그러나 폴더를 **라우트 그룹**으로 표시하면 해당 폴더가 라우트의 URL 경로에 포함되는 것을 방지할 수 있습니다.
-
 이를 통해 프로젝트 파일과 라우트 세그먼트를 논리적 그룹으로 구성하면서 URL 경로 구조에 영향을 주지 않게 됩니다.
 
-라우트 그룹은 다음과 같은 목적으로 유용합니다:
+라우트 그룹은 다음과 같은 목적으로 유용합니다.
 
 - [라우트를 그룹으로 구성](#url-경로에-영향을-주지-않고-라우트-구성하기) 예를 들어, 사이트 섹션, 목적 또는 팀별로.
 - 같은 라우트 세그먼트 레벨에서 [중첩 레이아웃 활성화](/docs/nextjs/routing/pages-and-layouts):
@@ -29,18 +28,20 @@ summary: 라우트 그룹을 사용하여 Next.js 애플리케이션을 다양�
 
 ### URL 경로에 영향을 주지 않고 라우트 구성하기
 
-URL에 영향을 주지 않고 라우트를 구성하려면 관련된 라우트를 함께 유지하는 그룹을 생성합니다. 괄호 안의 폴더는 URL에서 생략됩니다 (예: `(marketing)` 또는 `(shop)`).
+URL에 영향을 주지 않고 라우트를 구성하려면 관련된 라우트를 함께 유지하는 그룹을 생성합니다. 괄호 안의 폴더는 URL에서 생략됩니다. 예: `(marketing)` 또는 `(shop)`
 
 !["라우트 그룹으로 라우트 구성하기"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-group-organisation.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-`(marketing)` 및 `(shop)` 내부의 라우트는 동일한 URL 계층 구조를 공유하지만, 각 폴더 내부에 `layout.js` 파일을 추가하여 각 그룹에 대해 다른 레이아웃을 생성할 수 있습니다.
+`(marketing)` 및 `(shop)` 내부의 라우트는 동일한 URL 계층 구조를 공유하지만 각 폴더 내부에 `layout.js` 파일을 추가하여 각 그룹에 대해 다른 레이아웃을 생성할 수 있습니다.
 
 !["라우트 그룹과 다양한 레이아웃"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-group-multiple-layouts.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
 
 ### 특정 세그먼트에 레이아웃 적용하기
 
-특정 라우트에 레이아웃을 적용하려면 새로운 라우트 그룹(예: `(shop)`)을 생성하고 동일한 레이아웃을 공유하는 라우트를 그룹 안으로 이동합니다 (예: `account` 및 `cart`). 그룹 밖의 라우트는 레이아웃을 공유하지 않게 됩니다 (예: `checkout`).
+특정 라우트에 레이아웃을 적용하려면 새로운 라우트 그룹(예: `(shop)`)을 생성하고 동일한 레이아웃을 공유하는 라우트를 그룹 안으로 이동합니다. 예: `account` 및 `cart`
+
+그룹 밖의 라우트는 레이아웃을 공유하지 않게 됩니다. 예: `checkout`
 
 !["라우트 그룹과 선택적 레이아웃 적용"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-group-opt-in-layouts.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
@@ -53,8 +54,5 @@ URL에 영향을 주지 않고 라우트를 구성하려면 관련된 라우트�
 위의 예에서 `(marketing)` 및 `(shop)` 모두 자체 루트 레이아웃을 가지고 있습니다.
 
 
-> **알아두면 좋은 사실**:
->
 > - 라우트 그룹의 명명은 구성을 위한 것 외에 특별한 의미가 없습니다. 그것들은 URL 경로에 영향을 주지 않습니다.
 > - 라우트 그룹을 포함하는 라우트는 다른 라우트와 동일한 URL 경로를 갖도록 해석되어서는 **안됩니다**. 예를 들어, 라우트 그룹이 URL 구조에 영향을 주지 않기 때문에 `(marketing)/about/page.js` 및 `(shop)/about/page.js`는 모두 `/about`으로 해석되어 오류를 발생시킵니다.
-> - 상위 `layout.js` 파일 없이 여러 루트 레이아웃을 사용하는 경우 홈 `page.js

@@ -1,18 +1,18 @@
 ---
 title: 데이터 가져오기 패턴
 date: '2023-02-01 02:02'
-summary: React와 Next.js에서의 일반적인 데이터 가져오기 패턴에 대해 알아봅니다.
+summary: 리액트와 Next.js에서의 일반적인 데이터 가져오기 패턴에 대해 알아봅니다.
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
 
-React와 Next.js에서 데이터를 가져오는 데에는 몇 가지 권장되는 패턴과 모범 사례가 있습니다. 이 페이지에서는 가장 일반적인 패턴과 이를 어떻게 사용하는지에 대해 설명합니다.
+리액트와 Next.js에서 데이터를 가져오는 데에는 몇 가지 권장되는 패턴과 모범 사례가 있습니다. 이 페이지에서는 가장 일반적인 패턴과 이를 어떻게 사용하는지에 대해 설명합니다.
 
 ---
 
 ## 서버에서 데이터 가져오기
 
-가능한 경우에는 서버에서 데이터를 가져오는 것을 권장합니다. 이렇게 하면 다음과 같은 이점을 얻을 수 있습니다:
+가능한 경우에는 서버에서 데이터를 가져오는 것을 권장합니다. 이렇게 하면 다음과 같은 이점을 얻을 수 있습니다.
 
 - 백엔드 데이터 리소스(예: 데이터베이스)에 직접 액세스 할 수 있습니다.
 - 액세스 토큰 및 API 키와 같은 민감한 정보를 클라이언트에 노출하지 않고 애플리케이션을 더 안전하게 유지할 수 있습니다.
@@ -25,7 +25,7 @@ React와 Next.js에서 데이터를 가져오는 데에는 몇 가지 권장되�
 
 ### 필요한 곳에서 데이터 가져오기
 
-트리의 여러 컴포넌트에서 같은 데이터(예: 현재 사용자)를 사용해야 하는 경우 데이터를 전역적으로 가져오거나 컴포넌트 간에 속성을 전달할 필요가 없습니다. 대신, 동일한 데이터에 대한 여러 요청의 성능 영향을 걱정하지 않고 데이터가 필요한 컴포넌트에서 `fetch`나 React `cache`를 사용할 수 있습니다.
+트리의 여러 컴포넌트에서 같은 데이터(예: 현재 사용자)를 사용해야 하는 경우 데이터를 전역적으로 가져오거나 컴포넌트 간에 속성을 전달할 필요가 없습니다. 대신, 동일한 데이터에 대한 여러 요청의 성능 영향을 걱정하지 않고 데이터가 필요한 컴포넌트에서 `fetch`나 리액트 `cache`를 사용할 수 있습니다.
 
 이것은 `fetch` 요청이 자동으로 메모이제이션되기 때문에 가능합니다. [요청 메모이제이션](/docs/nextjs/caching/request-memoization)에 대해 자세히 알아보세요.
 
@@ -35,7 +35,7 @@ React와 Next.js에서 데이터를 가져오는 데에는 몇 가지 권장되�
 
 ## 스트리밍
 
-스트리밍 및 [Suspense](https://react.dev/reference/react/Suspense)는 UI의 렌더링 단위를 클라이언트에 점진적으로 렌더링하고 점진적으로 스트리밍할 수 있게 하는 React의 기능입니다.
+스트리밍 및 [Suspense](https://react.dev/reference/react/Suspense)는 UI의 렌더링 단위를 클라이언트에 점진적으로 렌더링하고 점진적으로 스트리밍할 수 있게 하는 리액트의 기능입니다.
 
 서버 컴포넌트와 [중첩 레이아웃](/docs/nextjs/routing/pages-and-layouts)을 사용하면 특정 데이터를 필요로 하지 않는 페이지의 일부를 즉시 렌더링할 수 있으며, 데이터를 가져오는 페이지의 일부에 [로딩 상태](/docs/nextjs/routing/loading-ui-and-streaming)를 표시할 수 있습니다. 이는 사용자가 전체 페이지가 로드되기를 기다릴 필요 없이 상호 작용을 시작할 수 있음을 의미합니다.
 ![](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fserver-rendering-with-streaming.png&w=1920&q=75&dpl=dpl_BGKWNLNJ1dMVCms2set8cNkQfaP3)
@@ -46,7 +46,7 @@ React와 Next.js에서 데이터를 가져오는 데에는 몇 가지 권장되�
 
 ## 병렬 및 순차 데이터 가져오기
 
-React 컴포넌트 내에서 데이터를 가져올 때, 병렬 및 순차 데이터 가져오기라는 두 가지 데이터 가져오기 패턴을 인식해야 합니다.
+리액트 컴포넌트 내에서 데이터를 가져올 때, 병렬 및 순차 데이터 가져오기라는 두 가지 데이터 가져오기 패턴을 인식해야 합니다.
 ![](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fsequential-parallel-data-fetching.png&w=1920&q=75&dpl=dpl_BGKWNLNJ1dMVCms2set8cNkQfaP3)
 
 - **순차 데이터 가져오기**에서는 라우트의 요청이 서로에게 종속되어 있으므로 워터폴을 만듭니다. 한 번의 가져오기가 다른 가져오기의 결과에 의존하거나, 다음 가져오기 전에 조건이 만족되기를 원하는 경우 이 패턴을 원할 수 있습니다. 그러나 이런 행동은 의도하지 않았을 수도 있으며, 더 긴 로딩 시간을 초래할 수 있습니다.
@@ -58,9 +58,9 @@ React 컴포넌트 내에서 데이터를 가져올 때, 병렬 및 순차 데�
 
 중첩된 컴포넌트가 있고 각 컴포넌트가 자체 데이터를 가져오는 경우, 데이터 요청이 서로 다르면 (같은 데이터에 대한 요청은 자동으로 [메모이제이션](/docs/nextjs/caching/request-memoization) 되기 때문에 해당되지 않음) 데이터 가져오기가 순차적으로 이루어집니다.
 
-예를 들어, `Playlists` 컴포넌트는 `artistID` 속성에 의존하기 때문에 `Artist` 컴포넌트가 데이터를 가져오는 것이 완료된 후에만 데이터를 가져오기 시작합니다:
+예를 들어, `Playlists` 컴포넌트는 `artistID` 속성에 의존하기 때문에 `Artist` 컴포넌트가 데이터를 가져오는 것이 완료된 후에만 데이터를 가져오기 시작합니다.
 
-```tsx:"app/artist/page.tsx" switcher
+```tsx:app/artist/page.tsx
 // ...
 
 async function Playlists({ artistID }: { artistID: string }) {
@@ -95,7 +95,7 @@ export default async function Page({
 }
 ```
 
-이런 경우에는 [`loading.js`](/docs/nextjs/routing/loading-ui-and-streaming) (라우트 세그먼트용) 또는 [React `<Suspense>`](/docs/nextjs/routing/loading-ui-and-streaming#suspense와-함께-스트리밍하기) (중첩 컴포넌트용)를 사용하여 React가 결과를 스트리밍하는 동안 즉각적인 로딩 상태를 표시할 수 있습니다.
+이런 경우에는 [`loading.js`](/docs/nextjs/routing/loading-ui-and-streaming) (라우트 세그먼트용) 또는 [리액트 `<Suspense>`](/docs/nextjs/routing/loading-ui-and-streaming#suspense와-함께-스트리밍하기) (중첩 컴포넌트용)를 사용하여 리액트가 결과를 스트리밍하는 동안 즉각적인 로딩 상태를 표시할 수 있습니다.
 
 이렇게 하면 데이터 가져오기에 의해 전체 라우트가 차단되는 것을 방지하고 사용자는 차단되지 않은 페이지의 부분과 상호 작용할 수 있습니다.
 
@@ -113,9 +113,9 @@ export default async function Page({
 
 병렬로 데이터를 가져오려면, 데이터를 사용하는 컴포넌트 외부에서 요청을 정의하고 컴포넌트 내부에서 호출하여 요청을 즉시 시작할 수 있습니다. 이렇게 하면 두 요청을 병렬로 시작하여 시간을 절약하지만, 사용자는 두 프로미스가 모두 해결될 때까지 렌더링된 결과를 볼 수 없습니다.
 
-아래 예시에서 `getArtist`와 `getArtistAlbums` 함수는 `Page` 컴포넌트 외부에서 정의되었으며, 컴포넌트 내부에서 호출되며, 우리는 두 프로미스가 모두 해결될 때까지 기다립니다:
+아래 예시에서 `getArtist`와 `getArtistAlbums` 함수는 `Page` 컴포넌트 외부에서 정의되었으며, 컴포넌트 내부에서 호출되며, 우리는 두 프로미스가 모두 해결될 때까지 기다립니다.
 
-```tsx:"app/artist/[username]/page.tsx" switcher
+```tsx:app/artist/[username]/page.tsx
 import Albums from './albums'
 
 async function getArtist(username: string) {
@@ -163,7 +163,7 @@ export default async function Page({
 
 데이터 로딩의 연속을 방지하기 위한 다른 방법은 사전 로딩 패턴을 사용하는 것입니다. 병렬 데이터 가져오기를 더욱 최적화하기 위해 선택적으로 `preload` 함수를 생성할 수 있습니다. 이 접근법을 사용하면 props로 프로미스를 전달할 필요가 없습니다. `preload` 함수는 패턴이므로 API가 아니기 때문에 어떤 이름으로든 가질 수 있습니다.
 
-```tsx:"components/Item.tsx" switcher
+```tsx:components/Item.tsx
 import { getItem } from '@/utils/get-item'
 
 export const preload = (id: string) => {
@@ -179,7 +179,8 @@ export default async function Item({ id }: { id: string }) {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx:"components/Item.js" switcher
+
+```jsx:components/Item.js
 import { getItem } from '@/utils/get-item'
 
 export const preload = (id) => {
@@ -194,8 +195,9 @@ export default async function Item({ id }) {
 }
 ```
 </details>
+<p />
 
-```tsx:"app/item/[id]/page.tsx" switcher
+```tsx:app/item/[id]/page.tsx
 import Item, { preload, checkIsAvailable } from '@/components/Item'
 
 export default async function Page({
@@ -213,7 +215,8 @@ export default async function Page({
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/item/[id]/page.js" switcher
+
+```jsx:app/item/[id]/page.js
 import Item, { preload, checkIsAvailable } from '@/components/Item'
 
 export default async function Page({ params: { id } }) {
@@ -229,11 +232,11 @@ export default async function Page({ params: { id } }) {
 
 ---
 
-## React `cache`, `server-only`, 및 사전 로딩 패턴 사용하기
+## 리액트 `cache`, `server-only`, 및 사전 로딩 패턴 사용하기
 
 `cache` 함수, 사전 로딩 패턴, `server-only` 패키지를 조합하여 앱 전체에서 사용할 수 있는 데이터 가져오기 유틸리티를 생성할 수 있습니다.
 
-```ts:"utils/get-item.ts" switcher
+```ts:utils/get-item.ts
 import { cache } from 'react'
 import 'server-only'
 
@@ -245,9 +248,11 @@ export const getItem = cache(async (id: string) => {
   // ...
 })
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"utils/get-item.js" switcher
+
+```js:utils/get-item.js
 import { cache } from 'react'
 import 'server-only'
 
@@ -265,6 +270,4 @@ export const getItem = cache(async (id) => {
 
 `utils/get-item` 내보내기는 레이아웃, 페이지 또는 다른 컴포넌트에서 사용될 수 있어 아이템의 데이터가 언제 가져와지는지 제어할 수 있게 해줍니다.
 
-> **알아두면 좋아요:**
->
-> - 서버 데이터 가져오기 함수가 클라이언트에서 사용되지 않도록 [`server-only` 패키지](/docs/nextjs/rendering/composition-patterns#클라이언트-환경에서-서버-전용-코드-유지하기)를 사용하는 것을 권장합니다.
+> 서버 데이터 가져오기 함수가 클라이언트에서 사용되지 않도록 [`server-only` 패키지](/docs/nextjs/rendering/composition-patterns#클라이언트-환경에서-서버-전용-코드-유지하기)를 사용하는 것을 권장합니다.

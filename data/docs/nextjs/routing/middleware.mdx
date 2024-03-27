@@ -13,13 +13,13 @@ summary: 요청이 완료되기 전에 코드를 실행하는 미들웨어의 �
 
 ## 규칙
 
-프로젝트의 루트에 `middleware.ts` (또는 `.js`) 파일을 사용하여 미들웨어를 정의하세요. 예를 들면, `pages` 또는 `app`와 동일한 수준에서, 또는 해당하는 경우 `src` 내부에 있습니다.
+프로젝트의 루트에 `middleware.ts` (또는 `.js`) 파일을 사용하여 미들웨어를 정의하세요. 예를 들면, `pages` 또는 `app`와 동일한 수준에서 또는 해당하는 경우 `src` 내부에 있습니다.
 
 ---
 
 ## 예제
 
-```ts:"middleware.ts" switcher
+```ts:middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -35,7 +35,8 @@ export const config = {
 ```
 <details>
     <summary>JavaScript</summary>
-```js:"middleware.js" switcher
+
+```js:middleware.js
 import { NextResponse } from 'next/server'
 
 // 이 함수는 내부에서 `await`를 사용하는 경우 `async`로 표시할 수 있습니다.
@@ -54,7 +55,7 @@ export const config = {
 
 ## 경로 매칭
 
-미들웨어는 **프로젝트의 모든 라우트에** 대해 호출됩니다. 다음은 실행 순서입니다:
+미들웨어는 **프로젝트의 모든 라우트에** 대해 호출됩니다. 다음은 실행 순서입니다.
 
 1. `next.config.js`에서의 `headers`
 2. `next.config.js`에서의 `redirects`
@@ -65,7 +66,7 @@ export const config = {
 7. 동적 라우트 (`/blog/[slug]`)
 8. `next.config.js`에서의 `fallback` (`rewrites`)
 
-미들웨어가 실행될 경로를 정의하는 두 가지 방법이 있습니다:
+미들웨어가 실행될 경로를 정의하는 두 가지 방법이 있습니다.
 
 1. [사용자 정의 매처 설정](#매처)
 2. [조건문](#조건문)
@@ -74,23 +75,23 @@ export const config = {
 
 `matcher`는 특정 경로에서 미들웨어를 실행하도록 필터링 할 수 있게 해줍니다.
 
-```js:"middleware.js"
+```js:middleware.js
 export const config = {
   matcher: '/about/:path*',
 }
 ```
 
-배열 문법을 사용하여 단일 경로 또는 여러 경로와 일치시킬 수 있습니다:
+배열 문법을 사용하여 단일 경로 또는 여러 경로와 일치시킬 수 있습니다.
 
-```js:"middleware.js"
+```js:middleware.js
 export const config = {
   matcher: ['/about/:path*', '/dashboard/:path*'],
 }
 ```
 
-`matcher` 설정은 완전한 정규 표현식을 허용하므로 부정 전방 탐색이나 문자 매칭과 같은 매칭이 지원됩니다. 특정 경로를 제외한 모든 것과 일치하는 부정 전방 탐색의 예는 다음과 같습니다:
+`matcher` 설정은 완전한 정규 표현식을 허용하므로 부정 전방 탐색이나 문자 매칭과 같은 매칭이 지원됩니다. 특정 경로를 제외한 모든 것과 일치하는 부정 전방 탐색의 예는 다음과 같습니다.
 
-```js:"middleware.js"
+```js:middleware.js
 export const config = {
   matcher: [
     /*
@@ -105,23 +106,23 @@ export const config = {
 }
 ```
 
-> **알아두세요**: `matcher` 값은 빌드 시간에 정적으로 분석될 수 있도록 상수여야 합니다. 변수와 같은 동적 값은 무시됩니다.
+> `matcher` 값은 빌드 시간에 정적으로 분석될 수 있도록 상수여야 합니다. 변수와 같은 동적 값은 무시됩니다.
 
-설정된 매처는:
+설정된 매처는 아래 규칙을 따라야 합니다.
 
 1. `/`로 시작해야 합니다.
-2. 명명된 매개 변수를 포함할 수 있습니다: `/about/:path`는 `/about/a`와 `/about/b`와 일치하지만 `/about/a/c`와는 일치하지 않습니다.
-3. 명명된 매개 변수 (':'로 시작하는)에 수정자를 가질 수 있습니다: `/about/:path*`는 `*`가 _제로 또는 더 많은_ 때문에 `/about/a/b/c`와 일치합니다. `?`는 _제로 또는 하나_ 이고 `+`는 _하나 또는 더 많은_ 입니다.
-4. 괄호로 묶인 정규 표현식을 사용할 수 있습니다: `/about/(.*)`는 `/about/:path*`와 동일합니다.
+2. 명명된 매개 변수를 포함할 수 있습니다. `/about/:path`는 `/about/a`와 `/about/b`와 일치하지만 `/about/a/c`와는 일치하지 않습니다.
+3. 명명된 매개 변수 (':'로 시작하는)에 수정자를 가질 수 있습니다. `/about/:path*`는 `*`가 _제로 또는 더 많은_ 때문에 `/about/a/b/c`와 일치합니다. `?`는 _제로 또는 하나_ 이고 `+`는 _하나 또는 더 많은_ 입니다.
+4. 괄호로 묶인 정규 표현식을 사용할 수 있습니다. `/about/(.*)`는 `/about/:path*`와 동일합니다.
 
 [path-to-regexp](https://github.com/pillarjs/path-to-regexp#path-to-regexp-1) 문서에서 더 자세한 내용을 읽어보세요.
 
-> **알아두세요**: 하위 호환성을 위해, Next.js는 항상 `/public`을 `/public/index`로 간주합니다. 따라서 `/public/:path` 매처는 일치하게 됩니다.
+> 하위 호환성을 위해 Next.js는 항상 `/public`을 `/public/index`로 간주합니다. 따라서 `/public/:path` 매처는 일치하게 됩니다.
 
 
 ### 조건문
 
-```ts:"middleware.ts" switcher
+```ts:middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -138,7 +139,8 @@ export function middleware(request: NextRequest) {
 
 <details>
 <summary>JavaScript</summary>
-```js:"middleware.js" switcher
+
+```js:middleware.js
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -157,7 +159,7 @@ export function middleware(request) {
 
 ## NextResponse
 
-`NextResponse` API를 통해 다음 작업을 수행할 수 있습니다:
+`NextResponse` API를 통해 다음 작업을 수행할 수 있습니다.
 
 - 들어오는 요청을 다른 URL로 `redirect`합니다.
 - 주어진 URL을 표시함으로써 응답을 `rewrite`합니다.
@@ -167,7 +169,7 @@ export function middleware(request) {
 
 <Callout type="app" icon="App Router Only">
 
-미들웨어에서 응답을 생성하려면 다음과 같은 방법이 있습니다:
+미들웨어에서 응답을 생성하려면 다음과 같은 방법이 있습니다.
 
 1. 응답을 생성하는 라우트([Page](/docs/nextjs/routing/pages-and-layouts) 또는 [Route Handler](/docs/nextjs/routing/route-handlers))로 `rewrite`합니다.
 2. `NextResponse`를 직접 반환합니다. [응답 생성](#응답-생성하기)을 참조하세요.
@@ -176,7 +178,7 @@ export function middleware(request) {
 
 <Callout type="page" icon="Page Router Only">
 
-미들웨어에서 응답을 생성하려면 다음과 같은 방법이 있습니다:
+미들웨어에서 응답을 생성하려면 다음과 같은 방법이 있습니다.
 
 1. 응답을 생성하는 라우트([Page](/docs/pages/building-your-application/routing/pages-and-layouts) 또는 [Edge API Route](/docs/pages/building-your-application/routing/api-routes))로 `rewrite`합니다.
 2. `NextResponse`를 직접 반환합니다. [응답 생성](#p응답-생성하기)을 참조하세요.
@@ -187,12 +189,12 @@ export function middleware(request) {
 
 ## 쿠키 사용하기
 
-쿠키는 일반적인 헤더입니다. `Request`에서는 `Cookie` 헤더에 저장되며, `Response`에서는 `Set-Cookie` 헤더에 있습니다. Next.js는 `NextRequest`와 `NextResponse`에 있는 `cookies` 확장을 통해 이러한 쿠키에 접근하고 조작하는 편리한 방법을 제공합니다.
+쿠키는 일반적인 헤더입니다. `Request`에서는 `Cookie` 헤더에 저장되며 `Response`에서는 `Set-Cookie` 헤더에 있습니다. Next.js는 `NextRequest`와 `NextResponse`에 있는 `cookies` 확장을 통해 이러한 쿠키에 접근하고 조작하는 편리한 방법을 제공합니다.
 
-1. 들어오는 요청에 대해 `cookies`는 다음 메소드와 함께 제공됩니다: 쿠키 `get`, `getAll`, `set`, `delete`. `has`로 쿠키의 존재 여부를 확인하거나 `clear`로 모든 쿠키를 삭제할 수 있습니다.
-2. 나가는 응답에 대해서 `cookies`는 다음 메소드를 가집니다: `get`, `getAll`, `set`, `delete`.
+1. 들어오는 요청에 대해 `cookies`는 다음 메소드와 함께 제공됩니다. 쿠키 `get`, `getAll`, `set`, `delete`. `has`로 쿠키의 존재 여부를 확인하거나 `clear`로 모든 쿠키를 삭제할 수 있습니다.
+2. 나가는 응답에 대해서 `cookies`는 다음 메소드를 가집니다. `get`, `getAll`, `set`, `delete`
 
-```ts:"middleware.ts" switcher
+```ts:middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -223,9 +225,11 @@ export function middleware(request: NextRequest) {
   return response
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"middleware.js" switcher
+
+```js:middleware.js
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -263,7 +267,7 @@ export function middleware(request) {
 
 `NextResponse` API를 사용하여 요청 및 응답 헤더를 설정할 수 있습니다 (요청 헤더 설정은 Next.js v13.0.0부터 사용 가능합니다).
 
-```ts:"middleware.ts" switcher
+```ts:middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -285,9 +289,11 @@ export function middleware(request: NextRequest) {
   return response
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"middleware.js" switcher
+
+```js:middleware.js
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -310,7 +316,7 @@ export function middleware(request) {
 ```
 </details>
 
-> **알아두면 좋은 점**: 큰 헤더를 설정하는 것은 백엔드 웹 서버 구성에 따라 [431 Request Header Fields Too Large](https://developer.mozilla.org/docs/Web/HTTP/Status/431) 오류를 발생시킬 수 있으므로 주의해야 합니다.
+> 큰 헤더를 설정하는 것은 백엔드 웹 서버 구성에 따라 [431 Request Header Fields Too Large](https://developer.mozilla.org/docs/Web/HTTP/Status/431) 오류를 발생시킬 수 있으므로 주의해야 합니다.
 
 ---
 
@@ -318,7 +324,7 @@ export function middleware(request) {
 
 미들웨어에서 직접 `Response` 또는 `NextResponse` 인스턴스를 반환하여 응답할 수 있습니다. ([Next.js v13.1.0](https://nextjs.org/blog/next-13-1#nextjs-advanced-middleware)부터 사용 가능합니다.)
 
-```ts:"middleware.ts" switcher
+```ts:middleware.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthenticated } from '@lib/auth'
 
@@ -344,7 +350,8 @@ export function middleware(request: NextRequest) {
 ```
 <details>
     <summary>JavaScript</summary>
-```js:"middleware.js" switcher
+
+```js:middleware.js
 import { NextResponse } from 'next/server'
 import { isAuthenticated } from '@lib/auth'
 
@@ -378,13 +385,13 @@ Next.js의 `v13.1`에서는 고급 사용 사례를 처리하기 위해 두 가�
 
 `skipTrailingSlashRedirect`는 트레일링 슬래시(trailing slash)를 추가하거나 제거하기 위한 Next.js 기본 리다이렉트를 비활성화하여 미들웨어 내에서 커스텀 처리를 할 수 있습니다. 이로 인해 일부 경로에는 트레일링 슬래시를 유지하고 다른 경로에는 트레일링 슬래시를 사용하지 않게 할 수 있어 점진적인 마이그레이션이 더욱 쉬워집니다.
 
-```js:"next.config.js"
+```js:next.config.js
 module.exports = {
   skipTrailingSlashRedirect: true,
 }
 ```
 
-```js:"middleware.js"
+```js:middleware.js
 const legacyPrefixes = ['/docs', '/blog']
 
 export default async function middleware(req) {
@@ -407,13 +414,13 @@ export default async function middleware(req) {
 
 `skipMiddlewareUrlNormalize`는 Next.js가 직접 방문과 클라이언트 전환을 동일하게 처리하기 위해 수행하는 URL 정규화를 비활성화 할 수 있습니다. 이를 통해 원래의 URL을 사용하여 전체 제어가 필요한 몇 가지 고급 사례를 다룰 수 있습니다.
 
-```js:"next.config.js"
+```js:next.config.js
 module.exports = {
   skipMiddlewareUrlNormalize: true,
 }
 ```
 
-```js:"middleware.js"
+```js:middleware.js
 export default async function middleware(req) {
   const { pathname } = req.nextUrl
 
@@ -424,14 +431,4 @@ export default async function middleware(req) {
   // 플래그 없이는 /hello로 정규화됩니다.
 }
 ```
---- 
 
-## 버전 히스토리
-
-| 버전      | 변경사항                                                                                                                  |
-| --------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `v13.1.0` | 고급 미들웨어 플래그 추가                                                                                                 |
-| `v13.0.0` | 미들웨어는 요청 헤더, 응답 헤더를 수정하고 응답을 전송할 수 있습니다.                                                       |
-| `v12.2.0` | 미들웨어는 안정적이며, [업그레이드 가이드](https://nextjs.org/docs/messages/middleware-upgrade-guide)를 참조하세요.                         |
-| `v12.0.9` | Edge Runtime에서 절대 URL 강제 적용 ([PR](https://github.com/vercel/next.js/pull/33410))                                   |
-| `v12.0.0` | 미들웨어 (베타) 추가                                                                                                      |

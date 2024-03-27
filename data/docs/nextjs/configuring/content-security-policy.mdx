@@ -10,12 +10,8 @@ summary: Next.js 애플리케이션에 대한 콘텐츠 보안 정책(CSP)을 �
 
 CSP를 사용하면 개발자들은 콘텐츠 출처, 스크립트, 스타일시트, 이미지, 폰트, 객체, 미디어(오디오, 비디오), iframes 등에 허용되는 원본을 지정할 수 있습니다.
 
-<details>
-  <summary>예제</summary>
+> 엄격한 CSP 예제: [링크](https://github.com/vercel/next.js/tree/canary/examples/with-strict-csp)
 
-- [엄격한 CSP](https://github.com/vercel/next.js/tree/canary/examples/with-strict-csp)
-
-</details>
 
 ## Nonces (난스)
 
@@ -23,17 +19,15 @@ CSP를 사용하면 개발자들은 콘텐츠 출처, 스크립트, 스타일시
 
 ### 왜 난스를 사용해야 할까요?
 
-CSP는 악의적인 스크립트를 차단하도록 설계되었지만, 인라인 스크립트가 필요한 합당한 상황이 있습니다. 이러한 경우, 난스는 올바른 난스를 가진 스크립트가 실행될 수 있도록 허용하는 방법을 제공합니다.
+CSP는 악의적인 스크립트를 차단하도록 설계되었지만, 인라인 스크립트가 필요한 합당한 상황이 있습니다. 이러한 경우 난스는 올바른 난스를 가진 스크립트가 실행될 수 있도록 허용하는 방법을 제공합니다.
 
 ### 미들웨어를 이용한 난스 추가하기
 
 [미들웨어](/docs/nextjs/routing/middleware)는 페이지가 렌더링되기 전에 헤더를 추가하고 난스를 생성할 수 있게 해줍니다.
-
 페이지가 조회될 때마다 새로운 난스가 생성되어야 합니다. 이것은 **난스를 추가하기 위해 동적 렌더링을 사용해야 함**을 의미합니다.
 
-예를 들면:
 
-```ts:"middleware.ts" switcher
+```ts:middleware.ts
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
@@ -68,9 +62,11 @@ export function middleware(request: NextRequest) {
   })
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"middleware.js" switcher
+
+```js:middleware.js
 import { NextResponse } from 'next/server'
 
 export function middleware(request) {
@@ -108,10 +104,9 @@ export function middleware(request) {
 </details>
 
 기본적으로 미들웨어는 모든 요청에서 실행됩니다. [`matcher`](/docs/nextjs/routing/middleware#매처)를 사용하여 특정 경로에서 미들웨어가 실행되도록 필터링할 수 있습니다.
+`next/link`에서의 프리페치와 CSP 헤더가 필요 없는 정적 자산의 일치를 무시하는 것을 권장합니다.
 
-우리는 `next/link`에서의 프리페치와 CSP 헤더가 필요 없는 정적 자산의 일치를 무시하는 것을 권장합니다.
-
-```ts:"middleware.ts" switcher
+```ts:middleware.ts
 export const config = {
   matcher: [
     /*
@@ -131,9 +126,11 @@ export const config = {
   ],
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"middleware.js" switcher
+
+```js:middleware.js
 export const config = {
   matcher: [
     /*
@@ -157,9 +154,9 @@ export const config = {
 
 ### nonce 읽기
 
-이제 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)를 사용하여 [Server Component](/docs/nextjs/rendering/server-components)에서 nonce를 읽을 수 있습니다:
+이제 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)를 사용하여 [Server Component](/docs/nextjs/rendering/server-components)에서 nonce를 읽을 수 있습니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 import { headers } from 'next/headers'
 import Script from 'next/script'
 
@@ -176,7 +173,10 @@ export default function Page() {
 }
 ```
 
-```jsx:"app/page.jsx" switcher
+<details>
+    <summary>JavaScript</summary>
+
+```jsx:app/page.jsx
 import { headers } from 'next/headers'
 import Script from 'next/script'
 
@@ -192,7 +192,4 @@ export default function Page() {
   )
 }
 ```
-
-## 버전 히스토리
-
-Next.js의 `v13.4.20+` 버전을 사용하여 nonce를 적절하게 처리하고 적용하는 것이 좋습니다.
+</details>

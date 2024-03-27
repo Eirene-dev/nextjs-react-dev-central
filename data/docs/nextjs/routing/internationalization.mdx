@@ -12,10 +12,10 @@ Next.js는 여러 언어를 지원하기 위해 콘텐츠의 라우팅 및 렌�
 
 ## 용어 설명
 
-- **Locale:** 언어 및 형식 지정 기본 설정에 대한 식별자입니다. 이는 사용자의 선호 언어와 그들의 지리적 지역을 포함할 수 있습니다.
-  - `en-US`: 미국에서 사용되는 영어
-  - `nl-NL`: 네덜란드에서 사용되는 네덜란드어
-  - `nl`: 지역 특정이 아닌 네덜란드어
+**Locale:** 언어 및 형식 지정 기본 설정에 대한 식별자입니다. 이는 사용자의 선호 언어와 그들의 지리적 지역을 포함할 수 있습니다.
+- `en-US`: 미국에서 사용되는 영어
+- `nl-NL`: 네덜란드에서 사용되는 네덜란드어
+- `nl`: 지역 특정이 아닌 네덜란드어
 
 <Callout type="warning" icon="한국어 설정">
 Next.js에서 대한민국에서 사용하는 한국어를 설정하기 위해서는 `ko-KR`를 사용하면 됩니다. 
@@ -23,7 +23,6 @@ Next.js에서 대한민국에서 사용하는 한국어를 설정하기 위해�
 다국어 지원과 국제화(i18n)을 Next.js 프로젝트에 적용하려면, 다음과 같은 단계를 따르면 됩니다:
 
 1. **next.config.js** 파일에서 `i18n` 설정을 추가하세요.
-
 ```js
 module.exports = {
   i18n: {
@@ -34,9 +33,7 @@ module.exports = {
 ```
 
 2. 여기서 `locales`는 지원하는 언어 목록입니다. 필요한 경우 다른 언어 코드를 추가할 수 있습니다. `defaultLocale`은 기본 언어를 설정하는 부분입니다. 이 예제에서는 대한민국에서 사용하는 한국어인 `ko-KR`를 기본으로 설정했습니다.
-
 3. 이 설정을 마치면 Next.js가 자동으로 각 언어별로 라우팅을 처리합니다. 예를 들면, `/en-US/about`는 영어로 된 "about" 페이지로 이동하고, `/ko-KR/about`는 한국어로 된 "about" 페이지로 이동합니다.
-
 4. 각 언어에 따른 문자열을 제공하려면, 예를 들어 `locales` 폴더 내에 각 언어별 폴더를 만들고 그 안에 번역된 문자열을 관리하는 방법 등 다양한 방법이 있습니다. 번역 라이브러리(예: `next-i18next`, `react-intl` 등)를 사용하여 이를 보다 효율적으로 관리할 수 있습니다.
 
 이렇게 설정하면 Next.js에서 대한민국에서 사용하는 한국어 설정을 적용할 수 있습니다.
@@ -48,7 +45,7 @@ module.exports = {
 
 예를 들어, 다음 라이브러리들을 사용하여 들어오는 `Request`를 확인하여 `Headers`, 지원할 로케일 및 기본 로케일을 기반으로 어떤 로케일을 선택할 것인지 결정할 수 있습니다.
 
-```js:"middleware.js"
+```js:middleware.js
 import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 
@@ -62,7 +59,7 @@ match(languages, locales, defaultLocale) // -> 'en-US'
 
 라우팅은 서브 경로(`/fr/products`) 또는 도메인(`my-site.fr/products`)을 통해 국제화될 수 있습니다. 이 정보를 통해 사용자를 로케일을 기반으로 [Middleware](/docs/nextjs/routing/middleware) 내에서 리디렉션할 수 있습니다.
 
-```js:"middleware.js"
+```js:middleware.js
 import { NextResponse } from 'next/server'
 
 let locales = ['en-US', 'nl-NL', 'nl']
@@ -102,7 +99,7 @@ export const config = {
 
 마지막으로, `app/` 안의 모든 특별한 파일들이 `app/[lang]` 아래에 중첩되도록 합니다. 이를 통해 Next.js 라우터는 라우트 내의 다양한 로케일을 동적으로 처리하고 모든 레이아웃 및 페이지에 `lang` 매개변수를 전달할 수 있습니다. 예를 들면:
 
-```jsx:"app/[lang]/page.js"
+```jsx:app/[lang]/page.js
 // 현재 로케일에 접근할 수 있습니다
 // 예: /en-US/products -> `lang`은 "en-US" 입니다
 export default async function Page({ params: { lang } }) {
@@ -119,7 +116,7 @@ export default async function Page({ params: { lang } }) {
 
 예를 들어, 애플리케이션 내에서 영어와 네덜란드어 콘텐츠 모두를 지원하려고 한다고 가정해봅시다. 우리는 키에서 지역화된 문자열로의 매핑을 제공하는 두 개의 다른 "사전"을 유지할 수 있습니다. 예를 들면:
 
-```json:"dictionaries/en.json"
+```json:dictionaries/en.json
 {
   "products": {
     "cart": "Add to Cart"
@@ -127,7 +124,7 @@ export default async function Page({ params: { lang } }) {
 }
 ```
 
-```json:"dictionaries/nl.json"
+```json:dictionaries/nl.json
 {
   "products": {
     "cart": "Toevoegen aan Winkelwagen"
@@ -137,7 +134,7 @@ export default async function Page({ params: { lang } }) {
 
 요청된 로케일의 번역을 불러오기 위해 `getDictionary` 함수를 생성할 수 있습니다:
 
-```jsx:"app/[lang]/dictionaries.js"
+```jsx:app/[lang]/dictionaries.js
 import 'server-only'
 
 const dictionaries = {
@@ -152,7 +149,7 @@ export const getDictionary = async (locale) => dictionaries[locale]()
 
 현재 선택된 언어를 기반으로 레이아웃이나 페이지 내에서 사전을 가져올 수 있습니다.
 
-```jsx:"app/[lang]/page.js"
+```jsx:app/[lang]/page.js
 import { getDictionary } from './dictionaries'
 
 export default async function Page({ params: { lang } }) {
@@ -168,7 +165,7 @@ export default async function Page({ params: { lang } }) {
 
 주어진 로케일 집합에 대한 정적 라우트를 생성하기 위해, 어떤 페이지나 레이아웃에서도 `generateStaticParams`를 사용할 수 있습니다. 예를 들면, 루트 레이아웃에서 전역적으로 사용될 수 있습니다:
 
-```jsx:"app/[lang]/layout.js"
+```jsx:app/[lang]/layout.js
 export async function generateStaticParams() {
   return [{ lang: 'en-US' }, { lang: 'de' }]
 }

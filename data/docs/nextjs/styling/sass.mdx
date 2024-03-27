@@ -6,27 +6,27 @@ summary: Next.js 어플리케이션에 Sass를 이용한 스타일링하기.
 
 <TOCInline toc={props.toc} asDisclosure />
 
+## 사용법
+
 Next.js는 `.scss`와 `.sass` 확장자 모두를 지원하는 내장 Sass 지원 기능을 가지고 있습니다. `.module.scss` 또는 `.module.sass` 확장자와 CSS 모듈을 통해 컴포넌트 수준의 Sass를 사용할 수 있습니다.
 
-먼저 [`sass`](https://github.com/sass/sass)를 설치하세요:
+먼저 [`sass`](https://github.com/sass/sass)를 설치하세요.
 
-```bash:"터미널"
+```bash:터미널
 npm install --save-dev sass
 ```
 
-> **알아두면 좋은 점**:
->
 > Sass는 각각 자신의 확장자를 가진 [두 가지 다른 문법](https://sass-lang.com/documentation/syntax)을 지원합니다.
 > `.scss` 확장자는 [SCSS 문법](https://sass-lang.com/documentation/syntax#scss)을 사용하도록 요구하며,
 > `.sass` 확장자는 [들여쓰기 문법("Sass")](https://sass-lang.com/documentation/syntax#the-indented-syntax)을 사용하도록 요구합니다.
 >
 > 어떤 것을 선택해야 할지 확실하지 않다면, CSS의 상위 집합인 `.scss` 확장자로 시작하십시오. 이는 들여쓰기 문법("Sass")을 배울 필요가 없습니다.
 
-### Sass 옵션 커스터마이징
+## Sass 옵션 커스터마이징
 
 Sass 컴파일러를 설정하고 싶다면, `next.config.js`의 `sassOptions`를 사용하세요.
 
-```js:"next.config.js"
+```js:next.config.js
 const path = require('path')
 
 module.exports = {
@@ -36,13 +36,13 @@ module.exports = {
 }
 ```
 
-### Sass 변수
+## Sass 변수
 
 Next.js는 CSS 모듈 파일에서 내보낸 Sass 변수를 지원합니다.
 
-예를 들어, 내보낸 `primaryColor` Sass 변수를 사용하는 경우:
+예를 들어, 내보낸 `primaryColor` Sass 변수를 사용하는 경우에는 아래와 같습니다.
 
-```scss:"app/variables.module.scss"
+```scss:app/variables.module.scss
 $primary-color: #64ff00;
 
 :export {
@@ -50,7 +50,7 @@ $primary-color: #64ff00;
 }
 ```
 
-```jsx:"app/page.js"
+```jsx:app/page.js
 // 루트 `/` URL로 매핑됩니다
 
 import variables from './variables.module.scss'

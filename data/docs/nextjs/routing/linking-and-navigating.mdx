@@ -6,10 +6,10 @@ summary: Next.js에서 내비게이션 작동 방식과 Link 컴포넌트 및 `u
 <TOCInline toc={props.toc} asDisclosure />
 
 
-Next.js에서 라우트 간에 이동하는 두 가지 방법이 있습니다:
+Next.js에서 라우트 간에 이동하는 두 가지 방법이 있습니다.
 
-- [`<Link>` 컴포넌트](#link-컴포넌트) 사용하기
-- [`useRouter` 훅](#userouter-훅) 사용하기
+1. [`<Link>` 컴포넌트](#link-컴포넌트) 사용하기
+2. [`useRouter` 훅](#userouter-훅) 사용하기
 
 이 페이지에서는 `<Link>`, `useRouter()`의 사용 방법과 내비게이션의 작동 방식에 대해 자세히 알아볼 것입니다.
 
@@ -19,9 +19,9 @@ Next.js에서 라우트 간에 이동하는 두 가지 방법이 있습니다:
 
 `<Link>`는 HTML `<a>` 태그를 확장하여 [프리페칭](#1-프리페칭)과 클라이언트 사이드 라우트 간 내비게이션을 제공하는 내장 컴포넌트입니다. Next.js에서 라우트 간에 이동하는 주요 방법입니다.
 
-`next/link`에서 가져와서 `href` prop을 컴포넌트에 전달하여 사용할 수 있습니다:
+`next/link`에서 가져와서 `href` prop을 컴포넌트에 전달하여 사용할 수 있습니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 import Link from 'next/link'
 
 export default function Page() {
@@ -29,26 +29,17 @@ export default function Page() {
 }
 ```
 
-<details>
-    <summary>JavaScript</summary>
-```jsx:"app/page.js" switcher
-import Link from 'next/link'
-
-export default function Page() {
-  return <Link href="/dashboard">대시보드</Link>
-}
-```
-</details>
 
 `<Link>`에 전달할 수 있는 다른 선택적인 props도 있습니다. 자세한 내용은 [API 참조](https://nextjs.org/docs/app/api-reference/components/link)에서 확인하실 수 있습니다.
+
 
 ### 예제들
 
 #### 동적 세그먼트로 링크 생성하기
 
-[동적 세그먼트](/docs/nextjs/routing/dynamic-routes)로 링크할 때, 블로그 포스트의 목록을 생성하는 것과 같은 방법으로 [템플릿 리터럴과 보간](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)을 사용할 수 있습니다:
+[동적 세그먼트](/docs/nextjs/routing/dynamic-routes)로 링크할 때 블로그 포스트의 목록을 생성하는 것과 같은 방법으로 [템플릿 리터럴과 보간](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)을 사용할 수 있습니다.
 
-```jsx:"app/blog/PostList.js"
+```jsx:app/blog/PostList.js
 import Link from 'next/link'
 
 export default function PostList({ posts }) {
@@ -66,9 +57,10 @@ export default function PostList({ posts }) {
 
 #### 활성 링크 확인하기
 
-[`usePathname()`](https://nextjs.org/docs/app/api-reference/functions/use-pathname)을 사용하여 링크가 활성 상태인지 확인할 수 있습니다. 예를 들어, 현재 `pathname`이 링크의 `href`와 일치하는 경우 활성 링크에 클래스를 추가하려면:
+[`usePathname()`](https://nextjs.org/docs/app/api-reference/functions/use-pathname)을 사용하여 링크가 활성 상태인지 확인할 수 있습니다.
+예를 들어, 현재 `pathname`이 링크의 `href`와 일치하는 경우 활성 링크에 클래스를 추가하려면 아래 코드와 같습니다.
 
-```jsx:"app/ui/Navigation.js"
+```jsx:app/ui/Navigation.js
 'use client'
 
 import { usePathname } from 'next/navigation'
@@ -138,7 +130,7 @@ router.push('/dashboard', { scroll: false })
 
 이 훅은 클라이언트 컴포넌트 내에서만 사용할 수 있으며 `next/navigation`에서 가져옵니다.
 
-```jsx:"app/page.js"
+```jsx:app/page.js
 'use client'
 
 import { useRouter } from 'next/navigation'
@@ -162,42 +154,39 @@ export default function Page() {
 
 ## 라우팅 및 내비게이션 작동 방식
 
-앱 라우터는 라우팅 및 내비게이션을 위한 하이브리드 접근 방식을 사용합니다. 서버에서는 애플리케이션 코드가 자동으로 라우트 세그먼트별로 코드 분할됩니다. 
-클라이언트에서는 Next.js가 라우트 세그먼트를 [프리페치](#1-프리페칭)하고 [캐시](#2-캐싱)합니다. 즉, 사용자가 새로운 라우트로 이동할 때 브라우저는 페이지를 다시 로드하지 않고 변경되는 라우트 세그먼트만 다시 렌더링합니다 - 내비게이션 경험 및 성능 향상.
+앱 라우터는 라우팅 및 내비게이션을 위한 하이브리드 접근 방식을 사용합니다. 서버에서는 애플리케이션 코드가 자동으로 라우트 세그먼트별로 코드 분할됩니다.
+클라이언트에서는 Next.js가 라우트 세그먼트를 [프리페치](#1-프리페칭)하고 [캐시](#2-캐싱)합니다.
+즉, 사용자가 새로운 라우트로 이동할 때 브라우저는 페이지를 다시 로드하지 않고 변경되는 라우트 세그먼트만 다시 렌더링합니다. 이는 내비게이션 경험 및 성능을 향상합니다.
 
 ### 1. 프리페칭
 
 프리페칭은 사용자가 방문하기 전에 백그라운드에서 라우트를 사전 로드하는 방법입니다.
 
-Next.js에서 라우트가 프리페치되는 두 가지 방법이 있습니다:
+Next.js에서 라우트가 프리페치되는 두 가지 방법이 있습니다.
 
-- **`<Link>` 컴포넌트**: 라우트는 사용자의 뷰포트에 표시될 때 자동으로 프리페치됩니다. 페이지가 처음 로드되거나 스크롤을 통해 보이게 될 때 프리페칭이 발생합니다.
-- **`router.prefetch()`**: `useRouter` 훅을 사용하여 프로그래매틱하게 라우트를 프리페치 할 수 있습니다.
+1. **`<Link>` 컴포넌트**: 라우트는 사용자의 뷰포트에 표시될 때 자동으로 프리페치됩니다. 페이지가 처음 로드되거나 스크롤을 통해 보이게 될 때 프리페칭이 발생합니다.
+2. **`router.prefetch()`**: `useRouter` 훅을 사용하여 프로그래매틱하게 라우트를 프리페치 할 수 있습니다.
 
-`<Link>`의 프리페칭 동작은 정적 및 동적 라우트에서 다릅니다:
+`<Link>`의 프리페칭 동작은 정적 및 동적 라우트에서 다릅니다.
 
 - [**정적 라우트**](/docs/nextjs/rendering/server-components#정적-렌더링-기본-설정): `prefetch`는 `true`로 기본 설정됩니다. 전체 라우트가 프리페치되어 캐시됩니다.
-- [**동적 라우트**](/docs/nextjs/rendering/server-components#d동적-렌더링): `prefetch`는 자동으로 기본 설정됩니다. 첫 번째 `loading.js` 파일까지의 공유 레이아웃만 프리페치되고 `30초` 동안 캐시됩니다. 이는 동적 라우트 전체의 가져오기 비용을 줄이며, 사용자에게 더 나은 시각적 피드백을 제공하기 위한 [즉각적인 로딩 상태](/docs/nextjs/routing/loading-ui-and-streaming#즉시-로딩-상태)를 보여줄 수 있습니다.
+- [**동적 라우트**](/docs/nextjs/rendering/server-components#d동적-렌더링): `prefetch`는 자동으로 기본 설정됩니다. 첫 번째 `loading.js` 파일까지의 공유 레이아웃만 프리페치되고 `30초` 동안 캐시됩니다. 이는 동적 라우트 전체의 가져오기 비용을 줄이며 사용자에게 더 나은 시각적 피드백을 제공하기 위한 [즉각적인 로딩 상태](/docs/nextjs/routing/loading-ui-and-streaming#즉시-로딩-상태)를 보여줄 수 있습니다.
 
-`prefetch` prop을 `false`로 설정하여 프리페칭을 비활성화 할 수 있습니다.
+`prefetch` prop을 `false`로 설정하여 프리페칭을 비활성화 할 수 있습니다. 자세한 정보는 [`<Link>` API 참조](https://nextjs.org/docs/app/api-reference/components/link)를 참고하세요.
 
-자세한 정보는 [`<Link>` API 참조](https://nextjs.org/docs/app/api-reference/components/link)를 참고하세요.
-
-> **알아두면 좋은 사실**:
->
-> - 프리페칭은 개발 환경에서는 활성화되지 않으며, 생산 환경에서만 활성화됩니다.
+> 프리페칭은 개발 환경에서는 활성화되지 않으며 배포 환경에서만 활성화됩니다.
 
 ### 2. 캐싱
 
-Next.js에는 [라우터 캐시](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-캐싱)라는 **메모리 내 클라이언트 측 캐시**가 있습니다. 사용자가 앱을 탐색할 때 React 서버 컴포넌트 페이로드의 [프리페치된](#1-프리페칭) 라우트 세그먼트와 방문한 라우트가 캐시에 저장됩니다.
-
-이는 내비게이션 시 가능한 많은 캐시를 재사용하며 서버에 새로운 요청을 하지 않는 것을 의미합니다 - 요청 수와 전송되는 데이터의 양을 줄여 성능을 향상시킵니다.
+Next.js에는 [라우터 캐시](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-캐싱)라는 **메모리 내 클라이언트 측 캐시**가 있습니다. \
+사용자가 앱을 탐색할 때 리액트 서버 컴포넌트 페이로드의 [프리페치된](#1-프리페칭) 라우트 세그먼트와 방문한 라우트가 캐시에 저장됩니다.
+이는 내비게이션 시 가능한 많은 캐시를 재사용하며 서버에 새로운 요청을 하지 않는 것을 의미합니다. 즉, 요청 수와 전송되는 데이터의 양을 줄여 성능을 향상시킵니다.
 
 [라우터 캐시](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-캐싱)가 어떻게 작동하는지 알아보고 설정하는 방법을 알아보세요.
 
 ### 3. 부분 렌더링
 
-부분 렌더링은 내비게이션시 변경되는 라우트 세그먼트만 클라이언트에서 다시 렌더링되는 것을 의미하며, 공유 세그먼트는 보존됩니다.
+부분 렌더링은 내비게이션시 변경되는 라우트 세그먼트만 클라이언트에서 다시 렌더링되는 것을 의미하며 공유 세그먼트는 보존됩니다.
 
 예를 들어, 두 형제 라우트인 `/dashboard/settings`와 `/dashboard/analytics` 사이를 탐색할 때 `settings`와 `analytics` 페이지는 렌더링되고 공유 `dashboard` 레이아웃은 보존됩니다.
 
@@ -207,7 +196,7 @@ Next.js에는 [라우터 캐시](/docs/nextjs/data-fetching/fetching-caching-and
 
 ### 4. 소프트 내비게이션
 
-기본적으로 브라우저는 페이지 간에 하드 내비게이션을 수행합니다. 이는 브라우저가 페이지를 다시 로드하고 앱의 `useState` 훅과 같은 React 상태 또는 사용자의 스크롤 위치 또는 포커스된 요소와 같은 브라우저 상태를 재설정한다는 것을 의미합니다. 그러나 Next.js에서 앱 라우터는 소프트 내비게이션을 사용합니다. 이는 React가 변경된 세그먼트만 렌더링하면서 React와 브라우저 상태를 보존하며 전체 페이지 리로드가 없다는 것을 의미합니다.
+기본적으로 브라우저는 페이지 간에 하드 내비게이션을 수행합니다. 이는 브라우저가 페이지를 다시 로드하고 앱의 `useState` 훅과 같은 리액트 상태 또는 사용자의 스크롤 위치 또는 포커스된 요소와 같은 브라우저 상태를 재설정한다는 것을 의미합니다. 그러나 Next.js에서 앱 라우터는 소프트 내비게이션을 사용합니다. 이는 리액트가 변경된 세그먼트만 렌더링하면서 리액트와 브라우저 상태를 보존하며 전체 페이지 리로드가 없다는 것을 의미합니다.
 
 ### 5. 뒤로 및 앞으로 내비게이션
 

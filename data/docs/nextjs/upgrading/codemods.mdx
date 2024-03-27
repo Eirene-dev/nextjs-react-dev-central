@@ -14,9 +14,9 @@ API가 업데이트되거나 폐기될 때 Next.js 코드베이스를 업그레�
 
 ## 사용법
 
-터미널에서 프로젝트 폴더로 이동(`cd`)한 다음 다음을 실행합니다:
+터미널에서 프로젝트 폴더로 이동(`cd`)한 다음 다음을 실행합니다.
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod <transform> <path>
 ```
 
@@ -37,7 +37,7 @@ npx @next/codemod <transform> <path>
 
 ##### `built-in-next-font`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod@latest built-in-next-font .
 ```
 
@@ -49,7 +49,7 @@ npx @next/codemod@latest built-in-next-font .
 import { Inter } from '@next/font/google'
 ```
 
-이렇게 변환됩니다:
+이렇게 변환됩니다.
 
 ```js
 import { Inter } from 'next/font/google'
@@ -61,7 +61,7 @@ import { Inter } from 'next/font/google'
 
 ##### `next-image-to-legacy-image`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod@latest next-image-to-legacy-image .
 ```
 
@@ -69,7 +69,7 @@ npx @next/codemod@latest next-image-to-legacy-image .
 
 예를 들면:
 
-```jsx:"pages/index.js"
+```jsx:pages/index.js
 import Image1 from 'next/image'
 import Image2 from 'next/future/image'
 
@@ -83,9 +83,9 @@ export default function Home() {
 }
 ```
 
-이렇게 변환됩니다:
+이렇게 변환됩니다.
 
-```jsx:"pages/index.js"
+```jsx:pages/index.js
 // 'next/image'는 'next/legacy/image'가 됩니다.
 import Image1 from 'next/legacy/image'
 // 'next/future/image'는 'next/image'가 됩니다.
@@ -106,7 +106,7 @@ export default function Home() {
 
 ##### `next-image-experimental`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod@latest next-image-experimental .
 ```
 
@@ -122,7 +122,7 @@ npx @next/codemod@latest next-image-experimental .
 
 ##### `new-link`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod@latest new-link .
 ```
 
@@ -172,7 +172,7 @@ const Component = () => <a>About</a>
 
 ##### `cra-to-next`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod cra-to-next
 ```
 
@@ -186,7 +186,7 @@ Create React App 프로젝트를 Next.js로 마이그레이션하며, Pages Rout
 
 ##### `add-missing-react-import`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod add-missing-react-import
 ```
 
@@ -194,7 +194,7 @@ npx @next/codemod add-missing-react-import
 
 예를 들면:
 
-```jsx:"my-component.js"
+```jsx:my-component.js
 export default class Home extends React.Component {
   render() {
     return <div>Hello World</div>
@@ -202,9 +202,9 @@ export default class Home extends React.Component {
 }
 ```
 
-이렇게 변환됩니다:
+이렇게 변환됩니다.
 
-```jsx:"my-component.js"
+```jsx:my-component.js
 import React from 'react'
 export default class Home extends React.Component {
   render() {
@@ -219,7 +219,7 @@ export default class Home extends React.Component {
 
 ##### `name-default-component`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod name-default-component
 ```
 
@@ -229,15 +229,15 @@ npx @next/codemod name-default-component
 
 예를 들면:
 
-```jsx:"my-component.js"
+```jsx:my-component.js
 export default function () {
   return <div>Hello World</div>
 }
 ```
 
-이렇게 변환됩니다:
+이렇게 변환됩니다.
 
-```jsx:"my-component.js"
+```jsx:my-component.js
 export default function MyComponent() {
   return <div>Hello World</div>
 }
@@ -253,7 +253,7 @@ export default function MyComponent() {
 
 ##### `withamp-to-config`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod withamp-to-config
 ```
 
@@ -289,7 +289,7 @@ export const config = {
 
 ##### `url-to-withrouter`
 
-```bash:"Terminal"
+```bash:터미널
 npx @next/codemod url-to-withrouter
 ```
 
@@ -297,7 +297,7 @@ npx @next/codemod url-to-withrouter
 
 예시:
 
-```js:"From"
+```js:From
 import React from 'react'
 export default class extends React.Component {
   render() {
@@ -307,7 +307,7 @@ export default class extends React.Component {
 }
 ```
 
-```js:"To"
+```js:To
 import React from 'react'
 import { withRouter } from 'next/router'
 export default withRouter(

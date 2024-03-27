@@ -9,10 +9,10 @@ summary: 모든 레이아웃이나 페이지에서 메타데이터를 정의하�
 
 Next.js는 SEO와 웹 공유성을 향상시키기 위해 HTML `head` 요소 내부의 `meta` 및 `link` 태그 같은 애플리케이션 메타데이터를 정의하는 데 사용할 수 있는 Metadata API를 제공합니다.
 
-애플리케이션에 메타데이터를 추가하는 두 가지 방법이 있습니다:
+애플리케이션에 메타데이터를 추가하는 두 가지 방법이 있습니다.
 
-- **설정 기반 메타데이터**: `layout.js` 또는 `page.js` 파일에서 [정적 `metadata` 객체](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-object)나 동적 [`generateMetadata` 함수](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function)를 내보냅니다.
-- **파일 기반 메타데이터**: 라우트 세그먼트에 정적 또는 동적으로 생성된 특별한 파일을 추가합니다.
+1. **설정 기반 메타데이터**: `layout.js` 또는 `page.js` 파일에서 [정적 `metadata` 객체](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-object)나 동적 [`generateMetadata` 함수](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function)를 내보냅니다.
+2. **파일 기반 메타데이터**: 라우트 세그먼트에 정적 또는 동적으로 생성된 특별한 파일을 추가합니다.
 
 이 두 옵션을 사용하면 Next.js는 페이지에 대한 관련 `<head>` 요소를 자동으로 생성합니다. 또한 [`ImageResponse`](https://nextjs.org/docs/app/api-reference/functions/image-response) 생성자를 사용하여 동적 OG 이미지도 생성할 수 있습니다.
 
@@ -22,7 +22,7 @@ Next.js는 SEO와 웹 공유성을 향상시키기 위해 HTML `head` 요소 내
 
 정적 메타데이터를 정의하려면 `layout.js` 또는 정적 `page.js` 파일에서 [`Metadata` 객체](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-object)를 내보냅니다.
 
-```tsx:"layout.tsx / page.tsx" switcher
+```tsx:layout.tsx / page.tsx
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -32,10 +32,11 @@ export const metadata: Metadata = {
 
 export default function Page() {}
 ```
+
 <details>
     <summary>JavaScript</summary>
 
-```jsx:"layout.js / page.js" switcher
+```jsx:layout.js / page.js
 export const metadata = {
   title: '...',
   description: '...',
@@ -53,7 +54,7 @@ export default function Page() {}
 
 `generateMetadata` 함수를 사용하여 동적 값을 요구하는 메타데이터를 `fetch` 할 수 있습니다.
 
-```tsx:"app/products/[id]/page.tsx" switcher
+```tsx:app/products/[id]/page.tsx
 import type { Metadata, ResolvingMetadata } from 'next'
 
 type Props = {
@@ -86,9 +87,11 @@ export async function generateMetadata(
 
 export default function Page({ params, searchParams }: Props) {}
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/products/[id]/page.js" switcher
+
+```jsx:app/products/[id]/page.js
 export async function generateMetadata({ params, searchParams }, parent) {
   // 라우트 매개변수 읽기
   const id = params.id
@@ -115,8 +118,6 @@ export default function Page({ params, searchParams }) {}
 
 사용 가능한 모든 매개변수에 대해 [API 참조](https://nextjs.org/docs/app/api-reference/functions/generate-metadata)에서 확인하세요.
 
-> **알아두면 좋은 점**:
->
 > - `generateMetadata`를 통한 정적 및 동적 메타데이터는 **Server Components에서만 지원**됩니다.
 > - `fetch` 요청은 `generateMetadata`, `generateStaticParams`, Layouts, Pages 및 Server Components의 동일한 데이터에 대해 자동으로 [메모화](/docs/nextjs/caching/request-memoization)됩니다. `fetch`를 사용할 수 없는 경우 React [`cache`를 사용](/docs/nextjs/caching/request-memoization)할 수 있습니다.
 > - Next.js는 클라이언트에 UI를 스트리밍하기 전에 `generateMetadata` 내의 데이터 가져오기가 완료될 때까지 기다립니다. 이렇게 하면 [스트리밍된 응답](/docs/nextjs/routing/loading-ui-and-streaming)의 첫 번째 부분에 `<head>` 태그가 포함됩니다.
@@ -125,7 +126,7 @@ export default function Page({ params, searchParams }) {}
 
 ## 파일 기반 메타데이터
 
-메타데이터를 위해 사용할 수 있는 특별한 파일들은 다음과 같습니다:
+메타데이터를 위해 사용할 수 있는 특별한 파일들은 다음과 같습니다.
 
 - [favicon.ico, apple-icon.jpg, icon.jpg](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons)
 - [opengraph-image.jpg and twitter-image.jpg](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image)
@@ -144,7 +145,7 @@ export default function Page({ params, searchParams }) {}
 
 ### 기본 필드
 
-메타데이터를 정의하지 않는 경로에도 항상 추가되는 두 개의 기본 `meta` 태그가 있습니다:
+메타데이터를 정의하지 않는 경로에도 항상 추가되는 두 개의 기본 `meta` 태그가 있습니다.
 
 - [메타 문자셋 태그](https://developer.mozilla.org/docs/Web/HTML/Element/meta#attr-charset)는 웹사이트의 문자 인코딩을 설정합니다.
 - [메타 뷰포트 태그](https://developer.mozilla.org/docs/Web/HTML/Viewport_meta_tag)는 웹사이트의 뷰포트 너비와 스케일을 다양한 장치에 맞게 조정합니다.
@@ -158,7 +159,7 @@ export default function Page({ params, searchParams }) {}
 
 ### 순서
 
-메타데이터는 최종 `page.js` 세그먼트에 가장 가까운 세그먼트로부터 루트 세그먼트까지 순서대로 평가됩니다. 예를 들면:
+메타데이터는 최종 `page.js` 세그먼트에 가장 가까운 세그먼트로부터 루트 세그먼트까지 순서대로 평가됩니다. 예를 들면 아래와 같습니다.
 
 1. `app/layout.tsx` (루트 레이아웃)
 2. `app/blog/layout.tsx` (중첩된 블로그 레이아웃)
@@ -171,9 +172,9 @@ export default function Page({ params, searchParams }) {}
 이것은 [`openGraph`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#opengraph)와 [`robots`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#robots)와 같이 중첩된 필드를 가진 메타데이터가 이전 세그먼트에서 정의되면 마지막 세그먼트에서 **덮어쓰게** 됨을 의미합니다.
 
 
-#### 필드 덮어쓰기
+필드 덮어쓰기 예제 코드는 다음과 같습니다.
 
-```jsx:"app/layout.js"
+```jsx:app/layout.js"
 export const metadata = {
   title: 'Acme',
   openGraph: {
@@ -182,9 +183,11 @@ export const metadata = {
   },
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/blog/page.js"
+
+```jsx:app/blog/page.js"
 export const metadata = {
   title: '블로그',
   openGraph: {
@@ -198,18 +201,18 @@ export const metadata = {
 ```
 </details>
 
-위 예제에서:
+위 예제는 아래와 같이 동작됩니다.
 
 - `app/layout.js`의 `title`은 `app/blog/page.js`의 `title`로 **대체**됩니다.
 - `app/layout.js`의 모든 `openGraph` 필드는 `app/blog/page.js`에서 `openGraph` 메타데이터를 설정하기 때문에 **대체**됩니다. `openGraph.description`이 없는 것에 주목하세요.
 
-세그먼트간에 중첩된 필드를 공유하면서 다른 필드를 덮어쓰고 싶다면 별도의 변수로 분리할 수 있습니다:
+세그먼트간에 중첩된 필드를 공유하면서 다른 필드를 덮어쓰고 싶다면 별도의 변수로 분리할 수 있습니다.
 
-```jsx:"app/shared-metadata.js"
+```jsx:app/shared-metadata.js
 export const openGraphImage = { images: ['http://...'] }
 ```
 
-```jsx:"app/page.js"
+```jsx:app/page.js
 import { openGraphImage } from './shared-metadata'
 
 export const metadata = {
@@ -221,7 +224,7 @@ export const metadata = {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/about/page.js"
+```jsx:app/about/page.js
 import { openGraphImage } from '../shared-metadata'
 
 export const metadata = {
@@ -233,12 +236,12 @@ export const metadata = {
 ```
 </details>
 
-위 예제에서, OG 이미지는 `app/layout.js`와 `app/about/page.js` 사이에서 공유되며 타이틀은 다릅니다.
+위 예제에서 OG 이미지는 `app/layout.js`와 `app/about/page.js` 사이에서 공유되며 타이틀은 다릅니다.
 
 
 #### 필드 상속
 
-```jsx:"app/layout.js"
+```jsx:app/layout.js
 export const metadata = {
   title: 'Acme',
   openGraph: {
@@ -248,7 +251,7 @@ export const metadata = {
 }
 ```
 
-```jsx:"app/about/page.js"
+```jsx:app/about/page.js
 export const metadata = {
   title: '소개',
 }
@@ -259,7 +262,7 @@ export const metadata = {
 // <meta property="og:description" content="Acme는 ...입니다." />
 ```
 
-**주의사항**
+**주의사항**은 다음과 같습니다.
 
 - `app/layout.js`의 `title`은 `app/about/page.js`의 `title`로 **대체**됩니다.
 - `app/about/page.js`가 `openGraph` 메타데이터를 설정하지 않기 때문에 `app/layout.js`의 모든 `openGraph` 필드가 **상속**됩니다.
@@ -270,9 +273,9 @@ export const metadata = {
 
 `ImageResponse`는 [Edge Runtime](/docs/nextjs/rendering/edge-and-nodejs-runtimes#edge-runtime)을 사용하며, Next.js는 자동으로 엣지에서 캐싱된 이미지에 올바른 헤더를 추가하여 성능을 향상시키고 다시 계산을 줄입니다.
 
-이를 사용하려면 `next/server`에서 `ImageResponse`를 가져올 수 있습니다:
+이를 사용하려면 `next/server`에서 `ImageResponse`를 가져올 수 있습니다.
 
-```jsx:"app/about/route.js"
+```jsx:app/about/route.js
 import { ImageResponse } from 'next/server'
 
 export const runtime = 'edge'
@@ -307,8 +310,6 @@ export async function GET() {
 
 `ImageResponse`는 flexbox와 절대 위치 지정, 사용자 정의 폰트, 텍스트 줄 바꿈, 중앙 정렬 및 중첩된 이미지를 포함한 일반적인 CSS 속성을 지원합니다. [지원되는 CSS 속성의 전체 목록을 확인하십시오](https://nextjs.org/docs/app/api-reference/functions/image-response).
 
-> **알아두면 좋아요**:
->
 > - 예제는 [Vercel OG Playground](https://og-playground.vercel.app/)에서 확인할 수 있습니다.
 > - `ImageResponse`는 HTML과 CSS를 PNG로 변환하기 위해 [@vercel/og](https://vercel.com/docs/concepts/functions/edge-functions/og-image-generation), [Satori](https://github.com/vercel/satori), 및 Resvg를 사용합니다.
 > - 오직 Edge Runtime만 지원됩니다. 기본 Node.js 런타임은 작동하지 않습니다.
@@ -322,9 +323,9 @@ export async function GET() {
 
 [JSON-LD](https://json-ld.org/)는 검색 엔진이 귀하의 콘텐츠를 이해하는 데 사용할 수 있는 구조화된 데이터 형식입니다. 예를 들면, 이를 사용하여 사람, 이벤트, 조직, 영화, 책, 레시피 등 많은 종류의 엔터티를 설명할 수 있습니다.
 
-현재 JSON-LD에 대한 추천 방식은 `layout.js` 또는 `page.js` 컴포넌트 내에서 구조화된 데이터를 `<script>` 태그로 렌더링하는 것입니다. 예를 들면:
+현재 JSON-LD에 대한 추천 방식은 `layout.js` 또는 `page.js` 컴포넌트 내에서 구조화된 데이터를 `<script>` 태그로 렌더링하는 것입니다. 아래는 예제 코드입니다.
 
-```tsx:"app/products/[id]/page.tsx" switcher
+```tsx:app/products/[id]/page.tsx
 export default async function Page({ params }) {
   const product = await getProduct(params.id)
 
@@ -348,9 +349,11 @@ export default async function Page({ params }) {
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/products/[id]/page.js" switcher
+
+```jsx:app/products/[id]/page.js
 export default async function Page({ params }) {
   const product = await getProduct(params.id)
 
@@ -378,7 +381,7 @@ export default async function Page({ params }) {
 
 구조화된 데이터를 [Rich Results Test](https://search.google.com/test/rich-results)로 Google에 대하여 검증하고 테스트하거나 일반적인 [Schema Markup Validator](https://validator.schema.org/)를 사용할 수 있습니다.
 
-TypeScript를 사용하여 [`schema-dts`](https://www.npmjs.com/package/schema-dts)와 같은 커뮤니티 패키지로 JSON-LD를 타입화 할 수 있습니다:
+타입스크립트를 사용하여 [`schema-dts`](https://www.npmjs.com/package/schema-dts)와 같은 커뮤니티 패키지로 JSON-LD를 타입화 할 수 있습니다.
 
 ```tsx
 import { Product, WithContext } from 'schema-dts'

@@ -8,13 +8,13 @@ summary: 마크다운 파일에서 JSX를 작성하기 위해 MDX를 설정하�
 
 [Markdown](https://daringfireball.net/projects/markdown/syntax)은 텍스트를 형식화하는 데 사용되는 경량 마크업 언어입니다. 평문 구문을 사용하여 작성하고 구조적으로 유효한 HTML로 변환할 수 있습니다. 웹사이트와 블로그의 내용을 작성하는 데 일반적으로 사용됩니다.
 
-작성하면...
+ 마크다운으로 아래와 같이 작성하면,
 
 ```md
 I **love** using [Next.js](https://nextjs.org/)
 ```
 
-출력:
+아래와 같이 변환됩니다.
 
 ```html
 <p>I <strong>love</strong> using \
@@ -35,15 +35,15 @@ Next.js는 애플리케이션 내의 로컬 MDX 콘텐츠와 서버에서 동적
 
 ## 시작하기
 
-`@next/mdx` 패키지를 설치하세요:
+`@next/mdx` 패키지를 설치하세요.
 
-```bash:"터미널"
+```bash:터미널
 npm install @next/mdx @mdx-js/loader @mdx-js/react @types/mdx
 ```
 
-응용 프로그램의 루트(즉, `app/` 또는 `src/`의 상위 폴더)에 `mdx-components.tsx`를 생성하세요:
+응용 프로그램의 루트(즉, `app/` 또는 `src/`의 상위 폴더)에 `mdx-components.tsx`를 생성하세요.
 
-```tsx:"mdx-components.tsx" switcher
+```tsx:mdx-components.tsx
 import type { MDXComponents } from 'mdx/types'
 
 // 이 파일은 MDX 파일에서 사용할 사용자 지정 React 컴포넌트를 제공합니다.
@@ -62,9 +62,9 @@ export function useMDXComponents(components: MDXComponents)
 }
 ```
 
-`next.config.js`를 업데이트하여 `mdxRs`를 사용하도록 설정하세요:
+`next.config.js`를 업데이트하여 `mdxRs`를 사용하도록 설정하세요.
 
-```js:"next.config.js"
+```js:"next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
@@ -76,7 +76,7 @@ const withMDX = require('@next/mdx')()
 module.exports = withMDX(nextConfig)
 ```
 
-`app` 디렉터리에 MDX 콘텐츠가 포함된 새 파일을 추가하세요:
+`app` 디렉터리에 MDX 콘텐츠가 포함된 새 파일을 추가하세요.
 
 ```md:"app/hello.mdx"
 안녕, Next.js!
@@ -84,9 +84,9 @@ module.exports = withMDX(nextConfig)
 MDX 파일에서 React 컴포넌트를 가져와 사용할 수 있습니다.
 ```
 
-콘텐츠를 표시하기 위해 `page` 내에서 MDX 파일을 가져옵니다:
+콘텐츠를 표시하기 위해 `page` 내에서 MDX 파일을 가져옵니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 import HelloWorld from './hello.mdx'
 
 export default function Page() {
@@ -95,7 +95,7 @@ export default function Page() {
 ```
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/page.js" switcher
+```jsx:app/page.js
 import HelloWorld from './hello.mdx'
 
 export default function Page() {
@@ -110,11 +110,11 @@ export default function Page() {
 
 만약 마크다운 또는 MDX 파일이 애플리케이션 내부에 _존재하지 않는다면_, 서버에서 그것들을 동적으로 가져올 수 있습니다. 이것은 CMS 또는 다른 데이터 소스에서 내용을 가져오는 데 유용합니다.
 
-MDX 콘텐츠를 가져오기 위한 두 가지 인기 있는 커뮤니티 패키지가 있습니다: [`next-mdx-remote`](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support)와 [`contentlayer`](https://www.contentlayer.dev/). 예를 들면, 아래 예제는 `next-mdx-remote`를 사용합니다:
+MDX 콘텐츠를 가져오기 위한 두 가지 인기 있는 커뮤니티 패키지가 있습니다. [`next-mdx-remote`](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support)와 [`contentlayer`](https://www.contentlayer.dev/). 예를 들면, 아래 예제는 `next-mdx-remote`를 사용합니다.
 
-> **알아두면 좋아요**: 주의 깊게 진행해 주세요. MDX는 자바스크립트로 컴파일되며 서버에서 실행됩니다. 신뢰할 수 있는 출처에서만 MDX 콘텐츠를 가져와야 합니다. 그렇지 않으면 원격 코드 실행(RCE)이 발생할 수 있습니다.
+> 주의 깊게 진행해 주세요. MDX는 자바스크립트로 컴파일되며 서버에서 실행됩니다. 신뢰할 수 있는 출처에서만 MDX 콘텐츠를 가져와야 합니다. 그렇지 않으면 원격 코드 실행(RCE)이 발생할 수 있습니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
 export default async function Home() {
@@ -123,8 +123,10 @@ export default async function Home() {
   return <MDXRemote source={markdown} />
 }
 ```
+<details>
+    <summary>JavaScript</summary>
 
-```jsx:"app/page.js" switcher
+```jsx:app/page.js
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
 export default async function Home() {
@@ -133,6 +135,7 @@ export default async function Home() {
   return <MDXRemote source={markdown} />
 }
 ```
+</details>
 
 ---
 
@@ -148,7 +151,7 @@ MDX 콘텐츠를 변환하기 위해 `remark`와 `rehype` 플러그인을 선택
 
 `remark`와 `rehype` 생태계가 ESM만 지원하므로, 설정 파일로 `next.config.mjs`를 사용해야 합니다.
 
-```js:"next.config.mjs"
+```js:next.config.mjs
 import remarkGfm from 'remark-gfm'
 import createMDX from '@next/mdx'
 
@@ -173,7 +176,7 @@ export default withMDX(nextConfig)
 
 프론트매터는 페이지에 대한 데이터를 저장하기 위해 사용할 수 있는 YAML과 유사한 키/값 쌍입니다. `@next/mdx`는 기본적으로 프론트매터를 지원하지 않지만, MDX 콘텐츠에 프론트매터를 추가하기 위한 많은 솔루션이 있습니다. 예를 들면 [gray-matter](https://github.com/jonschlinkert/gray-matter)와 같은 것들이 있습니다.
 
-`@next/mdx`로 페이지 메타데이터에 접근하려면, `.mdx` 파일 내에서 메타 객체를 내보낼 수 있습니다:
+`@next/mdx`로 페이지 메타데이터에 접근하려면, `.mdx` 파일 내에서 메타 객체를 내보낼 수 있습니다.
 
 ```mdx
 export const meta = {
@@ -187,20 +190,20 @@ export const meta = {
 
 ## 커스텀 요소들
 
-마크다운을 사용하는 즐거운 점 중 하나는, 이것이 기본 `HTML` 요소로 매핑되기 때문에 빠르고 직관적으로 쓸 수 있다는 것입니다:
+마크다운을 사용하는 즐거운 점 중 하나는, 이것이 기본 `HTML` 요소로 매핑되기 때문에 빠르고 직관적으로 쓸 수 있다는 것입니다.
 
 ```md
-이것은 마크다운에서의 목록입니다:
+이것은 마크다운에서의 목록입니다.
 
 - 하나
 - 둘
 - 셋
 ```
 
-위의 것은 다음 `HTML`을 생성합니다:
+위의 것은 다음 `HTML`을 생성합니다.
 
 ```html
-<p>이것은 마크다운에서의 목록입니다:</p>
+<p>이것은 마크다운에서의 목록입니다.</p>
 
 <ul>
   <li>하나</li>
@@ -213,7 +216,7 @@ export const meta = {
 
 활성화하려면 `next.config.js`에서 `providerImportSource: "@mdx-js/react"`를 지정해야 합니다.
 
-```js:"next.config.js"
+```js:next.config.js
 const withMDX = require('@next/mdx')({
   // ...
   options: {
@@ -224,7 +227,7 @@ const withMDX = require('@next/mdx')({
 
 그런 다음 페이지에서 프로바이더를 설정합니다.
 
-```jsx:"pages/index.js"
+```jsx:pages/index.js
 import { MDXProvider } from '@mdx-js/react'
 import Image from 'next/image'
 import { Heading, InlineCode, Pre, Table, Text } from 'my-components'
@@ -266,7 +269,7 @@ export default function Post(props) {
 
 React는 기본적으로 마크다운을 이해하지 못합니다. 마크다운 평문을 HTML로 변환해야 합니다. 이 작업은 `remark`와 `rehype`를 통해 수행할 수 있습니다.
 
-`remark`는 마크다운 주변의 다양한 도구들을 모아놓은 생태계입니다. `rehype`도 마찬가지로, HTML을 위한 도구 모음입니다. 예를 들어, 아래 코드 조각은 마크다운을 HTML로 변환합니다:
+`remark`는 마크다운 주변의 다양한 도구들을 모아놓은 생태계입니다. `rehype`도 마찬가지로, HTML을 위한 도구 모음입니다. 예를 들어, 아래 코드 조각은 마크다운을 HTML로 변환합니다.
 
 ```js
 import { unified } from 'unified'
@@ -295,9 +298,9 @@ async function main() {
 
 ## Rust 기반 MDX 컴파일러 사용하기 (실험적)
 
-Next.js는 Rust로 작성된 새로운 MDX 컴파일러를 지원합니다. 이 컴파일러는 아직 실험적이며, 실제 운영 환경에서의 사용은 권장되지 않습니다. 새로운 컴파일러를 사용하려면, `withMDX`에 넘겨줄 때 `next.config.js`를 설정해야 합니다:
+Next.js는 Rust로 작성된 새로운 MDX 컴파일러를 지원합니다. 이 컴파일러는 아직 실험적이며, 실제 운영 환경에서의 사용은 권장되지 않습니다. 새로운 컴파일러를 사용하려면, `withMDX`에 넘겨줄 때 `next.config.js`를 설정해야 합니다.
 
-```js:"next.config.js"
+```js:next.config.js
 module.exports = withMDX({
   experimental: {
     mdxRs: true,

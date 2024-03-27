@@ -17,7 +17,7 @@ summary: 프론트엔드 애플리케이션을 위한 라우팅의 기본을 배
 !["컴포넌트 트리를 위한 용어"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fterminology-component-tree.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
 
-- **트리(Tree):** 계층 구조를 시각화하기 위한 관례. 예를 들면, 부모와 자식 컴포넌트로 이루어진 컴포넌트 트리, 폴더 구조 등입니다.
+- **트리(Tree):** 계층 구조를 시각화하기 위한 관례. 예를 들면, 부모와 자식 컴포넌트로 이루어진 컴포넌트 트리와 폴더 구조 등입니다.
 - **서브트리(Subtree):** 새로운 루트(처음)에서 시작하여 리프(마지막)까지의 트리의 일부입니다.
 - **루트(Root):** 트리나 서브트리에서 첫 번째 노드입니다. 예를 들면, 루트 레이아웃과 같습니다.
 - **리프(Leaf):** 자식이 없는 서브트리의 노드입니다. URL 경로의 마지막 세그먼트와 같습니다.
@@ -25,33 +25,32 @@ summary: 프론트엔드 애플리케이션을 위한 라우팅의 기본을 배
 !["URL 구조를 위한 용어"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fterminology-url-anatomy.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
 - **URL 세그먼트:** 슬래시로 구분된 URL 경로의 일부입니다.
-- **URL 경로:** 도메인 이후의 URL 부분입니다 (세그먼트로 구성됨).
+- **URL 경로:** 도메인 이후의 URL 부분입니다. (세그먼트로 구성됨)
 
 ---
 
-## `app` 라우터
+## 앱 라우터
 
-버전 13에서, Next.js는 [React Server Components](/docs/nextjs/rendering/server-components)를 기반으로 한 새로운 **App 라우터**를 소개했습니다. 이는 공유 레이아웃, 중첩 라우팅, 로딩 상태, 에러 처리 등을 지원합니다.
+버전 13에서 Next.js는 [리액트 Server Components](/docs/nextjs/rendering/server-components)를 기반으로 한 새로운 **앱 라우터**를 소개했습니다. 이는 공유 레이아웃, 중첩 라우팅, 로딩 상태, 에러 처리 등을 지원합니다.
 
-App 라우터는 `app`이라는 새로운 디렉토리에서 작동합니다. `app` 디렉토리는 점진적인 채택을 허용하기 위해 `pages` 디렉토리와 함께 작동합니다. 이를 통해 애플리케이션의 일부 라우트를 새로운 동작으로 변경할 수 있으며, 기존 동작을 유지하기 위해 `pages` 디렉토리에 다른 라우트를 유지할 수도 있습니다. 
+앱 라우터는 `app/`이라는 새로운 디렉토리에서 작동합니다. `app/` 디렉토리는 점진적인 채택을 허용하기 위해 `pages/` 디렉토리와 함께 작동합니다.
+이를 통해 애플리케이션의 일부 라우트를 새로운 동작으로 변경할 수 있으며 기존 동작을 유지하기 위해 `pages/` 디렉토리에 다른 라우트를 유지할 수도 있습니다.
 
 <Callout type="warning">
-이 문서에서는 App 라우터를 기반으로 설명합니다.
+이 문서에서는 앱 라우터를 기반으로 설명합니다.
 </Callout>
 
-> **알아두세요**: App 라우터는 Page 라우터보다 우선순위가 있습니다. 디렉토리 간의 라우트는 동일한 URL 경로로 해석되어서는 안되며, 충돌을 방지하기 위해 빌드 시간 오류가 발생합니다.
+> **알아두세요**: 앱 라우터는 페이지 라우터보다 우선순위가 있습니다. 디렉토리 간의 라우트는 동일한 URL 경로로 해석되어서는 안되며, 충돌을 방지하기 위해 빌드 시간 오류가 발생합니다.
 
 !["Next.js 앱 디렉토리"](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fnext-router-directories.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
 
-기본적으로 `app` 내의 컴포넌트들은 [React Server Components](/docs/nextjs/rendering/server-components)입니다. 이것은 성능 최적화이며, 이를 쉽게 채택할 수 있습니다. 또한 [클라이언트 컴포넌트](/docs/nextjs/rendering/client-components)도 사용할 수 있습니다.
-
-> **추천**: 서버 컴포넌트에 익숙하지 않다면, [서버 컴포넌트](/docs/nextjs/rendering/server-components) 페이지를 확인하세요.
+기본적으로 `app` 내의 컴포넌트들은 [리액트 Server Components](/docs/nextjs/rendering/server-components)입니다. 이것은 성능 최적화이며, 이를 쉽게 채택할 수 있습니다. 또한 [클라이언트 컴포넌트](/docs/nextjs/rendering/client-components)도 사용할 수 있습니다.
 
 ---
 
 ## 폴더와 파일의 역할
 
-Next.js는 파일 시스템 기반 라우터를 사용하여:
+Next.js는 파일 시스템 기반 라우터를 사용합니다.
 
 - **폴더**는 라우트를 정의하는 데 사용됩니다. 라우트는 **루트 폴더**에서 시작하여 `page.js` 파일을 포함하는 최종 **리프 폴더**까지의 파일 시스템 계층을 따르는 단일 경로입니다. [라우트 정의](/docs/nextjs/routing/defining-routes)를 참조하세요.
 - **파일**은 라우트 세그먼트에 표시되는 UI를 생성하는 데 사용됩니다. [특별한 파일](#file-conventions)을 참조하세요.
@@ -70,7 +69,7 @@ Next.js는 파일 시스템 기반 라우터를 사용하여:
 
 중첩 라우트를 생성하려면 폴더를 중첩하여 배치할 수 있습니다. 예를 들어, `app` 디렉토리에 두 개의 새 폴더를 중첩하여 `/dashboard/settings` 라우트를 추가할 수 있습니다.
 
-`/dashboard/settings` 라우트는 세 개의 세그먼트로 구성됩니다:
+`/dashboard/settings` 라우트는 세 개의 세그먼트로 구성됩니다.
 
 - `/` (루트 세그먼트)
 - `dashboard` (세그먼트)
@@ -80,7 +79,7 @@ Next.js는 파일 시스템 기반 라우터를 사용하여:
 
 ## 파일 규칙
 
-Next.js는 중첩된 라우트에서 특정 동작의 UI를 생성하기 위한 특별한 파일들을 제공합니다:
+Next.js는 중첩된 라우트에서 특정 동작의 UI를 생성하기 위한 특별한 파일들을 제공합니다.
 
 |                                                                                       |                                                                                                |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -94,19 +93,19 @@ Next.js는 중첩된 라우트에서 특정 동작의 UI를 생성하기 위한 
 | [`template`](/docs/nextjs/routing/pages-and-layouts#템플릿) | 특별하게 다시 렌더링되는 레이아웃 UI                                                           |
 | [`default`](https://nextjs.orghttps://nextjs.orghttps://nextjs.org/docs/app/api-reference/file-conventions/default)                         | [병렬 라우트](/docs/nextjs/routing/parallel-routes)를 위한 기본 UI     |
 
-> **참고**: 특별한 파일들에 `.js`, `.jsx` 또는 `.tsx` 확장자를 사용할 수 있습니다.
+> **참고**: 파일들에 `.js`, `.jsx` 또는 `.tsx` 확장자를 사용할 수 있습니다.
 
 ---
 
 ## 컴포넌트 계층 구조
 
-라우트 세그먼트의 특별한 파일에 정의된 React 컴포넌트는 특정 계층 구조에서 렌더링됩니다:
+라우트 세그먼트의 특별한 파일에 정의된 리액트 컴포넌트는 특정 계층 구조에서 렌더링됩니다:
 
 - `layout.js`
 - `template.js`
-- `error.js` (React 에러 경계)
-- `loading.js` (React 서스펜스 경계)
-- `not-found.js` (React 에러 경계)
+- `error.js` (리액트 에러 경계)
+- `loading.js` (리액트 서스펜스 경계)
+- `not-found.js` (리액트 에러 경계)
 - `page.js` 또는 중첩된 `layout.js`
 
 ![](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Ffile-conventions-component-hierarchy.png&w=1920&q=75&dpl=dpl_3EQWD49M65DCVzGTYPK2YqHNmCjt)
@@ -116,7 +115,7 @@ Next.js는 중첩된 라우트에서 특정 동작의 UI를 생성하기 위한 
 
 ---
 
-## 코드 공동 위치(Colocation)
+## 코드 공동 위치 (Colocation)
 
 특별한 파일 외에도 `app` 디렉토리 내의 폴더 안에 본인의 파일들(예: 컴포넌트, 스타일, 테스트 등)을 함께 위치시킬 수 있습니다.
 
@@ -129,14 +128,12 @@ Next.js는 중첩된 라우트에서 특정 동작의 UI를 생성하기 위한 
 
 ## 고급 라우팅 패턴
 
-App 라우터는 보다 고급 라우팅 패턴을 구현하는 데 도움이 되는 규칙들도 제공합니다. 이에는 다음이 포함됩니다:
+앱 라우터는 보다 고급 라우팅 패턴을 구현하는 데 도움이 되는 규칙들도 제공합니다. 이에는 다음이 포함됩니다.
 
 - [병렬 라우트](/docs/nextjs/routing/parallel-routes): 한 뷰에서 독립적으로 탐색할 수 있는 두 개 이상의 페이지를 동시에 표시합니다. 병렬 뷰에 서브 네비게이션을 가진 경우 사용할 수 있습니다. 예: 대시보드.
-- [라우트 가로채기](/docs/nextjs/routing/intercepting-routes): 다른 라우트의 컨텍스트에서 라우트를 가로채서 표시합니다. 현재 페이지의 컨텍스트를 유지하는 것이
+- [라우트 가로채기](/docs/nextjs/routing/intercepting-routes): 다른 라우트의 컨텍스트에서 라우트를 가로채서 표시합니다. 현재 페이지의 컨텍스트를 유지하는 것이 중요할 때 사용할 수 있습니다. 예: 하나의 작업을 편집하면서 모든 작업을 보거나 피드에서 사진을 확장할 때.
 
- 중요할 때 사용할 수 있습니다. 예: 하나의 작업을 편집하면서 모든 작업을 보거나 피드에서 사진을 확장할 때.
-
-이러한 패턴들을 통해 복잡한 UI를 구축할 수 있으며, 작은 팀과 개별 개발자가 구현하기 어려웠던 기능들을 보다 쉽게 만들 수 있게 됩니다.
+이러한 패턴들을 통해 복잡한 UI를 구축할 수 있으며 작은 팀과 개별 개발자가 구현하기 어려웠던 기능들을 보다 쉽게 만들 수 있게 됩니다.
 
 ---
 
@@ -185,7 +182,7 @@ Suspense 위에 구축된 로딩 UI를 통해 특정 라우트 세그먼트에 �
 <Card href="/docs/nextjs/routing/error-handling">
 ### 오류 처리
 
-라우트 세그먼트와 그 중첩된 자식들을 React 오류 경계로 자동으로 감싸서 런타임 오류를 처리합니다.
+라우트 세그먼트와 그 중첩된 자식들을 리액트 오류 경계로 자동으로 감싸서 런타임 오류를 처리합니다.
 </Card>
 
 <Card href="/docs/nextjs/routing/parallel-routes">

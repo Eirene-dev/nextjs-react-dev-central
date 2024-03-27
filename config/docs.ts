@@ -361,7 +361,7 @@ export const docsConfig: DocsConfig = {
           href: '/docs/nextjs/configuring',
           items: [
             {
-              title: 'TypeScript',
+              title: '타입스크립트',
               href: '/docs/nextjs/configuring/typescript',
               disabled: false,
             },
@@ -399,7 +399,7 @@ export const docsConfig: DocsConfig = {
               title: '콘텐츠 보안 정책',
               href: '/docs/nextjs/configuring/content-security-policy',
               disabled: false,
-            }     
+            }
           ],
         },
         {
@@ -410,7 +410,7 @@ export const docsConfig: DocsConfig = {
               title: '정적 내보내기',
               href: '/docs/nextjs/deploying/static-exports',
               disabled: false,
-            }  
+            }
           ],
         },
         {
@@ -423,7 +423,7 @@ export const docsConfig: DocsConfig = {
               disabled: false,
             },
             {
-              title: 'App 라우터 마이그레이션',
+              title: '앱 라우터 마이그레이션',
               href: '/docs/nextjs/upgrading/app-router-migration',
               disabled: false,
             },

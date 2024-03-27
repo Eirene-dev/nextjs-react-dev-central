@@ -23,7 +23,7 @@ summary: 내장된 next/font 로더로 애플리케이션의 웹 폰트를 최�
 
 `next/font/google`에서 원하는 폰트를 함수로 가져와 시작하세요. 최상의 성능과 유연성을 위해 [변수 폰트](https://fonts.google.com/variablefonts)을 사용하는 것을 권장합니다.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import { Inter } from 'next/font/google'
 
 // 변수 폰트를 로드할 경우 폰트 무게를 지정할 필요가 없습니다
@@ -44,9 +44,11 @@ export default function RootLayout({
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 import { Inter } from 'next/font/google'
 
 // 변수 폰트를 로드할 경우 폰트 무게를 지정할 필요가 없습니다
@@ -65,9 +67,9 @@ export default function RootLayout({ children }) {
 ```
 </details>
 
-변수 폰트를 사용할 수 없는 경우 **Weight를 지정해야** 합니다:
+변수 폰트를 사용할 수 없는 경우 **Weight를 지정해야** 합니다.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import { Roboto } from 'next/font/google'
 
 const roboto = Roboto({
@@ -88,9 +90,11 @@ export default function RootLayout({
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 import { Roboto } from 'next/font/google'
 
 const roboto = Roboto({
@@ -109,9 +113,9 @@ export default function RootLayout({ children }) {
 ```
 </details>
 
-여러 폰트 Weight와/또는 스타일을 배열을 사용하여 지정할 수 있습니다:
+여러 폰트 Weight와/또는 스타일을 배열을 사용하여 지정할 수 있습니다.
 
-```jsx:"app/layout.js"
+```jsx:app/layout.js
 const roboto = Roboto({
   weight: ['400', '700'],
   style: ['normal', 'italic'],
@@ -120,33 +124,35 @@ const roboto = Roboto({
 })
 ```
 
-> **알아두면 좋습니다**: 여러 단어로 된 폰트 이름에는 밑줄(\_)을 사용하세요. 예를 들어 `Roboto Mono`는 `Roboto_Mono`로 가져와야 합니다.
+> 여러 단어로 된 폰트 이름에는 밑줄(\_)을 사용하세요. 예를 들어 `Roboto Mono`는 `Roboto_Mono`로 가져와야 합니다.
 
 ### 부분 집합 지정하기
 
 Google 폰트는 자동으로 [부분 집합화](https://fonts.google.com/knowledge/glossary/subsetting)됩니다. 이로 인해 폰트 파일의 크기가 줄어들고 성능이 향상됩니다. 미리 로드하려는 부분 집합을 정의해야 합니다. [`preload`](https://nextjs.org/docs/app/api-reference/components/font#preload)가 `true`인 상태에서 부분 집합을 지정하지 않으면 경고가 발생합니다.
 
-함수 호출에 추가하여 이를 수행할 수 있습니다:
+함수 호출에 추가하여 이를 수행할 수 있습니다.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 const inter = Inter({ subsets: ['latin'] })
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 const inter = Inter({ subsets: ['latin'] })
 ```
 </details>
 
-더 자세한 정보는 [폰트 API 참조](https://nextjs.org/docs/app/api-reference/components/font)를 참조하세요.
+> 더 자세한 정보는 [폰트 API 참조](https://nextjs.org/docs/app/api-reference/components/font)를 참조하세요.
 
 ### 여러 폰트 사용하기
 
 애플리케이션에서 여러 폰트를 가져와서 사용할 수 있습니다. 접근 방법은 두 가지가 있습니다.
 
-첫 번째 방법은 폰트를 내보내는 유틸리티 함수를 만들어서 해당 폰트를 가져와 필요한 곳에서 `className`을 적용하는 것입니다. 이렇게 하면 폰트가 렌더링될 때만 미리 로드됩니다:
+첫 번째 방법은 폰트를 내보내는 유틸리티 함수를 만들어서 해당 폰트를 가져와 필요한 곳에서 `className`을 적용하는 것입니다. 이렇게 하면 폰트가 렌더링될 때만 미리 로드됩니다.
 
-```ts:"app/fonts.ts" switcher
+```ts:app/fonts.ts
 import { Inter, Roboto_Mono } from 'next/font/google'
 
 export const inter = Inter({
@@ -159,9 +165,11 @@ export const roboto_mono = Roboto_Mono({
   display: 'swap',
 })
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"app/fonts.js" switcher
+
+```js:app/fonts.js
 import { Inter, Roboto_Mono } from 'next/font/google'
 
 export const inter = Inter({
@@ -175,9 +183,9 @@ export const roboto_mono = Roboto_Mono({
 })
 ```
 </details>
+<p />
 
-
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import { inter } from './fonts'
 
 export default function Layout({ children }
@@ -191,9 +199,11 @@ export default function Layout({ children }
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 import { inter } from './fonts'
 
 export default function Layout({ children }) {
@@ -207,8 +217,9 @@ export default function Layout({ children }) {
 }
 ```
 </details>
+<p />
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 import { roboto_mono } from './fonts'
 
 export default function Page() {
@@ -219,9 +230,11 @@ export default function Page() {
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/page.js" switcher
+
+```jsx:app/page.js
 import { roboto_mono } from './fonts'
 
 export default function 페이지() {
@@ -234,11 +247,11 @@ export default function 페이지() {
 ```
 </details>
 
-위 예제에서는, `Inter` 폰트는 전역적으로 적용되며, `Roboto Mono` 폰트는 필요에 따라 가져와서 적용할 수 있습니다.
+위 예제에서는 `Inter` 폰트는 전역적으로 적용되며 `Roboto Mono` 폰트는 필요에 따라 가져와서 적용할 수 있습니다.
 
-또한, [CSS 변수](https://nextjs.org/docs/app/api-reference/components/font#variable)를 생성하고 선호하는 CSS 솔루션과 함께 사용할 수 있습니다:
+또한 [CSS 변수](https://nextjs.org/docs/app/api-reference/components/font#variable)를 생성하고 선호하는 CSS 솔루션과 함께 사용할 수 있습니다.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import { Inter, Roboto_Mono } from 'next/font/google'
 import styles from './global.css'
 
@@ -272,9 +285,11 @@ export default function 루트레이아웃({
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 import { Inter, Roboto_Mono } from 'next/font/google'
 
 const inter = Inter({
@@ -304,10 +319,9 @@ export default function 루트레이아웃({ children }) {
 }
 ```
 </details>
+<p />
 
-
-
-```css:"app/global.css"
+```css:app/global.css
 html {
   font-family: var(--font-inter);
 }
@@ -317,9 +331,9 @@ h1 {
 }
 ```
 
-위 예제에서는 `Inter` 폰트가 전역적으로 적용될 것이며, `<h1>` 태그는 `Roboto Mono` 폰트 스타일로 꾸며집니다.
+위 예제에서는 `Inter` 폰트가 전역적으로 적용될 것이며 `<h1>` 태그는 `Roboto Mono` 폰트 스타일로 꾸며집니다.
 
-> **추천사항**: 각각의 새로운 폰트는 클라이언트가 다운로드해야 하는 추가 리소스이므로, 여러 폰트를 사용할 때는 신중하게 사용하세요.
+> **추천사항**: 각각의 새로운 폰트는 클라이언트가 다운로드해야 하는 추가 리소스이므로 여러 폰트를 사용할 때는 신중하게 사용하세요.
 
 ---
 
@@ -327,7 +341,7 @@ h1 {
 
 `next/font/local`을 임포트하고 로컬 폰트 파일의 `src`를 지정하세요. 최상의 성능과 유연성을 위해 [변수 폰트](https://fonts.google.com/variablefonts) 사용을 권장합니다.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import localFont from 'next/font/local'
 
 // 폰트 파일은 `app` 내에 함께 위치할 수 있습니다.
@@ -348,9 +362,11 @@ export default function RootLayout({
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 import localFont from 'next/font/local'
 
 // 폰트 파일은 `app` 내에 함께 위치할 수 있습니다.
@@ -371,7 +387,7 @@ export default function RootLayout({ children }) {
 
 
 
-하나의 폰트 패밀리에 여러 파일을 사용하려면 `src`는 배열로 될 수 있습니다:
+하나의 폰트 패밀리에 여러 파일을 사용하려면 `src`는 배열로 될 수 있습니다.
 
 ```js
 const roboto = localFont({
@@ -400,7 +416,7 @@ const roboto = localFont({
 })
 ```
 
-더 자세한 정보는 [폰트 API 레퍼런스](https://nextjs.org/docs/app/api-reference/components/font)에서 확인하세요.
+> 더 자세한 정보는 [폰트 API 레퍼런스](https://nextjs.org/docs/app/api-reference/components/font)에서 확인하세요.
 
 ---
 
@@ -410,7 +426,7 @@ const roboto = localFont({
 
 아래 예제에서는 `next/font/google`의 폰트 `Inter`를 사용합니다(구글 또는 로컬 폰트 중 어떤 폰트든 사용 가능합니다). `variable` 옵션으로 폰트를 로드하여 CSS 변수 이름을 정의하고 `inter`에 할당합니다. 그런 다음 `inter.variable`을 사용하여 HTML 문서에 CSS 변수를 추가합니다.
 
-```tsx:"app/layout.tsx" switcher
+```tsx:app/layout.tsx
 import { Inter, Roboto_Mono } from 'next/font/google'
 
 const inter = Inter({
@@ -440,9 +456,11 @@ export default function RootLayout({
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/layout.js" switcher
+
+```jsx:app/layout.js
 import { Inter, Roboto_Mono } from 'next/font/google'
 
 const inter = Inter({
@@ -472,9 +490,9 @@ export default function RootLayout({ children }) {
 
 
 
-마지막으로, CSS 변수를 [Tailwind CSS 설정](/docs/nextjs/styling/tailwind-css#tailwind-설정하기)에 추가하세요:
+마지막으로 CSS 변수를 [Tailwind CSS 설정](/docs/nextjs/styling/tailwind-css#tailwind-설정하기)에 추가하세요.
 
-```js:"tailwind.config.js"
+```js:tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -500,7 +518,7 @@ module.exports = {
 
 ## 미리 로딩하기
 
-사이트의 페이지에서 폰트 함수가 호출되면 모든 루트에서 전역적으로 사용 가능하거나 미리 로드되지 않습니다. 대신 폰트는 사용된 파일의 유형에 따라 관련 루트에서만 미리 로드됩니다:
+사이트의 페이지에서 폰트 함수가 호출되면 모든 루트에서 전역적으로 사용 가능하거나 미리 로드되지 않습니다. 대신 폰트는 사용된 파일의 유형에 따라 관련 루트에서만 미리 로드됩니다.
 
 - [고유 페이지](/docs/nextjs/routing/pages-and-layouts#페이지)인 경우 해당 페이지의 고유 루트에서 미리 로드됩니다.
 - [레이아웃](/docs/nextjs/routing/pages-and-layouts#레이아웃)인 경우 레이아웃으로 감싸진 모든 루트에서 미리 로드됩니다.
@@ -510,7 +528,7 @@ module.exports = {
 
 ## 폰트 재사용
 
-`localFont` 또는 Google 폰트 함수를 호출할 때마다 해당 폰트는 애플리케이션에서 하나의 인스턴스로 호스팅됩니다. 따라서 여러 파일에서 같은 폰트 함수를 로드하면 같은 폰트의 여러 인스턴스가 호스팅됩니다. 이런 상황에서는 다음을 권장합니다:
+`localFont` 또는 Google 폰트 함수를 호출할 때마다 해당 폰트는 애플리케이션에서 하나의 인스턴스로 호스팅됩니다. 따라서 여러 파일에서 같은 폰트 함수를 로드하면 같은 폰트의 여러 인스턴스가 호스팅됩니다. 이런 상황에서는 다음을 권장합니다.
 
 - 공유 파일에서 폰트 로더 함수를 호출합니다.
 - 상수로 내보냅니다.

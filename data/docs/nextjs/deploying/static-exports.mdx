@@ -1,7 +1,7 @@
 ---
 title: 정적 내보내기
 date: '2023-02-01 08:01'
-summary: Next.js는 정적 사이트나 싱글 페이지 애플리케이션(SPA)로 시작할 수 있게 해주며, 나중에 서버가 필요한 기능을 선택적으로 사용하도록 업그레이드할 수 있습니다.
+summary: Next.js는 정적 사이트나 싱글 페이지 애플리케이션(SPA)로 시작할 수 있게 해주며 나중에 서버가 필요한 기능을 선택적으로 사용하도록 업그레이드할 수 있습니다.
 ---
 <TOCInline toc={props.toc} asDisclosure />
 
@@ -15,9 +15,9 @@ Next.js는 이러한 정적 내보내기를 지원하기 때문에, HTML/CSS/JS 
 
 ## 설정
 
-정적 내보내기를 활성화하려면 `next.config.js` 내의 출력 모드를 변경하십시오:
+정적 내보내기를 활성화하려면 `next.config.js` 내의 출력 모드를 변경하십시오.
 
-```js:"next.config.js" highlight={5}
+```js:next.config.js {5}
 /**
  * @type {import('next').NextConfig}
  */
@@ -38,7 +38,7 @@ const nextConfig = {
 module.exports = nextConfig
 ```
 
-`next build`를 실행한 후, Next.js는 애플리케이션의 HTML/CSS/JS 자산을 포함하는 `out` 폴더를 생성합니다.
+`next build`를 실행한 후 Next.js는 애플리케이션의 HTML/CSS/JS 자산을 포함하는 `out` 폴더를 생성합니다.
 
 ---
 
@@ -52,7 +52,7 @@ Next.js의 핵심은 정적 내보내기를 지원하도록 설계되었습니�
 
 결과 컴포넌트는 초기 페이지 로드를 위한 정적 HTML로 렌더링되며, 라우트 간의 클라이언트 탐색을 위한 정적 페이로드로 렌더링됩니다. 서버 컴포넌트를 정적 내보내기로 사용할 때 [동적 서버 함수](#지원되지-않는-기능)를 사용하지 않는 한 변경할 필요가 없습니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 export default async function Page() {
   // 이 fetch는 `next build` 중 서버에서 실행됩니다.
   const res = await fetch('https://api.example.com/...')
@@ -66,7 +66,7 @@ export default async function Page() {
 
 클라이언트에서 데이터를 가져오려면 [SWR](https://github.com/vercel/swr)을 사용하여 요청을 메모이제이션하기 위해 클라이언트 컴포넌트를 사용할 수 있습니다.
 
-```tsx:"app/other/page.tsx" switcher
+```tsx:app/other/page.tsx
 'use client'
 
 import useSWR from 'swr'
@@ -84,9 +84,11 @@ export default function Page() {
   return data.title
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/other/page.js" switcher
+
+```jsx:app/other/page.js
 'use client'
 
 import useSWR from 'swr'
@@ -106,9 +108,9 @@ export default function Page() {
 ```
 </details>
 
-라우트 전환은 클라이언트 측에서 발생하기 때문에 이는 전통적인 SPA처럼 동작합니다. 예를 들어, 아래의 인덱스 라우트는 클라이언트에서 다른 포스트로 이동할 수 있게 합니다:
+라우트 전환은 클라이언트 측에서 발생하기 때문에 이는 전통적인 SPA처럼 동작합니다. 예를 들어 아래의 인덱스 라우트는 클라이언트에서 다른 포스트로 이동할 수 있게 합니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 import Link from 'next/link'
 
 export default function Page() {
@@ -128,9 +130,11 @@ export default function Page() {
   )
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/page.js" switcher
+
+```jsx:app/page.js
 import Link from 'next/link'
 
 export default function Page() {
@@ -149,9 +153,9 @@ export default function Page() {
 
 ### 이미지 최적화
 
-[이미지 최적화](/docs/nextjs/optimizing/images)는 `next.config.js`에서 사용자 정의 이미지 로더를 정의함으로써 `next/image`와 함께 정적으로 내보내어 사용할 수 있습니다. 예를 들어, Cloudinary와 같은 서비스를 사용하여 이미지를 최적화할 수 있습니다:
+[이미지 최적화](/docs/nextjs/optimizing/images)는 `next.config.js`에서 사용자 정의 이미지 로더를 정의함으로써 `next/image`와 함께 정적으로 내보내어 사용할 수 있습니다. 예를 들어, Cloudinary와 같은 서비스를 사용하여 이미지를 최적화할 수 있습니다.
 
-```js:"next.config.js"
+```js:next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
@@ -164,9 +168,9 @@ const nextConfig = {
 module.exports = nextConfig
 ```
 
-이 사용자 정의 로더는 원격 소스에서 이미지를 가져오는 방법을 정의합니다. 예를 들어, 아래의 로더는 Cloudinary의 URL을 구성합니다:
+이 사용자 정의 로더는 원격 소스에서 이미지를 가져오는 방법을 정의합니다. 예를 들어, 아래의 로더는 Cloudinary의 URL을 구성합니다.
 
-```ts:"my-loader.ts" switcher
+```ts:my-loader.ts
 export default function cloudinaryLoader({
   src,
   width,
@@ -184,9 +188,11 @@ export default function cloudinaryLoader({
   )}${src}`
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"my-loader.js" switcher
+
+```js:my-loader.js
 export default function cloudinaryLoader({ src, width, quality }) {
   const params = ['f_auto', 'c_limit', `w_${width}`, \
     `q_${quality || 'auto'}`]
@@ -198,18 +204,20 @@ export default function cloudinaryLoader({ src, width, quality }) {
 ```
 </details>
 
-그런 다음 Cloudinary의 이미지에 대한 상대 경로를 정의하여 애플리케이션에서 `next/image`를 사용할 수 있습니다:
+그런 다음 Cloudinary의 이미지에 대한 상대 경로를 정의하여 애플리케이션에서 `next/image`를 사용할 수 있습니다.
 
-```tsx:"app/page.tsx" switcher
+```tsx:app/page.tsx
 import Image from 'next/image'
 
 export default function Page() {
   return <Image alt="거북이" src="/turtles.jpg" width={300} height={300} />
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```jsx:"app/page.js" switcher
+
+```jsx:app/page.js
 import Image from 'next/image'
 
 export default function Page() {
@@ -228,16 +236,18 @@ export default function Page() {
 
 라우트 핸들러는 `next build`를 실행할 때 정적 응답을 렌더링합니다. `GET` HTTP 동사만 지원됩니다. 이는 캐싱된 또는 캐싱되지 않은 데이터에서 정적 HTML, JSON, TXT 또는 기타 파일을 생성하는 데 사용될 수 있습니다. 예를 들면:
 
-```ts:"app/data.json/route.ts" switcher
+```ts:app/data.json/route.ts
 import { NextResponse } from 'next/server'
 
 export async function GET() {
   return NextResponse.json({ name: 'Lee' })
 }
 ```
+
 <details>
     <summary>JavaScript</summary>
-```js:"app/data.json/route.js" switcher
+
+```js:app/data.json/route.js
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -299,21 +309,21 @@ export const dynamic = 'error'
 
 정적 내보내기를 사용하면 Next.js는 HTML/CSS/JS 정적 리소스를 제공할 수 있는 어떤 웹 서버에서도 배포 및 호스팅될 수 있습니다.
 
-`next build`를 실행하면 Next.js는 `out` 폴더에 정적 내보내기를 생성합니다. 이제 `next export`를 사용할 필요가 없습니다. 예를 들면 다음과 같은 라우트가 있다고 가정하겠습니다:
+`next build`를 실행하면 Next.js는 `out` 폴더에 정적 내보내기를 생성합니다. 이제 `next export`를 사용할 필요가 없습니다. 예를 들면 다음과 같은 라우트가 있다고 가정하겠습니다.
 
 - `/`
 - `/blog/[id]`
 
-`next build`를 실행한 후 Next.js는 다음 파일을 생성합니다:
+`next build`를 실행한 후 Next.js는 다음 파일을 생성합니다.
 
 - `/out/index.html`
 - `/out/404.html`
 - `/out/blog/post-1.html`
 - `/out/blog/post-2.html`
 
-Nginx와 같은 정적 호스트를 사용하는 경우 들어오는 요청에서 올바른 파일로의 리라이트를 설정할 수 있습니다:
+Nginx와 같은 정적 호스트를 사용하는 경우 들어오는 요청에서 올바른 파일로의 리라이트를 설정할 수 있습니다.
 
-```nginx:"nginx.conf"
+```nginx:nginx.conf
 server {
   listen 80;
   server_name acme.com;
@@ -336,12 +346,3 @@ server {
   }
 }
 ```
-
----
-
-## 버전 히스토리
-
-| 버전      | 변경 사항                                                                                                                                        |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `v13.4.0` | App Router (안정 버전)는 React 서버 컴포넌트 및 라우트 핸들러를 사용하는 강화된 정적 내보내기 지원을 추가합니다.                     |
-| `v13.3.0` | `next export`는 폐기되었으며 `"output": "export"`로 대체되었습니다.                                                              |

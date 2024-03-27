@@ -1,7 +1,7 @@
 ---
 title: 라우터 캐시
 date: '2023-02-01 04:04'
-summary:
+summary: 클라이언트 사이드 캐시인 라우터 캐시에 설명합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
@@ -10,12 +10,11 @@ summary:
 
 ## 라우터 캐시
 
-> **관련 용어:**
->
-> 라우터 캐시는 **클라이언트 측 캐시** 또는 **프리페치 캐시**로 언급되곤 합니다. **프리페치 캐시**는 미리 가져온 라우트 세그먼트를 나타내며, **클라이언트 측 캐시**는 방문하고 미리 가져온 세그먼트를 포함한 전체 라우터 캐시를 나타냅니다.
+Next.js에는 사용자 세션 동안 개별 라우트 세그먼트별로 리액트 서버 컴포넌트 페이로드를 저장하는 인메모리 클라이언트 측 캐시가 있습니다. 이것을 라우터 캐시라고 합니다.
+
+> 라우터 캐시는 **클라이언트 사이드 캐시** 또는 **프리페치 캐시**로 언급되곤 합니다. **프리페치 캐시**는 미리 가져온 라우트 세그먼트를 나타내며, **클라이언트 측 캐시**는 방문하고 미리 가져온 세그먼트를 포함한 전체 라우터 캐시를 나타냅니다.
 > 이 캐시는 특히 Next.js 및 서버 컴포넌트에 적용되며, 브라우저의 [bfcache](https://web.dev/bfcache/)와는 다르지만 비슷한 결과를 보입니다.
 
-Next.js에는 사용자 세션 동안 개별 라우트 세그먼트별로 React 서버 컴포넌트 페이로드를 저장하는 인메모리 클라이언트 측 캐시가 있습니다. 이것을 라우터 캐시라고 합니다.
 
 **라우터 캐시의 작동 방식**
 
@@ -23,40 +22,38 @@ Next.js에는 사용자 세션 동안 개별 라우트 세그먼트별로 React 
 
 사용자가 라우트 간을 이동하면 Next.js는 방문한 라우트 세그먼트를 캐시하고 사용자가 방문할 가능성이 있는 라우트를 [프리페치](/docs/nextjs/routing/linking-and-navigating#1-프리페칭)합니다.
 
-이로 인해 사용자에게 다음과 같은 개선된 탐색 경험이 제공됩니다:
+이로 인해 사용자에게 다음과 같은 개선된 탐색 경험이 제공됩니다.
 
-- 방문한 라우트가 캐시되어 있기 때문에 즉시 앞/뒤로 이동이 가능하고, 프리페치 및 [부분 렌더링](/docs/nextjs/routing/linking-and-navigating#3-부분-렌더링)으로 인해 새로운 라우트로의 빠른 탐색이 가능합니다.
-- 탐색 간 전체 페이지가 다시 로드되지 않으며, React 상태 및 브라우저 상태가 보존됩니다.
+- 방문한 라우트가 캐시되어 있기 때문에 즉시 앞/뒤로 이동이 가능하고 프리페치 및 [부분 렌더링](/docs/nextjs/routing/linking-and-navigating#3-부분-렌더링)으로 인해 새로운 라우트로의 빠른 탐색이 가능합니다.
+- 탐색 간 전체 페이지가 다시 로드되지 않으며 리액트 상태 및 브라우저 상태가 보존됩니다.
 
-> **라우터 캐시와 전체 라우트 캐시의 차이**:
->
-> 라우터 캐시는 사용자 세션 동안 브라우저에서 React 서버 컴포넌트 페이로드를 임시로 저장하는 반면, 전체 라우트 캐시는 여러 사용자 요청 간 서버에서 React 서버 컴포넌트 페이로드와 HTML을 영구적으로 저장합니다.
->
-> 전체 라우트 캐시는 정적으로 렌더링된 라우트만 캐시하는 반면, 라우터 캐시는 정적 및 동적으로 렌더링된 라우트 모두에 적용됩니다.
+<ToggleContent title="라우터 캐시와 전체 라우트 캐시의 차이">
+라우터 캐시는 사용자 세션 동안 브라우저에서 리액트 서버 컴포넌트 페이로드를 임시로 저장하는 반면, 전체 라우트 캐시는 여러 사용자 요청 간 서버에서 리액트 서버 컴포넌트 페이로드와 HTML을 영구적으로 저장합니다.
+
+전체 라우트 캐시는 정적으로 렌더링된 라우트만 캐시하는 반면, 라우터 캐시는 정적 및 동적으로 렌더링된 라우트 모두에 적용됩니다.
+</ToggleContent>
 
 ### 지속 기간
 
-캐시는 브라우저의 임시 메모리에 저장됩니다. 라우터 캐시가 얼마나 오래 지속되는지 결정하는 두 가지 요소가 있습니다:
+캐시는 브라우저의 임시 메모리에 저장됩니다. 라우터 캐시가 얼마나 오래 지속되는지 결정하는 두 가지 요소가 있습니다.
 
-- **세션**: 캐시는 탐색 간에 지속됩니다. 그러나 페이지를 새로고침하면 지워집니다.
-- **자동 무효화 기간**: 특정 시간이 경과하면 개별 세그먼트의 캐시는 자동으로 무효화됩니다. 기간은 라우트가 [정적](/docs/nextjs/rendering/server-components#정적-렌더링-기본-설정) 또는 [동적](/docs/nextjs/rendering/server-components#동적-렌더링)으로 렌더링되는지 여부에 따라 달라집니다:
+1. **세션**: 캐시는 탐색 간에 지속됩니다. 그러나 페이지를 새로고침하면 지워집니다.
+2. **자동 무효화 기간**: 특정 시간이 경과하면 개별 세그먼트의 캐시는 자동으로 무효화됩니다. 기간은 라우트가 [정적](/docs/nextjs/rendering/server-components#정적-렌더링-기본-설정) 또는 [동적](/docs/nextjs/rendering/server-components#동적-렌더링)으로 렌더링되는지 여부에 따라 달라집니다:
   - **동적으로 렌더링됨**: 30초
   - **정적으로 렌더링됨**: 5분
 
-페이지 새로고침은 **모든** 캐시된 세그먼트를 지우지만, 자동 무효화 기간은 마지막으로 액세스되거나 생성된 후 개별 세그먼트에만 영향을 미칩니다.
-
+페이지 새로고침은 **모든** 캐시된 세그먼트를 지우지만 자동 무효화 기간은 마지막으로 액세스되거나 생성된 후 개별 세그먼트에만 영향을 미칩니다.
 동적으로 렌더링된 라우트에 `prefetch={true}`를 추가하거나 `router.prefetch`를 호출하면 5분 동안 캐싱할 수 있습니다.
 
 ### 무효화
 
-라우터 캐시를 무효화하는 두 가지 방법이 있습니다:
+라우터 캐시를 무효화하는 두 가지 방법이 있습니다.
 
-- **서버 액션에서**:
-  - 경로별로 데이터를 즉시 검증하거나 ([`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)) 또는 캐시 태그를 사용하여 ([`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag)) 무효화
-  - 쿠키를 사용하는 라우트가 오래된 것으로 되지 않도록 [`cookies.set`](https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options) 또는 [`cookies.delete`](https://nextjs.org/docs/app/api-reference/functions/cookies#deleting-cookies)를 사용하면 라우터 캐시가 무효화됩니다 (예: 인증).
+1. 서버 액션에서 무효화
+   - 경로별로 데이터를 즉시 검증하거나 ([`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)) 또는 캐시 태그를 사용하여 ([`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag)) 무효화
+   - 쿠키를 사용하는 라우트가 오래된 것으로 되지 않도록 [`cookies.set`](https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options) 또는 [`cookies.delete`](https://nextjs.org/docs/app/api-reference/functions/cookies#deleting-cookies)를 사용하면 라우터 캐시가 무효화됩니다 (예: 인증).
 
-
-- [`router.refresh`](https://nextjs.org/docs/app/api-reference/functions/use-router)를 호출하면 라우터 캐시가 무효화되고 현재 라우트에 대한 새로운 요청이 서버로 전송됩니다.
+2. [`router.refresh`](https://nextjs.org/docs/app/api-reference/functions/use-router)를 호출하면 라우터 캐시가 무효화되고 현재 라우트에 대한 새로운 요청이 서버로 전송됩니다.
 
 ### 선택 취소
 
@@ -68,7 +65,7 @@ Next.js에는 사용자 세션 동안 개별 라우트 세그먼트별로 React 
 
 ## 캐시 상호 작용
 
-다른 캐싱 메커니즘을 설정할 때, 그들이 서로 어떻게 상호 작용하는지 이해하는 것이 중요합니다:
+다른 캐싱 메커니즘을 설정할 때 그들이 서로 어떻게 상호 작용하는지 이해하는 것이 중요합니다.
 
 ### 데이터 캐시 및 전체 라우트 캐시
 
@@ -79,4 +76,3 @@ Next.js에는 사용자 세션 동안 개별 라우트 세그먼트별로 React 
 
 - [Route Handler](/docs/nextjs/routing/route-handlers)에서 데이터 캐시를 다시 유효화해도 즉시 라우터 캐시를 무효화하지 않습니다. 라우터 핸들러는 특정 라우트에 연결되어 있지 않기 때문입니다. 이는 라우터 캐시가 하드 리프레시를 하거나 자동 무효화 기간이 경과할 때까지 이전 페이로드를 계속 제공한다는 것을 의미합니다.
 - 데이터 캐시와 라우터 캐시를 즉시 무효화하려면 [Server Action](/docs/nextjs/data-fetching/forms-and-mutations)에서 [`revalidatePath`](/docs/nextjs/caching/affecting-api#revalidatepath)나 [`revalidateTag`](/docs/nextjs/caching/affecting-api#fetch-optionsnexttags-및-revalidatetag)를 사용할 수 있습니다.
-
