@@ -1,7 +1,7 @@
 ---
 title: 코어 웹 바이탈 모니터링
 date: '2023-01-01 03:06'
-summary: Next.js를 활용한 성능 모니터링 방법, 사용자 정의 보고 설정, 크롬 사용자 경험 보고서를 이용한 분석, 그리고 다양한 성능 측정 도구에 대해 소개합니다.
+summary: Next.js를 활용한 성능 모니터링 방법, 사용자 정의 보고 설정, 크롬 사용자 경험 보고서를 이용한 분석, 다양한 성능 측정 도구에 대해 소개합니다.
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
@@ -9,77 +9,46 @@ summary: Next.js를 활용한 성능 모니터링 방법, 사용자 정의 보�
 ------
 
 ## 코어 웹 바이탈 모니터링 개요
-사이트를 최적화한 후, 프로덕션 환경에서 지속적으로 모니터링하여 반복 작업을 수행하는 것이 중요합니다. 코어 웹 바이탈을 모니터링 할 때, 일회성 랩 테스트에 의존하기보다는 시간 경과에 따른 추적이 핵심입니다.
+사이트를 최적화한 후 프로덕션 환경에서 지속적으로 모니터링하여 반복 작업을 수행하는 것이 중요합니다. 코어 웹 바이탈을 모니터링 할 때 일회성 랩 테스트에 의존하기보다는 시간 경과에 따른 추적이 핵심입니다. 여기에서는 다음과 같은 내용을 더 자세히 알게 됩니다.
 
-이 수업에서는 다음과 같은 내용을 더 자세히 알게 됩니다:
-
-- Next.js Speed Insights(속도 인사이트)
+- Next.js Speed Insights (스피드 인사이트)
 - Next.js 사용자 정의 보고
 - CrUX 보고서
 - 기타 측정 도구들
 
-## Next.js Speed Insights(속도 인사이트)
+## Next.js Speed Insights
 [Next.js Speed Insights](https://vercel.com/analytics)를 통해 코어 웹 바이탈을 사용하여 페이지의 성능을 분석하고 측정할 수 있습니다.
 ![Speed Insights](https://nextjs.org/static/images/learn/seo/analytics.png)
 
-Vercel 배포에서 구성 없이 [실제 경험 점수](https://vercel.com/docs/speed-insights#metrics?utm_source=next-site&utm_medium=learnpages&utm_campaign=no-campaign)를 수집하기 시작할 수 있습니다.
+Vercel 배포에서 구성 없이 [실제 점수](https://vercel.com/docs/speed-insights#metrics?utm_source=next-site&utm_medium=learnpages&utm_campaign=no-campaign)를 수집하기 시작할 수 있습니다.
 
 ## 사용자 정의 보고
-또한 Next.js 속도 인사이트에서 사용하는 내장된 릴레이를 사용하여 데이터를 자체 서비스로 보내거나 Google Analytics로 보낼 수 있습니다.
-
-이제 우리가 최적화해왔던 데모 앱에 이를 추가하는 방법을 살펴보겠습니다.
-
-실시간으로 지표를 확인하기 위해 console.log를 사용하겠습니다.
-
+또한 Next.js Speed Insights에서 사용하는 내장된 릴레이를 사용하여 데이터를 자체 서비스로 보내거나 Google Analytics로 보낼 수 있습니다.
 이를 위해 Next.js에서 제공하는 reportWebVitals 함수를 활용할 수 있습니다.
 
-<Callout type="warning">
-참고: 이전 수업을 마친 경우 이 작업은 필요하지 않습니다.
-</Callout>
-
-```bash
-npx create-next-app@latest nextjs-lighthouse \
---use-npm \
---example "https://github.com/vercel/next-learn/tree/main/seo"
-```
-
-`pages/_app.js`를 열고 다음 함수를 내보냅니다:
-```jsx
-export function reportWebVitals(metric) {
-  console.log(metric);
-}
-```
-그런 다음 애플리케이션을 빌드하고 시작하세요:
-```bash
-npm run build && npm run start
-```
-Chrome을 열면 DevTools 콘솔 안에 지표가 표시됩니다. 또한 페이지와 상호작용할 때만 FID가 트리거 됨을 알 수 있습니다.
-
-## 데이터 스튜디오 (크롬 사용자 경험 보고서)
+## 크롬 사용자 경험 보고서
 성능을 측정하는 또 다른 무료 오픈소스 방법은 [크롬 사용자 경험 보고서 데이터 세트](https://developer.chrome.com/docs/crux/)를 사용하는 것입니다.
 
 크롬 사용자 경험 보고서는 실제 크롬 사용자가 웹의 인기 목적지에서 어떻게 경험하는지에 대한 사용자 경험 메트릭을 제공합니다.
-
 이 데이터 세트는 [BigQuery](https://console.cloud.google.com/bigquery?project=chrome-ux-report&pli=1)에서 공개적으로 이용 가능하며 [Google Data Studio](https://lookerstudio.google.com/overview?)에서도 완전히 무료로 사용할 수 있습니다.
-
 운 좋게도 사용할 수 있는 [오픈소스 대시보드 템플릿](https://lookerstudio.google.com/datasources/create?connectorId=AKfycbxk7u2UtsqzgaA7I0bvkaJbBPannEx0_zmeCsGh9bBZy7wFMLrQ8x24WxpBzk_ln2i7)이 있어 웹사이트의 성능을 추적할 수 있습니다.
 
-이 데이터 세트의 유일한 단점은 CrUX 보고서에 웹사이트가 포함되기 위해서는 의미 있는 방문 횟수가 필요하며, 그렇지 않으면 데이터가 부족하다는 이유로 보고서에 포함되지 않을 것이라는 것입니다. 따라서 이는 진행 중이거나 최근에 생성된 웹사이트에는 최선의 옵션이 아닐 수 있습니다.
+이 데이터 세트의 유일한 단점은 CrUX 보고서에 웹사이트가 포함되기 위해서는 의미 있는 방문 횟수가 필요하며 그렇지 않으면 데이터가 부족하다는 이유로 보고서에 포함되지 않을 것이라는 것입니다. 따라서 이는 진행 중이거나 최근에 생성된 웹사이트에는 최선의 옵션이 아닐 수 있습니다.
 
 또한 데이터는 월별로 업데이트됩니다. 보통 달이 끝난 후 약 15일 정도 뒤에 업데이트되므로 일정한 지연과 함께 데이터를 볼 수 있습니다. 이는 코어 웹 바이탈 점수를 개선하는 작업을 계획하는 경우 가장 실용적이지 않을 수 있습니다.
 ![Data Studio](https://nextjs.org/static/images/learn/seo/data-studio.png)
 
 ## 기타 도구들
-다음 도구에서 필드 데이터 수집을 찾을 수 있습니다:
+다음 도구에서 필드 데이터 수집을 찾을 수 있습니다.
 
-- [PageSpeed Insights](https://pagespeed.web.dev/?utm_source=psi&utm_medium=redirect): 구글의 페이지 속도 측정 도구.
-- [크롬 사용자 경험 보고서](https://developer.chrome.com/docs/crux/): 필드 데이터 오픈소스 데이터 세트.
-- [검색 콘솔](https://support.google.com/webmasters/answer/9205520): 구글 검색, 코어 웹 바이탈 보고서.
+- [PageSpeed Insights](https://pagespeed.web.dev/?utm_source=psi&utm_medium=redirect): 구글의 페이지 속도 측정 도구
+- [크롬 사용자 경험 보고서](https://developer.chrome.com/docs/crux/): 필드 데이터 오픈소스 데이터 세트
+- [검색 콘솔](https://support.google.com/webmasters/answer/9205520): 구글 검색, 코어 웹 바이탈 보고서
 
-랩 데이터를 찾고 있다면, Google도 여러 측정 도구를 제공합니다:
+랩 데이터를 찾고 있다면, Google도 여러 측정 도구를 제공합니다.
 
-- [Lighthouse](https://developer.chrome.com/docs/lighthouse/overview/?hl=en): 웹 페이지의 품질을 개선하기 위한 구글의 오픈소스 자동화 도구.
-- [Chrome DevTools](https://developer.chrome.com/docs/devtools/): 구글 크롬 브라우저에 직접 내장된 웹 개발자 도구 세트.
+- [Lighthouse](https://developer.chrome.com/docs/lighthouse/overview/?hl=en): 웹 페이지의 품질을 개선하기 위한 구글의 오픈소스 자동화 도구
+- [Chrome DevTools](https://developer.chrome.com/docs/devtools/): 구글 크롬 브라우저에 직접 내장된 웹 개발자 도구 세트
 
 두 도구 모두 필드 데이터를 통해서만 측정할 수 있는 FID 대신 Total Blocking Time (TBT)을 사용해야 합니다.
 
