@@ -89,6 +89,27 @@ export const docsConfig: DocsConfig = {
         //   ],
         // },
         {
+          title: '리액트 기초',
+          href: '/docs/getting-started/react-foundation',
+          items: [
+            {
+              title: '리액트 기초와 시작하기',
+              href: '/docs/getting-started/react-foundation/basics',
+              disabled: false,
+            },
+            {
+              title: '컴포넌트와 데이터 관리',
+              href: '/docs/getting-started/react-foundation/components',
+              disabled: false,
+            },
+            {
+              title: 'Next.js로의 전환과 심화',
+              href: '/docs/getting-started/react-foundation/with-nextjs',
+              disabled: false,
+            },
+          ],
+        },
+        {
           title: '검색 엔진 최적화',
           href: '/docs/getting-started/seo',
           items: [
