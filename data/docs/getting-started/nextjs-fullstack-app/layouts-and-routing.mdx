@@ -1,0 +1,278 @@
+---
+title: 레이아웃 및 라우팅
+date: '2023-01-01 03:02'
+summary: 애플리케이션의 구조를 정의하고 페이지 간의 이동을 관리하는 방법을 다룹니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 4장: 레이아웃과 페이지 만들기
+지금까지 애플리케이션에는 홈페이지만 있었습니다. 레이아웃과 페이지를 사용하여 더 많은 라우트를 만드는 방법을 알아봅시다.
+
+이 장에서 다룰 주제는 다음과 같습니다.
+
+- 파일 시스템 라우팅을 사용하여 대시보드 라우트 만들기
+- 새로운 라우트 세그먼트를 만들 때 폴더와 파일의 역할 이해하기
+- 여러 대시보드 페이지 간에 공유할 수 있는 중첩 레이아웃 만들기
+- 코로케이션, 부분 렌더링, 루트 레이아웃이 무엇인지 이해하기
+
+### 중첩 라우팅
+Next.js는 폴더를 사용하여 중첩된 라우트를 만드는 파일 시스템 라우팅을 사용합니다. 각 폴더는 URL 세그먼트에 매핑되는 라우트 세그먼트를 나타냅니다.
+
+![폴더가 URL 세그먼트에 매핑되는 방식을 보여주는 다이어그램](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Ffolders-to-url-segments.png&w=1920&q=75)
+`layout.tsx` 및 `page.tsx` 파일을 사용하여 각 라우트에 대한 별도의 UI를 만들 수 있습니다.
+
+`page.tsx`는 리액트 컴포넌트를 내보내는 특별한 Next.js 파일이며, 라우트가 접근 가능하려면 필요합니다. 애플리케이션에는 이미 page 파일이 있습니다. `/app/page.tsx` - 이는 `/` 라우트와 연결된 홈페이지입니다.
+
+중첩된 라우트를 만들려면 폴더를 서로 중첩시키고 그 안에 `page.tsx` 파일을 추가할 수 있습니다.
+예를 들어 `/app/dashboard/page.tsx`는 `/dashboard` 경로와 연결됩니다.
+![대시보드라는 폴더를 추가하여 새로운 라우트 '/dashboard'를 생성하는 방식을 보여주는 다이어그램](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fdashboard-route.png&w=1920&q=75)
+페이지를 만들어 작동 방식을 확인해봅시다!
+
+### 대시보드 페이지 만들기
+`/app` 내에 `dashboard`라는 새 폴더를 만든 후 그 안에 다음 내용이 있는 새 `page.tsx` 파일을 생성하세요:
+
+```tsx:/app/dashboard/page.tsx
+export default function Page() {
+  return <p>대시보드 페이지</p>;
+}
+```
+개발 서버가 실행 중인지 확인하고 `http://localhost:3000/dashboard`를 방문하세요. "대시보드 페이지" 텍스트를 볼 수 있어야 합니다.
+
+Next.js에서 다른 `page`를 만드는 방법은 다음과 같습니다. 폴더를 사용하여 새 라우트 세그먼트를 만들고 그 안에 `page` 파일을 추가합니다.
+
+페이지 파일에 대한 특별한 이름을 사용함으로써 Next.js는 라우트와 관련된 UI 컴포넌트, 테스트 파일 및 기타 관련 코드를 [공동 위치](/docs/nextjs/routing#코드-공동-위치-colocation)할 수 있게 합니다. 페이지 파일 내의 내용만 공개적으로 접근 가능합니다. 예를 들어, `/ui` 및 `/lib` 폴더는 라우트와 함께 `/app` 폴더 내에 코로케이트됩니다.
+
+{/* ![코로케이트](https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-colocation.png&w=1920&q=75)
+
+![프로젝트 구성 및 파일 공동 위치](/docs/nextjs/routing/colocation)에 대해 더 자세히 알아 보세요. */}
+
+<Callout type="warning" icon="실습: 대시보드 페이지 만들기">
+
+더 많은 라우트를 만들어봅시다. 대시보드에 다음 두 페이지를 추가하세요.
+
+1. 고객 페이지: 이 페이지는 `http://localhost:3000/dashboard/customers`에서 접근 가능해야 합니다. 지금은 `<p>고객 페이지</p>` 요소를 반환해야 합니다.
+2. 인보이스 페이지: 인보이스 페이지는 `http://localhost:3000/dashboard/invoices`에서 접근 가능해야 합니다. 이 페이지도 지금은 `<p>인보이스 페이지</p>` 요소를 반환해야 합니다.
+
+이 연습에 시간을 할애하세요.
+
+<ToggleContent title="준비가 되면 아래 토글을 펼쳐 솔루션을 확인하세요.">
+다음과 같은 폴더 구조를 가지고 있어야 합니다.
+
+![로그인이라는 폴더를 추가하여 새로운 라우트 '/login'을 생성하는 방식을 보여주는 다이어그램](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Frouting-solution.png&w=1920&q=75)
+
+고객 페이지:
+```tsx:/app/dashboard/customers/page.tsx
+export default function Page() {
+  return <p>Customers Page</p>;
+}
+```
+
+인보이스 페이지:
+```tsx:/app/dashboard/invoices/page.tsx
+export default function Page() {
+  return <p>Invoices Page</p>;
+}
+```
+</ToggleContent>
+</Callout>
+
+
+### 대시보드 레이아웃 만들기
+대시보드에는 여러 페이지에 걸쳐 공유되는 일종의 네비게이션이 있습니다. Next.js에서는 특별한 layout.tsx 파일을 사용하여 여러 페이지 간에 공유되는 UI를 만들 수 있습니다. 대시보드 페이지를 위한 레이아웃을 만들어봅시다!
+
+`/dashboard` 폴더 내에 layout.tsx라는 새 파일을 추가하고 다음 코드를 붙여넣으세요.
+
+```tsx:/app/dashboard/layout.tsx
+import SideNav from '@/app/ui/dashboard/sidenav';
+ 
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+      <div className="w-full flex-none md:w-64">
+        <SideNav />
+      </div>
+      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+    </div>
+  );
+}
+```
+이 코드에서 몇 가지 일이 일어나고 있으니 자세히 살펴보겠습니다.
+
+먼저, `<SideNav />` 컴포넌트를 레이아웃에 가져오고 있습니다. 이 파일에 가져오는 모든 컴포넌트는 레이아웃의 일부가 됩니다.
+
+`<Layout />` 컴포넌트는 children prop을 받습니다. 이 자식은 페이지 또는 다른 레이아웃일 수 있습니다. 여러분의 경우, `/dashboard` 내의 페이지들이 자동으로 `<Layout />` 안에 중첩됩니다.
+
+![대시보드 페이지들을 자식으로 중첩시키는 대시보드 레이아웃과 폴더 구조](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fshared-layout.png&w=1920&q=75)
+
+변경 사항을 저장하고 로컬호스트를 확인하여 모든 것이 올바르게 작동하는지 확인하세요. 다음과 같은 화면을 볼 수 있어야 합니다.
+
+![사이드네비와 메인 컨텐츠 영역이 있는 대시보드 페이지](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fshared-layout-page.png&w=1080&q=75)
+
+Next.js에서 레이아웃을 사용하는 한 가지 장점은 내비게이션시 페이지 컴포넌트만 업데이트되고 레이아웃은 다시 렌더링되지 않는다는 것입니다. 이를 부분 렌더링이라고 합니다.
+
+![대시보드 페이지들을 자식으로 중첩시키는 대시보드 레이아웃과 폴더 구조, 하지만 내비게이션시에는 페이지 UI만 교체됩니다](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fpartial-rendering-dashboard.png&w=1920&q=75)
+
+### 루트 레이아웃
+3장에서 다른 레이아웃인 `/app/layout.tsx`에 Inter 폰트를 가져온 것을 기억하실 겁니다.
+
+```tsx:/app/layout.tsx
+import '@/app/ui/global.css';
+import { inter } from '@/app/ui/fonts';
+ 
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={`${inter.className} antialiased`}>{children}</body>
+    </html>
+  );
+}
+```
+이것을 루트 레이아웃이라고 하며, 필수적입니다. 루트 레이아웃에 추가하는 모든 UI는 애플리케이션의 모든 페이지에 걸쳐 공유됩니다. 루트 레이아웃을 사용하여 `<html>`과 `<body>` 태그를 수정하고 메타데이터를 추가할 수 있습니다(나중 장에서 메타데이터에 대해 더 배울 겁니다).
+
+방금 생성한 새 레이아웃(`/app/dashboard/layout.tsx`)이 대시보드 페이지에만 특화되어 있으므로 위의 루트 레이아웃에 어떤 UI도 추가할 필요가 없습니다.
+
+---
+
+## 5장: 페이지 간 내이게이션
+이전 장에서 대시보드 레이아웃과 페이지를 만들었습니다. 이제 대시보드 라우트 간에 사용자가 내이게이션할 수 있도록 몇 가지 링크를 추가해 봅시다.
+
+이 장에서 다룰 주제는 다음과 같습니다.
+
+- `next/link` 컴포넌트 사용 방법
+- `usePathname()` 훅을 사용하여 활성 링크 표시 방법
+- Next.js에서의 내비게이션작동 방식
+
+### 네이게이션을 최적화하는 이유는?
+페이지 간에 링크를 생성하기 위해 전통적으로 `<a>` HTML 요소를 사용합니다. 현재 사이드바 링크는 `<a>` 요소를 사용하고 있지만, 브라우저에서 홈, 인보이스, 고객 페이지 간에 네이게이션할 때 무슨 일이 일어나는지 주목하세요.
+
+보셨나요?
+
+각 페이지 네이게이션마다 전체 페이지 새로고침이 일어납니다!
+
+### `<Link>` 컴포넌트
+Next.js에서는 애플리케이션 내의 페이지 간에 링크를 생성하기 위해 `<Link />` 컴포넌트를 사용할 수 있습니다. `<Link>`는 자바스크립트로 클라이언트 측 네이게이션을 할 수 있게 해줍니다.
+
+`<Link />` 컴포넌트를 사용하기 위해 `/app/ui/dashboard/nav-links.tsx`를 열고 `next/link`에서 Link 컴포넌트를 가져온 후 `<a>` 태그를 `<Link>`로 교체하세요.
+
+```tsx:/app/ui/dashboard/nav-links.tsx {6,16,23}
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+ 
+// ...
+ 
+export default function NavLinks() {
+  return (
+    <>
+      {links.map((link) => {
+        const LinkIcon = link.icon;
+        return (
+          <Link
+            key={link.name}
+            href={link.href}
+            className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
+          >
+            <LinkIcon className="w-6" />
+            <p className="hidden md:block">{link.name}</p>
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+```
+보시다시피 Link 컴포넌트는 `<a>` 태그를 사용하는 것과 유사하지만, `<a href="…">` 대신 `<Link href="…">`를 사용합니다.
+
+변경 사항을 저장하고 로컬호스트에서 작동하는지 확인하세요. 이제 전체 새로고침 없이 페이지 간에 내이게이션할 수 있어야 합니다. 애플리케이션의 일부가 서버에서 렌더링되지만 전체 페이지 새로고침이 없어 웹 앱처럼 느껴집니다. 왜 그럴까요?
+
+
+#### 자동 코드 분할 및 프리패치
+내비게이션 경험을 개선하기 위해 Next.js는 애플리케이션을 라우트 세그먼트별로 자동으로 코드를 분할합니다. 이는 브라우저가 초기 로드 시 애플리케이션 코드 전체를 로드하는 전통적인 리액트 [SPA](https://developer.mozilla.org/en-US/docs/Glossary/SPA)와 다릅니다.
+
+라우트별로 코드를 분할함으로써 페이지가 독립적이게 됩니다. 특정 페이지에서 오류가 발생하더라도 나머지 애플리케이션은 계속 작동합니다.
+
+더욱이, 제작 환경에서 `<Link>` 컴포넌트가 브라우저의 뷰포트에 나타날 때, Next.js는 백그라운드에서 연결된 라우트의 코드를 자동으로 프리패치합니다. 사용자가 링크를 클릭할 때 목적지 페이지의 코드는 이미 백그라운드에서 로드되어 있기 때문에 페이지 전환이 거의 즉각적으로 느껴집니다!
+
+[내이게이션이 어떻게 작동](/docs/nextjs/routing/linking-and-navigating#라우팅-및-내비게이션-작동-방식)하는지 더 알아보세요.
+
+### 패턴: 활성 링크 표시
+사용자가 현재 어떤 페이지에 있는지를 나타내기 위해 활성 링크를 표시하는 것은 일반적인 UI 패턴입니다. 이를 수행하려면 URL에서 사용자의 현재 경로를 가져와야 합니다. Next.js는 `usePathname()`이라는 훅을 제공하여 경로를 확인하고 이 패턴을 구현할 수 있습니다.
+
+`usePathname()`은 훅이므로 `nav-links.tsx`를 클라이언트 컴포넌트로 전환해야 합니다. 파일 상단에 리액트의 `"use client"` 지시문을 추가한 다음, `next/navigation`에서 `usePathname()`을 가져오세요.
+
+```tsx:/app/ui/dashboard/nav-links.tsx {1,9}
+'use client';
+ 
+import {
+  UserGroupIcon,
+  HomeIcon,
+  InboxIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+ 
+// ...
+```
+다음으로, `<NavLinks />` 컴포넌트 내에서 `pathname` 변수에 경로를 할당하세요.
+
+```tsx:/app/ui/dashboard/nav-links.tsx {2}
+export default function NavLinks() {
+  const pathname = usePathname();
+  // ...
+}
+```
+CSS 스타일링 장에서 소개한 `clsx` 라이브러리를 사용하여 링크가 활성 상태일 때 조건부로 클래스 이름을 적용할 수 있습니다. `link.href`가 `pathname`과 일치할 때 링크는 파란색 텍스트와 옅은 파란색 배경으로 표시되어야 합니다.
+
+`nav-links.tsx`의 최종 코드는 다음과 같습니다.
+
+```tsx:/app/ui/dashboard/nav-links.tsx {10, 25-30}
+'use client';
+ 
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
+ 
+// ...
+ 
+export default function NavLinks() {
+  const pathname = usePathname();
+ 
+  return (
+    <>
+      {links.map((link) => {
+        const LinkIcon = link.icon;
+        return (
+          <Link
+            key={link.name}
+            href={link.href}
+            className={clsx(
+              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+              {
+                'bg-sky-100 text-blue-600': pathname === link.href,
+              },
+            )}
+          >
+            <LinkIcon className="w-6" />
+            <p className="hidden md:block">{link.name}</p>
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+```
+변경 사항을 저장하고 로컬호스트를 확인하세요. 이제 활성 링크가 파란색으로 강조 표시되어야 합니다.

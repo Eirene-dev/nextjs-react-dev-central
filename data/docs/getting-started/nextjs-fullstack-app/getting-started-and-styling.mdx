@@ -1,0 +1,511 @@
+---
+title: 기본 설정 및 스타일링
+date: '2023-01-01 03:01'
+summary: 프로젝트의 초기 설정과 기본 스타일링 방법을 배웁니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 1장: 시작하기
+### 새 프로젝트 생성하기
+Next.js 앱을 만들려면 터미널을 열고 프로젝트를 저장할 폴더로 이동한 다음 다음 명령어를 실행하세요.
+
+```bash:터미널
+npx create-next-app@latest nextjs-dashboard --use-npm \
+ --example "https://github.com/vercel/next-learn/tree/main/dashboard/starter-example"
+```
+
+이 명령어는 `create-next-app`, 즉 Next.js 애플리케이션을 설정해주는 명령줄 인터페이스(CLI) 도구를 사용합니다. 위 명령어에서는 이 과정을 위한 [시작 예제](https://github.com/vercel/next-learn/tree/main/dashboard/starter-example)에 `--example` 플래그를 사용하고 있습니다.
+
+### 프로젝트 탐색하기
+처음부터 코드를 작성하게 하는 튜토리얼과 달리, 이 과정의 많은 코드는 이미 작성되어 있습니다. 이는 실제 개발 환경을 더 잘 반영하며, 기존 코드베이스와 함께 작업할 가능성이 높습니다.
+
+우리의 목표는 모든 애플리케이션 코드를 작성하지 않고도 Next.js의 주요 기능을 학습하는 데 집중할 수 있도록 돕는 것입니다.
+
+설치 후 코드 에디터에서 프로젝트를 열고 `nextjs-dashboard`로 이동하세요.
+
+```bash:터미널
+cd nextjs-dashboard
+```
+프로젝트를 탐색하는 데 시간을 좀 할애해 보세요.
+
+#### 폴더 구조
+프로젝트에는 다음과 같은 폴더 구조가 있다는 것을 알게 될 것입니다.
+![폴더 구조](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Flearn-folder-structure.png&w=1920&q=75)
+
+대시보드 프로젝트의 폴더 구조를 보여주며, 주요 폴더와 app, public 및 설정 파일들을 나타냅니다.
+- `/app`: 애플리케이션의 모든 라우트, 컴포넌트, 로직이 들어 있으며, 주로 이곳에서 작업하게 됩니다.
+- `/app/lib`: 애플리케이션에서 사용되는 함수들이 들어 있습니다. 예를 들어 재사용 가능한 유틸리티 함수와 데이터 가져오기 함수 등이 있습니다.
+- `/app/ui`: 애플리케이션의 모든 UI 컴포넌트가 들어 있으며, 카드, 테이블, 폼과 같은 요소들을 포함합니다. 시간을 절약하기 위해 이 컴포넌트들은 사전에 스타일이 지정되어 있습니다.
+- `/public`: 애플리케이션의 모든 정적 자산이 들어 있습니다. 예를 들어 이미지 등이 있습니다.
+- `/scripts`: 나중 장에서 데이터베이스를 채우는 데 사용할 시딩 스크립트가 들어 있습니다.
+- **설정 파일들**: `next.config.js`와 같은 애플리케이션 루트에 있는 설정 파일들도 주목할 수 있습니다. 이 파일들의 대부분은 `create-next-app`을 사용해 새 프로젝트를 시작할 때 생성되고 사전 설정됩니다. 이 과정에서 이 파일들을 수정할 필요는 없습니다.
+이 폴더들을 탐색해 보고 코드가 하는 일을 모두 이해하지 못해도 걱정하지 마세요.
+
+#### 플레이스홀더 데이터
+사용자 인터페이스를 구축할 때는 플레이스홀더 데이터가 있으면 도움이 됩니다. 데이터베이스나 API가 아직 사용할 수 없는 경우에는:
+
+- JSON 형식이나 자바스크립트 객체로 플레이스홀더 데이터를 사용할 수 있습니다.
+- [mockAPI](https://mockapi.io/)와 같은 서드파티 서비스를 사용할 수 있습니다.
+
+이 프로젝트에서는 `app/lib/placeholder-data.js`에 일부 플레이스홀더 데이터를 제공했습니다. 파일 내의 각 자바스크립트 객체는 데이터베이스의 테이블을 대표합니다. 예를 들어, 청구서 테이블의 경우에는 아래 코드와 같습니다.
+
+```js:/app/lib/placeholder-data.js
+const invoices = [
+  {
+    customer_id: customers[0].id,
+    amount: 15795,
+    status: 'pending',
+    date: '2022-12-06',
+  },
+  {
+    customer_id: customers[1].id,
+    amount: 20348,
+    status: 'pending',
+    date: '2022-11-14',
+  },
+  // ...
+];
+```
+데이터베이스를 설정하는 장에서 이 데이터를 사용하여 데이터베이스를 시드할 것입니다(초기 데이터로 채울 것입니다).
+
+
+#### 타입스크립트
+파일들이 `.ts` 또는 `.tsx` 접미사를 가지고 있는 것을 알 수 있습니다. 이 프로젝트는 타입스크립트로 작성되었기 때문입니다. 현대 웹 환경을 반영하는 과정을 만들고 싶었습니다.
+
+타입스크립트를 모른다고 해도 괜찮습니다. 필요할 때 타입스크립트 코드 스니펫을 제공할 것입니다.
+
+일단 `/app/lib/definitions.ts` 파일을 살펴보세요. 여기서는 데이터베이스에서 반환될 타입을 수동으로 정의합니다. 예를 들어, invoices 테이블은 다음과 같은 타입을 가집니다.
+
+```ts:/app/lib/definitions.ts
+export type Invoice = {
+  id: string;
+  customer_id: string;
+  amount: number;
+  date: string;
+  // 타입스크립트에서 이것을 문자열 합집합 타입이라고 부릅니다.
+  // "status" 속성은 'pending' 또는 'paid' 중 하나만 될 수 있음을 의미합니다.
+  status: 'pending' | 'paid';
+};
+```
+타입스크립트를 사용하면 컴포넌트나 데이터베이스에 잘못된 데이터 형식을 전달하는 실수를 방지할 수 있습니다. 예를 들어, 인보이스 금액에 숫자 대신 문자열을 전달하는 것과 같은 실수입니다.
+
+> 타입스크립트 개발자라면,
+> 
+> 데이터 타입을 수동으로 선언하고 있지만, 데이터베이스 스키마를 기반으로 자동으로 타입을 생성하는 [Prisma](https://www.prisma.io/)와 같이 더 나은 타입 안전성을 위해 추천합니다.
+> Next.js는 프로젝트가 타입스크립트를 사용하는지 감지하고 필요한 패키지와 설정을 자동으로 설치합니다. 또한 코드 에디터를 위한 [타입스크립트 플러그인](https://nextjs.org/learn/dashboard-app/getting-started#:~:text=comes%20with%20a-,TypeScript%20plugin,-for%20your%20code)이 포함되어 있어 자동 완성 및 타입 안전성을 도와줍니다.
+
+### 개발 서버 실행하기
+프로젝트 패키지를 설치하려면 `npm i`를 실행하세요.
+
+```bash:터미널
+npm i
+```
+그 다음에 `npm run dev`를 실행하여 개발 서버를 시작하세요.
+
+```bash:터미널
+npm run dev
+```
+
+`npm run dev`는 `3000` 포트에서 Next.js 개발 서버를 시작합니다. 작동하는지 확인해봅시다. 브라우저에서 `http://localhost:3000`을 엽니다. 홈페이지는 다음과 같이 보일 것입니다.
+
+!['Acme'라는 제목과 설명, 로그인 링크가 있는 스타일이 적용되지 않은 페이지](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Facme-unstyled.png&w=1920&q=75)
+
+---
+
+## 2장: CSS 스타일링
+현재 홈페이지에는 스타일이 적용되어 있지 않습니다. Next.js 애플리케이션에 스타일을 적용하는 다양한 방법을 살펴봅시다.
+
+이 장에서 다룰 주제는 다음과 같습니다.
+- 애플리케이션에 전역 CSS 파일 추가하는 방법
+- 스타일링의 두 가지 방법: Tailwind와 CSS 모듈
+- clsx 유틸리티 패키지를 사용하여 클래스 이름을 조건부로 추가하는 방법
+
+### 전역 스타일
+`/app/ui` 폴더 안을 보면 global.css라는 파일이 있습니다. 이 파일을 사용하여 애플리케이션의 모든 라우트에 CSS 규칙을 추가할 수 있습니다. 예를 들어 CSS 리셋 규칙, 링크와 같은 HTML 요소에 대한 사이트 전체 스타일 등이 있습니다.
+
+`global.css`를 애플리케이션의 어떤 컴포넌트에서도 가져올 수 있지만, 최상위 컴포넌트에 추가하는 것이 좋은 관행입니다. Next.js에서는 이것이 루트 레이아웃입니다(이에 대해서는 나중에 더 자세히 설명합니다).
+
+`/app/layout.tsx`로 이동하여 `global.css` 파일을 가져와 애플리케이션에 전역 스타일을 추가하세요.
+
+```tsx:/app/layout.tsx
+import '@/app/ui/global.css';
+ 
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+개발 서버가 여전히 실행 중인 상태에서 변경 사항을 저장하고 브라우저에서 미리보기를 확인하세요. 이제 홈페이지는 다음과 같이 보일 것입니다.
+
+!['Acme' 로고, 설명 및 로그인 링크가 있는 스타일이 적용된 페이지.](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fhome-page-with-tailwind.png&w=1080&q=75)
+
+잠깐, 아직 CSS 규칙을 추가하지 않았는데 스타일은 어디서 왔을까요?
+
+`global.css` 내부를 살펴보면 `@tailwind` 지시문이 몇 개 있는 것을 알 수 있습니다.
+
+```css:/app/ui/global.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+
+### Tailwind
+[Tailwind](https://tailwindcss.com/)는 TSX 마크업 내에서 직접 [유틸리티 클래스](https://tailwindcss.com/docs/utility-first)를 신속하게 작성할 수 있게 해주는 CSS 프레임워크로 개발 과정을 가속화합니다.
+
+Tailwind에서는 클래스 이름을 추가함으로써 요소를 스타일링합니다. 예를 들어, `"text-blue-500"` 클래스를 추가하면 `<h1>` 텍스트가 파랗게 변합니다.
+
+```jsx
+<h1 className="text-blue-500">나는 파랗다!</h1>
+```
+CSS 스타일은 전역적으로 공유되지만, 각 클래스는 각 요소에 개별적으로 적용됩니다. 이는 요소를 추가하거나 삭제할 때 별도의 스타일시트를 관리하거나 스타일 충돌을 걱정하거나 애플리케이션이 확장됨에 따라 CSS 번들 크기가 커지는 것에 대해 걱정할 필요가 없음을 의미합니다.
+
+새 프로젝트를 시작할 때 create-next-app을 사용하면 Next.js가 Tailwind를 사용할지 물어보고, 예를 선택하면 필요한 패키지를 자동으로 설치하고 애플리케이션에서 Tailwind를 구성합니다.
+
+`/app/page.tsx`를 살펴보면 예제에서 Tailwind 클래스를 사용하고 있음을 볼 수 있습니다.
+
+```tsx:/app/page.tsx
+import AcmeLogo from '@/app/ui/acme-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+ 
+export default function Page() {
+  return (
+    // 이것들은 Tailwind 클래스입니다.
+    <main className="flex min-h-screen flex-col p-6">
+      <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
+    // ...
+  )
+}
+```
+Tailwind를 처음 사용한다고 해도 걱정하지 마세요. 시간을 절약하기 위해 사용할 모든 컴포넌트를 이미 스타일링했습니다.
+
+Tailwind로 놀아보세요! 아래 코드를 복사해서 `/app/page.tsx`의 `<p>` 요소 위에 붙여넣으세요.
+
+```tsx:/app/page.tsx
+<div
+  className="h-0 w-0 border-b-[30px] border-l-[20px] \
+    border-r-[20px] border-b-black border-l-transparent border-r-transparent"
+/>
+```
+
+전통적인 CSS 규칙을 작성하는 것을 선호하거나 JSX와 스타일을 분리하고 싶다면 CSS 모듈은 훌륭한 대안입니다.
+
+### CSS 모듈
+CSS 모듈을 사용하면 고유한 클래스 이름을 자동으로 생성함으로써 CSS를 컴포넌트에 범위를 지정할 수 있으므로 스타일 충돌에 대해 걱정할 필요가 없습니다.
+
+이 과정에서는 Tailwind를 계속 사용할 예정이지만 CSS 모듈을 사용하여 위의 퀴즈에서와 같은 결과를 어떻게 달성할 수 있는지 잠시 살펴보겠습니다.
+
+`/app/ui` 내부에 `home.module.css`라는 새 파일을 생성하고 다음 CSS 규칙을 추가하세요.
+
+```css:/app/ui/home.module.css
+.shape {
+  height: 0;
+  width: 0;
+  border-bottom: 30px solid black;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+}
+```
+그런 다음 `/app/page.tsx` 파일 내에서 스타일을 가져오고 추가한 `<div>`에서 Tailwind 클래스 이름을 `styles.shape`로 교체하세요.
+
+```tsx:/app/page.tsx
+import styles from '@/app/ui/home.module.css';
+<div className={styles.shape} />;
+```
+변경 사항을 저장하고 브라우저에서 미리보기를 확인하세요. 이전과 같은 모양을 볼 수 있어야 합니다.
+
+Tailwind와 CSS 모듈은 Next.js 애플리케이션을 스타일링하는 가장 일반적인 두 가지 방법입니다. 하나를 사용하거나 다른 것을 사용하는 것은 선호도의 문제이며 심지어 같은 애플리케이션에서 두 가지를 모두 사용할 수도 있습니다!
+
+### clsx 라이브러리를 사용하여 클래스 이름 토글하기
+상태나 다른 조건에 따라 요소를 조건부로 스타일링해야 할 경우가 있을 수 있습니다.
+
+[clsx](https://www.npmjs.com/package/clsx)는 클래스 이름을 쉽게 토글할 수 있게 해주는 라이브러리입니다. 자세한 내용은 [문서](https://github.com/lukeed/clsx)를 참조하는 것이 좋지만 기본 사용 방법은 다음과 같습니다.
+
+- `status`를 받아들이는 `InvoiceStatus` 컴포넌트를 만들고자 한다고 가정합니다. 상태는 `'pending'` 또는 `'paid'`일 수 있습니다.
+- `'paid'`인 경우 색상을 녹색으로, `'pending'`인 경우 색상을 회색으로 하고 싶습니다.
+
+clsx를 사용하여 조건부로 클래스를 적용할 수 있습니다.
+
+```tsx:/app/ui/invoices/status.tsx
+import clsx from 'clsx';
+ 
+export default function InvoiceStatus({ status }: { status: string }) {
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center rounded-full px-2 py-1 text-sm',
+        {
+          'bg-gray-100 text-gray-500': status === 'pending',
+          'bg-green-500 text-white': status === 'paid',
+        },
+      )}
+    >
+    // ...
+)}
+```
+
+### 다른 스타일링 솔루션
+앞서 논의한 접근 방식 외에도 다음과 같이 Next.js 애플리케이션을 스타일링할 수 있습니다.
+
+- `.css` 및 `.scss` 파일을 가져올 수 있는 Sass
+- [styled-jsx](https://github.com/vercel/styled-jsx), [styled-components](https://github.com/vercel/next.js/tree/canary/examples/with-styled-components), [emotion과](https://github.com/vercel/next.js/tree/canary/examples/with-emotion) 같은 CSS-in-JS 라이브러리
+
+보다 많은 정보는 [CSS 문서](/docs/nextjs/styling)를 참고 하세요.
+
+---
+
+## 3장: 폰트와 이미지 최적화
+이전 장에서는 Next.js 애플리케이션을 스타일링하는 방법을 배웠습니다. 이제 홈페이지에 사용자 정의 폰트와 히어로 이미지를 추가하며 작업을 계속해봅시다.
+
+이 장에서 다룰 주제는 다음과 같습니다.
+
+- `next/font`를 사용하여 사용자 정의 폰트 추가 방법
+- `next/image`를 사용하여 이미지 추가 방법
+- Next.js에서 폰트와 이미지가 어떻게 최적화되는지
+
+### 폰트를 최적화하는 이유는?
+폰트는 웹사이트 디자인에 중요한 역할을 하지만, 프로젝트에서 사용자 정의 폰트를 사용할 경우 폰트 파일을 가져오고 로드해야 하기 때문에 성능에 영향을 줄 수 있습니다.
+
+[누적 레이아웃 이동](https://web.dev/cls/)은 Google이 웹사이트의 성능과 사용자 경험을 평가하기 위해 사용하는 지표입니다. 폰트와 관련하여 레이아웃 이동은 브라우저가 처음에 대체 또는 시스템 폰트로 텍스트를 렌더링한 다음 사용자 정의 폰트가 로드되면 이를 교체할 때 발생합니다. 이 교체는 텍스트 크기, 간격 또는 레이아웃을 변경하여 주변 요소를 이동시킬 수 있습니다.
+
+![사용자 정의 폰트가 로드될 때 발생하는 레이아웃 이동을 보여주는 모의 UI](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Ffont-layout-shift.png&w=1920&q=75)
+Next.js는 `next/font` 모듈을 사용할 때 애플리케이션에서 폰트를 자동으로 최적화합니다. 빌드 시 폰트 파일을 다운로드하고 다른 정적 자산과 함께 호스팅합니다. 이는 사용자가 애플리케이션을 방문할 때 폰트에 대한 추가 네트워크 요청이 없으므로 성능에 영향을 주지 않음을 의미합니다.
+
+### 메인 폰트 추가
+애플리케이션에 사용자 정의 Google 폰트를 추가하여 이 작업이 어떻게 이루어지는지 살펴봅시다!
+
+`/app/ui` 폴더에 `fonts.ts`라는 새 파일을 생성하세요. 이 파일을 사용하여 애플리케이션 전체에서 사용될 폰트를 관리할 것입니다.
+
+`next/font/google` 모듈에서 Inter 폰트를 가져와 주 폰트로 지정하세요. 그리고 로드할 하위 집합을 지정합니다. 이 경우에는 `'latin'`입니다.
+
+```ts:/app/ui/fonts.ts {1,3}
+import { Inter } from 'next/font/google';
+ 
+export const inter = Inter({ subsets: ['latin'] });
+```
+
+마지막으로 `/app/layout.tsx`에서 `<body>` 요소에 폰트를 추가하세요.
+
+```tsx:/app/layout.tsx {2,11}
+import '@/app/ui/global.css';
+import { inter } from '@/app/ui/fonts';
+ 
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={`${inter.className} antialiased`}>{children}</body>
+    </html>
+  );
+}
+```
+Inter를 `<body>` 요소에 추가함으로써 애플리케이션 전체에 폰트가 적용됩니다. 여기서 Tailwind의 [antialiased](https://tailwindcss.com/docs/font-smoothing) 클래스도 추가하는데, 폰트를 부드럽게 합니다. 이 클래스를 사용하지 않아도 되지만, 보기 좋은 터치를 더합니다.
+
+브라우저로 이동하여 개발 도구를 열고 `body` 요소를 선택하세요. 이제 `Inter`와 `Inter_Fallback`이 스타일 아래에 적용된 것을 볼 수 있습니다.
+
+<Callout type="warning" icon="실습: 보조 폰트 추가하기">
+
+애플리케이션의 특정 요소에 폰트를 추가할 수도 있습니다.
+
+이제 직접 실습할 차례입니다! `fonts.ts` 파일에서 `Lusitana`라는 보조 폰트를 가져와 `/app/page.tsx` 파일의 `<p>` 요소에 적용하세요. 이전에 하셨던 것처럼 하위 집합을 지정할 뿐만 아니라 폰트 두께도 지정해야 합니다.
+
+> 힌트:
+> - 폰트에 어떤 두께 옵션을 전달해야 하는지 확실하지 않다면 코드 에디터의 타입스크립트 오류를 확인하세요.
+> - Google Fonts 웹사이트를 방문하여 `Lusitana`가 어떤 옵션이 있는지 확인하세요.
+> - 여러 폰트를 추가하고 전체 옵션 목록에 대한 문서를 참조하세요.
+
+<ToggleContent title="준비가 되면 아래 코드 스니펫을 펼쳐서 솔루션을 확인하세요.">
+
+```ts:/app/ui/fonts.ts
+import { Inter, Lusitana } from 'next/font/google';
+ 
+export const inter = Inter({ subsets: ['latin'] });
+ 
+export const lusitana = Lusitana({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+});
+```
+
+```tsx:/app/page.tsx
+import AcmeLogo from '@/app/ui/acme-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { lusitana } from '@/app/ui/fonts';
+ 
+export default function Page() {
+  return (
+    // ...
+    <p
+      className={`${lusitana.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}
+    >
+      <strong>Welcome to Acme.</strong> This is the example for the{' '}
+      <a href="https://nextjs.org/learn/" className="text-blue-500">
+        Next.js Learn Course
+      </a>
+      , brought to you by Vercel.
+    </p>
+    // ...
+  );
+}
+```
+</ToggleContent>
+</Callout>
+
+
+
+마지막으로, `<AcmeLogo />` 컴포넌트도 `Lusitana`를 사용합니다. 오류를 방지하기 위해 주석 처리되었으나 이제 주석을 해제할 수 있습니다.
+
+```tsx:/app/page.tsx {7}
+// ...
+ 
+export default function Page() {
+  return (
+    <main className="flex min-h-screen flex-col p-6">
+      <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
+        <AcmeLogo />
+        {/* ... */}
+      </div>
+    </main>
+  );
+}
+```
+좋습니다, 애플리케이션에 두 개의 사용자 정의 폰트를 추가했습니다! 다음으로, 홈페이지에 히어로 이미지를 추가해봅시다.
+
+### 이미지를 최적화하는 이유는 무엇인가요?
+Next.js는 이미지와 같은 정적 자산을 최상위 `/public` 폴더 아래에서 제공할 수 있습니다. `/public` 안의 파일들은 애플리케이션에서 참조될 수 있습니다.
+
+일반 HTML에서는 다음과 같이 이미지를 추가합니다.
+
+```jsx
+<img
+  src="/hero.png"
+  alt="대시보드 프로젝트의 스크린샷을 보여주는 데스크탑 버전"
+/>
+```
+하지만 이는 수동으로 아래 사항을 수행해야 합니다.
+
+- 다양한 화면 크기에서 이미지가 반응형이 되도록 해야 합니다.
+- 다양한 기기에 대해 이미지 크기를 지정해야 합니다.
+- 이미지가 로드되면서 발생하는 레이아웃 이동을 방지해야 합니다.
+- 사용자의 뷰포트 밖에 있는 이미지를 지연 로드해야 합니다.
+
+웹 개발에서 이미지 최적화는 자체적으로 전문화될 수 있는 큰 주제입니다. 이러한 최적화를 수동으로 구현하는 대신 `next/image` 컴포넌트를 사용하여 이미지를 자동으로 최적화할 수 있습니다.
+
+
+
+### `<Image>` 컴포넌트
+`<Image>` 컴포넌트는 HTML `<img>` 태그를 확장한 것으로 자동 이미지 최적화 기능을 제공합니다. 예를 들면 아래와 같습니다.
+
+- 이미지가 로딩될 때 레이아웃 이동을 자동으로 방지합니다.
+- 더 작은 뷰포트를 가진 기기에 큰 이미지를 전송하지 않도록 이미지 크기를 조정합니다.
+- 기본적으로 이미지가 뷰포트에 들어올 때까지 지연 로딩합니다.
+- 브라우저가 지원할 경우 WebP와 AVIF와 같은 현대적인 포맷으로 이미지를 제공합니다.
+
+### 데스크탑 히어로 이미지 추가
+`<Image>` 컴포넌트를 사용해봅시다. `/public` 폴더 안을 보면 `hero-desktop.png`와 `hero-mobile.png` 두 이미지가 있는 것을 볼 수 있습니다. 이 두 이미지는 완전히 다르며 사용자의 기기가 데스크탑인지 모바일인지에 따라 표시됩니다.
+
+`/app/page.tsx` 파일에서 `next/image`에서 컴포넌트를 가져옵니다. 그런 다음, 주석 아래에 이미지를 추가하세요.
+
+```tsx:/app/page.tsx {5, 12-18}
+import AcmeLogo from '@/app/ui/acme-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { lusitana } from '@/app/ui/fonts';
+import Image from 'next/image';
+ 
+export default function Page() {
+  return (
+    // ...
+    <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
+      {/* 히어로 이미지 추가하기 */}
+      <Image
+        src="/hero-desktop.png"
+        width={1000}
+        height={760}
+        className="hidden md:block"
+        alt="대시보드 프로젝트의 데스크탑 버전을 보여주는 스크린샷"
+      />
+    </div>
+    //...
+  );
+}
+```
+여기서 이미지의 너비를 `1000`, 높이를 `760` 픽셀로 설정했습니다. 이미지의 너비와 높이를 설정하여 레이아웃 이동을 방지하는 것은 좋은 관행입니다. 이 값들은 원본 이미지와 **동일한 종횡비**여야 합니다.
+
+모바일 화면에서 이미지를 DOM에서 제거하는 클래스 `hidden`과 데스크탑 화면에서 이미지를 표시하는 `md:block` 클래스도 확인할 수 있습니다.
+
+이제 홈페이지는 다음과 같아야 합니다.
+
+![사용자 정의 폰트와 히어로 이미지가 적용된 스타일 홈페이지](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fhome-page-with-hero.png&w=1080&q=75)
+
+
+<Callout type="warning" icon="실습: 모바일 히어로 이미지 추가">
+
+이제 실습할 차례입니다! 방금 추가한 이미지 아래에 `hero-mobile.png`에 대한 또 다른 `<Image>` 컴포넌트를 추가하세요.
+
+- 이 이미지는 너비가 `560`이고 높이가 `620` 픽셀이어야 합니다.
+- 모바일 화면에 표시되고 데스크탑에는 숨겨져야 합니다. 개발 도구를 사용해 데스크탑과 모바일 이미지가 올바르게 교체되는지 확인할 수 있습니다.
+
+<ToggleContent title="준비가 되면 아래 코드 스니펫을 펼쳐 솔루션을 확인하세요.">
+
+
+```tsx:/app/page.tsx {19-25}
+import AcmeLogo from '@/app/ui/acme-logo';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { lusitana } from '@/app/ui/fonts';
+import Image from 'next/image';
+ 
+export default function Page() {
+  return (
+    // ...
+    <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
+      {/* Add Hero Images Here */}
+      <Image
+        src="/hero-desktop.png"
+        width={1000}
+        height={760}
+        className="hidden md:block"
+        alt="Screenshots of the dashboard project showing desktop version"
+      />
+      <Image
+        src="/hero-mobile.png"
+        width={560}
+        height={620}
+        className="block md:hidden"
+        alt="Screenshot of the dashboard project showing mobile version"
+      />
+    </div>
+    //...
+  );
+}
+```
+</ToggleContent>
+</Callout>
+
+
+좋습니다! 홈페이지에 사용자 정의 폰트와 히어로 이미지가 추가되었습니다.
+
+
+
+### 추가 학습 항목
+이러한 주제에 대해 더 배우고 싶다면 원격 이미지 최적화 및 로컬 폰트 파일 사용을 포함하여 더 많은 정보를 얻을 수 있습니다. 폰트와 이미지에 대해 더 깊이 파고들고 싶다면 다음을 참조하세요.
+
+- [이미지 최적화 문서](/docs/nextjs/optimizing/images)
+- [폰트 최적화 문서](/docs/nextjs/optimizing/fonts)
+- [웹 성능 향상을 위한 이미지 (MDN)](https://developer.mozilla.org/en-US/docs/Learn/Performance/Multimedia)
+- [웹 폰트 (MDN)](https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Web_fonts)
+

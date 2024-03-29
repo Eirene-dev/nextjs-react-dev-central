@@ -1,0 +1,1203 @@
+---
+title: 고급 데이터 처리
+date: '2023-01-01 03:05'
+summary: 데이터를 업데이트하고 관리하는 고급 기술과 최적화 전략을 배웁니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 11장: 검색과 페이지네이션 추가하기
+
+이전 장에서는 스트리밍을 통해 대시보드의 초기 로딩 성능을 개선했습니다. 이제 `/invoices` 페이지로 넘어가 검색과 페이지네이션을 추가하는 방법을 배워봅시다!
+
+이 장에서 다룰 내용은 다음과 같습니다.
+
+- Next.js API인 `searchParams`, `usePathname`, `useRouter` 사용 방법 학습
+- URL 검색 파라미터를 사용하여 검색과 페이지네이션 구현하기
+
+### 시작 코드
+`/dashboard/invoices/page.tsx` 파일 안에 다음 코드를 붙여넣으세요.
+
+```tsx:/app/dashboard/invoices/page.tsx
+import Pagination from '@/app/ui/invoices/pagination';
+import Search from '@/app/ui/search';
+import Table from '@/app/ui/invoices/table';
+import { CreateInvoice } from '@/app/ui/invoices/buttons';
+import { lusitana } from '@/app/ui/fonts';
+import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
+import { Suspense } from 'react';
+ 
+export default async function Page() {
+  return (
+    <div className="w-full">
+      <div className="flex w-full items-center justify-between">
+        <h1 className={`${lusitana.className} text-2xl`}>청구서</h1>
+      </div>
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Search placeholder="청구서 검색..." />
+        <CreateInvoice />
+      </div>
+      {/*  <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
+        <Table query={query} currentPage={currentPage} />
+      </Suspense> */}
+      <div className="mt-5 flex w-full justify-center">
+        {/* <Pagination totalPages={totalPages} /> */}
+      </div>
+    </div>
+  );
+}
+```
+
+페이지와 작업할 컴포넌트에 익숙해지는 시간을 가지세요.
+
+1. `<Search/>`는 사용자가 특정 청구서를 검색할 수 있게 해줍니다.
+2. `<Pagination/>`는 사용자가 청구서 페이지 간을 넘나들 수 있게 해줍니다.
+3. `<Table/>`은 청구서를 표시합니다.
+
+검색 기능은 클라이언트와 서버 양쪽에 걸쳐 있습니다. 사용자가 클라이언트에서 청구서를 검색하면 URL 파라미터가 업데이트되고 서버에서 데이터가 가져와지며 새 데이터로 서버에서 테이블이 다시 렌더링됩니다.
+
+
+### URL 검색 파라미터를 사용하는 이유
+앞서 언급했듯이, 검색 상태를 관리하기 위해 URL 검색 파라미터를 사용할 예정입니다. 클라이언트 사이드 상태로 처리하는 데 익숙한 경우에는 이 패턴이 새로울 수 있습니다.
+
+URL 파라미터를 이용한 검색 구현의 장점은 다음과 같습니다.
+
+- **북마크 가능하고 공유 가능한 URL**: 검색 파라미터가 URL에 있기 때문에, 사용자는 애플리케이션의 현재 상태를 북마크하거나 검색 쿼리와 필터를 포함하여 미래 참조나 공유를 위해 저장할 수 있습니다.
+- **서버 사이드 렌더링 및 초기 로드**: URL 파라미터는 서버에서 직접 소비될 수 있어 초기 상태 렌더링을 쉽게 처리할 수 있습니다.
+- **분석 및 추적**: 검색 쿼리와 필터가 URL에 직접 있어 사용자 행동을 추적하기가 더 쉽고 추가 클라이언트 사이드 로직이 필요하지 않습니다.
+
+### 검색 기능 추가하기
+검색 기능을 구현하기 위해 사용할 Next.js 클라이언트 훅은 다음과 같습니다.
+
+- `useSearchParams`: 현재 URL의 파라미터에 접근할 수 있게 합니다. 예를 들어, 이 URL `/dashboard/invoices?page=1&query=pending`의 검색 파라미터는 `{page: '1', query: 'pending'}`처럼 보입니다.
+- `usePathname`: 현재 URL의 라우트 이름을 읽을 수 있게 합니다. 예를 들어, `/dashboard/invoices` 라우트의 경우 usePathname은 '/dashboard/invoices'를 반환합니다.
+- `useRouter`: 클라이언트 컴포넌트 내에서 프로그래밍 방식으로 라우트 간의 탐색을 가능하게 합니다. 사용할 수 있는 여러 메소드가 있습니다.
+
+구현 단계 개요는 다음과 같습니다.
+
+1. 사용자 입력을 캡처합니다.
+2. 검색 파라미터로 URL을 업데이트합니다.
+3. 입력 필드와 URL을 동기화합니다.
+4. 검색 쿼리를 반영하여 테이블을 업데이트합니다.
+
+#### 1. 사용자 입력 캡처하기
+`<Search>` 컴포넌트(`/app/ui/search.tsx`)로 가보면 다음을 확인할 수 있습니다.
+
+- `"use client"`: 이것은 클라이언트 컴포넌트로 이벤트 리스너와 훅을 사용할 수 있습니다.
+- `<input>`: 이것은 검색 입력 필드입니다.
+새로운 `handleSearch` 함수를 생성하고, `<input>` 요소에 `onChange` 리스너를 추가합니다. 입력값이 변경될 때마다 `onChange`가 `handleSearch`를 호출합니다.
+
+```tsx:/app/ui/search.tsx {6-8,18-20}
+'use client';
+ 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+ 
+export default function Search({ placeholder }: { placeholder: string }) {
+  function handleSearch(term: string) {
+    console.log(term);
+  }
+ 
+  return (
+    <div className="relative flex flex-1 flex-shrink-0">
+      <label htmlFor="search" className="sr-only">
+        검색
+      </label>
+      <input
+        className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+        placeholder={placeholder}
+        onChange={(e) => {
+          handleSearch(e.target.value);
+        }}
+      />
+      <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+    </div>
+  );
+}
+```
+개발자 도구의 콘솔을 열고 검색 필드에 입력해 보세요. 검색어가 콘솔에 로그로 기록되는 것을 볼 수 있습니다.
+
+좋습니다! 사용자의 검색 입력을 캡처했습니다. 이제 검색어로 URL을 업데이트해야 합니다.
+
+
+#### 2. 검색 파라미터로 URL 업데이트하기
+`'next/navigation'`에서 `useSearchParams` 훅을 불러와 변수에 할당하세요.
+
+```tsx:/app/ui/search.tsx {4,7}
+'use client';
+ 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useSearchParams } from 'next/navigation';
+ 
+export default function Search() {
+  const searchParams = useSearchParams();
+ 
+  function handleSearch(term: string) {
+    console.log(term);
+  }
+  // ...
+}
+```
+`handleSearch` 안에서 새 `URLSearchParams` 인스턴스를 검색 파라미터 변수를 사용하여 생성하세요.
+
+```tsx:/app/ui/search.tsx {10}
+'use client';
+ 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useSearchParams } from 'next/navigation';
+ 
+export default function Search() {
+  const searchParams = useSearchParams();
+ 
+  function handleSearch(term: string) {
+    const params = new URLSearchParams(searchParams);
+  }
+  // ...
+}
+```
+`URLSearchParams`는 URL 쿼리 파라미터를 조작하기 위한 유틸리티 메소드를 제공하는 웹 API입니다. 복잡한 문자열 리터럴을 만들기보다는, `?page=1&query=a`와 같은 파라미터 문자열을 얻기 위해 사용할 수 있습니다.
+
+다음으로 사용자 입력에 따라 파라미터 문자열을 설정합니다. 입력이 비어있다면 삭제하고 싶을 것입니다.
+
+```tsx:/app/ui/search.tsx {11-15}
+'use client';
+ 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useSearchParams } from 'next/navigation';
+ 
+export default function Search() {
+  const searchParams = useSearchParams();
+ 
+  function handleSearch(term: string) {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set('query', term);
+    } else {
+      params.delete('query');
+    }
+  }
+  // ...
+}
+```
+
+이제 쿼리 문자열을 가지고 있으니 Next.js의 `useRouter`와 `usePathname` 훅을 사용하여 URL을 업데이트할 수 있습니다.
+
+`'next/navigation'`에서 `useRouter`와 `usePathname`을 불러와서 `handleSearch` 내의 `useRouter()`에서 `replace` 메소드를 사용하세요.
+
+```tsx:/app/ui/search.tsx {4,8,9,18}
+'use client';
+ 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+ 
+export default function Search() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+ 
+  function handleSearch(term: string) {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set('query', term);
+    } else {
+      params.delete('query');
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }
+}
+```
+
+무슨 일이 일어나는지 살펴봅시다.
+
+- `${pathname}`은 현재 라우트로 여러분의 경우 `"/dashboard/invoices"`입니다.
+- 사용자가 검색 바에 입력함에 따라 `params.toString()`은 이 입력을 URL 친화적 형식으로 변환합니다.
+- `replace(${pathname}?${params.toString()})`는 사용자의 검색 데이터로 URL을 업데이트합니다. 예를 들어, 사용자가 "Lee"를 검색하면 `/dashboard/invoices?query=lee`가 됩니다.
+- Next.js의 클라이언트 사이드 탐색 덕분에 페이지를 새로고침하지 않고도 URL이 업데이트됩니다(페이지 간 탐색에 대한 장에서 배웠습니다).
+
+#### 3. URL과 입력 필드 동기화하기
+공유할 때 입력 필드가 URL과 동기화되어 채워지도록 하려면 `searchParams`에서 읽어온 기본값을 입력 필드에 전달할 수 있습니다.
+
+```tsx:/app/ui/search.tsx {7}
+<input
+  className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+  placeholder={placeholder}
+  onChange={(e) => {
+    handleSearch(e.target.value);
+  }}
+  defaultValue={searchParams.get('query')?.toString()}
+/>
+```
+<ToggleContent title="`defaultValue` vs. `value` => 제어되는 컴포넌트 vs. 제어되지 않는 컴포넌트">
+입력의 값을 상태로 관리하는 경우에는 값을 제어하는 컴포넌트로 만들기 위해 value 속성을 사용합니다. 이는 리액트가 입력의 상태를 관리하게 됩니다.
+
+하지만 상태를 사용하지 않는 경우, `defaultValue`를 사용할 수 있습니다. 이는 네이티브 입력이 자체 상태를 관리하게 됩니다. 상태 대신 URL에 검색 쿼리를 저장하므로 이 방식이 문제가 되지 않습니다.
+</ToggleContent>
+
+#### 4. 테이블 업데이트하기
+마지막으로, 검색 쿼리를 반영하도록 테이블 컴포넌트를 업데이트해야 합니다.
+
+청구서 페이지로 돌아가세요.
+
+페이지 컴포넌트는 `searchParams`라는 속성을 받으므로 현재 URL 파라미터를 `<Table>` 컴포넌트에 전달할 수 있습니다.
+
+```tsx:/app/dashboard/invoices/page.tsx {9-18,29-31}
+import Pagination from '@/app/ui/invoices/pagination';
+import Search from '@/app/ui/search';
+import Table from '@/app/ui/invoices/table';
+import { CreateInvoice } from '@/app/ui/invoices/buttons';
+import { lusitana } from '@/app/ui/fonts';
+import { Suspense } from 'react';
+import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
+ 
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
+ 
+  return (
+    <div className="w-full">
+      <div className="flex w-full items-center justify-between">
+        <h1 className={`${lusitana.className} text-2xl`}>청구서</h1>
+      </div>
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Search placeholder="청구서 검색..." />
+        <CreateInvoice />
+      </div>
+      <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
+        <Table query={query} currentPage={currentPage} />
+      </Suspense>
+      <div className="mt-5 flex w-full justify-center">
+        {/* <Pagination totalPages={totalPages} /> */}
+      </div>
+    </div>
+  );
+}
+```
+`<Table>` 컴포넌트로 이동하면, `query`와 `currentPage` 두 속성이 쿼리와 일치하는 청구서를 반환하는 `fetchFilteredInvoices()` 함수에 전달되는 것을 볼 수 있습니다.
+
+```tsx:/app/ui/invoices/table.tsx
+// ...
+export default async function InvoicesTable({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) {
+  const invoices = await fetchFilteredInvoices(query, currentPage);
+  // ...
+}
+```
+이러한 변경사항을 적용한 후에 테스트해 보세요. 검색어를 입력하면 URL이 업데이트되고, 서버로 새 요청이 전송되며, 서버에서 데이터가 가져와지고 쿼리와 일치하는 청구서만 반환됩니다.
+
+<ToggleContent title="`useSearchParams()` 훅과 `searchParams` 속성을 언제 사용해야 하나요?">
+searchParams를 추출하는 두 가지 다른 방법을 사용한 것을 알 수 있습니다. 클라이언트에서 작업하는지 서버에서 작업하는지에 따라 사용 방법이 달라집니다.
+
+- `<Search>`는 클라이언트 컴포넌트이므로 클라이언트에서 파라미터에 접근하기 위해 `useSearchParams()` 훅을 사용했습니다.
+- `<Table>`은 자체 데이터를 가져오는 서버 컴포넌트이므로 페이지에서 컴포넌트로 `searchParams` 속성을 전달할 수 있습니다.
+
+일반적으로 클라이언트에서 파라미터를 읽고 싶다면 서버로 다시 돌아갈 필요 없이 `useSearchParams()` 훅을 사용하세요.
+</ToggleContent>
+
+#### 모범 사례: 디바운싱
+축하합니다! Next.js로 검색 기능을 구현했습니다! 하지만 이를 최적화할 수 있는 방법이 있습니다.
+
+`handleSearch` 함수 안에 다음 `console.log`를 추가해보세요.
+
+```tsx:/app/ui/search.tsx {2}
+function handleSearch(term: string) {
+  console.log(`검색 중... ${term}`);
+ 
+  const params = new URLSearchParams(searchParams);
+  if (term) {
+    params.set('query', term);
+  } else {
+    params.delete('query');
+  }
+  replace(`${pathname}?${params.toString()}`);
+}
+```
+
+그리고 검색 바에 "Emil"을 입력한 후 개발자 도구의 콘솔을 확인해보세요. 무슨 일이 일어나고 있나요?
+
+```bash:DevToolsConsole
+검색 중... E
+검색 중... Em
+검색 중... Emi
+검색 중... Emil
+```
+
+키 입력마다 URL을 업데이트하고, 따라서 키 입력마다 데이터베이스를 쿼리하고 있습니다! 우리 애플리케이션이 작으므로 문제가 되지 않지만, 애플리케이션이 수천 명의 사용자를 가지고 있고 각각이 키 입력마다 새 요청을 데이터베이스에 보낸다고 상상해보세요.
+
+디바운싱은 함수가 실행될 수 있는 속도를 제한하는 프로그래밍 관행입니다. 우리의 경우, 사용자가 입력을 멈췄을 때만 데이터베이스를 쿼리하길 원합니다.
+
+<ToggleContent title="디바운싱 작동 방식">
+1. 이벤트 트리거: 디바운싱되어야 하는 이벤트(예: 검색 상자에서의 키 입력)가 발생하면 타이머가 시작됩니다.
+2. 대기: 타이머가 만료되기 전에 새 이벤트가 발생하면 타이머가 리셋됩니다.
+3. 실행: 타이머가 카운트다운의 끝에 도달하면 디바운스된 함수가 실행됩니다.
+</ToggleContent>
+
+디바운싱은 직접 디바운스 함수를 만드는 것을 포함하여 몇 가지 방법으로 구현할 수 있습니다. 간단하게 유지하기 위해 `use-debounce` 라이브러리를 사용하겠습니다.
+
+`use-debounce` 설치 방법은 아래와 같습니다.
+
+```bash:Terminal
+npm i use-debounce
+```
+`<Search>` 컴포넌트에서 `useDebouncedCallback` 함수를 불러옵니다.
+
+```tsx:/app/ui/search.tsx {2,5,15}
+// ...
+import { useDebouncedCallback } from 'use-debounce';
+ 
+// Search 컴포넌트 안에서...
+const handleSearch = useDebouncedCallback((term) => {
+  console.log(`검색 중... ${term}`);
+ 
+  const params = new URLSearchParams(searchParams);
+  if (term) {
+    params.set('query', term);
+  } else {
+    params.delete('query');
+  }
+  replace(`${pathname}?${params.toString()}`);
+}, 300);
+```
+이 함수는 `handleSearch`의 내용을 감싸고 사용자가 입력을 멈춘 후 특정 시간(300ms)이 지난 후에만 코드를 실행합니다.
+
+이제 다시 검색 바에 입력해보고 개발자 도구의 콘솔을 열어보세요. 다음과 같이 표시됩니다.
+
+```bash:DevToolsConsole
+검색 중... Emil
+```
+디바운싱을 통해 데이터베이스로 보내는 요청 수를 줄임으로써 리소스를 절약할 수 있습니다.
+
+
+### 페이지네이션 추가하기
+검색 기능을 도입한 후, 테이블이 한 번에 6개의 청구서만 표시하는 것을 알 수 있습니다. 이는 `fetchFilteredInvoices()` 함수가 페이지당 최대 6개의 청구서를 반환하기 때문입니다.
+
+페이지네이션을 추가하면 사용자가 다른 페이지를 탐색하여 모든 청구서를 볼 수 있습니다. 검색과 마찬가지로 URL 파라미터를 사용하여 페이지네이션을 구현하는 방법을 살펴보겠습니다.
+
+`<Pagination/>` 컴포넌트로 이동하면 클라이언트 컴포넌트임을 알 수 있습니다. 데이터베이스 비밀을 노출시키기 때문에(기억하세요, API 계층을 사용하지 않습니다) 클라이언트에서 데이터를 가져오고 싶지 않습니다. 대신 서버에서 데이터를 가져와 컴포넌트에 속성으로 전달할 수 있습니다.
+
+`/dashboard/invoices/page.tsx`에서 `fetchInvoicesPages`라는 새 함수를 불러오고 `searchParams`의 쿼리를 인자로 전달하세요.
+
+```tsx:/app/dashboard/invoices/page.tsx {2,15}
+// ...
+import { fetchInvoicesPages } from '@/app/lib/data';
+ 
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string,
+    page?: string,
+  },
+}) {
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
+ 
+  const totalPages = await fetchInvoicesPages(query);
+ 
+  return (
+    // ...
+  );
+}
+```
+
+`fetchInvoicesPages`는 검색 쿼리에 따라 총 페이지 수를 반환합니다. 예를 들어, 검색 쿼리와 일치하는 청구서가 12개 있고 각 페이지마다 6개의 청구서를 표시한다면, 총 페이지 수는 2가 될 것입니다.
+
+
+### 페이지네이션 추가하기
+검색 기능을 소개한 후, 테이블이 한 번에 6개의 청구서만 표시한다는 것을 알게 됩니다. 이는 `fetchFilteredInvoices()` 함수가 페이지당 최대 6개의 청구서를 반환하기 때문입니다.
+
+페이지네이션을 추가하면 사용자가 다양한 페이지를 탐색하여 모든 청구서를 볼 수 있습니다. 검색처럼 URL 파라미터를 사용하여 페이지네이션을 구현하는 방법을 알아봅시다.
+
+`<Pagination/>` 컴포넌트로 이동하면 이것이 클라이언트 컴포넌트임을 알 수 있습니다. 데이터를 클라이언트에서 가져오고 싶지 않습니다(기억하십시오, API 계층을 사용하지 않습니다). 대신 서버에서 데이터를 가져와 컴포넌트에 속성으로 전달할 수 있습니다.
+
+`/dashboard/invoices/page.tsx`에서 `fetchInvoicesPages`라는 새 함수를 불러와 `searchParams`의 쿼리를 인수로 전달하세요.
+
+```tsx:/app/dashboard/invoices/page.tsx {29}
+// ...
+import { fetchInvoicesPages } from '@/app/lib/data';
+ 
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
+ 
+  const totalPages = await fetchInvoicesPages(query);
+ 
+  return (
+    <div className="w-full">
+      <div className="flex w-full items-center justify-between">
+        <h1 className={`${lusitana.className} text-2xl`}>청구서</h1>
+      </div>
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Search placeholder="청구서 검색..." />
+        <CreateInvoice />
+      </div>
+      <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
+        <Table query={query} currentPage={currentPage} />
+      </Suspense>
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
+      </div>
+    </div>
+  );
+}
+```
+`<Pagination/>` 컴포넌트로 이동해 `usePathname`과 `useSearchParams` 훅을 불러오세요. 현재 페이지를 가져오고 새 페이지를 설정하는 데 이를 사용합니다. 이 컴포넌트의 코드를 주석 해제하세요. `<Pagination/>` 로직을 아직 구현하지 않았기 때문에 잠시 애플리케이션이 중단됩니다. 지금 바로 해결합시다!
+
+```tsx:/app/ui/invoices/pagination.tsx {7,10-12}
+'use client';
+ 
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { generatePagination } from '@/app/lib/utils';
+import { usePathname, useSearchParams } from 'next/navigation';
+ 
+export default function Pagination({ totalPages }: { totalPages: number }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;
+ 
+  // ...
+}
+```
+검색과 유사하게, 새 페이지 번호를 설정하고 `pathName`으로 URL 문자열을 생성하기 위해 `URLSearchParams`를 사용하는 `createPageURL`이라는 새 함수를 `<Pagination>` 컴포넌트 내부에 생성하세요.
+
+```tsx:/app/ui/invoices/pagination.tsx {14-18}
+'use client';
+ 
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { generatePagination } from '@/app/lib/utils';
+import { usePathname, useSearchParams } from 'next/navigation';
+ 
+export default function Pagination({ totalPages }: { totalPages: number }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;
+ 
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', pageNumber.toString());
+    return `${pathname}?${params.toString()}`;
+  };
+ 
+  // ...
+}
+```
+새 검색 쿼리를 입력할 때 페이지 번호를 1로 재설정하고 싶습니다. `<Search>` 컴포넌트의 `handleSearch` 함수를 업데이트하여 이를 수행할 수 있습니다.
+
+```tsx:/app/ui/search.tsx {14}
+'use client';
+ 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
+ 
+export default function Search({ placeholder }: { placeholder: string }) {
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const pathname = usePathname();
+ 
+  const handleSearch = useDebouncedCallback((term) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    if (term) {
+      params.set('query', term);
+    } else {
+      params.delete('query');
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, 300);
+```
+
+### 요약
+축하합니다! URL 파라미터와 Next.js API를 사용해 검색 및 페이지네이션을 구현했습니다.
+
+이 장을 요약하면 다음과 같습니다.
+
+- 클라이언트 상태 대신 URL 검색 파라미터로 검색 및 페이지네이션을 처리했습니다.
+- 서버에서 데이터를 가져왔습니다.
+- 부드러운 클라이언트 측 전환을 위해 `useRouter` 훅을 사용했습니다.
+
+이러한 패턴은 클라이언트 측 리액트 작업에 익숙한 것과 다를 수 있지만, URL 검색 파라미터를 사용하고 이 상태를 서버로 올리는 것의 이점을 이제 더 잘 이해하게 되었기를 바랍니다.
+
+---
+
+
+## 12장: 데이터 변경하기
+이전 장에서는 URL 검색 파라미터와 Next.js API를 사용하여 검색 및 페이지네이션을 구현했습니다. 이제 청구서 페이지에서 청구서를 생성, 업데이트 및 삭제할 수 있는 기능을 추가해 봅시다!
+
+이 장에서 다룰 내용은 다음과 같습니다.
+
+- 리액트 서버 액션이 무엇이며 데이터를 변경하기 위해 어떻게 사용하는지
+- 서버 컴포넌트와 폼을 사용하는 방법
+- 타입 검증을 포함한 네이티브 `formData` 객체를 사용하는 모범 사례
+- `revalidatePath` API를 사용하여 클라이언트 캐시를 다시 검증하는 방법
+- 특정 ID를 가진 동적 라우트 세그먼트를 생성하는 방법
+
+### 서버 액션은 무엇인가요?
+리액트 서버 액션은 서버에서 직접 비동기 코드를 실행할 수 있게 해줍니다. 데이터를 변경하기 위해 API 엔드포인트를 생성할 필요가 없어집니다. 대신 서버에서 실행되고 클라이언트 또는 서버 컴포넌트에서 호출할 수 있는 비동기 함수를 작성합니다.
+
+웹 애플리케이션에는 다양한 위협에 취약할 수 있으므로 보안이 최우선 과제입니다. 서버 액션은 POST 요청, 암호화된 클로저, 엄격한 입력 검사, 오류 메시지 해싱 및 호스트 제한과 같은 기법을 통해 다양한 공격으로부터 보호하고 데이터를 안전하게 유지하며 권한 있는 액세스를 보장하는 효과적인 보안 솔루션을 제공합니다.
+
+### 서버 액션으로 폼 사용하기
+리액트에서는 `<form>` 요소의 `action` 속성을 사용하여 액션을 호출할 수 있습니다. 액션은 캡처된 데이터를 포함하는 네이티브 [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) 객체를 자동으로 받습니다.
+
+예제 코드는 아래와 같습니다.
+
+```jsx
+// 서버 컴포넌트
+export default function Page() {
+  // 액션
+  async function create(formData: FormData) {
+    'use server';
+ 
+    // 데이터 변경 로직...
+  }
+ 
+  // "action" 속성을 사용하여 액션 호출
+  return <form action={create}>...</form>;
+}
+```
+서버 컴포넌트 내에서 서버 액션을 호출하는 장점은 점진적 향상입니다. 클라이언트에서 자바스크립트가 비활성화되어 있어도 폼이 작동합니다.
+
+### Next.js와 서버 액션
+서버 액션은 Next.js [캐싱](https://nextjs.org/docs/app/building-your-application/caching)과도 깊게 통합되어 있습니다. 폼을 서버 액션을 통해 제출할 때 데이터를 변경하는 액션을 사용할 수 있을 뿐만 아니라 `revalidatePath` 및 `revalidateTag`와 같은 API를 사용하여 관련 캐시를 다시 검증할 수도 있습니다.
+
+이 모든 것이 어떻게 함께 작동하는지 알아봅시다!
+
+### 청구서 생성하기
+새 청구서를 생성하기 위해 따를 단계는 다음과 같습니다.
+
+1. 사용자 입력을 캡처할 폼 생성하기
+2. 서버 액션 생성하고 폼에서 호출하기
+3. 서버 액션 내에서 `formData` 객체로부터 데이터 추출하기
+4. 데이터를 검증하고 데이터베이스에 삽입하기 위해 준비하기
+5. 데이터 삽입하고 오류 처리하기
+6. 캐시를 다시 검증하고 사용자를 청구서 페이지로 리다이렉트하기
+
+#### 1. 새 라우트 및 폼 생성하기
+시작하기 위해 `/invoices` 폴더 내에 `/create`라는 새 라우트 세그먼트와 `page.tsx` 파일을 추가하세요.
+![새 라우트 및 폼 생성하기](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fcreate-invoice-route.png&w=1920&q=75)
+
+`page.tsx` 파일을 포함한 `create` 폴더와 함께 있는 청구서 폴더
+이 라우트는 새 청구서를 생성하기 위해 사용됩니다. `page.tsx` 파일 안에 다음 코드를 붙여넣은 후, 코드를 잘 살펴보세요.
+
+```tsx:/dashboard/invoices/create/page.tsx
+import Form from '@/app/ui/invoices/create-form';
+import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import { fetchCustomers } from '@/app/lib/data';
+ 
+export default async function Page() {
+  const customers = await fetchCustomers();
+ 
+  return (
+    <main>
+      <Breadcrumbs
+        breadcrumbs={[
+          { label: '청구서', href: '/dashboard/invoices' },
+          {
+            label: '청구서 생성',
+            href: '/dashboard/invoices/create',
+            active: true,
+          },
+        ]}
+      />
+      <Form customers={customers} />
+    </main>
+  );
+}
+```
+페이지는 `customers`를 가져와서 `<Form>` 컴포넌트에 전달하는 서버 컴포넌트입니다. 시간을 절약하기 위해 `<Form>` 컴포넌트는 이미 생성해 두었습니다.
+
+`<Form>` 컴포넌트로 이동하면 폼이 다음과 같은 것을 볼 수 있습니다.
+
+- 고객 목록이 있는 하나의 `<select>`(드롭다운) 요소가 있습니다.
+- 금액을 위한 `type="number"`인 하나의 `<input>` 요소가 있습니다.
+- 상태를 위한 `type="radio"`인 두 개의 `<input>` 요소가 있습니다.
+- `type="submit"`인 하나의 버튼이 있습니다.
+
+http://localhost:3000/dashboard/invoices/create에서 다음과 같은 UI를 볼 수 있어야 합니다.
+
+![브레드크럼 및 폼이 있는 청구서 생성 페이지](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fcreate-invoice-page.png&w=1080&q=75)
+
+
+#### 2. 서버 액션 생성하기
+좋습니다, 이제 폼이 제출될 때 호출될 서버 액션을 생성해봅시다.
+
+`lib` 디렉토리로 이동해 `actions.ts`라는 새 파일을 생성하세요. 이 파일의 맨 위에 리액트 `use server` 지시어를 추가하세요.
+
+```ts:/app/lib/actions.ts
+'use server';
+```
+`'use server'`를 추가함으로써 파일 내에 내보내진 모든 함수를 서버 함수로 표시합니다. 이 서버 함수들은 클라이언트 및 서버 컴포넌트에 가져와 사용될 수 있어 매우 다재다능합니다.
+
+서버 액션을 서버 컴포넌트 내에서 "use server"를 추가하여 직접 작성할 수도 있지만, 이 과정에서는 모든 것을 별도의 파일에 정리하여 유지하겠습니다.
+
+`actions.ts` 파일에서 formData를 받아들이는 새 비동기 함수를 생성하세요.
+
+```ts:/app/lib/actions.ts {3}
+'use server';
+ 
+export async function createInvoice(formData: FormData) {}
+```
+그런 다음, `<Form>` 컴포넌트에서 `actions.ts` 파일의 `createInvoice`를 가져와 `<form>` 요소에 action 속성을 추가하고 `createInvoice` 액션을 호출하세요.
+
+```tsx:/app/ui/invoices/create-form.tsx {10,18}
+import { customerField } from '@/app/lib/definitions';
+import Link from 'next/link';
+import {
+  CheckIcon,
+  ClockIcon,
+  CurrencyDollarIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/outline';
+import { Button } from '@/app/ui/button';
+import { createInvoice } from '@/app/lib/actions';
+ 
+export default function Form({
+  customers,
+}: {
+  customers: customerField[];
+}) {
+  return (
+    <form action={createInvoice}>
+      // ...
+  )
+}
+```
+
+> 알아두면 좋은 점: HTML에서는 `action` 속성에 URL을 전달합니다. 이 URL은 폼 데이터가 제출될 목적지(보통 API 엔드포인트)입니다.
+> 하지만 리액트에서는 `action` 속성이 특별한 속성으로 간주됩니다. 즉 리액트는 이를 활용해 액션을 호출할 수 있게 합니다.
+> 내부적으로 서버 액션은 `POST` API 엔드포인트를 생성합니다. 이것이 서버 액션을 사용할 때 수동으로 API 엔드포인트를 생성할 필요가 없는 이유입니다.
+
+
+
+
+#### 2. 서버 액션 생성하기
+이제 폼이 제출될 때 호출될 서버 액션을 생성할 시간입니다.
+
+`lib` 디렉토리로 이동해 `actions.ts`라는 새 파일을 만들고, 이 파일의 맨 위에 리액트 `use server` 지시어를 추가하세요.
+
+```ts:/app/lib/actions.ts
+'use server';
+```
+`'use server'`를 추가함으로써 파일 내에 내보내진 모든 함수를 서버 함수로 표시합니다. 이러한 서버 함수들은 클라이언트 및 서버 컴포넌트에서 가져와 사용될 수 있어 매우 유연합니다.
+
+서버 액션을 서버 컴포넌트 내에서 "use server"를 추가하여 직접 작성할 수도 있지만, 이 과정에서는 모든 것을 별도의 파일에 정리하여 유지하기로 합니다.
+
+`actions.ts` 파일에서 `formData`를 받는 새 비동기 함수를 생성하세요.
+
+```ts:/app/lib/actions.ts {3-10}
+'use server';
+ 
+export async function createInvoice(formData: FormData) {}
+```
+그런 다음, `<Form>` 컴포넌트에서 `actions.ts` 파일의 `createInvoice`를 가져와 `<form>` 요소에 action 속성을 추가하고 `createInvoice` 액션을 호출하세요.
+
+```tsx:/app/ui/invoices/create-form.tsx
+import { customerField } from '@/app/lib/definitions';
+import Link from 'next/link';
+import {
+  CheckIcon,
+  ClockIcon,
+  CurrencyDollarIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/outline';
+import { Button } from '@/app/ui/button';
+import { createInvoice } from '@/app/lib/actions';
+ 
+export default function Form({
+  customers,
+}: {
+  customers: customerField[];
+}) {
+  return (
+    <form action={createInvoice}>
+      // ...
+  )
+}
+```
+
+HTML에서는 `action` 속성에 URL을 전달합니다. 이 URL은 폼 데이터가 제출될 목적지(보통 API 엔드포인트)입니다.
+
+하지만 리액트에서는 `action` 속성이 특별한 속성으로 간주됩니다 - 리액트는 이를 확장하여 액션을 호출할 수 있게 합니다.
+
+내부적으로 서버 액션은 `POST` API 엔드포인트를 생성합니다. 이것이 서버 액션을 사용할 때 수동으로 API 엔드포인트를 생성할 필요가 없는 이유입니다.
+
+
+#### 3. `formData`에서 데이터 추출하기
+`actions.ts` 파일로 돌아가 `formData`의 값을 추출해야 합니다. 사용할 수 있는 몇 가지 방법이 있습니다. 이 예제에서는 `.get(name)` 메소드를 사용해봅시다.
+
+```ts:/app/lib/actions.ts
+'use server';
+ 
+export async function createInvoice(formData: FormData) {
+  const rawFormData = {
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  };
+  // 테스트해보기:
+  console.log(rawFormData);
+}
+```
+
+> 팁: 많은 필드를 가진 폼을 다루고 있다면, 자바스크립트의 `Object.fromEntries()`와 함께 `entries()` 메소드를 고려해볼 수 있습니다. 예를 들면 다음 코드와 같습니다.
+> ```
+> const rawFormData = Object.fromEntries(formData.entries())
+> ```
+
+모든 것이 올바르게 연결되었는지 확인하기 위해 폼을 시도해보세요. 제출 후, 폼에 입력한 데이터가 터미널에 로그로 나타나야 합니다.
+
+이제 데이터가 객체의 형태로 있으므로 작업하기 훨씬 쉬울 것입니다.
+
+
+#### 4. 데이터 검증 및 준비하기
+폼 데이터를 데이터베이스로 보내기 전에 올바른 형식과 타입을 갖추었는지 확인해야 합니다. 과정 초반에 언급했듯이, 청구서 테이블은 다음 형식의 데이터를 기대합니다.
+
+```ts:/app/lib/definitions.ts
+export type Invoice = {
+  id: string; // 데이터베이스에서 생성될 예정
+  customer_id: string;
+  amount: number; // 센트로 저장됨
+  status: 'pending' | 'paid';
+  date: string;
+};
+```
+지금까지 폼에서 `customer_id`, `amount`, `status`만 가지고 있습니다.
+
+##### 타입 검증 및 강제 변환
+폼에서 온 데이터가 데이터베이스에서 예상하는 타입과 일치하는지 검증하는 것이 중요합니다. 예를 들어, 액션 내부에 `console.log`를 추가하면 다음과 같습니다.
+
+```jsx
+console.log(typeof rawFormData.amount);
+```
+
+`amount`가 `string` 타입이고 `number`가 아님을 알 수 있습니다. 이는 `type="number"`인 `input` 요소가 실제로는 숫자가 아닌 문자열을 반환하기 때문입니다!
+
+타입 검증을 처리하기 위해 몇 가지 옵션이 있습니다. 수동으로 타입을 검증할 수도 있지만, 타입 검증 라이브러리를 사용하면 시간과 노력을 절약할 수 있습니다. 예제에서는 이 작업을 단순화할 수 있는 TypeScript 우선 검증 라이브러리인 Zod를 사용하겠습니다.
+
+`actions.ts` 파일에서 Zod를 불러오고 폼 객체의 형태와 일치하는 스키마를 정의하세요. 이 스키마는 데이터베이스에 저장하기 전에 `formData`를 검증할 것입니다.
+
+```ts:/app/lib/actions.ts {3,5-11,13}
+'use server';
+ 
+import { z } from 'zod';
+ 
+const FormSchema = z.object({
+  id: z.string(),
+  customerId: z.string(),
+  amount: z.coerce.number(),
+  status: z.enum(['pending', 'paid']),
+  date: z.string(),
+});
+ 
+const CreateInvoice = FormSchema.omit({ id: true, date: true });
+ 
+export async function createInvoice(formData: FormData) {
+  // ...
+}
+```
+
+`amount` 필드는 문자열에서 숫자로 강제 변환되면서 타입도 검증됩니다.
+
+`rawFormData`를 `CreateInvoice`에 전달하여 타입을 검증하세요.
+
+```ts:/app/lib/actions.ts {3}
+// ...
+export async function createInvoice(formData: FormData) {
+  const { customerId, amount, status } = CreateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+}
+```
+
+##### 값 센트로 저장하기
+일반적으로 JavaScript의 부동 소수점 오류를 제거하고 더 큰 정확성을 보장하기 위해 데이터베이스에 금전적 가치를 센트로 저장하는 것이 좋은 관행입니다.
+
+금액을 센트로 변환해봅시다.
+
+```ts:/app/lib/actions.ts {8}
+// ...
+export async function createInvoice(formData: FormData) {
+  const { customerId, amount, status } = CreateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+  const amountInCents = amount * 100;
+}
+```
+
+##### 새로운 날짜 생성하기
+마지막으로, 청구서 생성 날짜를 "YYYY-MM-DD" 형식으로 새로운 날짜를 생성해봅시다.
+
+```ts:/app/lib/actions.ts {9}
+// ...
+export async function createInvoice(formData: FormData) {
+  const { customerId, amount, status } = CreateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+  const amountInCents = amount * 100;
+  const date = new Date().toISOString().split('T')[0];
+}
+```
+
+#### 5. 데이터를 데이터베이스에 삽입하기
+이제 데이터베이스에 필요한 모든 값을 갖추었으므로 새 청구서를 데이터베이스에 삽입하기 위한 SQL 쿼리를 생성하고 변수를 전달할 수 있습니다.
+
+```ts:/app/lib/actions.ts {2, 15-18}
+import { z } from 'zod';
+import { sql } from '@vercel/postgres';
+ 
+// ...
+ 
+export async function createInvoice(formData: FormData) {
+  const { customerId, amount, status } = CreateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+  const amountInCents = amount * 100;
+  const date = new Date().toISOString().split('T')[0];
+ 
+  await sql`
+    INSERT INTO invoices (customer_id, amount, status, date)
+    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+  `;
+}
+```
+현재 우리는 아무런 오류도 처리하지 않고 있습니다. 다음 장에서 이 부분을 다룰 예정입니다. 지금은 다음 단계로 넘어갑시다.
+
+
+#### 6. 캐시 다시 검증하고 리다이렉트하기
+Next.js에는 사용자의 브라우저에 일정 시간 동안 라우트 세그먼트를 저장하는 클라이언트 측 라우터 캐시가 있습니다. 프리페칭과 함께 이 캐시는 사용자가 라우트 간에 빠르게 탐색할 수 있게 하면서 서버로의 요청 수를 줄입니다.
+
+청구서 라우트에 표시된 데이터를 업데이트하므로 이 캐시를 지우고 서버에 새 요청을 트리거하고 싶을 것입니다. Next.js의 `revalidatePath` 함수를 사용하여 이를 수행할 수 있습니다.
+
+```ts:/app/lib/actions.ts {5,23}
+'use server';
+ 
+import { z } from 'zod';
+import { sql } from '@vercel/postgres';
+import { revalidatePath } from 'next/cache';
+ 
+// ...
+ 
+export async function createInvoice(formData: FormData) {
+  const { customerId, amount, status } = CreateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+  const amountInCents = amount * 100;
+  const date = new Date().toISOString().split('T')[0];
+ 
+  await sql`
+    INSERT INTO invoices (customer_id, amount, status, date)
+    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+  `;
+ 
+  revalidatePath('/dashboard/invoices');
+}
+```
+데이터베이스가 업데이트되면 `/dashboard/invoices` 경로가 다시 검증되고 서버에서 새로운 데이터가 가져와집니다.
+
+이 시점에서 사용자를 `/dashboard/invoices` 페이지로 리다이렉트하고 싶을 것입니다. Next.js의 redirect 함수를 사용하여 이를 수행할 수 있습니다.
+
+```ts:/app/lib/actions.ts {6,14}
+'use server';
+ 
+import { z } from 'zod';
+import { sql } from '@vercel/postgres';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+ 
+// ...
+ 
+export async function createInvoice(formData: FormData) {
+  // ...
+ 
+  revalidatePath('/dashboard/invoices');
+  redirect('/dashboard/invoices');
+}
+```
+
+축하합니다! 첫 번째 서버 액션을 구현했습니다. 새 청구서를 추가하여 테스트해 보세요. 모든 것이 올바르게 작동한다면 아래와 같이 동작됩니다.
+
+1. 제출 후 `/dashboard/invoices` 라우트로 리다이렉트되어야 합니다.
+2. 테이블 상단에서 새 청구서를 볼 수 있어야 합니다.
+
+
+### 청구서 업데이트하기
+청구서 업데이트 폼은 청구서 생성 폼과 비슷하지만, 데이터베이스의 레코드를 업데이트하기 위해 청구서 `id`를 전달해야 합니다. 청구서 `id`를 얻고 전달하는 방법을 알아봅시다.
+
+청구서를 업데이트하기 위해 따를 단계는 다음과 같습니다.
+
+1. 청구서 `id`를 포함하는 새 동적 라우트 세그먼트 생성하기.
+2. 페이지 파라미터에서 청구서 `id` 읽기.
+3. 데이터베이스에서 특정 청구서 가져오기.
+4. 폼을 청구서 데이터로 사전 채우기.
+5. 데이터베이스에서 청구서 데이터 업데이트하기.
+
+#### 1. 청구서 `id`를 포함하는 동적 라우트 세그먼트 생성하기
+Next.js는 정확한 세그먼트 이름을 모르거나 데이터를 기반으로 라우트를 생성하고자 할 때 동적 라우트 세그먼트를 생성할 수 있게 합니다. 이는 블로그 포스트 제목, 제품 페이지 등이 될 수 있습니다. 폴더 이름을 대괄호로 묶어 동적 라우트 세그먼트를 생성할 수 있습니다. 예를 들어, `[id]`, `[post]` 또는 `[slug]`가 됩니다.
+
+`/invoices` 폴더 안에 `[id]`라는 새 동적 라우트를 생성한 다음, `edit`이라는 새 라우트와 `page.tsx` 파일을 만드세요. 파일 구조는 다음과 같아야 합니다.
+
+![`[id]` 폴더와 그 안에 `edit` 폴더를 포함한 청구서 폴더](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fedit-invoice-route.png&w=1920&q=75)
+`<Table>` 컴포넌트에서는 테이블 레코드로부터 청구서의 id를 받는 `<UpdateInvoice />` 버튼이 있음을 확인할 수 있습니다.
+
+```tsx:/app/ui/invoices/table.tsx {11}
+export default async function InvoicesTable({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) {
+  return (
+    // ...
+    <td className="flex justify-end gap-2 whitespace-nowrap px-6 py-4 text-sm">
+      <UpdateInvoice id={invoice.id} />
+      <DeleteInvoice id={invoice.id} />
+    </td>
+    // ...
+  );
+}
+```
+`<UpdateInvoice />` 컴포넌트로 이동하여 `Link`의 href가 `id` 속성을 받아들일 수 있도록 업데이트하세요. 동적 라우트 세그먼트로 연결하기 위해 템플릿 리터럴을 사용할 수 있습니다.
+
+```tsx:/app/ui/invoices/buttons.tsx {9}
+import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+ 
+// ...
+ 
+export function UpdateInvoice({ id }: { id: string }) {
+  return (
+    <Link
+      href={`/dashboard/invoices/${id}/edit`}
+      className="rounded-md border p-2 hover:bg-gray-100"
+    >
+      <PencilIcon className="w-5" />
+    </Link>
+  );
+}
+```
+
+#### 2. 페이지 `params`에서 청구서 `id` 읽기
+`<Page>` 컴포넌트로 돌아가 다음 코드를 붙여넣으세요.
+
+```tsx:/app/dashboard/invoices/[id]/edit/page.tsx
+import Form from '@/app/ui/invoices/edit-form';
+import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import { fetchCustomers } from '@/app/lib/data';
+ 
+export default async function Page() {
+  return (
+    <main>
+      <Breadcrumbs
+        breadcrumbs={[
+          { label: '청구서', href: '/dashboard/invoices' },
+          {
+            label: '청구서 편집',
+            href: `/dashboard/invoices/${id}/edit`,
+            active: true,
+          },
+        ]}
+      />
+      <Form invoice={invoice} customers={customers} />
+    </main>
+  );
+}
+```
+
+이 페이지는 `/create` 청구서 페이지와 유사하지만, 다른 폼(`edit-form.tsx` 파일에서 가져옴)을 가져옵니다. 이 폼은 고객 이름, 청구서 금액, 상태에 대한 `defaultValue`로 사전 채워져야 합니다. 폼 필드를 사전 채우려면 `id`를 사용하여 특정 청구서를 가져와야 합니다.
+
+`searchParams` 외에도 페이지 컴포넌트는 `params`라는 속성을 받아 `id`에 접근할 수 있습니다. `<Page>` 컴포넌트를 업데이트하여 속성을 받도록 하세요.
+
+```tsx:/app/dashboard/invoices/[id]/edit/page.tsx {5,6}
+import Form from '@/app/ui/invoices/edit-form';
+import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import { fetchCustomers } from '@/app/lib/data';
+ 
+export default async function Page({ params }: { params: { id: string } }) {
+  const id = params.id;
+  // ...
+}
+```
+
+#### 3. 특정 청구서 가져오기
+그런 다음:
+
+- `fetchInvoiceById`라는 새 함수를 불러와 `id`를 인자로 전달하세요.
+- 드롭다운을 위해 고객 이름을 가져오는 `fetchCustomers`를 불러오세요.
+
+`Promise.all`을 사용하여 청구서와 고객 정보를 병렬로 가져올 수 있습니다.
+
+```tsx:/dashboard/invoices/[id]/edit/page.tsx {3,7-10}
+import Form from '@/app/ui/invoices/edit-form';
+import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
+import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
+ 
+export default async function Page({ params }: { params: { id: string } }) {
+  const id = params.id;
+  const [invoice, customers] = await Promise.all([
+    fetchInvoiceById(id),
+    fetchCustomers(),
+  ]);
+  // ...
+}
+```
+
+터미널에서 `invoice` 속성에 대해 임시 TS 오류가 발생하는데, 이는 `invoice`가 `undefined`일 수 있기 때문입니다. 지금은 걱정하지 마세요, 다음 장에서 오류 처리를 추가할 때 이 문제를 해결할 예정입니다.
+
+좋습니다! 이제 모든 것이 올바르게 연결되었는지 테스트해보세요. http://localhost:3000/dashboard/invoices로 이동하여 청구서의 연필 아이콘을 클릭하여 편집하세요. 탐색 후, 청구서 세부 정보가 사전 채워진 폼을 볼 수 있어야 합니다.
+
+![브레드크럼 및 폼이 있는 청구서 편집 페이지](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fedit-invoice-page.png&w=1080&q=75)
+
+URL도 다음과 같이 id를 포함하여 업데이트되어야 합니다. http://localhost:3000/dashboard/invoice/uuid/edit
+
+<ToggleContent title="UUID vs. 자동 증가 키">
+우리는 증가하는 키(예: 1, 2, 3 등) 대신 UUID를 사용합니다. 이로 인해 URL이 더 길어지지만, UUID는 ID 충돌 위험을 제거하고 전 세계적으로 고유하며 열거 공격의 위험을 줄여줍니다. 이는 큰 데이터베이스에 이상적입니다.
+
+그러나 더 깨끗한 URL을 선호한다면 자동 증가 키를 사용할 수 있습니다.
+</ToggleContent>
+
+
+
+#### 4. 서버 액션에 `id` 전달하기
+마지막으로, 데이터베이스의 올바른 레코드를 업데이트하기 위해 서버 액션에 `id`를 전달하고 싶습니다. 다음과 같이 `id`를 인자로 전달할 수 없습니다.
+
+```tsx:/app/ui/invoices/edit-form.tsx
+// id를 인자로 전달하는 것은 작동하지 않습니다
+<form action={updateInvoice(id)}>
+```
+
+대신, JS `bind`를 사용하여 서버 액션에 `id`를 전달할 수 있습니다. 이렇게 하면 서버 액션에 전달된 모든 값이 인코딩됩니다.
+
+```tsx:/app/ui/invoices/edit-form.tsx {2,11,14}
+// ...
+import { updateInvoice } from '@/app/lib/actions';
+ 
+export default function EditInvoiceForm({
+  invoice,
+  customers,
+}: {
+  invoice: InvoiceForm;
+  customers: CustomerField[];
+}) {
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+ 
+  return (
+    <form action={updateInvoiceWithId}>
+      <input type="hidden" name="id" value={invoice.id} />
+    </form>
+  );
+}
+```
+
+> 참고: 폼에 숨겨진 입력 필드를 사용하는 것도 가능합니다(예: `<input type="hidden" name="id" value={invoice.id} />`). 하지만, 값이 HTML 소스에 전체 텍스트로 나타나므로 ID와 같은 민감한 데이터에는 이상적이지 않습니다.
+
+그런 다음, `actions.ts` 파일에서 새 액션인 `updateInvoice`를 생성하세요.
+
+```ts:/app/lib/actions.ts
+// Zod를 사용하여 예상되는 타입 업데이트
+const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+ 
+// ...
+ 
+export async function updateInvoice(id: string, formData: FormData) {
+  const { customerId, amount, status } = UpdateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+ 
+  const amountInCents = amount * 100;
+ 
+  await sql`
+    UPDATE invoices
+    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+    WHERE id = ${id}
+  `;
+ 
+  revalidatePath('/dashboard/invoices');
+  redirect('/dashboard/invoices');
+}
+```
+
+`createInvoice` 액션과 유사하게, 아래와 같이 동작합니다.
+
+1. `formData`에서 데이터를 추출합니다.
+2. Zod로 타입을 검증합니다.
+3. 금액을 센트로 변환합니다.
+4. SQL 쿼리에 변수를 전달합니다.
+5. 클라이언트 캐시를 지우고 서버에 새 요청을 하기 위해 `revalidatePath`를 호출합니다.
+6. 사용자를 청구서 페이지로 리다이렉트하기 위해 `redirect`를 호출합니다.
+
+청구서를 편집하여 테스트해보세요. 폼을 제출한 후 청구서 페이지로 리다이렉트되어야 하며, 청구서가 업데이트되어야 합니다.
+
+
+### 청구서 삭제하기
+서버 액션을 사용하여 청구서를 삭제하려면 삭제 버튼을 `<form>` 요소로 감싸고 `bind`를 사용하여 서버 액션에 `id`를 전달하세요.
+
+```tsx:/app/ui/invoices/buttons.tsx {1,5,6,9,14}
+import { deleteInvoice } from '@/app/lib/actions';
+ 
+// ...
+ 
+export function DeleteInvoice({ id }: { id: string }) {
+  const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+ 
+  return (
+    <form action={deleteInvoiceWithId}>
+      <button className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">삭제</span>
+        <TrashIcon className="w-4" />
+      </button>
+    </form>
+  );
+}
+```
+
+`actions.ts` 파일 내부에서 `deleteInvoice`라는 새 액션을 생성하세요.
+
+```ts:/app/lib/actions.ts
+export async function deleteInvoice(id: string) {
+  await sql`DELETE FROM invoices WHERE id = ${id}`;
+  revalidatePath('/dashboard/invoices');
+}
+```
+
+이 액션이 `/dashboard/invoices` 경로에서 호출되므로 `redirect`를 호출할 필요가 없습니다. `revalidatePath`를 호출하면 새 서버 요청이 트리거되고 테이블이 다시 렌더링됩니다.
+
+### 추가 학습 자료
+이 장에서는 데이터를 변경하기 위해 서버 액션을 사용하는 방법을 배웠습니다. 또한, Next.js 캐시를 다시 검증하기 위해 `revalidatePath` API를 사용하는 방법과 사용자를 새 페이지로 리다이렉트하기 위해 `redirect`를 사용하는 방법도 배웠습니다.
+
+[서버 액션과 관련된 보안](https://nextjs.org/blog/security-nextjs-server-components-actions)에 대해 더 학습하고 싶다면 추가 학습 자료를 참고하세요.
+

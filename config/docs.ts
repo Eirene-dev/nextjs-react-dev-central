@@ -47,47 +47,6 @@ export const docsConfig: DocsConfig = {
             },
           ],
         },
-        // {
-        //   title: 'Next.js 첫번째 앱 만들기',
-        //   href: '/docs/getting-started/nextjs-first-app',
-        //   items: [
-        //     {
-        //       title: 'Next.js 앱 생성',
-        //       href: '/docs/getting-started/nextjs-first-app/create-nextjs-app',
-        //       disabled: false,
-        //     },
-        //     {
-        //       title: '페이지 간 이동',
-        //       href: '/docs/getting-started/nextjs-first-app/navigate-between-pages',
-        //       disabled: false,
-        //     },
-        //     {
-        //       title: '메타데이터/Assets/CSS',
-        //       href: '/docs/getting-started/nextjs-first-app/assets-metadata-css',
-        //       disabled: false,
-        //     },
-        //     {
-        //       title: '데이터 가져오기',
-        //       href: '/docs/getting-started/nextjs-first-app/data-fetching',
-        //       disabled: false,
-        //     },
-        //     {
-        //       title: '동적 라우팅',
-        //       href: '/docs/getting-started/nextjs-first-app/dynamic-routes',
-        //       disabled: false,
-        //     },
-        //     {
-        //       title: 'API 라우팅',
-        //       href: '/docs/getting-started/nextjs-first-app/api-routes',
-        //       disabled: false,
-        //     },
-        //     {
-        //       title: 'Next.js 앱 배포하기',
-        //       href: '/docs/getting-started/nextjs-first-app/deploying-nextjs-app',
-        //       disabled: false,
-        //     },
-        //   ],
-        // },
         {
           title: '리액트 기초',
           href: '/docs/getting-started/react-foundation',
@@ -105,6 +64,47 @@ export const docsConfig: DocsConfig = {
             {
               title: 'Next.js로의 전환과 심화',
               href: '/docs/getting-started/react-foundation/with-nextjs',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: 'Next.js 풀스택 앱 만들기',
+          href: '/docs/getting-started/nextjs-fullstack-app',
+          items: [
+            {
+              title: '기본 설정 및 스타일링',
+              href: '/docs/getting-started/nextjs-fullstack-app/getting-started-and-styling',
+              disabled: false,
+            },
+            {
+              title: '레이아웃 및 라우팅',
+              href: '/docs/getting-started/nextjs-fullstack-app/layouts-and-routing',
+              disabled: false,
+            },
+            {
+              title: '데이터 생성과 가져오기',
+              href: '/docs/getting-started/nextjs-fullstack-app/data-management',
+              disabled: false,
+            },
+            {
+              title: '렌더링',
+              href: '/docs/getting-started/nextjs-fullstack-app/rendering',
+              disabled: false,
+            },
+            {
+              title: '고급 데이터 처리',
+              href: '/docs/getting-started/nextjs-fullstack-app/data-mutation',
+              disabled: false,
+            },
+            {
+              title: '에러처리 및 접근성',
+              href: '/docs/getting-started/nextjs-fullstack-app/error-handling-accessibility',
+              disabled: false,
+            },
+            {
+              title: '인증 및 메타데이터',
+              href: '/docs/getting-started/nextjs-fullstack-app/auth-and-metadata',
               disabled: false,
             },
           ],

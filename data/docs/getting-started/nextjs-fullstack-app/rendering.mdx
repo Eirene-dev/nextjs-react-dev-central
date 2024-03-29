@@ -1,0 +1,567 @@
+---
+title: 렌더링
+date: '2023-01-01 03:04'
+summary: 서버 사이드 렌더링과 정적 사이트 생성 등 Next.js의 렌더링 방식을 탐색합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 8장: 정적 및 동적 렌더링
+이전 장에서는 대시보드 개요 페이지를 위해 데이터를 가져왔습니다. 그러나 현재 설정의 두 가지 제한 사항을 간략하게 논의했습니다.
+
+1. 데이터 요청이 의도하지 않은 폭포를 만듭니다.
+2. 대시보드가 정적이므로 데이터 업데이트가 애플리케이션에 반영되지 않습니다.
+
+이 장에서 다룰 주제는 다음과 같습니다.
+
+- 정적 렌더링이 무엇인지와 애플리케이션의 성능을 어떻게 향상시킬 수 있는지
+- 동적 렌더링이 무엇이고 언제 사용해야 하는지
+- 대시보드를 동적으로 만들기 위한 다양한 접근 방법
+- 느린 데이터 가져오기를 시뮬레이션하여 무슨 일이 일어나는지 살펴봅니다
+
+### 정적 렌더링이란 무엇인가요?
+정적 렌더링에서는 데이터 가져오기와 렌더링이 빌드 시간(배포할 때) 또는 [재검증](/docs/nextjs/data-fetching/fetching-caching-and-revalidating#데이터-재검증) 중에 서버에서 이루어집니다. 그 결과는 [콘텐츠 전달 네트워크(CDN)](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)에 분산되고 캐시될 수 있습니다.
+
+사용자가 애플리케이션을 방문할 때마다 캐시된 결과가 제공됩니다. 정적 렌더링의 몇 가지 이점은 다음과 같습니다.
+
+- **더 빠른 웹사이트**: 사전 렌더링된 콘텐츠는 캐시되어 전 세계적으로 배포될 수 있습니다. 이는 전 세계의 사용자가 웹사이트 콘텐츠에 더 빠르고 신뢰할 수 있게 접근할 수 있음을 보장합니다.
+- **서버 부하 감소**: 콘텐츠가 캐시되므로 서버가 각 사용자 요청에 대해 동적으로 콘텐츠를 생성할 필요가 없습니다.
+- **검색 엔진 최적화**: 사전 렌더링된 콘텐츠는 페이지가 로드될 때 콘텐츠가 이미 사용 가능하기 때문에 검색 엔진 크롤러가 인덱싱하기 더 쉽습니다. 이는 검색 엔진 순위를 향상시킬 수 있습니다.
+
+정적 렌더링은 **데이터가 없거나**, **사용자 간에 공유되는 데이터**가 있는 UI에 유용합니다. 예를 들어 정적 블로그 게시물이나 제품 페이지 등이 있습니다. 정기적으로 업데이트되는 개인화된 데이터가 있는 대시보드에는 적합하지 않을 수 있습니다.
+
+정적 렌더링의 반대는 동적 렌더링입니다.
+
+### 동적 렌더링이란 무엇인가요?
+동적 렌더링에서는 콘텐츠가 사용자가 페이지를 방문할 때 요청 시간에 서버에서 렌더링됩니다. 동적 렌더링의 몇 가지 이점은 다음과 같습니다.
+
+- **실시간 데이터**: 동적 렌더링을 통해 애플리케이션은 실시간 또는 자주 업데이트되는 데이터를 표시할 수 있습니다. 데이터가 자주 변경되는 애플리케이션에 이상적입니다.
+- **사용자별 콘텐츠**: 대시보드나 사용자 프로필과 같은 개인화된 콘텐츠를 더 쉽게 제공하고 사용자 상호작용에 따라 데이터를 업데이트할 수 있습니다.
+- **요청 시간 정보**: 동적 렌더링을 통해 쿠키나 URL 검색 매개변수와 같은 요청 시간에만 알 수 있는 정보에 접근할 수 있습니다.
+
+
+기본적으로 `@vercel/postgres`는 자체 캐싱 방식을 설정하지 않습니다. 이를 통해 프레임워크가 자체 정적 및 동적 동작을 설정할 수 있습니다.
+
+서버 컴포넌트나 데이터 가져오기 함수 내에서 정적 렌더링을 선택하지 않기 위해 Next.js API인 `unstable_noStore`를 사용할 수 있습니다. 이를 추가해 봅시다.
+
+`data.ts`에서 `next/cache`에서 `unstable_noStore`를 가져와서 데이터 가져오기 함수 상단에 호출합니다.
+
+```ts:/app/lib/data.ts {2,7,13,18,26,31,36,41}
+// ...
+import { unstable_noStore as noStore } from 'next/cache';
+ 
+export async function fetchRevenue() {
+  // 여기에 noStore()를 추가하여 응답이 캐시되지 않도록 합니다.
+  // 이는 fetch(..., {cache: 'no-store'})와 동일합니다.
+  noStore();
+ 
+  // ...
+}
+ 
+export async function fetchLatestInvoices() {
+  noStore();
+  // ...
+}
+ 
+export async function fetchCardData() {
+  noStore();
+  // ...
+}
+ 
+export async function fetchFilteredInvoices(
+  query: string,
+  currentPage: number,
+) {
+  noStore();
+  // ...
+}
+ 
+export async function fetchInvoicesPages(query: string) {
+  noStore();
+  // ...
+}
+ 
+export async function fetchFilteredCustomers(query: string) {
+  noStore();
+  // ...
+}
+ 
+export async function fetchInvoiceById(query: string) {
+  noStore();
+  // ...
+}
+```
+
+> 참고: `unstable_noStore`는 실험적인 API이며, 향후 변경될 수 있습니다. 자신의 프로젝트에서 안정적인 API를 사용하고 싶다면, 세그먼트 설정 옵션 `export const dynamic = "force-dynamic"`을 사용할 수도 있습니다.
+
+### 느린 데이터 가져오기를 시뮬레이션
+대시보드를 동적으로 만드는 것은 좋은 첫 걸음입니다. 하지만... 이전 장에서 언급한 문제가 하나 있습니다. 만약 하나의 데이터 요청이 다른 모든 요청보다 느리다면 어떻게 될까요?
+
+느린 데이터 가져오기를 시뮬레이션 해봅시다. `data.ts` 파일에서 `fetchRevenue()` 내의 `console.log`와 `setTimeout`을 주석 해제합니다.
+
+```ts:/app/lib/data.ts {5-6,10}
+export async function fetchRevenue() {
+  try {
+    // 시연 목적으로 응답을 인위적으로 지연시킵니다.
+    // 실제 제품에서는 이렇게 하지 마세요 :)
+    console.log('수익 데이터 가져오는 중...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+ 
+    const data = await sql<Revenue>`SELECT * FROM revenue`;
+ 
+    console.log('데이터 가져오기가 3초 후에 완료되었습니다.');
+ 
+    return data.rows;
+  } catch (error) {
+    console.error('데이터베이스 오류:', error);
+    throw new Error('수익 데이터를 가져오는 데 실패했습니다.');
+  }
+}
+```
+이제 새 탭에서 http://localhost:3000/dashboard/ 를 열고 페이지가 로드되는 데 시간이 더 오래 걸리는 것을 확인하세요. 터미널에서는 다음 메시지가 표시됩니다.
+
+```bash
+수익 데이터 가져오는 중...
+데이터 가져오기가 3초 후에 완료되었습니다.
+```
+
+여기서는 느린 데이터 가져오기를 시뮬레이션하기 위해 인위적으로 3초의 지연을 추가했습니다. 결과적으로 데이터를 가져오는 동안 전체 페이지가 차단되어 있습니다.
+
+이는 개발자가 해결해야 하는 일반적인 도전 과제로 이어집니다.
+
+동적 렌더링으로, 애플리케이션의 속도는 가장 느린 데이터 가져오기 속도에 달려 있습니다.
+
+---
+
+## 9장: 스트리밍
+
+이전 장에서 대시보드 페이지를 동적으로 만들었지만 데이터 가져오기가 느릴 때 애플리케이션 성능에 미치는 영향을 논의했습니다. 이 장에서는 느린 데이터 요청이 있을 때 사용자 경험을 개선하는 방법을 살펴봅니다.
+
+이 장에서 다룰 주제는 다음과 같습니다.
+
+- 스트리밍이 무엇인지와 사용하는 경우
+- `loading.tsx`와 서스펜스를 이용한 스트리밍 구현 방법
+- 로딩 스켈레톤이 무엇인지
+- 라우트 그룹이 무엇이고 사용하는 경우
+- 애플리케이션에서 서스펜스 경계를 어디에 두어야 하는지
+
+### 스트리밍이란?
+스트리밍은 데이터 전송 기술로, 라우트를 더 작은 '덩어리(chunks)'로 나누어 서버에서 클라이언트로 준비되는 대로 순차적으로 전송합니다. 이를 통해 느린 데이터 요청이 전체 페이지를 차단하는 것을 방지합니다. 사용자는 모든 데이터가 로드될 때까지 기다리지 않고도 페이지의 일부와 상호 작용할 수 있습니다.
+![스트리밍](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fserver-rendering-with-streaming.png&w=1920&q=75)
+스트리밍은 리액트 컴포넌트 모델과 잘 어울립니다. 각 컴포넌트를 하나의 덩어리로 간주할 수 있기 때문입니다.
+
+Next.js에서 스트리밍을 구현하는 방법은 두 가지입니다.
+
+1. 페이지 수준에서 `loading.tsx` 파일을 사용합니다.
+2. 특정 컴포넌트에 대해 `<Suspense>`를 사용합니다.
+
+### `loading.tsx`로 전체 페이지 스트리밍하기
+`/app/dashboard` 폴더에 `loading.tsx`라는 새 파일을 생성합니다.
+
+```tsx:/app/dashboard/loading.tsx
+export default function Loading() {
+  return <div>Loading...</div>;
+}
+```
+
+http://localhost:3000/dashboard를 새로고침하면 다음과 같이 표시됩니다.
+![전체 페이지 스트리밍하기](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Floading-page.png&w=1080&q=75)
+
+1. `loading.tsx`는 서스펜스를 기반으로 하는 특별한 Next.js 파일로, 페이지 콘텐츠가 로드되는 동안 보여줄 대체 UI를 만들 수 있습니다.
+2. `<SideNav>`가 정적이므로 즉시 표시됩니다. 사용자는 동적 콘텐츠가 로드되는 동안 `<SideNav>`와 상호 작용할 수 있습니다.
+3. 페이지 로딩이 완료되기 전에 탐색을 중단할 수 있습니다(이를 중단 가능한 탐색이라고 함).
+
+축하합니다! 스트리밍을 구현했습니다. 하지만 사용자 경험을 더 개선할 수 있습니다. `Loading...` 텍스트 대신 로딩 스켈레톤을 보여주겠습니다.
+
+
+#### 로딩 스켈레톤 추가하기
+로딩 스켈레톤은 UI의 단순화된 버전입니다. 많은 웹사이트가 콘텐츠가 로드되고 있다는 것을 사용자에게 알리기 위한 자리 표시자로 사용합니다. `loading.tsx`에 포함된 모든 UI는 정적 파일의 일부로 포함되어 먼저 전송됩니다. 그다음 나머지 동적 콘텐츠가 서버에서 클라이언트로 스트리밍됩니다.
+
+`loading.tsx` 파일 안에서 `<DashboardSkeleton>`이라는 새 컴포넌트를 불러옵니다.
+
+```tsx:/app/dashboard/loading.tsx
+import DashboardSkeleton from '@/app/ui/skeletons';
+ 
+export default function Loading() {
+  return <DashboardSkeleton />;
+}
+```
+그리고 http://localhost:3000/dashboard를 새로고침하면 로딩 스켈레톤이 있는 대시보드 페이지를 볼 수 있습니다.
+![로딩 스켈레톤](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Floading-page-with-skeleton.png&w=1080&q=75)
+
+
+
+#### 라우트 그룹으로 로딩 스켈레톤 버그 수정하기
+현재 설정으로는 청구서와 고객 페이지에도 로딩 스켈레톤이 적용됩니다.
+
+`loading.tsx`는 파일 시스템에서 `/invoices/page.tsx`와 `/customers/page.tsx`보다 상위 레벨에 있기 때문에 이 페이지들에도 적용됩니다.
+
+이를 라우트 그룹으로 변경할 수 있습니다. 대시보드 폴더 안에 `/(overview)`라는 새 폴더를 만듭니다. 그다음 `loading.tsx`와 `page.tsx` 파일을 그 폴더 안으로 옮깁니다.
+
+![괄호를 사용해 라우트 그룹을 만드는 폴더 구조를 보여주는 것입니다.](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Froute-group.png&w=1920&q=75)
+
+이제 `loading.tsx` 파일은 대시보드 개요 페이지에만 적용됩니다.
+
+라우트 그룹을 사용하면 URL 라우트 구조에 영향을 주지 않으면서 파일을 논리적인 그룹으로 조직할 수 있습니다. 괄호 `()`를 사용해 새 폴더를 만들 때 그 이름은 URL 라우트에 포함되지 않습니다. 따라서 `/dashboard/(overview)/page.tsx`는 `/dashboard`가 됩니다.
+
+여기서는 라우트 그룹을 사용해 `loading.tsx`가 대시보드 개요 페이지에만 적용되도록 합니다. 하지만 라우트 그룹은 애플리케이션을 섹션별로 분리하거나(예: `(marketing)` 라우트와 `(shop)` 라우트) 더 큰 애플리케이션의 팀별로 분리하는 데에도 사용할 수 있습니다.
+
+
+
+#### 컴포넌트 스트리밍하기
+지금까지 전체 페이지를 스트리밍했습니다. 하지만 리액트 서스펜스를 사용해 특정 컴포넌트만 스트리밍할 수도 있습니다.
+
+서스펜스는 어떤 조건이 충족될 때까지 애플리케이션의 일부 렌더링을 지연시키는 기능을 제공합니다. 동적 컴포넌트를 서스펜스로 감싸고 동적 컴포넌트가 로드되는 동안 보여줄 대체 컴포넌트를 전달할 수 있습니다.
+
+느린 데이터 요청인 `fetchRevenue()`를 기억한다면, 이 요청이 페이지 전체를 느리게 만들고 있습니다. 페이지를 차단하는 대신 서스펜스를 사용해 이 컴포넌트만 스트리밍하고 페이지 나머지 UI는 즉시 보여줄 수 있습니다.
+
+이를 위해 데이터 가져오기를 컴포넌트로 이동시켜 코드를 업데이트해 보겠습니다.
+
+`/dashboard/(overview)/page.tsx`에서 `fetchRevenue()`와 그 데이터 인스턴스를 모두 삭제합니다.
+
+```tsx:/app/dashboard/(overview)/page.tsx {5,8}
+import { Card } from '@/app/ui/dashboard/cards';
+import RevenueChart from '@/app/ui/dashboard/revenue-chart';
+import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
+import { lusitana } from '@/app/ui/fonts';
+import { fetchLatestInvoices, fetchCardData } from '@/app/lib/data'; // fetchRevenue 제거
+
+export default async function Page() {
+  const revenue = await fetchRevenue // 이 줄 삭제
+  const latestInvoices = await fetchLatestInvoices();
+  const {
+    numberOfInvoices,
+    numberOfCustomers,
+    totalPaidInvoices,
+    totalPendingInvoices,
+  } = await fetchCardData();
+ 
+  return (
+    // ...
+  );
+}
+```
+그다음 리액트에서 `<Suspense>`를 불러와 `<RevenueChart />` 주위에 감싸고 대체 컴포넌트로 `<RevenueChartSkeleton>`을 전달합니다.
+
+```tsx:/app/dashboard/(overview)/page.tsx {6,7,34-36}
+import { Card } from '@/app/ui/dashboard/cards';
+import RevenueChart from '@/app/ui/dashboard/revenue-chart';
+import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
+import { lusitana } from '@/app/ui/fonts';
+import { fetchLatestInvoices, fetchCardData } from '@/app/lib/data';
+import { Suspense } from 'react';
+import { RevenueChartSkeleton } from '@/app/ui/skeletons';
+
+export default async function Page() {
+  const latestInvoices = await fetchLatestInvoices();
+  const {
+    numberOfInvoices,
+    numberOfCustomers,
+    totalPaidInvoices,
+    totalPendingInvoices,
+  } = await fetchCardData();
+ 
+  return (
+    <main>
+      <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
+        대시보드
+      </h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card title="Collected" value={totalPaidInvoices} type="collected" />
+        <Card title="Pending" value={totalPendingInvoices} type="pending" />
+        <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
+        <Card
+          title="Total Customers"
+          value={numberOfCustomers}
+          type="customers"
+        />
+      </div>
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+        <Suspense fallback={<RevenueChartSkeleton />}>
+          <RevenueChart />
+        </Suspense>
+        <LatestInvoices latestInvoices={latestInvoices} />
+      </div>
+    </main>
+  );
+}
+```
+마지막으로 `<RevenueChart>` 컴포넌트를 업데이트해 자체 데이터를 가져오고 전달받은 속성을 제거합니다.
+
+```tsx:/app/ui/dashboard/revenue-chart.tsx {4,8,9}
+import { generateYAxis } from '@/app/lib/utils';
+import { CalendarIcon } from '@heroicons/react/24/outline';
+import { lusitana } from '@/app/ui/fonts';
+import { fetchRevenue } from '@/app/lib/data';
+
+// ...
+
+export default async function RevenueChart() { // 컴포넌트를 비동기로 만들고, 속성 제거
+  const revenue = await fetchRevenue(); // 컴포넌트 내부에서 데이터 가져오기
+
+  const chartHeight = 350;
+  const { yAxisLabels, topLabel } = generateYAxis(revenue);
+
+  if (!revenue || revenue.length === 0) {
+    return <p className="mt-4 text-gray-400">데이터가 없습니다.</p>;
+  }
+
+  return (
+    // ...
+  );
+}
+```
+
+페이지를 새로고침하면, 대시보드 정보가 거의 즉시 보이고, `<RevenueChart>`에는 대체 스켈레톤이 표시됩니다.
+
+![스켈레톤이 표시](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Floading-revenue-chart.png&w=1080&q=75)
+
+<Callout type="warning" icon="실습: `<LatestInvoices>` 스트리밍하기">
+이제 배운 내용을 실습해 볼 차례입니다. `<LatestInvoices>` 컴포넌트를 스트리밍해 보세요.
+
+`fetchLatestInvoices()`를 페이지에서 `<LatestInvoices>` 컴포넌트로 옮기고, `<LatestInvoicesSkeleton>`이라는 대체 컴포넌트를 가진 `<Suspense>` 경계로 컴포넌트를 감싸세요.
+
+<ToggleContent title="준비가 되면 토글을 확장해 해답 코드를 확인하세요.">
+대시보드 페이지:
+
+```tsx:/app/dashboard/(overview)/page.tsx {5,9,40-42}
+import { Card } from '@/app/ui/dashboard/cards';
+import RevenueChart from '@/app/ui/dashboard/revenue-chart';
+import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
+import { lusitana } from '@/app/ui/fonts';
+import { fetchCardData } from '@/app/lib/data'; // fetchLatestInvoices 제거
+import { Suspense } from 'react';
+import {
+  RevenueChartSkeleton,
+  LatestInvoicesSkeleton,
+} from '@/app/ui/skeletons';
+ 
+export default async function Page() {
+  // `const latestInvoices = await fetchLatestInvoices()` 삭제
+  const {
+    numberOfInvoices,
+    numberOfCustomers,
+    totalPaidInvoices,
+    totalPendingInvoices,
+  } = await fetchCardData();
+ 
+  return (
+    <main>
+      <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
+        대시보드
+      </h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card title="Collected" value={totalPaidInvoices} type="collected" />
+        <Card title="Pending" value={totalPendingInvoices} type="pending" />
+        <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
+        <Card
+          title="Total Customers"
+          value={numberOfCustomers}
+          type="customers"
+        />
+      </div>
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+        <Suspense fallback={<RevenueChartSkeleton />}>
+          <RevenueChart />
+        </Suspense>
+        <Suspense fallback={<LatestInvoicesSkeleton />}>
+          <LatestInvoices />
+        </Suspense>
+      </div>
+    </main>
+  );
+}
+```
+
+`<LatestInvoices>` 컴포넌트. 속성을 제거하는 것을 잊지 마세요!
+
+```tsx:/app/ui/dashboard/latest-invoices.tsx {5,7,8}
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
+import Image from 'next/image';
+import { lusitana } from '@/app/ui/fonts';
+import { fetchLatestInvoices } from '@/app/lib/data';
+ 
+export default async function LatestInvoices() { // 속성 제거
+  const latestInvoices = await fetchLatestInvoices();
+ 
+  return (
+    // ...
+  );
+}
+```
+</ToggleContent>
+</Callout>
+
+
+### 컴포넌트 그룹화하기
+잘 하셨습니다! 이제 거의 다 왔습니다. 이제 `<Card>` 컴포넌트를 서스펜스로 감싸야 합니다. 각각의 카드에 대해 데이터를 가져올 수 있지만, 이렇게 하면 카드가 로드되면서 팝업 효과가 발생할 수 있고, 이는 사용자에게 시각적으로 불편할 수 있습니다.
+
+이 문제를 어떻게 해결할까요?
+
+더욱 균일한 효과를 내기 위해, 카드를 래퍼 컴포넌트를 사용해 그룹화할 수 있습니다. 이는 정적인 `<SideNav/>`가 먼저 표시된 다음 카드 등이 따라오게 됩니다.
+
+`page.tsx` 파일에서 아래와 같이 처리하세요.
+
+1. `<Card>` 컴포넌트를 삭제하세요.
+2. `fetchCardData()` 함수를 삭제하세요.
+3. `<CardWrapper />`라는 새 래퍼 컴포넌트를 불러오세요.
+4. `<CardsSkeleton />`이라는 새 스켈레톤 컴포넌트를 불러오세요.
+5. `<CardWrapper />`를 서스펜스로 감싸세요.
+
+```tsx:/app/dashboard/page.tsx {1,6,16-18}
+import CardWrapper from '@/app/ui/dashboard/cards';
+// ...
+import {
+  RevenueChartSkeleton,
+  LatestInvoicesSkeleton,
+  CardsSkeleton,
+} from '@/app/ui/skeletons';
+ 
+export default async function Page() {
+  return (
+    <main>
+      <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
+        대시보드
+      </h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Suspense fallback={<CardsSkeleton />}>
+          <CardWrapper />
+        </Suspense>
+      </div>
+      // ...
+    </main>
+  );
+}
+```
+그다음 `/app/ui/dashboard/cards.tsx` 파일로 이동하여 `fetchCardData()` 함수를 불러오고 `<CardWrapper/>` 컴포넌트 안에서 호출하세요. 이 컴포넌트에서 필요한 코드의 주석 처리를 해제하세요.
+
+```tsx:/app/ui/dashboard/cards.tsx {2,7-12}
+// ...
+import { fetchCardData } from '@/app/lib/data';
+ 
+// ...
+ 
+export default async function CardWrapper() {
+  const {
+    numberOfInvoices,
+    numberOfCustomers,
+    totalPaidInvoices,
+    totalPendingInvoices,
+  } = await fetchCardData();
+ 
+  return (
+    <>
+      <Card title="Collected" value={totalPaidInvoices} type="collected" />
+      <Card title="Pending" value={totalPendingInvoices} type="pending" />
+      <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
+      <Card
+        title="Total Customers"
+        value={numberOfCustomers}
+        type="customers"
+      />
+    </>
+  );
+}
+```
+페이지를 새로고침하면 모든 카드가 동시에 로드되는 것을 볼 수 있습니다. 여러 컴포넌트를 동시에 로드하고 싶을 때 이 패턴을 사용할 수 있습니다.
+
+
+
+### 서스펜스 경계 배치 결정하기
+서스펜스 경계를 어디에 배치할지 결정할 때 고려할 몇 가지 사항이 있습니다.
+
+1. 페이지가 스트리밍됨에 따라 사용자가 페이지를 어떻게 경험하길 원하는지.
+2. 우선순위를 둘 콘텐츠는 무엇인지.
+3. 컴포넌트가 데이터 가져오기에 의존하는지 여부.
+
+대시보드 페이지를 살펴보세요. 다르게 했을 것이 있나요?
+
+걱정하지 마세요. 정답은 없습니다.
+
+- 우리가 `loading.tsx`를 사용해 전체 페이지를 스트리밍한 것처럼 할 수도 있지만, 컴포넌트 중 하나가 데이터를 느리게 가져오면 로딩 시간이 길어질 수 있습니다.
+- 모든 컴포넌트를 개별적으로 스트리밍할 수도 있지만, 이는 UI가 준비되는 대로 화면에 팝업되게 할 수 있습니다.
+- 페이지 섹션을 스트리밍함으로써 점진적 효과를 만들 수도 있지만, 래퍼 컴포넌트를 만들어야 합니다.
+
+서스펜스 경계를 어디에 배치할지는 애플리케이션에 따라 달라집니다. 일반적으로, 필요한 컴포넌트로 데이터 가져오기를 내리고, 그 컴포넌트를 서스펜스로 감싸는 것이 좋은 방법입니다. 하지만 애플리케이션의 필요에 따라 섹션 전체나 전체 페이지를 스트리밍하는 것도 문제가 없습니다.
+
+서스펜스를 실험해 보고 무엇이 가장 잘 작동하는지 확인해 보세요. 서스펜스는 사용자 경험을 더 즐겁게 만들 수 있는 강력한 API입니다.
+
+### 다음 내용 살펴보기
+스트리밍과 서버 컴포넌트는 데이터 가져오기와 로딩 상태를 처리하는 새로운 방법을 제공하여 결국 최종 사용자 경험을 개선하는 것을 목표로 합니다.
+
+다음 장에서는 스트리밍을 염두에 두고 만들어진 새로운 Next.js 렌더링 모델인 부분 프리렌더링에 대해 배웁니다.
+
+---
+
+
+## 10장: 부분 프리렌더링 (선택 사항)
+
+> 부분 프리렌더링은 Next.js 14에서 도입된 실험적 기능입니다. 이 기능의 안정성이 진행됨에 따라 이 페이지의 내용이 업데이트될 수 있습니다. 실험적 기능을 사용하지 않으려면 이 장을 건너뛰는 것이 좋습니다. 이 장은 과정을 완료하는 데 필요하지 않습니다.
+
+이 장에서 다룰 내용은 다음과 같습니다.
+
+- 부분 프리렌더링이 무엇인지
+- 부분 프리렌더링이 어떻게 작동하는지
+
+### 정적 및 동적 콘텐츠 결합하기
+현재 라우트 내에서 동적 함수를 호출하면(예: `noStore()`, `cookies()` 등) 전체 라우트가 동적이 됩니다.
+
+이것이 오늘날 대부분의 웹 앱이 구축되는 방식입니다. 전체 애플리케이션 또는 특정 라우트에 대해 정적 및 동적 렌더링 중에서 선택해야 합니다.
+
+그러나 대부분의 라우트는 완전히 정적이거나 동적이지 않습니다. 정적 및 동적 콘텐츠가 모두 있는 라우트가 있을 수 있습니다. 예를 들어 전자상거래 사이트를 고려해 보세요. 대부분의 제품 페이지를 프리렌더링할 수 있지만 사용자의 장바구니와 추천 제품을 동적으로 요청에 따라 가져오고 싶을 수 있습니다.
+
+<Callout type="warning" icon="생각해 보기">
+대시보드 페이지로 돌아가서 어떤 컴포넌트를 정적으로 고려하고 어떤 것을 동적으로 고려할지 생각해 보세요.
+
+<ToggleContent title="준비가 되면 대시보드 라우트를 어떻게 분할할지 아래 버튼을 클릭해 보세요.">
+![사이드네비게이션이 정적인 반면 페이지의 자식 컴포넌트는 동적인 다이어그램](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fdashboard-static-dynamic-components.png&w=1920&q=75)
+
+- `<SideNav>` 컴포넌트는 데이터에 의존하지 않고 사용자에게 개인화되지 않으므로 **정적**일 수 있습니다.
+- `<Page>` 내의 컴포넌트는 자주 변경되고 사용자에게 개인화될 데이터에 의존하므로 **동적**일 수 있습니다.
+</ToggleContent>
+</Callout>
+
+
+### 부분 프리렌더링이란?
+
+Next.js 14에는 정적 로딩 셸을 가진 라우트를 렌더링하면서 일부 부분을 동적으로 유지할 수 있는 실험적 기능인 부분 프리렌더링의 미리보기가 포함되어 있습니다. 즉, 라우트의 동적 부분을 분리할 수 있습니다.
+
+![](https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Fthinking-in-ppr.png&w=1920&q=75)
+
+부분적으로 프리렌더링된 제품 페이지는 정적 네비게이션과 제품 정보, 그리고 동적인 장바구니와 추천 제품을 보여줍니다.
+
+사용자가 라우트를 방문할 때 아래와 같이 동작됩니다.
+
+- 정적 라우트 셸이 제공되어 빠른 초기 로드를 보장합니다.
+- 셸은 동적 콘텐츠가 비동기적으로 로드될 곳에 구멍을 남깁니다.
+- 비동기 구멍은 병렬로 스트리밍되어 페이지의 전체 로드 시간을 줄입니다.
+
+이는 현재 애플리케이션이 작동하는 방식과 다르며, 전체 라우트가 완전히 정적이거나 동적인 경우가 대부분입니다.
+
+부분 프리렌더링은 초고속 정적 엣지 전달과 완전한 동적 기능을 결합하며, 정적 사이트 생성과 동적 전달의 최고의 장점을 결합한 웹 애플리케이션의 기본 렌더링 모델이 될 잠재력이 있다고 믿습니다.
+
+### 부분 프리렌더링은 어떻게 작동하나요?
+
+부분 프리렌더링은 리액트의 [동시성 API](https://react.dev/blog/2021/12/17/react-conf-2021-recap#react-18-and-concurrent-features)를 활용하고 [서스펜스](https://react.dev/reference/react/Suspense)를 사용하여 애플리케이션의 일부를 특정 조건(예: 데이터가 로드됨)이 충족될 때까지 렌더링을 지연시킵니다.
+
+대체 컨텐츠는 초기 정적 파일과 다른 정적 콘텐츠와 함께 포함됩니다. 빌드 시간(또는 재검증 중)에 라우트의 정적 부분이 프리렌더링되고 나머지는 사용자가 라우트를 요청할 때까지 연기됩니다.
+
+컴포넌트를 서스펜스로 감싼다고 해서 컴포넌트 자체가 동적이 되는 것은 아니며(이전에 `unstable_noStore`를 사용하여 이러한 동작을 달성했음을 기억하세요), 오히려 서스펜스는 라우트의 정적 부분과 동적 부분 사이의 경계로 사용됩니다.
+
+부분 프리렌더링의 좋은 점은 이를 사용하기 위해 코드를 변경할 필요가 없다는 것입니다. 라우트의 동적 부분을 서스펜스로 감싸는 한, Next.js는 라우트의 어느 부분이 정적이고 어느 부분이 동적인지 알 수 있습니다.
+
+> 참고: 부분 프리렌더링을 구성하는 방법에 대한 자세한 내용은 부분 프리렌더링(실험적) 문서를 참조하거나 부분 프리렌더링 템플릿 및 데모를 시도해 보세요. 이 기능은 실험적이며 아직 프로덕션 배포 준비가 되지 않았다는 점을 알아두는 것이 중요합니다.
+
+### 요약
+
+애플리케이션에서 데이터 가져오기를 최적화하기 위해 몇 가지 작업을 수행했습니다.
+
+1. 서버와 데이터베이스 간의 지연 시간을 줄이기 위해 애플리케이션 코드와 같은 지역에 데이터베이스를 생성했습니다.
+2. 리액트 서버 컴포넌트로 서버에서 데이터를 가져왔습니다. 이를 통해 고비용의 데이터 가져오기와 로직을 서버에 유지하고, 클라이언트 사이드 자바스크립트 번들을 줄이며, 데이터베이스 비밀이 클라이언트에 노출되는 것을 방지할 수 있습니다.
+3. 필요한 데이터만 가져오기 위해 SQL을 사용하여 각 요청에 대해 전송된 데이터의 양과 메모리에서 데이터를 변환하기 위해 필요한 자바스크립트의 양을 줄였습니다.
+4. 의미가 있는 경우에 자바스크립트로 데이터 가져오기를 병렬 처리했습니다.
+5. 전체 페이지를 차단하는 느린 데이터 요청을 방지하고 사용자가 모든 것이 로드될 때까지 기다리지 않고도 UI와 상호 작용할 수 있게 스트리밍을 구현했습니다.
+6. 데이터 가져오기를 필요로 하는 컴포넌트로 내리고 라우트의 어떤 부분이 동적이어야 하는지 분리하여 부분 프리렌더링을 위한 준비를 했습니다.
+
+다음 장에서는 데이터를 가져올 때 구현해야 할 수 있는 두 가지 일반적인 패턴인 검색과 페이지네이션을 살펴보겠습니다.

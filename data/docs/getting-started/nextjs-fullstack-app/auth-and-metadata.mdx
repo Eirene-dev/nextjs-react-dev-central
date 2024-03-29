@@ -1,0 +1,601 @@
+---
+title: 인증 및 메타데이터
+date: '2023-01-01 03:07'
+summary: 앱 내 인증 시스템을 구축하고 메타데이터를 관리하여 SEO를 향상시키는 방법을 배웁니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 15장: 사용자 인증 추가
+이전 장에서는 폼 검증을 추가하고 접근성을 개선함으로써 청구서 경로를 마무리 지었습니다. 이 장에서는 대시보드에 인증을 추가할 것입니다.
+
+이 장에서 다룰 주제는 다음과 같습니다.
+
+- 인증이란 무엇인가
+- NextAuth.js를 사용하여 앱에 인증 추가하기
+- 사용자를 리다이렉트하고 경로를 보호하기 위해 미들웨어 사용하기
+- 대기 상태와 폼 오류를 처리하기 위해 React의 `useFormStatus`와 `useFormState` 사용하기
+
+### 인증이란 무엇인가?
+인증은 오늘날 많은 웹 애플리케이션의 핵심 부분입니다. 시스템이 사용자가 자신이라고 주장하는 사람이 맞는지 확인하는 방법입니다.
+
+보안이 강화된 웹사이트는 사용자의 신원을 확인하기 위해 여러 가지 방법을 사용합니다. 예를 들어, 사용자 이름과 비밀번호를 입력한 후에 사이트는 사용자의 기기로 인증 코드를 보내거나 Google Authenticator와 같은 외부 앱을 사용할 수 있습니다. 이 2단계 인증(2FA)은 보안을 강화하는 데 도움이 됩니다. 비밀번호를 알아내더라도 고유한 토큰 없이는 계정에 접근할 수 없습니다.
+
+#### 인증과 권한 부여
+웹 개발에서 인증과 권한 부여는 서로 다른 역할을 합니다.
+
+- **인증**은 사용자가 자신이라고 주장하는 사람이 맞는지 확인하는 것입니다. 사용자 이름과 비밀번호와 같이 가지고 있는 것으로 신원을 증명합니다.
+- **권한 부여**는 사용자의 신원이 확인된 후 다음 단계입니다. 권한 부여는 애플리케이션에서 사용자가 사용할 수 있는 부분을 결정합니다.
+즉, 인증은 당신이 누구인지 확인하고, 권한 부여는 애플리케이션에서 무엇을 할 수 있는지 결정합니다.
+
+### 로그인 경로 생성하기
+애플리케이션에 `/login`이라는 새 경로를 생성하고 다음 코드를 붙여넣으세요.
+
+```tsx:/app/login/page.tsx
+import AcmeLogo from '@/app/ui/acme-logo';
+import LoginForm from '@/app/ui/login-form';
+ 
+export default function LoginPage() {
+  return (
+    <main className="flex items-center justify-center md:h-screen">
+      <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+        <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
+          <div className="w-32 text-white md:w-36">
+            <AcmeLogo />
+          </div>
+        </div>
+        <LoginForm />
+      </div>
+    </main>
+  );
+}
+```
+페이지는 나중에 이 장에서 업데이트할 `<LoginForm />`을 가져오고 있습니다.
+
+### NextAuth.js
+애플리케이션에 인증을 추가하기 위해 [NextAuth.js](https://nextjs.authjs.dev/)를 사용할 것입니다. NextAuth.js는 세션 관리, 로그인 및 로그아웃, 인증의 다른 측면에 관련된 복잡성을 추상화합니다. 이러한 기능을 수동으로 구현할 수 있지만, 이 과정은 시간이 많이 소요되고 오류가 발생하기 쉽습니다. NextAuth.js는 이 과정을 단순화하여 Next.js 애플리케이션에 대한 통합 인증 솔루션을 제공합니다.
+
+### NextAuth.js 설정하기
+터미널에서 다음 명령어를 실행하여 NextAuth.js를 설치하세요.
+
+```bash:Terminal
+npm install next-auth@beta
+```
+
+여기서 Next.js 14와 호환되는 NextAuth.js의 베타 버전을 설치합니다.
+
+다음으로, 애플리케이션의 비밀 키를 생성합니다. 이 키는 쿠키를 암호화하는 데 사용되어 사용자 세션의 보안을 보장합니다. 다음 명령어를 터미널에서 실행하여 비밀 키를 생성할 수 있습니다.
+
+```bash:Terminal
+openssl rand -base64 32
+```
+
+그런 다음 `.env` 파일에 생성한 키를 `AUTH_SECRET` 변수에 추가하세요.
+
+```bash:.env
+AUTH_SECRET=your-secret-key
+```
+
+프로덕션에서 인증이 작동하려면 Vercel 프로젝트의 환경 변수도 업데이트해야 합니다. Vercel에서 환경 변수를 추가하는 방법은 [이 가이드](https://vercel.com/docs/projects/environment-variables)를 확인하세요.
+
+페이지 옵션 추가하기
+프로젝트의 루트에 `auth.config.ts` 파일을 생성하고 `authConfig` 객체를 내보냅니다. 이 객체는 NextAuth.js에 대한 구성 옵션을 포함할 것입니다. 현재는 `pages` 옵션만 포함됩니다.
+
+```ts:/auth.config.ts
+import type { NextAuthConfig } from 'next-auth';
+ 
+export const authConfig = {
+  pages: {
+    signIn: '/login',
+  },
+};
+```
+
+`pages` 옵션을 사용하여 사용자 정의 로그인, 로그아웃, 오류 페이지의 경로를 지정할 수 있습니다. 필수 사항은 아니지만 `signIn: '/login'`을 `pages` 옵션에 추가하면 사용자가 NextAuth.js 기본 페이지 대신 사용자 지정 로그인 페이지로 리디렉션됩니다.
+
+
+### Next.js 미들웨어를 사용하여 라우트 보호하기
+다음으로, 라우트를 보호하는 로직을 추가하세요. 이를 통해 사용자가 로그인하지 않은 경우 대시보드 페이지에 접근할 수 없게 됩니다.
+
+```ts:/auth.config.ts {7-21}
+import type { NextAuthConfig } from 'next-auth';
+ 
+export const authConfig = {
+  pages: {
+    signIn: '/login',
+  },
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
+      if (isOnDashboard) {
+        if (isLoggedIn) return true;
+        return false; // 로그인하지 않은 사용자를 로그인 페이지로 리디렉션
+      } else if (isLoggedIn) {
+        return Response.redirect(new URL('/dashboard', nextUrl));
+      }
+      return true;
+    },
+  },
+  providers: [], // 지금은 빈 배열로 제공자 추가
+} satisfies NextAuthConfig;
+```
+`authorized` 콜백은 Next.js 미들웨어를 통해 페이지에 대한 요청이 인증되었는지 확인하는 데 사용됩니다. 요청이 완료되기 전에 호출되며 `auth` 및 `request` 속성이 포함된 객체를 받습니다. `auth` 속성에는 사용자의 세션이 포함되어 있고, `request` 속성에는 들어오는 요청이 포함됩니다.
+
+`providers` 옵션은 다양한 로그인 옵션을 나열하는 배열입니다. 지금은 NextAuth 구성을 만족시키기 위해 빈 배열입니다. 자격 증명 제공자 추가 섹션에서 이에 대해 자세히 알아볼 것입니다.
+
+다음으로, `authConfig` 객체를 미들웨어 파일로 가져와야 합니다. 프로젝트의 루트에 `middleware.ts`라는 파일을 생성하고 다음 코드를 붙여넣으세요.
+
+```ts:/middleware.ts
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
+ 
+export default NextAuth(authConfig).auth;
+ 
+export const config = {
+  // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+};
+```
+
+여기서는 `authConfig` 객체로 NextAuth.js를 초기화하고 `auth` 속성을 내보냅니다. 또한 미들웨어의 `matcher` 옵션을 사용하여 특정 경로에서 실행되어야 함을 지정합니다.
+
+이 작업에 미들웨어를 사용하는 장점은 미들웨어가 인증을 검증하기 전까지 보호된 라우트가 렌더링을 시작하지 않아 애플리케이션의 보안과 성능이 모두 향상된다는 것입니다.
+
+
+#### 비밀번호 해싱
+데이터베이스에 저장하기 전에 비밀번호를 **해싱**하는 것이 좋은 방법입니다. 해싱은 비밀번호를 임의로 보이는 고정 길이의 문자열로 변환하여, 사용자 데이터가 노출되더라도 보안 계층을 제공합니다.
+
+`seed.js` 파일에서 데이터베이스에 저장하기 전에 사용자의 비밀번호를 해싱하기 위해 `bcrypt` 패키지를 사용했습니다. 이 장의 뒷부분에서 사용자가 입력한 비밀번호가 데이터베이스의 비밀번호와 일치하는지 비교할 때 다시 사용할 것입니다. 하지만, Next.js 미들웨어에서 사용할 수 없는 Node.js API에 의존하는 `bcrypt` 패키지를 위해 별도의 파일을 생성해야 합니다.
+
+`auth.ts`라는 새 파일을 생성하여 `authConfig` 객체를 확장하세요.
+
+```ts:/auth.ts
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
+ 
+export const { auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+});
+```
+
+#### 자격 증명 제공자 추가하기
+다음으로, NextAuth.js에 `providers` 옵션을 추가해야 합니다. `providers`는 Google이나 GitHub 같은 다양한 로그인 옵션을 나열하는 배열입니다. 이 과정에서는 [자격 증명 제공자](https://authjs.dev/getting-started/providers/credentials-tutorial)만 사용하는 데 집중할 것입니다.
+
+자격 증명 제공자는 사용자가 사용자 이름과 비밀번호로 로그인할 수 있게 해줍니다.
+
+```ts:/auth.ts {3,7}
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
+import Credentials from 'next-auth/providers/credentials';
+ 
+export const { auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  providers: [Credentials({})],
+});
+```
+
+> 알아두기: 자격 증명 제공자를 사용하고 있지만, OAuth나 이메일 제공자와 같은 대안적인 제공자 사용을 권장합니다. 모든 옵션의 전체 목록은 NextAuth.js 문서에서 확인할 수 있습니다.
+
+
+#### 로그인 기능 추가하기
+`authorize` 함수를 사용하여 인증 로직을 처리할 수 있습니다. 서버 액션과 마찬가지로, 데이터베이스에서 사용자가 존재하는지 확인하기 전에 `zod`를 사용하여 이메일과 비밀번호를 검증할 수 있습니다.
+
+```ts:/auth.ts {4,9-15}
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
+import Credentials from 'next-auth/providers/credentials';
+import { z } from 'zod';
+ 
+export const { auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  providers: [
+    Credentials({
+      async authorize(credentials) {
+        const parsedCredentials = z
+          .object({ email: z.string().email(), password: z.string().min(6) })
+          .safeParse(credentials);
+      },
+    }),
+  ],
+});
+```
+자격 증명을 검증한 후, 데이터베이스에서 사용자를 조회하는 새로운 `getUser` 함수를 생성하세요.
+
+```ts:/auth.ts {5-11,9-17,28-31}
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { authConfig } from './auth.config';
+import { z } from 'zod';
+import { sql } from '@vercel/postgres';
+import type { User } from '@/app/lib/definitions';
+import bcrypt from 'bcrypt';
+ 
+async function getUser(email: string): Promise<User | undefined> {
+  try {
+    const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
+    return user.rows[0];
+  } catch (error) {
+    console.error('사용자를 불러오는데 실패함:', error);
+    throw new Error('사용자를 불러오는데 실패함.');
+  }
+}
+ 
+export const { auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  providers: [
+    Credentials({
+      async authorize(credentials) {
+        const parsedCredentials = z
+          .object({ email: z.string().email(), password: z.string().min(6) })
+          .safeParse(credentials);
+ 
+        if (parsedCredentials.success) {
+          const { email, password } = parsedCredentials.data;
+          const user = await getUser(email);
+          if (!user) return null;
+        }
+ 
+        return null;
+      },
+    }),
+  ],
+});
+```
+이 코드에서는 사용자의 이메일과 비밀번호를 검증하고, 검증에 성공하면 데이터베이스에서 사용자를 조회합니다. 사용자가 없으면 `null`을 반환하여 로그인을 실패하게 합니다.
+
+
+그 다음, `bcrypt.compare`를 호출하여 비밀번호가 일치하는지 확인하세요.
+
+```ts:/auth.ts {7,22,24,27-28}
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { authConfig } from './auth.config';
+import { sql } from '@vercel/postgres';
+import { z } from 'zod';
+import type { User } from '@/app/lib/definitions';
+import bcrypt from 'bcrypt';
+ 
+// ...
+ 
+export const { auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  providers: [
+    Credentials({
+      async authorize(credentials) {
+        // ...
+ 
+        if (parsedCredentials.success) {
+          const { email, password } = parsedCredentials.data;
+          const user = await getUser(email);
+          if (!user) return null;
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+ 
+          if (passwordsMatch) return user;
+        }
+ 
+        console.log('잘못된 자격 증명');
+        return null;
+      },
+    }),
+  ],
+});
+```
+마지막으로, 비밀번호가 일치하면 사용자를 반환하고, 그렇지 않으면 로그인을 방지하기 위해 `null`을 반환하세요.
+
+#### 로그인 폼 업데이트
+이제 인증 로직을 로그인 폼과 연결해야 합니다. `actions.ts` 파일에서 `authenticate`라는 새 액션을 생성하세요. 이 액션은 `auth.ts`에서 `signIn` 함수를 가져와야 합니다.
+
+```ts:/app/lib/actions.ts
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
+ 
+// ...
+ 
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return '잘못된 자격 증명입니다.';
+        default:
+          return '문제가 발생했습니다.';
+      }
+    }
+    throw error;
+  }
+}
+```
+`'CredentialsSignin'` 오류가 발생하면 적절한 오류 메시지를 표시하고자 합니다. NextAuth.js 오류에 대해서는 [문서](https://errors.authjs.dev/)에서 자세히 알아볼 수 있습니다.
+
+
+마침내 `login-form.tsx` 컴포넌트에서 서버 액션을 호출하고 폼 오류를 처리하기 위해 React의 `useFormState`를 사용하고, 폼의 대기 상태를 처리하기 위해 `useFormStatus`를 사용할 수 있습니다.
+
+```tsx:app/ui/login-form.tsx {1,11,12,15,18,65-76,83,86-88}
+'use client';
+
+import { lusitana } from '@/app/ui/fonts';
+import {
+  AtSymbolIcon,
+  KeyIcon,
+  ExclamationCircleIcon,
+} from '@heroicons/react/24/outline';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import { Button } from '@/app/ui/button';
+import { useFormState, useFormStatus } from 'react-dom';
+import { authenticate } from '@/app/lib/actions';
+
+export default function LoginForm() {
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+
+  return (
+    <form action={dispatch} className="space-y-3">
+      <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
+        <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+          계속하려면 로그인하세요.
+        </h1>
+        <div className="w-full">
+          <div>
+            <label
+              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              htmlFor="email"
+            >
+              이메일
+            </label>
+            <div className="relative">
+              <input
+                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                id="email"
+                type="email"
+                name="email"
+                placeholder="이메일 주소를 입력하세요"
+                required
+              />
+              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <label
+              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              htmlFor="password"
+            >
+              비밀번호
+            </label>
+            <div className="relative">
+              <input
+                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                id="password"
+                type="password"
+                name="password"
+                placeholder="비밀번호를 입력하세요"
+                required
+                minLength={6}
+              />
+              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
+          </div>
+        </div>
+        <LoginButton />
+        <div
+          className="flex h-8 items-end space-x-1"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {errorMessage && (
+            <>
+              <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+              <p className="text-sm text-red-500">{errorMessage}</p>
+            </>
+          )}
+        </div>
+      </div>
+    </form>
+  );
+}
+
+function LoginButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button className="mt-4 w-full" aria-disabled={pending}>
+      로그인 <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+    </Button>
+  );
+}
+```
+
+### 로그아웃 기능 추가
+로그아웃 기능을 `<SideNav />`에 추가하기 위해, `auth.ts`에서 `signOut` 함수를 `<form>` 요소에서 호출합니다.
+
+```tsx:/ui/dashboard/sidenav.tsx {5,15-18}
+import Link from 'next/link';
+import NavLinks from '@/app/ui/dashboard/nav-links';
+import AcmeLogo from '@/app/ui/acme-logo';
+import { PowerIcon } from '@heroicons/react/24/outline';
+import { signOut } from '@/auth';
+
+export default function SideNav() {
+  return (
+    <div className="flex h-full flex-col px-3 py-4 md:px-2">
+      // ...
+      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+        <NavLinks />
+        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+        <form
+          action={async () => {
+            'use server';
+            await signOut();
+          }}
+        >
+          <button className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
+            <PowerIcon className="w-6" />
+            <div className="hidden md:block">로그아웃</div>
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+```
+
+이제 시도해보세요. 다음 인증 정보를 사용하여 애플리케이션에 로그인하고 로그아웃할 수 있어야 합니다.
+
+- 이메일: `user@nextmail.com`
+- 비밀번호: `123456`
+
+---
+
+
+## 16장: 메타데이터 추가하기
+
+메타데이터는 SEO와 공유성을 높이는 데 중요합니다. 이 장에서는 Next.js 애플리케이션에 메타데이터를 추가하는 방법을 논의합니다.
+
+이 장에서 다룰 내용은 다음과 같습니다.
+- 메타데이터란 무엇인가
+- 메타데이터의 종류
+- 오픈 그래프 이미지 추가하기
+- 파비콘 추가하기
+
+### 메타데이터란?
+웹 개발에서 메타데이터는 웹페이지에 대한 추가 정보를 제공합니다. 사용자가 페이지를 방문할 때 보이지 않지만, 페이지의 HTML 내 `<head>` 요소 안에 숨겨져 있습니다. 이 숨겨진 정보는 검색 엔진과 같이 웹페이지 내용을 더 잘 이해해야 하는 시스템에 중요합니다.
+
+### 메타데이터의 중요성
+메타데이터는 웹페이지 SEO를 개선하는 데 중요한 역할을 합니다. 적절한 메타데이터는 검색 엔진이 웹페이지를 효과적으로 색인화하도록 도와서 검색 결과에서의 순위를 높일 수 있습니다. 또한, 오픈 그래프와 같은 메타데이터는 소셜 미디어에서 링크가 공유될 때 보다 매력적이고 정보적으로 만듭니다.
+
+### 메타데이터의 종류
+다양한 메타데이터가 각기 다른 목적을 가집니다. 흔히 볼 수 있는 몇 가지를 소개합니다.
+
+**제목 메타데이터**: 웹페이지의 제목을 브라우저 탭에 표시합니다. SEO에 중요합니다.
+```jsx
+<title>페이지 제목</title>
+```
+
+**설명 메타데이터**: 웹페이지 내용의 간략한 개요로, 종종 검색 엔진 결과에 표시됩니다.
+```jsx
+<meta name="description" content="페이지 내용의 간략한 설명." />
+```
+
+**키워드 메타데이터**: 웹페이지 내용과 관련된 키워드를 포함합니다.
+```jsx
+<meta name="keywords" content="키워드1, 키워드2, 키워드3" />
+```
+
+**오픈 그래프 메타데이터**: 소셜 미디어 플랫폼에서 웹페이지를 공유했을 때의 표현 방식을 개선합니다.
+```jsx
+<meta property="og:title" content="제목" />
+<meta property="og:description" content="설명" />
+<meta property="og:image" content="이미지_주소" />
+```
+
+**파비콘 메타데이터**: 웹페이지와 연결된 파비콘(작은 아이콘)을 브라우저의 주소 창이나 탭에 표시합니다.
+```jsx
+<link rel="icon" href="파비콘_경로/favicon.ico" />
+```
+
+이번 장에서는 이와 같은 메타데이터를 Next.js 애플리케이션에 효과적으로 추가하는 방법에 대해 자세히 알아보겠습니다.
+
+
+### 메타데이터 추가하기
+Next.js는 애플리케이션 메타데이터를 정의할 수 있는 메타데이터 API를 제공합니다. 애플리케이션에 메타데이터를 추가하는 방법은 두 가지입니다.
+
+- **설정 기반**: `layout.js` 또는 `page.js` 파일에서 정적 `metadata` 객체나 동적 `generateMetadata` 함수를 내보냅니다.
+
+- **파일 기반**: Next.js는 메타데이터 목적으로 사용되는 다양한 특수 파일을 가지고 있습니다.
+    - `favicon.ico`, `apple-icon.jpg`, `icon.jpg`: 파비콘과 아이콘에 사용됩니다
+    - `opengraph-image.jpg`와 `twitter-image.jpg`: 소셜 미디어 이미지에 쓰입니다
+    - `robots.txt`: 검색 엔진 크롤링 지침을 제공합니다
+    - `sitemap.xml`: 웹사이트 구조에 대한 정보를 제공합니다
+
+이 파일들을 정적 메타데이터에 사용하거나 프로젝트 내에서 프로그래매틱하게 생성할 수 있는 유연성이 있습니다.
+
+이 두 옵션을 사용하면 Next.js는 페이지의 `<head>` 요소를 자동으로 생성합니다.
+
+### 파비콘과 오픈 그래프 이미지
+`/public` 폴더를 살펴보면 `favicon.ico`와 `opengraph-image.jpg` 두 이미지가 있습니다.
+
+이 이미지들을 `/app` 폴더의 루트로 이동하세요.
+
+이 작업을 마치면 Next.js는 이 파일들을 파비콘과 OG 이미지로 자동으로 인식하고 사용합니다. 애플리케이션의 `<head>` 요소를 개발 도구에서 확인하여 이를 검증할 수 있습니다.
+
+> 알아두면 좋은 점: `ImageResponse` 생성자를 사용하여 동적 OG 이미지를 생성할 수도 있습니다.
+
+
+### 페이지 제목과 설명
+`layout.js` 또는 `page.js` 파일에서 `metadata` 객체를 포함시켜 제목과 설명 같은 추가 페이지 정보를 추가할 수 있습니다. `layout.js`의 메타데이터는 이를 사용하는 모든 페이지에 상속됩니다.
+
+루트 레이아웃에서 다음 필드를 가진 새 `metadata` 객체를 생성하세요.
+
+```tsx:/app/layout.tsx {1, 3-7}
+import { Metadata } from 'next';
+ 
+export const metadata: Metadata = {
+  title: 'Acme 대시보드',
+  description: '앱 라우터로 구축된 Next.js 공식 코스 대시보드입니다.',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
+ 
+export default function RootLayout() {
+  // ...
+}
+```
+Next.js는 자동으로 애플리케이션에 제목과 메타데이터를 추가합니다.
+
+특정 페이지에 사용자 정의 제목을 추가하려면 어떻게 해야 할까요? 페이지 자체에 메타데이터 객체를 추가함으로써 이를 수행할 수 있습니다. 중첩된 페이지의 메타데이터는 부모의 메타데이터를 덮어씁니다.
+
+예를 들어, `/dashboard/invoices` 페이지에서 페이지 제목을 업데이트할 수 있습니다.
+
+```tsx:/app/dashboard/invoices/page.tsx {1, 3-5}
+import { Metadata } from 'next';
+ 
+export const metadata: Metadata = {
+  title: '청구서 | Acme 대시보드',
+};
+```
+
+이 방법은 작동하지만, 애플리케이션의 제목을 모든 페이지마다 반복하고 있습니다. 회사 이름과 같은 것이 변경된다면, 모든 페이지를 업데이트해야 합니다.
+
+대신, `metadata` 객체의 `title.template` 필드를 사용하여 페이지 제목의 템플릿을 정의할 수 있습니다. 이 템플릿은 페이지 제목과 포함하고 싶은 다른 정보를 포함할 수 있습니다.
+
+루트 레이아웃에서 템플릿을 포함하도록 `metadata` 객체를 업데이트하세요.
+
+```tsx:/app/layout.tsx {1, 3-10}
+import { Metadata } from 'next';
+ 
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Acme 대시보드',
+    default: 'Acme 대시보드',
+  },
+  description: '앱 라우터로 구축된 Next.js 공식 학습 대시보드입니다.',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
+```
+
+템플릿의 `%s`는 특정 페이지 제목으로 대체됩니다.
+
+이제 `/dashboard/invoices` 페이지에서 페이지 제목을 추가할 수 있습니다.
+
+```tsx:/app/dashboard/invoices/page.tsx
+export const metadata: Metadata = {
+  title: '청구서',
+};
+```
+
+`/dashboard/invoices` 페이지로 이동하여 `<head>` 요소를 확인하세요. 페이지 제목이 `청구서 | Acme 대시보드`로 나타나야 합니다.
+
+<Callout type="warning" icon="실습: 메타데이터 추가하기">
+메타데이터에 대해 배웠으니 다른 페이지에 제목을 추가해 실습해보세요.
+
+1. `/login` 페이지
+2. `/dashboard/` 페이지
+3. `/dashboard/customers` 페이지
+4. `/dashboard/invoices/create` 페이지
+5. `/dashboard/invoices/[id]/edit` 페이지
+</Callout>
+
+Next.js 메타데이터 API는 강력하고 유연하여 애플리케이션의 메타데이터를 완벽히 제어할 수 있습니다. 여기서는 기본 메타데이터를 추가하는 방법을 보여주었지만 `keywords`, `robots`, `canonical` 등 다양한 필드를 추가할 수 있습니다. 문서를 탐색하고 애플리케이션에 추가하고 싶은 메타데이터를 자유롭게 추가해보세요.
