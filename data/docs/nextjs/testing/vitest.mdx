@@ -1,0 +1,168 @@
+---
+title: Next.js에서 Vitest 설정하기
+date: '2023-02-01 08:01'
+summary: Next.js에서 단위 테스트를 위해 Vitest를 설정하는 방법을 배워보세요.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+Vite와 리액트 테스팅 라이브러리는 **단위 테스트**를 위해 자주 함께 사용됩니다. 이 가이드에서는 Next.js와 Vitest를 설정하고 첫 번째 테스트를 작성하는 방법을 보여드립니다.
+
+> **알아두세요.** `async` 서버 컴포넌트는 리액트 생태계에 새로운 개념이기 때문에 Vitest는 현재 이를 지원하지 않습니다. 동기 서버 및 클라이언트 컴포넌트의 **단위 테스트**를 실행할 수는 있지만 `async` 컴포넌트의 경우 **E2E 테스트** 사용을 권장합니다.
+
+## 빠른 시작
+
+Next.js의 [with-vitest](https://github.com/vercel/next.js/tree/canary/examples/with-vitest) 예제와 `create-next-app`을 사용하여 빠르게 시작할 수 있습니다.
+
+```bash
+npx create-next-app@latest --example with-vitest with-vitest-app
+```
+
+## 수동 설정
+
+Vitest를 수동으로 설정하려면 `vitest`와 다음 패키지들을 개발 의존성으로 설치하세요.
+
+```bash
+npm install -D vitest @vitejs/plugin-react jsdom @testing-library/react
+# 또는
+yarn add -D vitest @vitejs/plugin-react jsdom @testing-library/react
+# 또는
+pnpm install -D vitest @vitejs/plugin-react jsdom @testing-library/react
+# 또는
+bun add -D vitest @vitejs/plugin-react jsdom @testing-library/react
+```
+
+프로젝트 루트에 `vitest.config.ts|js` 파일을 생성하고 다음 옵션을 추가하세요.
+
+```ts
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: 'jsdom',
+  },
+})
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```js
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: 'jsdom',
+  },
+})
+```
+</details>
+
+Vitest를 설정하는 더 많은 정보는 [Vitest 설정](https://vitest.dev/config/#configuration) 문서를 참고하세요.
+
+그다음, `package.json`에 `test` 스크립트를 추가하세요.
+
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest"
+  }
+}
+```
+
+`npm run test`를 실행하면 Vitest는 기본적으로 프로젝트의 변경 사항을 **감시**합니다.
+
+
+## 첫 번째 Vitest 단위 테스트 만들기
+
+`<Page />` 컴포넌트가 제목을 성공적으로 렌더링하는지 확인하는 테스트를 생성하여 모든 것이 잘 작동하는지 확인하세요.
+
+```tsx
+import Link from 'next/link'
+
+export default function Page() {
+  return (
+    <div>
+      <h1>홈</h1>
+      <Link href="/about">소개</Link>
+    </div>
+  )
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```jsx
+import Link from 'next/link'
+
+export default function Page() {
+  return (
+    <div>
+      <h1>홈</h1>
+      <Link href="/about">소개</Link>
+    </div>
+  )
+}
+```
+</details>
+<p />
+
+```tsx
+import { expect, test } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import Page from '../app/page'
+
+test('Page', () => {
+  render(<Page />)
+  expect(screen.getByRole('heading', { level: 1, name: '홈' })).toBeDefined()
+})
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```jsx
+import { expect, test } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import Page from '../app/page'
+
+test('Page', () => {
+  render(<Page />)
+  expect(screen.getByRole('heading', { level: 1, name: '홈' })).toBeDefined()
+})
+```
+</details>
+
+> **알아두세요**: 위의 예시는 일반적인 `__tests__` 규칙을 사용하지만, 테스트 파일은 `app` 라우터 안에 위치할 수도 있습니다.
+
+
+## 테스트 실행하기
+
+다음 명령어를 실행하여 테스트를 실행하세요.
+
+```bash
+npm run test
+# 또는
+yarn test
+# 또는
+pnpm test
+# 또는
+bun test
+```
+
+## 추가 자료
+
+다음 자료들이 도움이 될 수 있습니다.
+
+- [Next.js와 Vitest 예제](https://github.com/vercel/next.js/tree/canary/examples/with-vitest)
+- [Vitest 문서](https://vitest.dev/guide/)
+- [리액트 테스팅 라이브러리 문서](https://testing-library.com/docs/react-testing-library/intro/)
+

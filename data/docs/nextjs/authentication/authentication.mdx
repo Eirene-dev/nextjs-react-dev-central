@@ -1,0 +1,193 @@
+---
+title: 인증
+date: '2023-02-01 09:01'
+summary: 사용자가 자신이 주장하는 사람인지 확인합니다. 사용자는 사용자명과 비밀번호 같은 것을 통해 자신의 정체성을 증명해야 합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 인증
+
+인증은 사용자의 정체성을 확인합니다. 이는 사용자가 사용자명과 비밀번호 또는 구글 같은 서비스를 통해 로그인할 때 발생합니다. 인증은 사용자가 정말 자신이 주장하는 사람인지 확인하는 것으로, 사용자의 데이터와 애플리케이션을 무단 접근이나 사기 활동으로부터 보호합니다.
+
+### 인증 전략
+
+현대 웹 애플리케이션은 일반적으로 여러 인증 전략을 사용합니다.
+
+1. **OAuth/OpenID Connect (OIDC)**: 사용자 자격 증명을 공유하지 않고 타사 액세스를 가능하게 합니다. 소셜 미디어 로그인과 단일 로그인(Single Sign-On, SSO) 솔루션에 이상적입니다. OpenID Connect로 인증 계층을 추가합니다.
+2. **자격 증명 기반 로그인 (이메일 + 비밀번호)**: 사용자가 이메일과 비밀번호로 로그인하는 웹 애플리케이션의 표준 선택입니다. 친숙하고 구현하기 쉽지만, 피싱과 같은 위협에 대한 강력한 보안 조치가 필요합니다.
+3. **비밀번호 없는/토큰 기반 인증**: 이메일 마법의 링크나 SMS 일회용 코드를 사용하여 안전하고 비밀번호 없는 접근을 제공합니다. 편리함과 향상된 보안으로 인기가 있으며, 비밀번호 피로를 줄여줍니다. 사용자의 이메일이나 전화의 가용성에 의존한다는 한계가 있습니다.
+4. **패스키/WebAuthn**: 각 사이트에 고유한 암호화 자격 증명을 사용하여 피싱에 대한 높은 보안을 제공합니다. 보안이 강력하지만 새로워 구현하기 어려울 수 있습니다.
+
+인증 전략을 선택할 때는 애플리케이션의 특정 요구 사항, 사용자 인터페이스 고려 사항 및 보안 목표에 맞춰야 합니다.
+
+### 인증 구현하기
+
+이 섹션에서는 기본 이메일-비밀번호 인증을 웹 애플리케이션에 추가하는 과정을 탐색합니다. 이 방법은 기본적인 보안 수준을 제공하지만, 일반적인 보안 위협에 대한 보호를 강화하기 위해 OAuth 또는 비밀번호 없는 로그인과 같은 더 고급 옵션을 고려하는 것이 좋습니다. 논의할 인증 흐름은 다음과 같습니다.
+
+1. 사용자가 로그인 폼을 통해 자격 증명을 제출합니다.
+2. 폼은 서버 액션을 호출합니다.
+3. 성공적인 검증 후, 사용자의 성공적인 인증을 나타내는 과정이 완료됩니다.
+4. 검증이 실패하면 오류 메시지가 표시됩니다.
+
+사용자가 자격 증명을 입력할 수 있는 로그인 폼을 고려해보세요.
+
+```tsx
+import { authenticate } from '@/app/lib/actions'
+
+export default function Page() {
+  return (
+    <form action={authenticate}>
+      <input type="email" name="email" placeholder="이메일" required />
+      <input type="password" name="password" placeholder="비밀번호" required />
+      <button type="submit">로그인</button>
+    </form>
+  )
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```jsx
+import { authenticate } from '@/app/lib/actions'
+
+export default function Page() {
+  return (
+    <form action={authenticate}>
+      <input type="email" name="email" placeholder="이메일" required />
+      <input type="password" name="password" placeholder="비밀번호" required />
+      <button type="submit">로그인</button>
+    </form>
+  )
+}
+```
+</details>
+
+
+위 폼에는 사용자의 이메일과 비밀번호를 캡처하는 두 개의 입력 필드가 있습니다. 제출 시 `authenticate` 서버 액션을 호출합니다.
+
+서버 액션에서 인증 제공자의 API를 호출하여 인증을 처리할 수 있습니다.
+
+```ts
+'use server'
+
+import { signIn } from '@/auth'
+
+export async function authenticate(_currentState: unknown, formData: FormData) {
+  try {
+    await signIn('credentials', formData)
+  } catch (error) {
+    if (error) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return '잘못된 자격 증명입니다.'
+        default:
+          return '문제가 발생했습니다.'
+      }
+    }
+    throw error
+  }
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```js
+'use server'
+
+import { signIn } from '@/auth'
+
+export async function authenticate(_currentState, formData) {
+  try {
+    await signIn('credentials', formData)
+  } catch (error) {
+    if (error) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return '잘못된 자격 증명입니다.'
+        default:
+          return '문제가 발생했습니다.'
+      }
+    }
+    throw error
+  }
+}
+```
+</details>
+
+이 코드에서 `signIn` 메서드는 제공된 자격 증명을 저장된 사용자 데이터와 대조합니다. 인증 제공자가 자격 증명을 처리한 후 두 가지 가능한 결과가 있습니다.
+
+- **성공적인 인증**: 이 결과는 로그인이 성공적이었음을 의미합니다. 보호된 경로에 접근하거나 사용자 정보를 가져오는 등의 추가 작업을 시작할 수 있습니다.
+- **인증 실패**: 자격 증명이 잘못되었거나 오류가 발생한 경우, 해당 오류 메시지를 반환하여 인증 실패를 나타냅니다.
+
+마지막으로, `login-form.tsx` 컴포넌트에서 React의 `useFormState`를 사용하여 서버 액션을 호출하고 폼 오류를 처리하며, `useFormStatus`를 사용하여 폼의 대기 상태를 처리할 수 있습니다.
+
+```tsx
+'use client'
+
+import { authenticate } from '@/app/lib/actions'
+import { useFormState, useFormStatus } from 'react-dom'
+
+export default function Page() {
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined)
+
+  return (
+    <form action={dispatch}>
+      <input type="email" name="email" placeholder="이메일" required />
+      <input type="password" name="password" placeholder="비밀번호" required />
+      <div>{errorMessage && <p>{errorMessage}</p>}</div>
+      <LoginButton />
+    </form>
+  )
+}
+
+function LoginButton() {
+  const { pending } = useFormStatus()
+
+  return (
+    <button aria-disabled={pending} type="submit">
+      로그인
+    </button>
+  )
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```jsx
+'use client'
+
+import { authenticate } from '@/app/lib/actions'
+import { useFormState, useFormStatus } from 'react-dom'
+
+export default function Page() {
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined)
+
+  return (
+    <form action={dispatch}>
+      <input type="email" name="email" placeholder="이메일" required />
+      <input type="password" name="password" placeholder="비밀번호" required />
+      <div>{errorMessage && <p>{errorMessage}</p>}</div>
+      <LoginButton />
+    </form>
+  )
+}
+
+function LoginButton() {
+  const { pending } = useFormStatus()
+
+  return (
+    <button aria-disabled={pending} type="submit">
+      로그인
+    </button>
+  )
+}
+```
+</details>
+
+특히 여러 로그인 방법을 제공하는 Next.js 프로젝트에서 인증 설정을 더 효율적으로 하기 위해, 포괄적인 [인증 솔루션](#examples)을 고려해보세요.
+

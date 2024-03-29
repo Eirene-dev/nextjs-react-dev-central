@@ -1,0 +1,150 @@
+---
+title: 세션 관리
+date: '2023-02-01 09:03'
+summary: "여러 요청에 걸쳐 사용자의 상태(예: 로그인됨)를 추적합니다."
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 세션 관리
+
+세션 관리는 사용자의 애플리케이션과의 상호 작용을 시간에 걸쳐 추적하고 관리하여, 다양한 애플리케이션 부분에서 인증된 상태가 유지되도록 하는 것을 포함합니다.
+
+이는 반복적인 로그인의 필요성을 방지하며, 보안과 사용자 편의성을 모두 향상시킵니다. 세션 관리에는 주로 두 가지 방법으로 쿠키 기반과 데이터베이스 세션이 사용됩니다.
+
+### 쿠키 기반 세션
+
+> **🎥 시청:** Next.js와 쿠키 기반 세션 및 인증에 대해 더 알아보세요 → [YouTube (11분)](https://www.youtube.com/watch?v=DJvM2lSPn6w).
+
+쿠키 기반 세션은 암호화된 세션 정보를 직접 브라우저 쿠키에 저장하여 사용자 데이터를 관리합니다. 사용자 로그인 시, 이 암호화된 데이터가 쿠키에 저장됩니다. 이후 서버 요청마다 이 쿠키가 포함되어, 반복적인 서버 쿼리의 필요성을 최소화하고 클라이언트 측 효율성을 향상시킵니다.
+
+그러나 이 방법은 쿠키가 클라이언트 측 보안 위험에 노출될 수 있으므로 민감한 데이터를 보호하기 위해 신중한 암호화가 필요합니다. 쿠키 내 세션 데이터를 암호화하는 것은 무단 접근으로부터 사용자 정보를 보호하는 데 핵심입니다. 쿠키가 도난당하더라도 내부 데이터가 읽을 수 없게 합니다.
+
+개별 쿠키는 크기에 제한이 있지만(일반적으로 약 4KB), 쿠키 분할과 같은 기술을 사용하여 대용량 세션 데이터를 여러 쿠키로 나누어 이 제한을 극복할 수 있습니다.
+
+Next.js 프로젝트에서 쿠키를 설정하는 예는 다음과 같습니다.
+
+**서버에서 쿠키 설정:**
+
+```ts
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function handleLogin(sessionData) {
+  const encryptedSessionData = encrypt(sessionData) // 세션 데이터 암호화
+  cookies().set('session', encryptedSessionData, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 24 * 7, // 일주일
+    path: '/',
+  })
+  // 쿠키 설정 후 리디렉션 또는 응답 처리
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```js
+'use server'
+
+import { cookies } from 'next/headers'
+
+export async function handleLogin(sessionData) {
+  const encryptedSessionData = encrypt(sessionData) // 세션 데이터 암호화
+  cookies().set('session', encryptedSessionData, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 24 * 7, // 일주일
+    path: '/',
+  })
+  // 쿠키 설정 후 리디렉션 또는 응답 처리
+}
+```
+</details>
+
+**서버 컴포넌트에서 쿠키에 저장된 세션 데이터 접근하기:**
+
+```tsx
+import { cookies } from 'next/headers'
+
+export async function getSessionData(req) {
+  const encryptedSessionData = cookies().get('session')?.value
+  return encryptedSessionData ? JSON.parse(decrypt(encryptedSessionData)) : null
+}
+```
+
+<details>
+    <summary>JavaScript</summary>
+
+```jsx
+import { cookies } from 'next/headers'
+
+export async function getSessionData(req) {
+  const encryptedSessionData = cookies().get('session')?.value
+  return encryptedSessionData ? JSON.parse(decrypt(encryptedSessionData)) : null
+}
+```
+</details>
+
+### 데이터베이스 세션
+
+데이터베이스 세션 관리는 서버에 세션 데이터를 저장하고 사용자의 브라우저는 세션 ID만 받는 것을 포함합니다. 이 ID는 데이터 자체를 포함하지 않고 서버 측에 저장된 세션 데이터를 참조합니다. 이 방법은 민감한 세션 데이터를 클라이언트 측 환경에서 멀리 유지함으로써 보안을 강화하고 클라이언트 측 공격에 노출될 위험을 줄입니다. 데이터베이스 세션은 더 큰 데이터 저장 요구 사항을 수용할 수 있어 확장성도 더 높습니다.
+
+그러나 이 접근 방식은 트레이드오프가 있습니다. 사용자 상호 작용마다 데이터베이스 조회가 필요하기 때문에 성능 오버헤드가 증가할 수 있습니다. 세션 데이터 캐싱과 같은 전략으로 이를 완화할 수 있습니다. 또한, 데이터베이스에 대한 의존성은 세션 관리의 신뢰도가 데이터베이스의 성능 및 가용성만큼 높다는 것을 의미합니다.
+
+다음은 Next.js 애플리케이션에서 데이터베이스 세션을 구현하는 간소화된 예시입니다.
+
+**서버에서 세션 생성하기:**
+
+```js
+import db from './lib/db'
+
+export async function createSession(user) {
+  const sessionId = generateSessionId() // 고유한 세션 ID 생성
+  await db.insertSession({ sessionId, userId: user.id, createdAt: new Date() })
+  return sessionId
+}
+```
+
+**미들웨어나 서버 측 로직에서 세션 검색하기:**
+
+```js
+import { cookies } from 'next/headers'
+import db from './lib/db'
+
+export async function getSession() {
+  const sessionId = cookies().get('sessionId')?.value
+  return sessionId ? await db.findSession(sessionId) : null
+}
+```
+
+### Next.js에서 세션 관리 선택하기
+
+Next.js에서 쿠키 기반 세션과 데이터베이스 세션 사이의 결정은 애플리케이션의 필요에 따라 달라집니다. 쿠키 기반 세션은 더 간단하며 서버 부하가 낮은 작은 애플리케이션에 적합하지만 보안이 덜할 수 있습니다. 데이터베이스 세션은 더 복잡하지만, 더 나은 보안과 확장성을 제공하여 데이터에 민감한 큰 애플리케이션에 이상적입니다.
+
+[NextAuth.js](https://authjs.dev/guides/upgrade-to-v5)와 같은 [인증 솔루션](#examples)을 사용하면 쿠키나 데이터베이스 저장소를 사용하여 세션 관리가 더 효율적으로 이루어집니다. 이 자동화는 개발 과정을 단순화하지만, 선택한 솔루션에 사용된 세션 관리 방법을 이해하는 것이 중요합니다. 애플리케이션의 보안 및 성능 요구 사항과 일치하는지 확인하세요.
+
+선택에 상관없이 세션 관리 전략에서 보안을 우선시하세요. 쿠키 기반 세션의 경우, 세션 데이터를 보호하기 위해 보안 및 HTTP-only 쿠키 사용이 중요합니다. 데이터베이스 세션의 경우, 정기적인 백업과 세션 데이터의 안전한 처리가 필수적입니다. 무단 접근을 방지하고 애플리케이션의 성능 및 신뢰성을 유지하기 위해 두 접근 방식 모두에서 세션 만료 및 청소 메커니즘을 구현하는 것이 중요합니다.
+
+## 예시
+
+Next.js와 호환되는 인증 솔루션은 다음과 같으며, Next.js 애플리케이션에서 구성하는 방법을 배우려면 아래의 빠른 시작 가이드를 참조하세요.
+
+- [Auth0](https://auth0.com/docs/quickstart/webapp/nextjs/01-login)
+- [Clerk](https://clerk.com/docs/quickstarts/nextjs)
+- [Kinde](https://kinde.com/docs/developer-tools/nextjs-sdk)
+- [Lucia](https://lucia-auth.com/getting-started/nextjs-app)
+- [NextAuth.js](https://authjs.dev/guides/upgrade-to-v5)
+- [Supabase](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs)
+- [Stytch](https://stytch.com/docs/guides/quickstarts/nextjs)
+- [Iron Session](https://github.com/vvo/iron-session)
+
+## 추가 자료
+
+인증과 보안에 대해 더 배우고 싶다면 다음 자료들을 확인해보세요.
+
+- [XSS 공격 이해하기](https://vercel.com/guides/understanding-xss-attacks)
+- [CSRF 공격 이해하기](https://vercel.com/guides/understanding-csrf-attacks)
+

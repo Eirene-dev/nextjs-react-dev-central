@@ -219,7 +219,7 @@ export const docsConfig: DocsConfig = {
               title: '국제화',
               href: '/docs/nextjs/routing/internationalization',
               disabled: false,
-            },     
+            },
           ],
         },
         {
@@ -240,7 +240,7 @@ export const docsConfig: DocsConfig = {
               title: '폼과 변이',
               href: '/docs/nextjs/data-fetching/forms-and-mutations',
               disabled: false,
-            },  
+            },
           ],
         },
         {
@@ -374,7 +374,7 @@ export const docsConfig: DocsConfig = {
               title: 'Instrumentation',
               href: '/docs/nextjs/optimizing/instrumentation',
               disabled: false,
-            }    
+            },
           ],
         },
         {
@@ -420,7 +420,54 @@ export const docsConfig: DocsConfig = {
               title: '콘텐츠 보안 정책',
               href: '/docs/nextjs/configuring/content-security-policy',
               disabled: false,
-            }
+            },
+          ],
+        },
+        {
+          title: '테스팅',
+          href: '/docs/nextjs/testing',
+          items: [
+            {
+              title: 'Vitest',
+              href: '/docs/nextjs/testing/vitest',
+              disabled: false,
+            },
+            {
+              title: 'Jest',
+              href: '/docs/nextjs/testing/jest',
+              disabled: false,
+            },
+            {
+              title: 'Playwright',
+              href: '/docs/nextjs/testing/playwright',
+              disabled: false,
+            },
+            {
+              title: 'Cypress',
+              href: '/docs/nextjs/testing/cypress',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: '사용자 인증',
+          href: '/docs/nextjs/authentication',
+          items: [
+            {
+              title: '인증',
+              href: '/docs/nextjs/authentication/authentication',
+              disabled: false,
+            },
+            {
+              title: '권한 부여',
+              href: '/docs/nextjs/authentication/authorization',
+              disabled: false,
+            },
+            {
+              title: '세션 관리',
+              href: '/docs/nextjs/authentication/session-management',
+              disabled: false,
+            },
           ],
         },
         {
@@ -431,7 +478,7 @@ export const docsConfig: DocsConfig = {
               title: '정적 내보내기',
               href: '/docs/nextjs/deploying/static-exports',
               disabled: false,
-            }
+            },
           ],
         },
         {
