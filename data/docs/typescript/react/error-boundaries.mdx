@@ -1,0 +1,56 @@
+---
+title: 에러 경계
+date: '2024-01-03 10:00'
+summary: 리액트 애플리케이션에서 발생할 수 있는 에러를 처리하기 위해 `react-error-boundary` 라이브러리를 사용하는 방법과 사용자 정의 에러 경계 컴포넌트를 작성하는 방법을 설명합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+### 옵션 1: react-error-boundary 사용하기
+
+[React-error-boundary](https://github.com/bvaughn/react-error-boundary)는 타입스크립트 지원이 내장된 가벼운 패키지로, 이 시나리오에 즉시 사용할 수 있습니다.
+이 방법은 더 이상 그다지 인기 없는 클래스 컴포넌트를 피할 수 있게 해줍니다.
+
+### 옵션 2: 사용자 정의 에러 경계 컴포넌트 작성하기
+
+이를 위해 새 npm 패키지를 추가하고 싶지 않다면, 자신만의 `ErrorBoundary` 컴포넌트를 작성할 수도 있습니다.
+
+```jsx
+import React, { Component, ErrorInfo, ReactNode } from "react";
+
+interface Props {
+  children?: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false
+  };
+
+  public static getDerivedStateFromError(_: Error): State {
+    // 다음 렌더링에서 대체 UI를 표시하기 위해 상태를 업데이트합니다.
+    return { hasError: true };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("잡히지 않은 에러:", error, errorInfo);
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      return <h1>죄송합니다.. 에러가 발생했습니다</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;
+
+```
+
+[추가할 내용이 있나요? 이슈 등록하기](https://github.com/typescript-cheatsheets/react/issues/new).

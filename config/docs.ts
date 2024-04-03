@@ -741,17 +741,114 @@ export const docsConfig: DocsConfig = {
         // },
       ],
     },
-    // {
-    //   title: 'TypeScript',
-    //   href: '/docs/typescript',
-    //   items: [
-    //     {
-    //       title: 'Introduction',
-    //       href: '/docs/typescript',
-    //       disabled: true,
-    //     },
-    //   ],
-    // },
+    {
+      title: '타입스크립트',
+      href: '/docs/typescript',
+      items: [
+        {
+          title: 'TS 기초',
+          href: '/docs/typescript/basics',
+          items: [
+            {
+              title: '시작하기',
+              href: '/docs/typescript/basics/get-started',
+              disabled: false,
+            },
+            {
+              title: '기본기 다지기',
+              href: '/docs/typescript/basics/basics',
+              disabled: false,
+            },
+            {
+              title: '자주 사용되는 타입',
+              href: '/docs/typescript/basics/everyday-types',
+              disabled: false,
+            },
+            {
+              title: '타입 좁히기',
+              href: '/docs/typescript/basics/narrowing',
+              disabled: false,
+            },
+            {
+              title: '함수 타입',
+              href: '/docs/typescript/basics/more-on-functions',
+              disabled: false,
+            },
+            {
+              title: '객체 타입',
+              href: '/docs/typescript/basics/object-types',
+              disabled: false,
+            },
+            {
+              title: '타입 다루기',
+              href: '/docs/typescript/basics/type-manipulation',
+              disabled: false,
+            },
+            {
+              title: '모듈',
+              href: '/docs/typescript/basics/modules',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: '리액트를 위한 TS',
+          href: '/docs/typescript/react',
+          items: [
+            {
+              title: '컴포넌트 속성 타입',
+              href: '/docs/typescript/react/typing-component-props',
+              disabled: false,
+            },
+            {
+              title: '함수 컴포넌트',
+              href: '/docs/typescript/react/function-components',
+              disabled: false,
+            },
+            {
+              title: '훅',
+              href: '/docs/typescript/react/hooks',
+              disabled: false,
+            },
+            {
+              title: '클래스 컴포넌트',
+              href: '/docs/typescript/react/class-components',
+              disabled: false,
+            },
+            {
+              title: 'defaultProps 타입',
+              href: '/docs/typescript/react/typing-defaultprops',
+              disabled: false,
+            },
+            {
+              title: '폼과 이벤트',
+              href: '/docs/typescript/react/forms-and-events',
+              disabled: false,
+            },
+            {
+              title: '컨텍스트',
+              href: '/docs/typescript/react/context',
+              disabled: false,
+            },
+            {
+              title: 'forwardRef/createRef',
+              href: '/docs/typescript/react/forwardref-and-createref',
+              disabled: false,
+            },
+            {
+              title: '포털',
+              href: '/docs/typescript/react/portals',
+              disabled: false,
+            },
+            {
+              title: '에러 경계',
+              href: '/docs/typescript/react/error-boundaries',
+              disabled: false,
+            },
+          ],
+        },
+      ],
+    },
     // {
     //   title: 'JavaScript',
     //   href: '/docs/javascript',

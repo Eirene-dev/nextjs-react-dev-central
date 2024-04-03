@@ -1,0 +1,222 @@
+---
+title: defaultProps 타입
+date: '2024-01-03 05:00'
+summary: 이 문서는 타입스크립트를 사용하여 리액트 컴포넌트에서 `defaultProps`를 타이핑하고 사용하는 방법과 `defaultProps`가 필요하지 않을 수 있는 상황을 다룹니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## `defaultProps`가 필요하지 않을 수 있습니다.
+
+[이 트윗](https://twitter.com/dan_abramov/status/1133878326358171650)에 따르면, `defaultProps`는 결국 사용되지 않게 될 것입니다. 여기서 토론을 확인할 수 있습니다.
+
+- [원본 트윗](https://twitter.com/hswolff/status/1133759319571345408)
+- [이 기사](https://medium.com/@matanbobi/react-defaultprops-is-dying-whos-the-contender-443c19d9e7f1)에서도 더 많은 정보를 찾을 수 있습니다
+
+일반적인 의견은 객체 기본값을 사용하는 것입니다.
+
+함수 컴포넌트:
+
+```tsx
+type GreetProps = { age?: number };
+
+const Greet = ({ age = 21 }: GreetProps) => // 등등
+```
+
+클래스 컴포넌트:
+
+```tsx
+type GreetProps = {
+  age?: number;
+};
+
+class Greet extends React.Component<GreetProps> {
+  render() {
+    const { age = 21 } = this.props;
+    /*...*/
+  }
+}
+
+let el = <Greet age={3} />;
+```
+
+## `defaultProps` 타이핑하기
+
+[타입스크립트 3.0+](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html)부터 `defaultProps`에 대한 타입 추론이 크게 향상되었으나, [일부 경계 상황에서는 여전히 문제가 발생](https://github.com/typescript-cheatsheets/react/issues/61)합니다.
+
+**함수 컴포넌트**
+
+```tsx
+// typeof를 단축어로 사용; 주목할 점은 호이스팅이 됩니다!
+// DefaultProps의 타입을 선언할 수도 있습니다
+// 예: https://github.com/typescript-cheatsheets/
+// react/issues/415#issuecomment-841223219
+type GreetProps = { age: number } & typeof defaultProps;
+
+const defaultProps = {
+  age: 21,
+};
+
+const Greet = (props: GreetProps) => {
+  // 등등
+};
+Greet.defaultProps = defaultProps;
+```
+
+_[TS 플레이그라운드에서 보기](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAKjgQwM5wEoFNkGN4BmUEIcARFDvmQNwBQdMAnmFnAOKVYwAKxY6ALxwA3igDmWAFxwAdgFcQAIyxQ4AXzgAyOM1YQCcACZYCyeQBte-VPVwRZqeCbOXrEAXGEi6cCdLgAJgBGABo6dXo6e0d4TixuLzgACjAbGXjuPg9UAEovAD5RXzhKGHkoWTgAHiNgADcCkTScgDpkSTgAeiQFZVVELvVqrrrGiPpMmFaXcytsz2FZtwXbOiA)_
+
+**클래스 컴포넌트**의 경우 [`Pick` 유틸리티 타입을 포함하여](https://github.com/typescript-cheatsheets/react/pull/103#issuecomment-481061483) 여러 방법이 있지만, props 정의를 "역전"하는 것이 권장됩니다.
+
+```tsx
+type GreetProps = typeof Greet.defaultProps & {
+  age: number;
+};
+
+class Greet extends React.Component<GreetProps> {
+  static defaultProps = {
+    age: 21,
+  };
+  /*...*/
+}
+
+// 타입 검사됨! 타입 단언이 필요 없습니다!
+let el = <Greet age={3} />;
+```
+
+<details>
+<summary><b><code>React.JSX.LibraryManagedAttributes</code> 라이브러리 제작자를 위한 뉘앙스</b></summary>
+
+위의 구현 방식은 앱 제작자에게는 잘 작동하지만 때때로 다른 이들이 `GreetProps`를 사용할 수 있도록 내보내고 싶을 수 있습니다. 여기서 문제는 `GreetProps`가 정의된 방식으로 `age`가 `defaultProps` 때문에 필수 prop이 아니면서도 필수 prop으로 되어 있다는 것입니다.
+
+여기서 깨달아야 할 인사이트는 [`GreetProps`가 컴포넌트의 _내부_ 계약이며, 소비자가 마주하는 _외부_ 계약이 아니라는 점입니다](https://github.com/typescript-cheatsheets/react/issues/66#issuecomment-453878710). 별도의 타입을 특별히 내보내기 위해 만들거나, `React.JSX.LibraryManagedAttributes` 유틸리티를 사용할 수 있습니다.
+
+```tsx
+// 내부 계약, 외부로 내보내지 않아야 함
+type GreetProps = {
+  age: number;
+};
+
+class Greet extends Component<GreetProps> {
+  static defaultProps = { age: 21 };
+}
+
+// 외부 계약
+export type ApparentGreetProps = React.JSX.LibraryManagedAttributes<
+  typeof Greet,
+  GreetProps
+>;
+```
+
+이 방법은 제대로 작동하지만, `ApparentGreetProps`를 마우스로 가리킬 때 약간 위협적일 수 있습니다. 아래에 자세히 설명된 `ComponentProps` 유틸리티로 이런 보일러플레이트를 줄일 수 있습니다.
+
+</details>
+
+## defaultProps를 가진 컴포넌트의 Props 사용하기
+
+`defaultProps`가 있는 컴포넌트는 실제로 필수가 아닌 몇몇 props를 필수로 보이게 할 수 있습니다.
+
+### 문제 상황
+
+다음은 하고자 하는 작업입니다.
+
+```tsx
+interface IProps {
+  name: string;
+}
+const defaultProps = {
+  age: 25,
+};
+const GreetComponent = ({ name, age }
+: IProps & typeof defaultProps) => (
+  <div>{`안녕, 내 이름은 ${name}, 나이는 ${age}`}</div>
+);
+GreetComponent.defaultProps = defaultProps;
+
+const TestComponent = 
+  (props: React.ComponentProps<typeof GreetComponent>) => {
+  return <h1 />;
+};
+
+// '{ name: string; }' 타입에는 'age' 속성이 없지만 
+// '{ age: number; }' 타입에서는 필요합니다
+const el = <TestComponent name="foo" />;
+```
+
+### 해결 방법
+
+`React.JSX.LibraryManagedAttributes`를 적용하는 유틸리티를 정의하세요:
+
+```tsx
+type ComponentProps<T> = T extends
+  | React.ComponentType<infer P>
+  | React.Component<infer P>
+  ? React.JSX.LibraryManagedAttributes<T, P>
+  : never;
+
+const TestComponent = (props: ComponentProps<typeof GreetComponent>) => {
+  return <h1 />;
+};
+
+// 오류 없음
+const el = <TestComponent name="foo" />;
+```
+
+[_TS 플레이그라운드에서 보기_](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAKjgQwM5wEoFNkGN4BmUEIcARFDvmQNwBQdMAnmFnAMImQB2W3MABWJhUAHgAqAPjgBeOOLhYAHjD4ATdNjwwAdJ3ARe-cSyyjg3AlihwB0gD6Yqu-Tz4xzl67cl04cAH44ACkAZQANHQAZYAAjKGQoJgBZZG5kAHMsNQBBGBgoOIBXVTFxABofPzgALjheADdrejoLVSgCPDYASSEIETgAb2r0kCw61AKLDPoAXzpcQ0m4NSxOooAbQWF0OWH-TPG4ACYAVnK6WfpF7mWAcUosGFdDd1k4AApB+uQxysO4LM6r0dnAAGRwZisCAEFZrZCbbb9VAASlk0g+1VEamADUkgwABgAJLAbDYQSogJg-MZwYDoAAkg1GWFmlSZh1mBNmogA9Di8XQUfQHlgni8jLpVustn0BnJpQjZTsWrzeXANsh2gwbstxFhJhK3nIPmAdnUjfw5WIoVgYXBReKuK9+JI0TJpPs4JQYEUoNw4KIABYARjgvN8VwYargADkIIooMQoAslvBSe8JAbns7JTSsDIyAQIBAyOHJDQgA)
+
+
+
+## 기타 토론 및 지식
+
+<details>
+<summary><b><code>React.FC</code>가 <code>defaultProps</code>를 깨는 이유는?</b></summary>
+
+여기서 토론을 확인할 수 있습니다.
+
+- [10 TypeScript Pro Tips Patterns With or Without React - Medium](https://medium.com/@martin_hotell/10-typescript-pro-tips-patterns-with-or-without-react-5799488d6680)
+- [DefinitelyTyped GitHub 이슈 #30695](https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30695)
+- [typescript-cheatsheets/react GitHub 이슈 #87](https://github.com/typescript-cheatsheets/react/issues/87)
+
+이는 현재의 상태이며 미래에 수정될 수 있습니다.
+
+</details>
+
+<details>
+<summary><b>타입스크립트 2.9 이전 버전</b></summary>
+
+타입스크립트 2.9 이전 버전의 경우 여러 방법이 있지만, 지금까지 본 최고의 조언은 다음과 같습니다.
+
+```ts
+type Props = Required<typeof MyComponent.defaultProps> & {
+  /* 추가적인 props 여기에 */
+};
+
+export class MyComponent extends React.Component<Props> {
+  static defaultProps = {
+    foo: "foo",
+  };
+}
+```
+
+이전 추천사항은 타입스크립트의 `Partial type` 기능을 사용했으며, 이는 현재 인터페이스가 감싸진 인터페이스의 부분적인 버전을 충족시킨다는 의미입니다. 이 방법을 통해 타입 변경 없이 `defaultProps`를 확장할 수 있습니다!
+
+```ts
+interface IMyComponentProps {
+  firstProp?: string;
+  secondProp: IPerson[];
+}
+
+export class MyComponent extends React.Component<IMyComponentProps> {
+  public static defaultProps: Partial<IMyComponentProps> = {
+    firstProp: "default",
+  };
+}
+```
+
+이 접근 방식의 문제는 `React.JSX.LibraryManagedAttributes`와 작동하는 타입 추론에 복잡한 문제를 일으킨다는 것입니다. 기본적으로 컴파일러가 해당 컴포넌트로 JSX 표현을 만들 때 모든 prop이 선택 사항이라고 생각하게 만듭니다.
+
+[@ferdaber의 코멘터리 보기](https://github.com/typescript-cheatsheets/react/issues/57) 및 [여기](https://github.com/typescript-cheatsheets/react/issues/61).
+
+</details>
+
+[추가할 내용이 있나요? 이슈 등록하기](https://github.com/typescript-cheatsheets/react/issues/new).

@@ -1,0 +1,143 @@
+---
+title: 폼과 이벤트
+date: '2024-01-03 06:00'
+summary: 이 문서는 타입스크립트를 사용하여 리액트에서 폼과 다양한 이벤트를 처리하는 방법을 다루며 `InputEvent`와 같은 특정 이벤트에 대한 브라우저 지원 및 대안을 제시합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+성능 문제가 없다면(보통은 그렇지 않습니다!), 이벤트 핸들러를 인라인으로 작성하는 것이 가장 쉽습니다. 이때 [타입 추론 및 상황에 맞는 타이핑](https://www.typescriptlang.org/docs/handbook/type-inference.html#contextual-typing)을 바로 사용할 수 있습니다:
+
+```tsx
+const el = (
+  <button
+    onClick={(event) => {
+      /* event는 자동으로 올바르게 타이핑됩니다! */
+    }}
+  />
+);
+```
+
+그러나 이벤트 핸들러를 별도로 정의해야 할 경우, IDE 도구가 정말 유용합니다. @type 정의는 타이핑에 대한 풍부한 정보를 제공합니다. 찾고 있는 것을 타이핑하면 자동 완성 기능이 도와줍니다. 폼 이벤트에 대한 `onChange`를 예로 들면 다음과 같습니다:
+
+```tsx
+type State = {
+  text: string;
+};
+class App extends React.Component<Props, State> {
+  state = {
+    text: "",
+  };
+
+  // = 의 오른쪽에 타이핑
+  onChange = (e: React.FormEvent<HTMLInputElement>): void => {
+    this.setState({ text: e.currentTarget.value });
+  };
+  render() {
+    return (
+      <div>
+        <input type="text" value={this.state.text} onChange={this.onChange} />
+      </div>
+    );
+  }
+}
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play/?jsx=2#code/JYWwDg9gTgLgBAJQKYEMDG8BmUIjgcilQ3wFgAoCtAGxQGc64BBMMOJADxiQDsATRsnQwAdAGFckHrxgAeCnDgBvAL4AaBcs2KA9Drg8IcMDjB1tcblwBccOjCjAeAcwDcmlRQB8W8ovso3HAAvL6KilYwtgBE0R7ulH5wepYAnmBOznAQPIgAkgDiABIAKnAAFij8dsB8SNmYIZo5YpUu9aEAFEi2QhgiAGLQIACiAG4ysqUAsgAyeTxgAK4wI9RIIDJeAJS2YxC1IT5KFjDlwHQidEgwAMowgUidSpacUewiaEtQRDwwJSgoM4biIxihqEt6iptglFCpYXBfnUoJ1tmFwkQYN9cp0LIpZHxgGMvHjwrInMt4DB0khgtFItE4GCIbSlGcLlcHtwRJEVNkeK0qsDgmzzpcWm1gXydCSkuE4LIdITiRYYR4KCogA)
+
+`React.FormEvent<>` 및 `void`로 인수와 반환 값에 타입을 지정하는 대신, 이벤트 핸들러 자체에 타입을 적용할 수도 있습니다(_@TomasHubelbauer_ 기여):
+
+```tsx
+  // =의 왼쪽에 타이핑
+  onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    this.setState({text: e.currentTarget.value})
+  }
+```
+
+<details>
+
+<summary><b>왜 같은 일을 하는 두 가지 방법이 있나요?</b></summary>
+
+첫 번째 방법은 추론된 메서드 시그니처 `(e: React.FormEvent<HTMLInputElement>): void`를 사용하고 두 번째 방법은 `@types/react`에서 제공하는 대리자의 타입을 강제합니다. 따라서 `React.ChangeEventHandler<>`는 `@types/react`에서 "축복받은" 타이핑이며, 추론된 메서드는 더... _손수 제작된_ 것으로 생각할 수 있습니다. 어느 쪽이든 좋은 패턴을 알아두는 것이 좋습니다. [더 자세한 정보는 우리의 Github PR을 참조하세요](https://github.com/typescript-cheatsheets/react/pull/24).
+
+</details>
+
+
+**폼에서 제어되지 않는 컴포넌트를 사용하여 onSubmit 타이핑하기**
+
+이벤트의 타입을 크게 신경 쓰지 않는다면, `React.SyntheticEvent`를 그대로 사용할 수 있습니다. 대상 폼에 접근하고 싶은 사용자 정의 입력 이름이 있다면, 타입 단언을 사용할 수 있습니다:
+
+```tsx
+<form
+  ref={formRef}
+  onSubmit={(e: React.SyntheticEvent) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      email: { value: string };
+      password: { value: string };
+    };
+    const email = target.email.value; // 타입 검사됨!
+    const password = target.password.value; // 타입 검사됨!
+    // 등등...
+  }}
+>
+  <div>
+    <label>
+      이메일:
+      <input type="email" name="email" />
+    </label>
+  </div>
+  <div>
+    <label>
+      비밀번호:
+      <input type="password" name="password" />
+    </label>
+  </div>
+  <div>
+    <input type="submit" value="로그인" />
+  </div>
+</form>
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play/?jsx=2#code/JYWwDg9gTgLgBAJQKYEMDG8BmUIjgcilQ3wFgAoCtCAOwGctoRlM4BeRYmAOgFc6kLABQBKClVoM4AMSbs4o9gD4FFOHAA8mJmrhFMbAN7aozJJgC+u2gGVeAIxDAYRoUgBcndDxsBPGjAAFkgwwGgAogBuSAEiynCGuupI3GBE0QEAIuYovAA2MKIA3Elw1PTwMChQAOYh8ilVtfUodHAwvmBIEKyN1XXwAGQJpckgKMB5noZwkSh5vB5wDFDANDVwFiXk6rtwYK10AO7QACbTs-OLnitrG1ulDzu75VJI45PyTQPc7xN53DmCyQRTgAHowe1Okg0ME0ABrOgAQlKr3gBzoxzOX36IVShxOUFOgKuIPBkI6XVhMMRKOe6ghcBCaG4rN0Fis5CUug0p2AkW59M0eRQ9iQeUFe3U4Q+U1GmjWYF4lWhbAARH9Jmq4DQUCAkOrNXltWDJbsNGCRWKJTywXyBTz7Wb1BoreLnbsAAoEs7ueUaRXKqFddUYrFE7W6-Whn0R8Eei1um3PC1Ox38hOBlUhtV0BxOGDaoGLdUAGQgGzWJrNqYzFAtJhAgpEQA)
+
+물론, 어느 정도 규모가 있는 폼을 만들고 있다면, 타입스크립트로 작성된 [Formik](https://jaredpalmer.com/formik)이나 [React Hook Form](https://react-hook-form.com/)을 사용해야 합니다.
+
+### 이벤트 유형 목록
+
+| 이벤트 유형        | 설명                                                                                                                                                                                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AnimationEvent    | CSS 애니메이션.                                                                                                                                                                                                                                             |
+| ChangeEvent       | `<input>`, `<select>`, `<textarea>` 요소의 값 변경.                                                                                                                                                                                                         |
+| ClipboardEvent    | 복사, 붙여넣기, 잘라내기 이벤트 사용.                                                                                                                                                                                                                       |
+| CompositionEvent  | 사용자가 간접적으로 텍스트 입력 시 발생하는 이벤트 (예: 브라우저 및 PC 설정에 따라, 미국 키보드에서 일본어를 입력하려고 할 때 추가 문자가 있는 팝업 창이 나타날 수 있음)                                                                                    |
+| DragEvent         | 포인터 장치(예: 마우스)를 사용한 드래그 앤 드롭 상호작용.                                                                                                                                                                                                    |
+| FocusEvent        | 요소가 포커스를 얻거나 잃었을 때 발생하는 이벤트.                                                                                                                                                                                                           |
+| FormEvent         | 폼이나 폼 요소가 포커스를 얻거나 잃었을 때, 폼 요소 값이 변경되었을 때, 또는 폼이 제출될 때 발생하는 이벤트.                                                                                                                                                |
+| InvalidEvent      | 입력의 유효성 제한에 실패했을 때 발생하는 이벤트 (예: `<input type="number" max="10">`에 숫자 20이 입력된 경우).                                                                                                                                             |
+| KeyboardEvent     | 사용자가 키보드와 상호작용할 때 발생. 각 이벤트는 단일 키 상호작용을 설명합니다.                                                                                                                                                                             |
+| MouseEvent        | 사용자가 포인팅 장치(예: 마우스)로 상호작용할 때 발생하는 이벤트.                                                                                                                                                                                            |
+| PointerEvent      | 마우스, 펜/스타일러스, 터치스크린 등 다양한 포인팅 장치와의 사용자 상호작용으로 발생하는 이벤트로 멀티 터치도 지원합니다. 구형 브라우저(IE10 또는 Safari 12)를 대상으로 개발하지 않는 한, 포인터 이벤트 사용을 권장합니다. UIEvent를 확장합니다.     |
+| TouchEvent        | 사용자가 터치 장치와 상호작용할 때 발생하는 이벤트. UIEvent를 확장합니다.                                                                                                                                                                                   |
+| TransitionEvent   | CSS 전환. 완전히 브라우저 지원되지 않음. UIEvent를 확장합니다.                                                                                                                                                                                               |
+| UIEvent           | 마우스, 터치, 포인터 이벤트의 기본 이벤트.                                                                                                                                                                                                                  |
+| WheelEvent        | 마우스 휠이나 유사한 입력 장치를 스크롤링할 때 발생합니다. (`wheel` 이벤트는 `scroll` 이벤트와 혼동되어서는 안 됩니다)                                                                                                                                     |
+| SyntheticEvent    | 모든 위 이벤트의 기본 이벤트. 이벤트 유형을 확실히 알 수 없을 때 사용해야 합니다.                                                                                                                                                                          |
+
+
+<details>
+<summary><b><code>InputEvent</code>에 대해서는 어떻게 하나요?</b></summary>
+
+`InputEvent`가 없다는 것을 이미 알아차렸을 수 있습니다. 이는 이벤트 자체가 완전한 브라우저 지원을 받지 못하고 다른 브라우저에서 다르게 동작할 수 있기 때문에 타입스크립트에서 지원하지 않기 때문입니다. 대신 `KeyboardEvent`를 사용할 수 있습니다.
+
+출처:
+
+- [GitHub microsoft/TypeScript 이슈 #29441](https://github.com/microsoft/TypeScript/issues/29441)
+- [MDN Web API InputEvent](https://developer.mozilla.org/en-US/docs/Web/API/InputEvent)
+- [MDN Web API HTMLElement/input_event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event)
+
+</details>
+
+
+

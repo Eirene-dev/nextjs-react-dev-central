@@ -1,0 +1,114 @@
+---
+title: 함수 컴포넌트
+date: '2024-01-03 02:00'
+summary: 타입스크립트와 리액트를 함께 사용할 때 함수 컴포넌트를 정의하는 방법과 `React.FC`와 `React.VFC`의 사용을 다루며 이들 간의 차이점과 권장 사용법을 설명합니다.
+---
+
+
+이들은 일반 함수처럼 `props` 인자를 받아 JSX 요소를 반환하는 형태로 작성될 수 있습니다.
+
+```tsx
+// 프롭 타입 선언 - 더 많은 예시는 "컴포넌트 프롭스 타이핑"을 참고하세요.
+type AppProps = {
+  message: string;
+}; /* 내보낼 때는 사용자가 확장할 수 있도록 `interface` 사용 */
+
+// 함수 컴포넌트 선언의 가장 간단한 방법; 반환 타입은 추론됩니다.
+const App = ({ message }: AppProps) => <div>{message}</div>;
+
+// 실수로 다른 타입을 반환하는 경우 에러가 발생하도록 반환 타입을 명시적으로 지정할 수 있습니다
+const App = ({ message }: AppProps)
+: React.JSX.Element => <div>{message}</div>;
+
+// 타입 선언을 인라인으로 할 수도 있습니다; 
+// 프롭 타입을 명명할 필요가 없지만 반복적으로 보일 수 있습니다.
+const App = ({ message }: { message: string }) => <div>{message}</div>;
+
+// `React.FunctionComponent` (또는 `React.FC`)를 사용할 수도 있습니다. 
+//최신 React 타입과 TypeScript 5.1 이후에는 대부분 스타일 선택이지만, 
+// 그렇지 않을 경우 권장되지 않습니다.
+const App: React.FunctionComponent<{ message: string }> = ({ message }) => (
+  <div>{message}</div>
+);
+```
+
+
+> 팁: [Paul Shen의 VS Code 확장 프로그램](https://marketplace.visualstudio.com/items?itemName=paulshen.paul-typescript-toolkit)을 사용하여 타입 구조 분해 선언을 자동화하고 ([키보드 단축키](https://twitter.com/_paulshen/status/1392915279466745857?s=20) 포함)할 수 있습니다.
+
+<details>
+
+<summary><b>왜 <code>React.FC</code>가 필요하지 않나요? <code>React.FunctionComponent</code>/<code>React.VoidFunctionComponent</code>는 어떤가요?</b></summary>
+
+많은 리액트+타입스크립트 코드베이스에서 다음과 같은 코드를 볼 수 있습니다.
+
+```tsx
+const App: React.FunctionComponent<{ message: string }> = ({ message }) => (
+  <div>{message}</div>
+);
+```
+
+그러나 오늘날 일반적인 의견은 `React.FunctionComponent` (또는 축약형인 `React.FC`)가 필요하지 않다는 것입니다. React 17이나 TypeScript 5.1 미만을 사용하는 경우에는 [권장되지 않습니다](https://github.com/facebook/create-react-app/pull/8177). 이것은 물론 미묘한 의견이지만, 동의하고 코드베이스에서 `React.FC`를 제거하고 싶다면, [이 jscodeshift codemod](https://github.com/gndelia/codemod-replace-react-fc-typescript)를 사용할 수 있습니다.
+
+"일반 함수" 버전과의 몇 가지 차이점:
+
+- `React.FunctionComponent`는 반환 타입을 명시적으로 지정하는 반면, 일반 함수 버전은 암시적입니다(또는 추가적인 주석이 필요합니다).
+
+- `displayName`, `propTypes`, `defaultProps`와 같은 정적 속성에 대한 타입 검사와 자동 완성을 제공합니다.
+
+  - `React.FunctionComponent`를 사용할 때 `defaultProps`와 관련된 몇 가지 알려진 문제가 있습니다. 자세한 내용은 [이 문제를 참조하세요](https://github.com/typescript-cheatsheets/react/issues/87). 우리는 별도의 `defaultProps` 섹션도 유지 관리합니다.
+
+- [React 18 타입 업데이트](https://github.com/DefinitelyTyped/DefinitelyTyped/pull/56210) 이전에는, `React.FunctionComponent`가 `children`의 암시적 정의를 제공했는데, 이는 많은 논쟁의 대상이었으며 [`React.FC`가 Create React App TypeScript 템플릿에서 제거된 이유 중 하나입니다](https://github.com/facebook/create-react-app/pull/8177).
+
+```tsx
+// React 18 타입 이전
+const Title: React.FunctionComponent<{ title: string }> = ({
+  children,
+  title,
+}) => <div title={title}>{children}</div>;
+```
+
+
+<details>
+<summary>(사용 중단) <b><code>React.VoidFunctionComponent</code> 또는 <code>React.VFC</code> 대신 사용하기</b></summary>
+
+[@types/react 16.9.48](https://github.com/DefinitelyTyped/DefinitelyTyped/pull/46643)에서 `children`을 명시적으로 타이핑하기 위해 `React.VoidFunctionComponent` 또는 `React.VFC` 타입이 추가되었습니다.
+하지만, `React.VFC`와 `React.VoidFunctionComponent`는 React 18에서 사용 중단되었다는 점을 유의해주세요([참조](https://github.com/DefinitelyTyped/DefinitelyTyped/pull/59882)). 그래서 이 임시 솔루션은 React 18+에서는 더 이상 필요하지 않거나 권장되지 않습니다.
+
+대신 일반 함수 컴포넌트나 `React.FC`를 사용해주세요.
+
+```ts
+type Props = { foo: string };
+
+// 지금은 괜찮지만, 미래에는 에러
+const FunctionComponent: React.FunctionComponent<Props> = ({
+  foo,
+  children,
+}: Props) => {
+  return (
+    <div>
+      {foo} {children}
+    </div>
+  ); // 괜찮음
+};
+
+// 지금은 에러, 미래에는 사용 중단
+const VoidFunctionComponent: React.VoidFunctionComponent<Props> = ({
+  foo,
+  children,
+}) => {
+  return (
+    <div>
+      {foo}
+      {children}
+    </div>
+  );
+};
+```
+
+</details>
+
+- _미래에_ props를 자동으로 `readonly`로 표시할 수 있지만, 매개 변수 목록에서 props 객체가 구조 분해되는 경우에는 관련이 없습니다.
+
+대부분의 경우 어떤 문법을 사용하든 큰 차이가 없지만, `React.FunctionComponent`의 명시적인 성격을 선호할 수도 있습니다.
+
+</details>

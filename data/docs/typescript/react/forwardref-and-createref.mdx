@@ -1,0 +1,158 @@
+---
+title: forward와 createRef
+date: '2024-01-03 08:00'
+summary: 리액트의 `forwardRef`와 `createRef`를 사용하여 컴포넌트 간에 ref를 전달하고 생성하는 방법과 제네릭을 활용한 더 고급진 사용법을 다룹니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+`useRef`에 대해서는 [훅 섹션](https://github.com/typescript-cheatsheets/react/blob/main/README.md#hooks)을 확인하세요.
+
+`createRef`:
+
+```tsx
+import { createRef, PureComponent } from "react";
+
+class CssThemeProvider extends PureComponent<Props> {
+  private rootRef = createRef<HTMLDivElement>(); // 이렇게 사용합니다
+  render() {
+    return <div ref={this.rootRef}>{this.props.children}</div>;
+  }
+}
+```
+
+`forwardRef`:
+
+```tsx
+import { forwardRef, ReactNode } from "react";
+
+interface Props {
+  children?: ReactNode;
+  type: "submit" | "button";
+}
+export type Ref = HTMLButtonElement;
+
+export const FancyButton = forwardRef<Ref, Props>((props, ref) => (
+  <button ref={ref} className="MyClassName" type={props.type}>
+    {props.children}
+  </button>
+));
+```
+
+<details>
+<summary><b>부가 설명: <code>forwardRef</code>에서 얻은 <code>ref</code>는 가변적이므로 필요에 따라 할당할 수 있습니다.</b></summary>
+
+이는 [의도적으로](https://github.com/DefinitelyTyped/DefinitelyTyped/pull/43265/) 수행된 것입니다. 필요한 경우 불변으로 만들 수 있습니다 - 누군가가 재할당하는 것을 방지하고 싶다면 `React.Ref`를 할당하세요.
+
+```tsx
+import { forwardRef, ReactNode, Ref } from "react";
+
+interface Props {
+  children?: ReactNode;
+  type: "submit" | "button";
+}
+
+export const FancyButton = forwardRef(
+  (
+    props: Props,
+    ref: Ref<HTMLButtonElement> // <-- 여기!
+  ) => (
+    <button ref={ref} className="MyClassName" type={props.type}>
+      {props.children}
+    </button>
+  )
+);
+```
+
+</details>
+
+ref를 전달하는 컴포넌트의 props를 가져오려면 [`ComponentPropsWithRef`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/a05cc538a42243c632f054e42eab483ebf1560ab/types/react/index.d.ts#L770)를 사용하세요.
+
+
+[더 많은 컨텍스트 읽기](https://fettblog.eu/typescript-react-generic-forward-refs/):
+
+### 옵션 1 - 래퍼 컴포넌트
+
+```ts
+type ClickableListProps<T> = {
+  items: T[];
+  onSelect: (item: T) => void;
+  mRef?: React.Ref<HTMLUListElement> | null;
+};
+
+export function ClickableList<T>(props: ClickableListProps<T>) {
+  return (
+    <ul ref={props.mRef}>
+      {props.items.map((item, i) => (
+        <li key={i}>
+          <button onClick={(el) => props.onSelect(item)}>선택</button>
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+
+### 옵션 2 - forwardRef 재선언하기
+
+```ts
+// forwardRef 재선언
+declare module "react" {
+  function forwardRef<T, P = {}>(
+    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
+  ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+}
+
+// 익숙한 방식대로 컴포넌트 작성하기!
+import { forwardRef, ForwardedRef } from "react";
+
+interface ClickableListProps<T> {
+  items: T[];
+  onSelect: (item: T) => void;
+}
+
+function ClickableListInner<T>(
+  props: ClickableListProps<T>,
+  ref: ForwardedRef<HTMLUListElement>
+) {
+  return (
+    <ul ref={ref}>
+      {props.items.map((item, i) => (
+        <li key={i}>
+          <button onClick={(el) => props.onSelect(item)}>선택</button>
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export const ClickableList = forwardRef(ClickableListInner);
+```
+
+### 옵션 3 - 호출 서명
+
+```ts
+// `index.d.ts`에 추가
+interface ForwardRefWithGenerics extends React.FC<WithForwardRefProps<Option>> {
+  <T extends Option>(props: WithForwardRefProps<T>): ReturnType<
+    React.FC<WithForwardRefProps<T>>
+  >;
+}
+
+export const ClickableListWithForwardRef: ForwardRefWithGenerics =
+  forwardRef(ClickableList);
+```
+
+출처: [Stack Overflow](https://stackoverflow.com/a/73795494)
+
+## 추가 정보
+
+- [React Refs와 TypeScript - Medium](https://medium.com/@martin_hotell/react-refs-with-typescript-a32d56c4d315)
+
+[`forwardRef`를 사용한 조건부 렌더링](https://github.com/typescript-cheatsheets/react/issues/167)에 대해서도 알아보실 수 있습니다.
+
+[추가할 내용이 있나요? 이슈 등록하기](https://github.com/typescript-cheatsheets/react/issues/new).

@@ -1,9 +1,133 @@
 ---
-title: TypeScript
-date: '2025-01-01'
-summary: TypeScript
-draft: true
+title: 타입스크립트 소개
+date: '2024-01-01 00:00'
+summary: 타입스크립트는 자바스크립트에 타입 문법을 추가하여 모든 규모의 프로젝트에서 더 나은 도구를 제공하는 강력한 타입의 프로그래밍 언어입니다.
 ---
 
-## 작성 예정
-작성 예정
+## 타입스크립트는 무엇인가?
+타입스크립트는 타입을 위한 문법이 추가된 자바스크립트입니다. 자바스크립트를 기반으로 하며 강력한 타입 시스템을 제공하는 프로그래밍 언어로 모든 규모의 프로젝트에서 더 나은 도구를 이용할 수 있게 합니다.
+
+### 에디터 체크
+편집기 검사, 자동 완성, 인터페이스, JSX 등을 통해 타입스크립트는 오류를 미리 잡아내고 코드의 정확성을 향상시킵니다. 예를 들어 다음 객체를 보겠습니다.
+
+```ts
+const user = {
+  firstName: "Angela",
+  lastName: "Davis",
+  role: "Professor",
+}
+
+console.log(user.name)
+```
+
+`user` 객체에는 `name` 속성이 없기 때문에 타입스크립트는 아래과 같은 라는 오류를 발생시킵니다.
+
+> 타입 `{ firstName: string; lastName: string; role: string; }`에 'name' 속성이 존재하지 않습니다.
+
+이런 식으로 타입스크립트는 개발 과정에서 실수를 줄이고 코드의 안정성을 높이는 데 도움을 줍니다.
+
+### 자동 완성 기능
+자동 완성 기능은 개발자의 생산성을 크게 향상시킵니다. 예를 들어, `express` 라이브러리를 사용할 때, `res` 객체에 대해 입력을 시작하면 가능한 메서드 목록이 표시됩니다.
+
+```ts
+import express from "express"
+const app = express()
+ 
+app.get("/", function (req, res) {
+  // 자동 완성 기능을 통해 res 객체의 메서드를 빠르게 확인하고 선택할 수 있습니다.
+  res.send
+  // 가능한 옵션:
+  // send
+  // sendDate
+  // sendfile
+  // sendFile
+  // sendStatus
+})
+ 
+app.listen(3000)
+```
+
+이 기능을 통해 개발자는 `res` 객체가 제공하는 메서드를 쉽게 탐색하고 오타의 위험 없이 정확한 메서드를 빠르게 선택할 수 있습니다. 이는 특히 익숙하지 않은 라이브러리나 대규모 프로젝트에서 효과적인 시간 절약 및 오류 감소를 가능하게 합니다.
+
+### 인터페이스
+인터페이스는 타입스크립트에서 객체의 모양을 정의하는 강력한 방법을 제공합니다. `User` 인터페이스를 예로 들어보겠습니다.
+
+```typescript
+interface User {
+  id: number
+  firstName: string
+  lastName: string
+  role: string
+}
+```
+
+여기서 `User` 인터페이스는 사용자 객체가 가져야 하는 속성과 그 타입을 정의합니다. 이렇게 하면 함수 내부나 애플리케이션 전반에서 `User` 타입의 객체를 다룰 때 일관성을 유지하고 오류 가능성을 줄일 수 있습니다.
+
+`updateUser` 함수는 `id`와 `User` 타입의 일부 속성만 포함할 수 있는 `update` 객체를 매개변수로 받습니다. 이 함수는 기존 사용자 정보를 업데이트하며 `Partial<User>`를 사용함으로써 `update` 객체가 `User` 인터페이스의 모든 속성을 포함하지 않아도 되게 합니다.
+
+```typescript
+function updateUser(id: number, update: Partial<User>) {
+  const user = getUser(id) // 기존 사용자 정보를 불러옵니다.
+  const newUser = { ...user, ...update } // 기존 정보에 업데이트를 적용합니다.
+  saveUser(id, newUser) // 업데이트된 사용자 정보를 저장합니다.
+}
+```
+
+이 예제에서 `Partial<T>` 유틸리티 타입은 `T` 타입의 모든 속성을 선택적으로 만들어줍니다. 따라서 `update` 객체에는 `User` 인터페이스의 일부 속성만 포함되어 있어도 되며 이는 사용자 정보를 유연하게 업데이트할 수 있게 해줍니다.
+
+### JSX
+
+JSX는 리액트 컴포넌트를 작성할 때 HTML과 비슷한 문법을 사용할 수 있게 해주는 문법 확장입니다. `UserThumbnail` 컴포넌트 예제를 통해 JSX가 어떻게 사용되는지 살펴보겠습니다.
+
+```tsx
+import * as React from "react";
+
+interface UserThumbnailProps {
+  img: string;
+  alt: string;
+  url: string;
+}
+ 
+export const UserThumbnail = (props: UserThumbnailProps) =>
+  <a href={props.url}>
+    <img src={props.img} alt={props.alt} />
+  </a>;
+```
+
+여기서 `UserThumbnailProps` 인터페이스는 `UserThumbnail` 컴포넌트가 받을 속성들의 타입을 정의합니다. 이 인터페이스는 `img`, `alt`, `url` 세 가지 속성을 문자열로 가집니다.
+
+`UserThumbnail` 컴포넌트는 이 속성들을 사용하여 사용자 썸네일 이미지를 표시하는 하이퍼링크를 생성합니다. JSX를 사용함으로써 개발자는 HTML 태그와 유사한 문법으로 리액트 엘리먼트를 직관적으로 작성할 수 있습니다. `props` 객체를 통해 컴포넌트에 전달된 속성들에 접근하여 `href`, `src`, `alt` 속성을 각각 설정합니다.
+
+이 방식은 리액트에서 UI 컴포넌트를 선언적으로 명확하게 표현할 수 있게 해주며 리액트의 구성요소를 효과적으로 재사용하고 조합할 수 있는 기반을 마련합니다.
+
+
+
+## 자바스크립트와 그 이상
+타입스크립트는 편집기와 더 긴밀하게 통합할 수 있도록 자바스크립트에 추가 문법을 더합니다. 이를 통해 편집기에서 더 일찍 오류를 발견할 수 있습니다.
+
+## 믿을 수 있는 결과
+타입스크립트 코드는 자바스크립트로 변환되어 자바스크립트가 실행되는 모든 곳에서 실행됩니다. 브라우저, Node.js 또는 Deno 그리고 앱에서도 마찬가지입니다.
+
+## 규모에 따른 안전성
+타입스크립트는 자바스크립트를 이해하고 타입 추론을 사용해 추가 코드 없이도 훌륭한 도구를 제공합니다.
+
+타입스크립트는 타입을 위한 문법이 추가된 자바스크립트이며 강력한 타입 시스템을 갖춘 프로그래밍 언어로 자바스크립트 위에 구축되어 어떤 규모에서든 더 나은 도구를 제공합니다.
+
+
+
+## 더 알아보기
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<Card href="/docs/typescript/basics">
+### TS 기초
+
+타입스크립트의 기본 개념과 핵심적인 기능에 대한 훌륭한 출발점을 제공합니다.
+</Card>
+
+<Card href="/docs/typescript/react">
+### 리액트를 위한 TS
+
+타입스크립트를 사용하여 리액트 애플리케이션을 개발하는 데 필요한 다양한 주제를 다룹니다.
+</Card>
+
+</div>

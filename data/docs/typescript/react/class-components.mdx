@@ -1,0 +1,190 @@
+---
+title: 클래스 컴포넌트
+date: '2024-01-03 04:00'
+summary: 이 문서는 타입스크립트를 사용해 리액트의 클래스 컴포넌트 및 훅을 어떻게 효율적으로 타이핑하고 활용할 수 있는지에 대한 심도 있는 가이드를 제공합니다.
+draft: true
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+타입스크립트 내에서 `React.Component`는 제네릭 타입(즉, `React.Component<PropType, StateType>`)이므로, 선택적인 prop 및 state 타입 매개변수를 제공하고자 할 수 있습니다.
+
+```tsx
+type MyProps = {
+  // `interface` 사용도 가능
+  message: string;
+};
+type MyState = {
+  count: number; // 이런 식으로
+};
+class App extends React.Component<MyProps, MyState> {
+  state: MyState = {
+    // 더 나은 타입 추론을 위한 선택적 두 번째 주석
+    count: 0,
+  };
+  render() {
+    return (
+      <div>
+        {this.props.message} {this.state.count}
+      </div>
+    );
+  }
+}
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play/?jsx=2#code/JYWwDg9gTgLgBAJQKYEMDG8BmUIjgcilQ3wFgAoCmATzCTgFlqAFHMAZzgF44BvCuHAD0QuAFd2wAHYBzOAANpMJFEzok8uME4oANuwhwIAawFwQSduxQykALjjsYUaTIDcFAL4fyNOo2oAZRgUZW4+MzQIMSkYBykxEAAjFTdhUV1gY3oYAAttLx80XRQrOABBMDA4JAAPZSkAE05kdBgAOgBhXEgpJFiAHiZWCA4AGgDg0KQAPgjyQSdphyYpsJ5+BcF0ozAYYAgpPUckKKa4FCkpCBD9w7hMaDgUmGUoOD96aUwVfrQkMyCKIxOJwAAMZm8ZiITRUAAoAJTzbZwIgwMRQKRwOGA7YDRrAABuM1xKN4eW07TAbHY7QsVhsSE8fAptKWynawNinlJcAGQgJxNxCJ8gh55E8QA)
+
+이러한 타입/인터페이스를 재사용하기 위해 내보내기/불러오기/확장하는 것을 잊지 마세요.
+
+
+<details>
+<summary><b>왜 <code>state</code>를 두 번 주석 처리하나요?</b></summary>
+
+`state` 클래스 속성에 주석을 달 필요는 엄격하게 필요한 것은 아니지만, `this.state`에 접근하거나 상태를 초기화할 때 더 나은 타입 추론을 가능하게 합니다.
+
+이는 두 가지 다른 방식으로 작동하기 때문입니다. 두 번째 제네릭 타입 매개변수는 `this.setState()`가 올바르게 작동하도록 합니다. 왜냐하면 해당 메서드는 기본 클래스에서 오기 때문이지만, 컴포넌트 내에서 `state`를 초기화하는 것은 기본 구현을 오버라이드하므로 컴파일러에게 실제로 다른 작업을 수행하지 않음을 알려야 합니다.
+
+[여기에서 @ferdaber의 코멘트를 확인하세요](https://github.com/typescript-cheatsheets/react/issues/57).
+
+</details>
+
+<details>
+  <summary><b><code>readonly</code>는 필요 없습니다</b></summary>
+
+샘플 코드에서 props와 state를 변경 불가능하게 표시하기 위해 `readonly`를 사용하는 것을 종종 볼 수 있습니다.
+
+```tsx
+type MyProps = {
+  readonly message: string;
+};
+type MyState = {
+  readonly count: number;
+};
+```
+
+이는 `React.Component<P,S>`가 이미 그들을 변경 불가능하게 표시하기 때문에 필요하지 않습니다. ([PR과 토론 보기!](https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26813))
+
+</details>
+
+
+
+**클래스 메서드**: 평소처럼 처리하되 함수의 모든 인자도 타입이 필요함을 기억하세요:
+
+```tsx
+class App extends React.Component<{ message: string }, { count: number }> {
+  state = { count: 0 };
+  render() {
+    return (
+      <div onClick={() => this.increment(1)}>
+        {this.props.message} {this.state.count}
+      </div>
+    );
+  }
+  increment = (amt: number) => {
+    // 이렇게
+    this.setState((state) => ({
+      count: state.count + amt,
+    }));
+  };
+}
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play/?jsx=2#code/JYWwDg9gTgLgBAJQKYEMDG8BmUIjgcilQ3wFgAoCtAGxQGc64BBMMOJADxiQDsATRsnQwAdAGFckHrxgAeAN5wQSBigDmSAFxw6MKMB5q4AXwA0cRWggBXHjG09rIAEZIoJgHwWKcHTBTccAC8FnBWtvZwAAwmANw+cET8bgAUAJTe5L6+RDDWUDxwKQnZcLJ8wABucBA8YtTAaADWQfLpwV4wABbAdCIGaETKdikAjGnGHiWlFt29ImA4YH3KqhrGsz19ugFIIuF2xtO+sgD0FZVTWdlp8ddH1wNDMsFFKCCRji5uGUFe8tNTqc4A0mkg4HM6NNISI6EgYABlfzcFI7QJ-IoA66lA6RNF7XFwADUcHeMGmxjStwSxjuxiAA)
+
+
+
+**클래스 속성**: 나중에 사용할 클래스 속성을 선언해야 하는 경우, `state`처럼 선언하지만 할당 없이 이루어집니다.
+
+```tsx
+class App extends React.Component<{
+  message: string;
+}> {
+  pointer: number; // 이렇게
+  componentDidMount() {
+    this.pointer = 3;
+  }
+  render() {
+    return (
+      <div>
+        {this.props.message}와 {this.pointer}
+      </div>
+    );
+  }
+}
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play/?jsx=2#code/JYWwDg9gTgLgBAJQKYEMDG8BmUIjgcilQ3wFgAoCtAGxQGc64BBMMOJADxiQDsATRsnQwAdAGFckHrxgAeAN4U4cEEgYoA5kgBccOjCjAeGgNwUAvgD44i8sshHuUXTwCuIAEZIoJuAHo-OGpgAGskOBgAC2A6JTg0SQhpHhgAEWA+AFkIVxSACgBKGzjlKJiRBxTvOABeOABmMzs4cziifm9C4ublIhhXKB44PJLlOFk+YAA3S1GxmzK6CpwwJdV1LXM4FH4F6KXKp1aesdk-SZnRgqblY-MgA)
+
+[추가할 내용이 있나요? 이슈를 등록하세요](https://github.com/typescript-cheatsheets/react/issues/new).
+
+
+## getDerivedStateFromProps 타이핑하기
+
+`getDerivedStateFromProps`를 사용하기 전에, [문서](https://reactjs.org/docs/react-component.html#static-getderivedstatefromprops)와 [유도 상태가 필요 없을 수도 있습니다](https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html)를 반드시 읽어보세요. 유도 상태는 훅을 사용하여 구현할 수 있으며, 이를 통해 메모이제이션을 설정하는 데 도움을 줄 수 있습니다.
+
+`getDerivedStateFromProps`를 어노테이션하는 몇 가지 방법은 다음과 같습니다:
+
+1. 유도된 상태를 명시적으로 타이핑하고 `getDerivedStateFromProps`에서 반환되는 값이 이에 부합하도록 하고 싶을 때.
+
+```tsx
+class Comp extends React.Component<Props, State> {
+  static getDerivedStateFromProps(
+    props: Props,
+    state: State
+  ): Partial<State> | null {
+    //
+  }
+}
+```
+
+2. 함수의 반환 값이 상태를 결정하게 하고 싶을 때.
+
+```tsx
+class Comp extends React.Component<
+  Props,
+  ReturnType<typeof Comp["getDerivedStateFromProps"]>
+> {
+  static getDerivedStateFromProps(props: Props) {}
+}
+```
+
+3. 다른 상태 필드와 메모이제이션을 포함한 유도 상태를 원할 때
+
+```tsx
+type CustomValue = any;
+interface Props {
+  propA: CustomValue;
+}
+interface DefinedState {
+  otherStateField: string;
+}
+type State = DefinedState & ReturnType<typeof transformPropsToState>;
+function transformPropsToState(props: Props) {
+  return {
+    savedPropA: props.propA, // 메모이제이션을 위해 저장
+    derivedState: props.propA,
+  };
+}
+class Comp extends React.PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      otherStateField: "123",
+      ...transformPropsToState(props),
+    };
+  }
+  static getDerivedStateFromProps(props: Props, state: State) {
+    if (isEqual(props.propA, state.savedPropA)) return null;
+    return transformPropsToState(props);
+  }
+}
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play/?jsx=2#code/JYWwDg9gTgLgBAJQKYEMDG8BmUIjgcilQ3wFgAoCtAGxQGc64BBMMOJADxiQDsATRsnQwAdAGFckHrxgAeAN4U4cEEgYoA5kgBccOjCjAeGgNwUAvgD44i8sshHuUXTwCuIAEZIoJuAHo-OGpgAGskOBgAC2A6JTg0SQhpHhgAEWA+AFkIVxSACgBKGzjlKJiRBxTvOABeOABmMzs4cziifm9C4ublIhhXKB44PJLlOFk+YAA3S1GxmzK6CpwwJdV1LXM4FH4F6KXKp1aesdk-SZnRgqblY-MgA)
+
+
+
+
+
+
+

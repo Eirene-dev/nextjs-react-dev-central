@@ -1,0 +1,124 @@
+---
+title: 포털
+date: '2024-01-03 09:00'
+summary: 리액트의 `createPortal`을 사용하여 DOM의 다른 부분에 모달과 같은 UI 요소를 렌더링하는 방법과 관련 예시를 설명합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+`ReactDOM.createPortal` 사용하기:
+
+```tsx
+const modalRoot = document.getElementById("modal-root") as HTMLElement;
+// html 파일에 'modal-root' id를 가진 div가 있다고 가정합니다;
+
+export class Modal extends React.Component<{ children?: React.ReactNode }> {
+  el: HTMLElement = document.createElement("div");
+
+  componentDidMount() {
+    modalRoot.appendChild(this.el);
+  }
+
+  componentWillUnmount() {
+    modalRoot.removeChild(this.el);
+  }
+
+  render() {
+    return ReactDOM.createPortal(this.props.children, this.el);
+  }
+}
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play/?jsx=2#code/JYWwDg9gTgLgBAJQKYEMDG8BmUIjgcilQ3wFgAoUSWRYmAEQHkBZObXAo9GAWgBNcZchTQQAdgGd4ICHxQAbBBAjwAvHAFoAriCRiYAOgDmSGAFF5SXfoBCATwCSfABQAiGXPk8cK1wEo4FAk4AAkAFWYAGQsrPRgAbgoAeiTAiQkdYDEjOCy4OwgtKDgACxgQeTZgS1KgwI1gADc4AHdgGBLcvgIPBW9lGHxE4XIkAA9qeDR5IODmWQU4cZg9PmDkbgMAYVxIMTi4AG8KOCX5AC5QiOjLazUNCG07gzQuFZi7tz4m-2GTuFE4HEcXowD48y0+mcAWO5FOp16igGBhQYDAqy2JWqLg6wAkBiQ8j8w1OAF8KP9AXs4gB1aryACqYhkkJg0KO-wRCyRKgMRBkjSQmOxzlx+MJxP+5JGpyIYj4SCg7Nh8LgRBgRTEtG4TGYLzeSAACtAYApRVj8WAcGB8WgsfI+HKADRwMUEokkuDS0lAA)
+
+
+<details>
+  <summary><b>훅을 사용하는 방법</b></summary>
+
+위와 동일하지만 훅을 사용하여 구현한 예시입니다.
+
+```tsx
+import { useEffect, useRef, ReactNode } from "react";
+import { createPortal } from "react-dom";
+
+const modalRoot = document.querySelector("#modal-root") as HTMLElement;
+
+type ModalProps = {
+  children: ReactNode;
+};
+
+function Modal({ children }: ModalProps) {
+  // ref를 사용해 div 요소를 한 번만 생성합니다
+  const elRef = useRef<HTMLDivElement | null>(null);
+  if (!elRef.current) elRef.current = document.createElement("div");
+
+  useEffect(() => {
+    const el = elRef.current!; // 절대 null이 아니기 때문에 non-null 단언 사용
+    modalRoot.appendChild(el);
+    return () => {
+      modalRoot.removeChild(el);
+    };
+  }, []);
+
+  return createPortal(children, elRef.current);
+}
+```
+
+[타입스크립트 플레이그라운드에서 보기](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAJQKYEMDGMA0cDecCuAzkgKIBmZSG2RSyZ2y6MAchACZJwC+cZUEEHADkUVBmEBYAFChIsXHDRiUMJAAVoMFABsefAUNHiYAWnaCp0mQHobcFIUL4QwAHYBzOO7gBPCPhQcAAWMCB6ZMA6XMGODnDswABucADuwDDB3uwiIBy6pgIQMMIA3DJoEG6E8HnsuggQxXAAvAkQaC5IbjAAdACO+EhQvgDKSNEY0AAUAEQAxHUFRTCzAJQOhHAAEgAqALIAMiTRIN0w5dbSML5gXPv5OuoCYFttODJwSsFR7GJuAC5ECY2JxLjIyPg3BhgFU4A96jppng0D8dH9ujwgUjdM8IK8Nh9pF87EoVGoEsk4BMkGcenAqjpfEzYVwiO4vGIyJ8lFUarSdPRWgRiPQADx7I4AEWSJ3p5zgAB84G58DodAA+abqzVrS5fYBkODTACEE3ovU6UH+MA2lqQZGtgTtoosnQZfWUqDUCq9c0SSXWkNJYtIFCoMGm0w2LS1uD5X0q1XgE1FjudNrtZtKcHJbiqpj1ekcxFg8LccAARlQULRvPB0pq1UgksMa1wS0m4EthU0+igwHc3OwAMIY9jTCYGntiGCBKux1oJklfde9x6NYq9MR5dsT37TnSzsNfCF87jYADaAF1T3z54uKb6NFpdNN0b9-thMy7becp7cDIIHSOSRAoB4SCgdCsIwJWcAAILDsua78qmcDXoQwQQKkeI6NgxAwKMOF4Y8t6ikwGC9LQozaGo0xkLoxCnl8T5QEuPYSkGWo9mS9j+PgSgoFWzEQHAYD4PAmTAFsPiCUENSqMAaAhGEERRNBZ7rtxNLAOwLSzH2hQDrMWoSjYPF8bg2G4fhcAAGQOaa1lfBK+G8dpG5uUGrneTUvjRC0OBod5YXUoQYA6CgvhArMHhQPpsyYH5YVRegSAAJJqCAhBxWg5zDMlqXecESDAB4oRxQAjAADLVSTBMVXnhV86TsJkQLCHVDXBMIKUta11boAA1glASjnFUAeMN0y1Zg82Lb01VrM1rVhQAXplo5IAAHkCACcB0Det67cMBg3rp5p1fJlwhCCgm7ImaOCzHAswXTdcAStWUkwAiAVBSFw1oGNAgwuwcVgEOvgoKkPxgB9vBVGOOgqSNwXLvGcBESRdmPIxzFIGs3BamgOgQMQFm-TA-1uNd60WVZl0WR51kk9ZP1-QiKNo6DmNxgmuOkfh0wwFAQwk1qtmpIijzU9z9PWeSYiChAJoKQ4w5cZZyQM2sMjcEAA)
+
+</details>
+
+모달 컴포넌트 사용 예시:
+
+```tsx
+import { useState } from "react";
+
+function App() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <div>
+      // 정적 html 파일에 이 부분을 넣을 수도 있습니다
+      <div id="modal-root"></div>
+      {showModal && (
+        <Modal>
+          <div
+            style={{
+              display: "grid",
+              placeItems: "center",
+              height: "100vh",
+              width: "100vh",
+              background: "rgba(0,0,0,0.1)",
+              zIndex: 99,
+            }}
+          >
+            모달입니다!{" "}
+            <button
+              style={{ background: "papyawhip" }}
+              onClick={() => setShowModal(false)}
+            >
+              닫기
+            </button>
+          </div>
+        </Modal>
+      )}
+      <button onClick={() => setShowModal(true)}>모달 보기</button>
+      // 앱의 나머지 부분
+    </div>
+  );
+}
+```
+
+<details>
+
+<summary><b>예시의 배경</b></summary>
+
+이 예시는 React 문서의 [포털을 통한 이벤트 버블링](https://reactjs.org/docs/portals.html#event-bubbling-through-portals) 예시를 바탕으로 합니다.
+
+</details>
+
+
+
+
+
+

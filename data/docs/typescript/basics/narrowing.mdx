@@ -1,0 +1,598 @@
+---
+title: 타입 좁히기
+date: '2024-01-02 04:00'
+summary: 타입스크립트에서 제공하는 다양한 타입 좁히기 기법과 제어 흐름 분석, 타입 판별자, 구별된 유니온 등을 포함하여 타입 안정성을 높이는 방법에 대해 설명합니다.
+draft: false
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 타입 좁히기(Narrowing) 개요
+
+`padLeft`라는 함수를 가지고 있다고 상상해 보겠습니다.
+
+```typescript
+function padLeft(padding: number | string, input: string): string {
+  throw new Error("아직 구현되지 않았습니다!");
+}
+```
+
+`padding`이 숫자일 경우, 이를 입력 문자열 앞에 붙일 공백의 수로 처리하려고 합니다. `padding`이 문자열일 경우, 입력 문자열 앞에 `padding`을 그대로 붙입니다. `padLeft`에 숫자 타입의 `padding`이 전달되었을 때의 로직을 구현해 봅시다.
+
+```typescript
+function padLeft(padding: number | string, input: string): string {
+  return " ".repeat(padding) + input;
+  // 'string | number' 타입은 'number' 타입의 매개변수에 할당할 수 없습니다.
+  // 'string' 타입은 'number' 타입에 할당할 수 없습니다.
+}
+```
+
+앗, `padding`에서 오류가 발생했습니다. 타입스크립트는 우리가 `number | string` 타입의 값을 `repeat` 함수에 전달하고 있는데, 이 함수는 `number`만을 받아들인다고 경고하고 있습니다. 다시 말해, 우리는 `padding`이 숫자인지 명시적으로 확인하지 않았고, 문자열일 경우를 처리하지도 않았으므로 정확히 그렇게 해야 합니다.
+
+```typescript
+function padLeft(padding: number | string, input: string): string {
+  if (typeof padding === "number") {
+    return " ".repeat(padding) + input;
+  }
+  return padding + input;
+}
+```
+
+이것이 전형적인 자바스크립트 코드처럼 보인다면, 그게 바로 포인트입니다. 주석을 제외하고, 이 타입스크립트 코드는 자바스크립트와 같습니다. 타입스크립트의 타입 시스템 목표는 타입 안전성을 얻기 위해 곡예를 하지 않고도 전형적인 자바스크립트 코드를 쓸 수 있게 만드는 것입니다.
+
+여기서 많은 것이 일어나고 있습니다. 타입스크립트는 정적 타입을 사용하여 런타임 값을 분석하는 것처럼, if/else, 조건부 삼항 연산자, 루프, 진실성 검사 등 자바스크립트의 런타임 제어 흐름 구조에 타입 분석을 추가하여, 프로그램이 실행될 수 있는 가능한 경로를 따라 값의 가장 구체적인 가능한 타입을 분석합니다.
+
+우리의 if 검사 내에서 타입스크립트는 `typeof padding === "number"`를 타입 가드라고 하는 특별한 형태의 코드로 이해하며, 선언된 것보다 더 구체적인 타입으로 타입을 좁혀가는 과정을 좁혀짐이라고 합니다. 많은 편집기에서 이러한 타입 변화를 관찰할 수 있으며, 우리의 예제에서도 그렇게 할 것입니다.
+
+```typescript
+function padLeft(padding: number | string, input: string): string {
+  if (typeof padding === "number") {
+    return " ".repeat(padding) + input;
+    // (매개변수) padding: number
+  }
+  return padding + input;
+  // (매개변수) padding: string
+}
+```
+
+타입스크립트가 이해하는 좁혀짐을 위한 구조가 몇 가지 있습니다.
+
+
+## typeof 타입 가드
+
+우리가 보았듯이, 자바스크립트는 런타임에 우리가 가진 값의 타입에 대한 매우 기본적인 정보를 제공할 수 있는 `typeof` 연산자를 지원합니다. 타입스크립트는 이 연산자가 특정 문자열 집합을 반환하길 기대합니다.
+
+- `"string"`
+- `"number"`
+- `"bigint"`
+- `"boolean"`
+- `"symbol"`
+- `"undefined"`
+- `"object"`
+- `"function"`
+
+`padLeft`에서 보았듯이, 이 연산자는 자바스크립트 라이브러리에서 종종 등장하며 타입스크립트는 다른 분기에서 타입을 좁히는 데 이를 이해할 수 있습니다.
+
+타입스크립트에서 `typeof`가 반환한 값에 대한 검사는 타입 가드입니다. 타입스크립트는 `typeof`가 다른 값에 대해 어떻게 작동하는지를 인코딩하기 때문에, 자바스크립트의 몇 가지 특이점에 대해서도 알고 있습니다. 예를 들어, 위 목록에서 `typeof`가 null에 대한 문자열을 반환하지 않는다는 점에 주목하세요. 다음 예제를 확인해 보세요:
+
+```typescript
+function printAll(strs: string | string[] | null) {
+  if (typeof strs === "object") {
+    for (const s of strs) {
+      // 'strs'는 'null'일 수 있습니다.
+      console.log(s);
+    }
+  } else if (typeof strs === "string") {
+    console.log(strs);
+  } else {
+    // 아무것도 하지 않음
+  }
+}
+```
+
+`printAll` 함수에서 우리는 `strs`가 객체인지 확인하여 배열 타입인지 보려고 합니다(배열이 자바스크립트에서 객체 타입임을 다시 강조할 좋은 시점일 수 있습니다). 그러나 자바스크립트에서 `typeof null`은 실제로 "object"입니다! 이것은 역사의 불운한 사고 중 하나입니다.
+
+충분한 경험이 있는 사용자라면 놀라지 않을 수 있지만, 모든 사람이 자바스크립트에서 이와 같은 상황을 겪은 것은 아닙니다; 다행히 타입스크립트는 `strs`가 단순히 `string[]`이 아니라 `string[] | null`로 좁혀졌음을 알려줍니다.
+
+이는 우리가 "진실성" 검사라고 부를 것으로 넘어가는 좋은 계기가 될 수 있습니다.
+
+
+## 진실성 좁혀짐
+
+진실성은 사전에서 찾을 수 있는 단어는 아니지만 자바스크립트에서 자주 들을 수 있는 개념입니다.
+
+자바스크립트에서는 조건문, `&&`, `||`, `if` 문, 불리언 부정(`!`) 등에 어떤 표현식이든 사용할 수 있습니다. 예를 들어, `if` 문은 조건이 항상 `boolean` 타입이어야 한다고 요구하지 않습니다.
+
+```typescript
+function getUsersOnlineMessage(numUsersOnline: number) {
+  if (numUsersOnline) {
+    return `지금 ${numUsersOnline}명이 온라인입니다!`;
+  }
+  return "아무도 없습니다. :(";
+}
+```
+
+자바스크립트의 구조체는 먼저 조건을 불리언으로 "강제 변환"하여 이해하고, 그 결과가 참이나 거짓인지에 따라 분기를 선택합니다. 예를 들어 다음 값들은 거짓으로 강제 변환됩니다.
+
+- `0`
+- `NaN`
+- `""` (빈 문자열)
+- `0n` (bigint의 0)
+- `null`
+- `undefined`
+
+그 외의 값들은 참으로 강제 변환됩니다. 값을 불리언으로 강제 변환하려면 `Boolean` 함수를 통하거나 더 짧은 불리언 부정을 두 번 사용할 수 있습니다. (후자는 타입스크립트가 리터럴 불리언 타입 `true`를 좁혀내는 데 유리합니다.)
+
+```typescript
+// 두 경우 모두 'true'를 결과로 함
+Boolean("hello"); // 타입: boolean, 값: true
+!!"world"; // 타입: true, 값: true
+```
+
+이러한 동작을 이용하는 것은 특히 `null`이나 `undefined`와 같은 값을 방어하기 위해 인기가 있습니다. 예를 들어, `printAll` 함수에 이를 사용해 봅시다.
+
+```typescript
+function printAll(strs: string | string[] | null) {
+  if (strs && typeof strs === "object") {
+    for (const s of strs) {
+      console.log(s);
+    }
+  } else if (typeof strs === "string") {
+    console.log(strs);
+  }
+}
+```
+
+`strs`가 진실성이 있는지 확인함으로써 위의 오류를 없앴습니다. 이는 코드를 실행할 때 다음과 같은 오류를 방지합니다.
+
+```
+TypeError: null은 반복 가능한 객체가 아닙니다
+```
+
+그러나 원시 타입에 대한 진실성 검사는 종종 오류가 발생하기 쉽습니다. 다른 방식으로 `printAll`을 작성하려는 시도를 고려해 보세요.
+
+```typescript
+function printAll(strs: string | string[] | null) {
+  // !!!!!!!!!!!!!!!!
+  //  이렇게 하지 마세요!
+  //   계속 읽어보세요
+  // !!!!!!!!!!!!!!!!
+  if (strs) {
+    if (typeof strs === "object") {
+      for (const s of strs) {
+        console.log(s);
+      }
+    } else if (typeof strs === "string") {
+      console.log(strs);
+    }
+  }
+}
+```
+
+함수의 전체 본문을 진실성 검사로 감쌌지만, 빈 문자열 케이스를 올바르게 처리하지 못할 수 있는 미묘한 단점이 있습니다.
+
+`!`을 사용한 부정으로 진실성 좁혀짐을 통해 부정된 분기에서 필터링할 수 있습니다.
+
+```typescript
+function multiplyAll(
+  values: number[] | undefined,
+  factor: number
+): number[] | undefined {
+  if (!values) {
+    return values;
+  } else {
+    return values.map((x) => x * factor);
+  }
+}
+```
+
+## 동등성에 의한 좁혀짐
+
+타입스크립트는 switch 문과 `===`, `!==`, `==`, `!=`와 같은 동등성 검사를 사용하여 타입을 좁혀갑니다. 예를 들어,
+
+```typescript
+function example(x: string | number, y: string | boolean) {
+  if (x === y) {
+    // 이제 'x'나 'y'에 'string' 메서드를 호출할 수 있습니다.
+    x.toUpperCase();
+    y.toLowerCase();
+  } else {
+    console.log(x);
+    console.log(y);
+  }
+}
+```
+
+위 예제에서 `x`와 `y`가 동일하다고 확인했을 때, 타입스크립트는 그들의 타입도 동일해야 한다는 것을 알았습니다. `string`이 `x`와 `y` 모두가 될 수 있는 유일한 공통 타입이기 때문에, 타입스크립트는 첫 번째 분기에서 `x`와 `y`가 문자열이어야 한다는 것을 알고 있습니다.
+
+변수가 아닌 특정 리터럴 값과 비교하는 것도 작동합니다. 진실성 좁혀짐 섹션에서 우리가 작성한 `printAll` 함수는 빈 문자열을 제대로 처리하지 못해 오류가 발생하기 쉬웠습니다. 대신 `null`을 차단하기 위해 특정 검사를 할 수 있었고, 타입스크립트는 여전히 `strs` 타입에서 `null`을 올바르게 제거합니다.
+
+```typescript
+function printAll(strs: string | string[] | null) {
+  if (strs !== null) {
+    if (typeof strs === "object") {
+      for (const s of strs) {
+        console.log(s);
+      }
+    } else if (typeof strs === "string") {
+      console.log(strs);
+    }
+  }
+}
+```
+
+자바스크립트의 느슨한 동등성 검사인 `==`와 `!=`도 올바르게 좁혀집니다. 만약 누군가가 `== null`을 사용하면, 이는 특정 값이 `null`인지만 확인하는 것이 아니라 `undefined`일 수도 있는지를 확인합니다. `== undefined` 역시 값이 `null`이거나 `undefined`인지를 확인합니다.
+
+```typescript
+interface Container {
+  value: number | null | undefined;
+}
+ 
+function multiplyValue(container: Container, factor: number) {
+  // 'null'과 'undefined'를 타입에서 제거합니다.
+  if (container.value != null) {
+    console.log(container.value);
+    // 이제 'container.value'를 안전하게 곱할 수 있습니다.
+    container.value *= factor;
+  }
+}
+```
+
+
+## in 연산자에 의한 좁혀짐
+
+자바스크립트에는 객체 또는 그 프로토타입 체인이 특정 이름의 속성을 가지고 있는지 확인하는 연산자가 있습니다. `in` 연산자입니다. 타입스크립트는 이를 가능한 타입을 좁히는 방법으로 고려합니다.
+
+예를 들어, `"value" in x` 코드에서 `"value"`는 문자열 리터럴이고 `x`는 유니온 타입입니다. "true" 분기는 `x`의 타입 중 선택적 또는 필수 `value` 속성을 가진 타입을 좁히고, "false" 분기는 선택적 또는 없는 `value` 속성을 가진 타입을 좁힙니다.
+
+```typescript
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+ 
+function move(animal: Fish | Bird) {
+  if ("swim" in animal) {
+    return animal.swim();
+  }
+ 
+  return animal.fly();
+}
+```
+
+선택적 속성은 좁혀짐의 양쪽에서 모두 존재한다는 점을 다시 말하자면, 인간은 올바른 장비를 가지고 있다면 수영과 비행 둘 다 할 수 있으므로 `in` 검사의 양쪽에서 나타날 수 있습니다.
+
+```typescript
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+type Human = { swim?: () => void; fly?: () => void };
+ 
+function move(animal: Fish | Bird | Human) {
+  if ("swim" in animal) {
+    // animal: Fish | Human
+  } else {
+    // animal: Bird | Human
+  }
+}
+```
+
+
+## instanceof에 의한 좁혀짐
+
+자바스크립트에는 값이 다른 값의 "인스턴스"인지 아닌지를 확인하는 연산자가 있습니다. 구체적으로, 자바스크립트에서 `x instanceof Foo`는 `x`의 프로토타입 체인이 `Foo.prototype`을 포함하는지 확인합니다. 여기서 깊이 들어가지는 않겠지만, 클래스에 대해 더 다룰 때 더 많이 보게 될 것이고, `new`로 생성할 수 있는 대부분의 값에 대해 여전히 유용할 수 있습니다. 예상할 수 있듯이, `instanceof`도 타입 가드이며, 타입스크립트는 `instanceof`로 보호되는 분기에서 타입을 좁힙니다.
+
+```typescript
+function logValue(x: Date | string) {
+  if (x instanceof Date) {
+    console.log(x.toUTCString());
+  } else {
+    console.log(x.toUpperCase());
+  }
+}
+```
+
+## 할당
+
+앞서 언급했듯이 변수에 할당할 때 타입스크립트는 할당의 오른쪽을 보고 왼쪽을 적절히 좁혀줍니다.
+
+```typescript
+let x = Math.random() < 0.5 ? 10 : "안녕 세상!";
+   
+let x: string | number
+x = 1;
+ 
+console.log(x);
+           
+let x: number
+x = "안녕히 가세요!";
+ 
+console.log(x);
+           
+let x: string
+```
+
+이러한 할당이 모두 유효하다는 것을 알 수 있습니다. 첫 번째 할당 후 `x`의 관찰된 타입이 숫자로 바뀌었음에도 불구하고, 여전히 `x`에 문자열을 할당할 수 있었습니다. 이는 `x`의 선언된 타입 - `x`가 처음 가진 타입 - 이 `string | number`이고, 할당 가능성은 항상 선언된 타입과 비교하여 확인되기 때문입니다.
+
+만약 `x`에 불리언을 할당했다면, 선언된 타입의 일부가 아니기 때문에 오류가 발생했을 것입니다.
+
+```typescript
+let x = Math.random() < 0.5 ? 10 : "안녕 세상!";
+   
+let x: string | number
+x = 1;
+ 
+console.log(x);
+           
+let x: number
+x = true;
+// 'boolean' 타입은 'string | number' 타입에 할당할 수 없습니다.
+ 
+console.log(x);
+           
+let x: string | number
+```
+
+## 제어 흐름 분석
+
+지금까지 우리는 타입스크립트가 특정 분기 내에서 어떻게 타입을 좁혀가는지에 대한 몇 가지 기본적인 예를 살펴보았습니다. 그러나 단순히 모든 변수로부터 위로 올라가면서 `if`, `while`, 조건문 등에서 타입 가드를 찾는 것보다 더 많은 일이 진행됩니다. 예를 들어
+
+```typescript
+function padLeft(padding: number | string, input: string) {
+  if (typeof padding === "number") {
+    return " ".repeat(padding) + input;
+  }
+  return padding + input;
+}
+```
+
+`padLeft`는 첫 번째 `if` 블록 내에서 반환됩니다. 타입스크립트는 이 코드를 분석하고 나머지 본문(`return padding + input;`)이 `padding`이 숫자인 경우에 도달할 수 없음을 확인했습니다. 결과적으로, 함수의 나머지 부분에 대해 `padding`의 타입에서 `number`를 제거할 수 있었습니다(`string | number`에서 `string`으로 좁혀짐).
+
+이러한 도달 가능성에 기반한 코드 분석을 제어 흐름 분석이라고 하며, 타입스크립트는 이 흐름 분석을 사용하여 타입 가드와 할당을 만나면서 타입을 좁혀갑니다. 변수가 분석될 때, 제어 흐름은 계속해서 분기되고 다시 합쳐질 수 있으며, 각 지점에서 해당 변수는 다른 타입을 가진 것으로 관찰될 수 있습니다.
+
+```typescript
+function example() {
+  let x: string | number | boolean;
+ 
+  x = Math.random() < 0.5;
+ 
+  console.log(x);
+             
+  if (Math.random() < 0.5) {
+    x = "안녕";
+    console.log(x);
+  } else {
+    x = 100;
+    console.log(x);
+  }
+ 
+  return x;
+}
+```
+
+## 타입 판별자 사용하기
+
+지금까지 우리는 좁혀짐을 처리하기 위해 기존 자바스크립트 구조체를 사용했지만, 때때로 코드 전반에 걸쳐 타입이 어떻게 변경되는지에 대해 더 직접적인 제어를 원할 수 있습니다.
+
+사용자 정의 타입 가드를 정의하려면, 반환 타입이 타입 판별자인 함수를 정의하기만 하면 됩니다.
+
+```typescript
+function isFish(pet: Fish | Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
+}
+```
+
+이 예제에서 `pet is Fish`는 우리의 타입 판별자입니다. 판별자는 `parameterName is Type` 형태를 취하며, 여기서 `parameterName`은 현재 함수 서명에서 매개변수의 이름이어야 합니다.
+
+`isFish`가 어떤 변수와 함께 호출될 때마다, 타입스크립트는 원래 타입이 호환될 경우 해당 변수를 그 특정 타입으로 좁힙니다.
+
+```typescript
+// 'swim'과 'fly' 호출이 이제 가능합니다.
+let pet = getSmallPet();
+ 
+if (isFish(pet)) {
+  pet.swim();
+} else {
+  pet.fly();
+}
+```
+
+`if` 분기에서 `pet`이 `Fish`라는 것뿐만 아니라, `else` 분기에서 `Fish`가 아니라면 `Bird`여야 한다는 것도 타입스크립트가 알고 있음을 주목하세요.
+
+`isFish` 타입 가드를 사용하여 `Fish | Bird` 배열을 필터링하고 `Fish` 배열을 얻을 수 있습니다.
+
+```typescript
+const zoo: (Fish | Bird)[] = [getSmallPet(), getSmallPet(), getSmallPet()];
+const underWater1: Fish[] = zoo.filter(isFish);
+// 또는 동등하게
+const underWater2: Fish[] = zoo.filter(isFish) as Fish[];
+ 
+// 더 복잡한 예제의 경우 판별자가 반복될 수 있습니다
+const underWater3: Fish[] = zoo.filter((pet): pet is Fish => {
+  if (pet.name === "sharkey") return false;
+  return isFish(pet);
+});
+```
+
+또한, 클래스는 `is Type`을 사용하여 그들의 타입을 좁힐 수 있습니다.
+
+### 단언 함수
+
+타입은 단언 함수를 사용하여 좁혀질 수도 있습니다.
+
+
+## 구별된 유니온
+
+지금까지 우리가 살펴본 예제들은 주로 문자열, 불리언, 숫자와 같은 단순한 타입의 단일 변수를 좁혀 나가는 데 초점을 맞췄습니다. 이것은 흔한 경우지만, 대부분의 경우 자바스크립트에서는 조금 더 복잡한 구조를 다루게 됩니다.
+
+예를 들어, 원과 정사각형과 같은 모양을 인코딩하려고 한다고 상상해 봅시다. 원은 반지름을 추적하고 정사각형은 변의 길이를 추적합니다. 우리는 어떤 모양을 다루고 있는지 알려주는 `kind`라는 필드를 사용할 것입니다. 여기 Shape를 정의하는 첫 시도가 있습니다.
+
+```typescript
+interface Shape {
+  kind: "circle" | "square";
+  radius?: number;
+  sideLength?: number;
+}
+```
+
+우리가 "circle"과 "square"라는 문자열 리터럴 유니온을 사용하여 모양을 원이나 정사각형으로 각각 처리해야 하는지 알려줍니다. "circle" | "square" 대신에 문자열을 사용함으로써, 철자 오류를 피할 수 있습니다.
+
+```typescript
+function handleShape(shape: Shape) {
+  // 이런!
+  if (shape.kind === "rect") {
+    // ...
+  }
+}
+```
+
+`getArea` 함수를 작성하여 원이나 정사각형을 다루는 데 적절한 로직을 적용해 봅시다. 먼저 원을 다루는 것부터 시도해 봅시다.
+
+```typescript
+function getArea(shape: Shape) {
+  if (shape.kind === "circle") {
+    return Math.PI * shape.radius ** 2;
+  }
+}
+```
+
+`strictNullChecks`가 활성화된 상태에서 이는 오류를 일으킵니다. 이는 적절한 것이며, `radius`가 정의되지 않을 수 있기 때문입니다. 그러나 `kind` 속성에 대한 적절한 검사를 수행하면 어떨까요?
+
+```typescript
+function getArea(shape: Shape) {
+  if (shape.kind === "circle") {
+    return Math.PI * shape.radius ** 2;
+  }
+}
+```
+
+타입스크립트는 여전히 여기에서 무엇을 해야 할지 모릅니다. 우리는 타입 체커보다 우리의 값에 대해 더 많이 알고 있습니다. `radius`가 확실히 존재한다고 말하기 위해 `shape.radius`에 비강제 단언(`!`)을 사용해 볼 수 있습니다.
+
+```typescript
+function getArea(shape: Shape) {
+  if (shape.kind === "circle") {
+    return Math.PI * shape.radius! ** 2;
+  }
+}
+```
+
+하지만 이는 이상적이지 않습니다. 우리는 타입 체커에게 `shape.radius`가 정의되었다고 강하게 주장해야 했고, 이러한 주장은 코드를 이동하기 시작하면 오류가 발생하기 쉽습니다. 또한, `strictNullChecks` 외부에서는 선택적 속성을 읽을 때 항상 존재한다고 가정하기 때문에, 이러한 필드에 접근하는 것이 가능합니다. 우리는 분명히 더 나은 방법을 찾을 수 있습니다.
+
+`Shape`의 이러한 인코딩 문제는 타입 체커가 `kind` 속성에 따라 `radius`나 `sideLength`가 존재하는지 여부를 알 수 있는 방법이 없다는 것입니다. 우리가 타입 체커에게 우리가 알고 있는 것을 전달해야 합니다. 이를 염두에 두고, Shape를 다시 정의해 봅시다.
+
+```typescript
+interface Circle {
+  kind: "circle";
+  radius: number;
+}
+ 
+interface Square {
+  kind: "square";
+  sideLength: number;
+}
+ 
+type Shape = Circle | Square;
+```
+
+여기서 우리는 `kind` 속성의 다른 값들을 가진 두 타입으로 `Shape`를 적절히 분리했고, 각각의 타입에서 `radius`와 `sideLength`는 필수 속성으로 선언되었습니다.
+
+`Shape`의 `radius`에 접근할 때 어떤 일이 발생하는지 봅시다.
+
+```typescript
+function getArea(shape: Shape) {
+  if (shape.kind === "circle") {
+    return Math.PI * shape.radius ** 2;
+  }
+}
+```
+
+첫 번째 `Shape` 정의와 마찬가지로 여전히 오류입니다. `radius`가 선택적일 때, `strictNullChecks`가 활성화되어 있을 때 타입스크립트는 속성이 존재하는지 여부를 알 수 없기 때문에 오류가 발생했습니다. 이제 `Shape`가 유니온이 되었을 때, 타입스크립트는 `shape`가 `Square`일 수 있고, `Square`에는 `radius`가 정의되어 있지 않다고 말합니다! 두 해석 모두 정확하지만, 오직 유니온 인코딩의 `Shape`만 `strictNullChecks` 구성과 관계없이 오류를 일으킵니다.
+
+그러나 `kind` 속성을 다시 확인해 보면 어떨까요?
+
+```typescript
+function getArea(shape: Shape) {
+  if (shape.kind === "circle") {
+    return Math.PI * shape.radius ** 2;
+  }
+}
+```
+
+오류가 사라졌습니다! 유니온의 모든 타입이 리터럴 타입으로 공통 속성을 포함할 때, 타입스크립트는 그것을 구별된 유니온으로 간주하고 유니온의 멤버를 좁힐 수 있습니다.
+
+이 경우, `kind`는 `Shape`의 판별 속성(구별 속성)이었습니다. `kind` 속성이 "circle"인지 확인함으로써 `Shape`에서 "circle" 타입이 아닌 모든 타입을 제거했습니다. 그 결과 `shape`는 `Circle` 타입으로 좁혀졌습니다.
+
+`switch` 문에서도 같은 검사가 작동합니다. 이제 우리는 더 이상 성가신 `!` 비강제 단언 없이 `getArea`를 완성할 수 있습니다.
+
+```typescript
+function getArea(shape: Shape) {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "square":
+      return shape.sideLength ** 2;
+  }
+}
+```
+
+여기서 중요한 것은 `Shape`의 인코딩이었습니다. `Circle`과 `Square`가 정말로 특정 `kind` 필드를 가진 두 개의 별개 타입임을 타입스크립트에게 전달하는 것이 중요했습니다. 그렇게 함으로써 우리는 그렇지 않았다면 작성했을 자바스크립트와 다르지 않게 타입-안전한 타입스크립트 코드를 작성할 수 있습니다. 그 후로 타입 시스템이 `switch` 문의 각 분기에서 타입을 "올바르게" 파악할 수 있었습니다.
+
+또한, 위 예제에서 `return` 키워드를 제거하면서 놀아보세요. `switch` 문의 다른 절로 실수로 통과하는 버그를 피하는 데 타입 체킹이 어떻게 도움이 되는지 보게 될 것입니다.
+
+구별된 유니온은 원과 정사각형에 대해 이야기하는 것 이상으로 유용합니다. 자바스크립트에서 어떤 종류의 메시징 체계를 나타내는 데 좋습니다. 예를 들어, 네트워크를 통한 메시지 전송(클라이언트/서버 통신)이나 상태 관리 프레임워크에서 변화를 인코딩할 때 등입니다.
+
+
+## never 타입
+
+좁혀짐을 통해 유니온의 가능성을 점점 줄여 나가다 보면 모든 가능성을 제거하고 아무것도 남지 않는 지점에 도달할 수 있습니다. 이런 경우에 타입스크립트는 존재해서는 안 되는 상태를 나타내기 위해 `never` 타입을 사용합니다.
+
+### 완전성 검사
+
+`never` 타입은 모든 타입에 할당될 수 있지만, `never` 자신을 제외하고는 어떤 타입도 `never`에 할당될 수 없습니다. 이는 `switch` 문에서 완전성 검사를 수행하기 위해 좁혀짐을 사용하고 `never`가 나타날 때에 의존할 수 있음을 의미합니다.
+
+예를 들어, 모든 가능한 케이스가 처리되었을 때 오류를 발생시키지 않는 `getArea` 함수에 기본값을 추가하여 `shape`를 `never`에 할당하려고 시도할 수 있습니다.
+
+```typescript
+type Shape = Circle | Square;
+ 
+function getArea(shape: Shape) {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "square":
+      return shape.sideLength ** 2;
+    default:
+      const _exhaustiveCheck: never = shape;
+      return _exhaustiveCheck;
+  }
+}
+```
+
+`Shape` 유니온에 새로운 멤버를 추가하면 타입스크립트 오류가 발생합니다.
+
+```typescript
+interface Triangle {
+  kind: "triangle";
+  sideLength: number;
+}
+ 
+type Shape = Circle | Square | Triangle;
+ 
+function getArea(shape: Shape) {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "square":
+      return shape.sideLength ** 2;
+    default:
+      const _exhaustiveCheck: never = shape;
+      // 'Triangle' 타입은 'never' 타입에 할당할 수 없습니다.
+      return _exhaustiveCheck;
+  }
+}
+```
+
+이러한 방식으로 `Shape` 타입에 새로운 형태를 추가하면 `switch` 문의 `default` 케이스에서 타입 오류가 발생하여 완전성 검사에 실패함을 알 수 있습니다. 이는 모든 가능한 경우를 처리했는지 확인하는 데 유용합니다.
+
+
+
+
+
+

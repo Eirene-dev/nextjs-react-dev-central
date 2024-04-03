@@ -1,0 +1,805 @@
+---
+title: 객체 타입
+date: '2024-01-02 06:00'
+summary: 타입스크립트에서 객체 타입을 정의하는 다양한 방법을 다루며, 타입 속성, 선택적 및 읽기 전용 속성, 인덱스 시그니처, 초과 속성 검사, 타입 확장, 교차 타입, 인터페이스 비교, 제네릭 객체 타입, 배열과 튜플의 사용법에 이르기까지, 효과적인 타입 시스템 활용법을 제공합니다.
+draft: false
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+자바스크립트에서 데이터를 그룹화하고 전달하는 기본적인 방법은 객체를 사용하는 것입니다. 타입스크립트에서는 이러한 객체를 객체 타입을 통해 표현합니다.
+
+데이터를 익명으로 표현할 수도 있습니다.
+
+```typescript
+function greet(person: { name: string; age: number }) {
+  return "Hello " + person.name;
+}
+```
+
+또한 이름을 가진 객체 타입을 정의하기 위해 인터페이스를 사용할 수 있습니다.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+ 
+function greet(person: Person) {
+  return "Hello " + person.name;
+}
+```
+
+혹은 타입 별칭을 사용할 수도 있습니다.
+
+```typescript
+type Person = {
+  name: string;
+  age: number;
+};
+ 
+function greet(person: Person) {
+  return "Hello " + person.name;
+}
+```
+
+위의 세 가지 예시에서는 모두 name 속성(문자열 타입)과 age 속성(숫자 타입)을 가진 객체를 함수의 매개변수로 받아 인사말을 반환합니다.
+
+참고로 타입과 인터페이스에 대한 더 자세한 설명을 찾고 싶다면 관련 자료를 확인할 수 있습니다.
+
+## 타입 속성
+객체 타입의 각 속성은 몇 가지를 지정할 수 있습니다. 그것은 타입, 속성이 선택적인지 그리고 속성이 쓰기 가능한지 여부입니다.
+
+### 선택적 속성
+대부분의 경우, 속성이 설정될 수도 있는 객체를 다루게 됩니다. 이런 경우에는 속성 이름 끝에 물음표(`?`)를 추가함으로써 해당 속성을 선택적으로 표시할 수 있습니다.
+
+```typescript
+interface PaintOptions {
+  shape: Shape;
+  xPos?: number;
+  yPos?: number;
+}
+
+function paintShape(opts: PaintOptions) {
+  // ...
+}
+
+const shape = getShape();
+paintShape({ shape });
+paintShape({ shape, xPos: 100 });
+paintShape({ shape, yPos: 100 });
+paintShape({ shape, xPos: 100, yPos: 100 });
+```
+
+이 예시에서 `xPos`와 `yPos`는 선택적으로 고려됩니다. 둘 중 하나를 제공할 수도 있으므로 `paintShape`에 대한 모든 호출이 유효합니다. 선택적이라는 것은 속성이 설정되었다면 특정 타입을 가져야 한다는 것을 의미합니다.
+
+이러한 속성에서 읽기를 시도할 때, 타입스크립트는 그것들이 potentionally `undefined`일 수 있다고 알려줍니다.
+
+```typescript
+function paintShape(opts: PaintOptions) {
+  let xPos = opts.xPos;
+  let yPos = opts.yPos;
+  // ...
+}
+```
+
+자바스크립트에서 속성이 결코 설정되지 않았더라도 여전히 접근할 수 있습니다. 그냥 `undefined` 값을 줄 것입니다. `undefined`를 특별하게 처리하기만 하면 됩니다.
+
+```typescript
+function paintShape(opts: PaintOptions) {
+  let xPos = opts.xPos === undefined ? 0 : opts.xPos;
+  let yPos = opts.yPos === undefined ? 0 : opts.yPos;
+  // ...
+}
+```
+
+지정되지 않은 값에 대해 기본값을 설정하는 이 패턴은 자바스크립트에서 문법적으로 지원될 정도로 흔합니다.
+
+```typescript
+function paintShape({ shape, xPos = 0, yPos = 0 }: PaintOptions) {
+  console.log("x 좌표", xPos);
+  console.log("y 좌표", yPos);
+  // ...
+}
+```
+
+여기서는 `paintShape`의 매개변수에 대해 구조 분해 패턴을 사용하고 `xPos`와 `yPos`에 대한 기본값을 제공했습니다. 이제 `paintShape` 내부에서 `xPos`와 `yPos`는 확실히 존재하지만 `paintShape`를 호출하는 데는 선택적입니다.
+
+현재는 구조 분해 패턴 내에 타입 주석을 배치할 방법이 없습니다. 이는 다음 구문이 자바스크립트에서 이미 다른 의미를 가지기 때문입니다.
+
+```typescript
+function draw({ shape: Shape, xPos: number = 100 /*...*/ }) {
+  render(shape);
+  render(xPos);
+}
+```
+
+객체 구조 분해 패턴에서 `shape: Shape`는 "shape 속성을 잡아서 로컬에 Shape라는 변수로 재정의한다"는 의미입니다. 마찬가지로 `xPos: number`는 매개변수의 `xPos`에 기반한 `number`라는 이름의 변수를 생성합니다.
+
+### 읽기 전용 속성
+
+타입스크립트에서는 속성을 읽기 전용으로 표시할 수도 있습니다. 실행 시에는 어떤 동작도 변경하지 않지만 읽기 전용으로 표시된 속성은 타입 검사 중에 재할당될 수 없습니다.
+
+```typescript
+interface SomeType {
+  readonly prop: string;
+}
+
+function doSomething(obj: SomeType) {
+  // 'obj.prop'에서 읽을 수 있습니다.
+  console.log(`prop의 값은 '${obj.prop}'입니다.`);
+
+  // 하지만 재할당할 수는 없습니다.
+  obj.prop = "hello";
+  // 'prop'은 읽기 전용 속성이므로 할당할 수 없습니다.
+}
+```
+
+읽기 전용 수정자를 사용한다고 해서 값이 완전히 변경 불가능하다는 것을 의미하지는 않습니다. 즉, 내부 내용이 변경될 수 없다는 것을 의미하지는 않습니다. 그저 속성 자체가 재할당될 수 없다는 의미일 뿐입니다.
+
+```typescript
+interface Home {
+  readonly resident: { name: string; age: number };
+}
+
+function visitForBirthday(home: Home) {
+  // 'home.resident'의 속성을 읽고 업데이트할 수 있습니다.
+  console.log(`생일 축하합니다 ${home.resident.name}!`);
+  home.resident.age++;
+}
+
+function evict(home: Home) {
+  // 하지만 'Home'의 'resident' 속성 자체를 재할당할 수는 없습니다.
+  home.resident = {
+    // 'resident'는 읽기 전용 속성이므로 할당할 수 없습니다.
+    name: "Victor the Evictor",
+    age: 42,
+  };
+}
+```
+
+읽기 전용이 의미하는 바를 관리하는 것이 중요합니다. 타입스크립트에서 객체가 어떻게 사용되어야 하는지의 의도를 개발 시간 동안 신호로 사용하는 데 유용합니다. 타입스크립트는 두 타입의 속성이 읽기 전용인지 여부를 고려하지 않고 그 타입들이 호환되는지를 검사할 때, 따라서 읽기 전용 속성도 별칭을 통해 변경될 수 있습니다.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+interface ReadonlyPerson {
+  readonly name: string;
+  readonly age: number;
+}
+
+let writablePerson: Person = {
+  name: "Person McPersonface",
+  age: 42,
+};
+
+// 작동합니다
+let readonlyPerson: ReadonlyPerson = writablePerson;
+
+console.log(readonlyPerson.age); // '42'를 출력합니다
+writablePerson.age++;
+console.log(readonlyPerson.age); // '43'을 출력합니다
+```
+
+매핑 수정자를 사용하면 읽기 전용 속성을 제거할 수 있습니다.
+
+
+## 인덱스 시그니처
+때로는 타입의 속성 이름을 미리 알 수 없지만 값의 형태는 알고 있는 경우가 있습니다. 이러한 경우에는 인덱스 시그니처를 사용해 가능한 값의 타입을 설명할 수 있습니다. 예를 들어,
+
+```typescript
+interface StringArray {
+  [index: number]: string;
+}
+
+const myArray: StringArray = getStringArray();
+const secondItem = myArray[1];
+```
+
+위에서 `StringArray` 인터페이스는 인덱스 시그니처를 가지고 있습니다. 이 인덱스 시그니처는 `StringArray`가 숫자로 색인될 때 문자열을 반환할 것이라고 명시합니다.
+
+인덱스 시그니처 속성에는 문자열, 숫자, 심볼, 템플릿 문자열 패턴, 그리고 이들만으로 구성된 유니온 타입이 허용됩니다.
+
+인덱스 시그니처는 매우 강력한 방법으로 "사전" 패턴을 설명하는 데 사용될 수 있지만 모든 속성이 반환 타입과 일치해야 한다는 규칙을 강요합니다. 문자열 인덱스는 `obj.property`가 `obj["property"]`로도 사용 가능하다고 선언하기 때문입니다. 다음 예시에서는 `name`의 타입이 문자열 인덱스의 타입과 일치하지 않아 타입 검사기에서 오류를 반환합니다.
+
+```typescript
+interface NumberDictionary {
+  [index: string]: number;
+
+  length: number; // ok
+  // 'name'의 타입 'string'은 'string' 인덱스 타입 'number'에 할당할 수 없습니다.
+  name: string;
+}
+```
+
+하지만 인덱스 시그니처가 속성 타입의 유니온이라면 다른 타입의 속성도 허용됩니다.
+
+```typescript
+interface NumberOrStringDictionary {
+  [index: string]: number | string;
+  length: number; // ok, length는 숫자입니다
+  name: string; // ok, name은 문자열입니다
+}
+```
+
+마지막으로 인덱스 시그니처를 읽기 전용으로 만들어 인덱스에 대한 할당을 방지할 수 있습니다.
+
+```typescript
+interface ReadonlyStringArray {
+  readonly [index: number]: string;
+}
+
+let myArray: ReadonlyStringArray = getReadOnlyStringArray();
+// 'ReadonlyStringArray' 타입의 인덱스 시그니처는 읽기만 허용합니다.
+myArray[2] = "Mallory";
+```
+
+`myArray[2]`에 값을 설정할 수 없는 이유는 인덱스 시그니처가 읽기 전용이기 때문입니다.
+
+
+## 초과 속성 검사
+객체에 타입이 할당되는 위치와 방법은 타입 시스템에서 차이를 만들 수 있습니다. 이의 주요 예시 중 하나는 생성 시 객체 타입에 할당될 때 객체를 더 철저히 검증하는 초과 속성 검사입니다.
+
+```typescript
+interface SquareConfig {
+  color?: string;
+  width?: number;
+}
+
+function createSquare(config: SquareConfig): { color: string; area: number } {
+  return {
+    color: config.color || "red",
+    area: config.width ? config.width * config.width : 20,
+  };
+}
+
+let mySquare = createSquare({ colour: "red", width: 100 });
+// '{ colour: string; width: number; }' 타입은 
+// 'SquareConfig' 타입의 매개변수에 할당할 수 없습니다.
+// 객체 리터럴은 알려진 속성만 명시할 수 있지만 'colour'는 
+// 'SquareConfig' 타입에 존재하지 않습니다. 'color'를 작성하려고 했나요?
+```
+
+createSquare에 주어진 인자가 color 대신 colour로 철자가 쓰여져 있습니다. 자바스크립트에서는 이런 종류의 문제가 조용히 실패합니다.
+
+이 프로그램이 width 속성이 호환되고, color 속성이 존재하지 않으며, 추가적인 colour 속성이 중요하지 않기 때문에 올바르게 타입이 지정되었다고 주장할 수 있습니다.
+
+그러나 타입스크립트는 이 코드에 버그가 있을 가능성이 있다고 판단합니다. 객체 리터럴은 특별한 처리를 받아 다른 변수에 할당되거나 인자로 전달될 때 초과 속성 검사를 거칩니다. 객체 리터럴에 "대상 타입"에 없는 어떤 속성이 있으면 오류를 받게 됩니다.
+
+```typescript
+let mySquare = createSquare({ colour: "red", width: 100 });
+// '{ colour: string; width: number; }' 타입은 
+// 'SquareConfig' 타입의 매개변수에 할당할 수 없습니다.
+// 객체 리터럴은 알려진 속성만 명시할 수 있지만 'colour'는 
+// 'SquareConfig' 타입에 존재하지 않습니다. 'color'를 작성하려고 했나요?
+```
+
+이러한 검사를 우회하는 방법은 실제로 매우 간단합니다. 가장 쉬운 방법은 타입 단언을 사용하는 것입니다.
+
+```typescript
+let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
+```
+
+그러나 객체가 특별한 방식으로 사용되는 몇 가지 추가 속성을 가질 수 있다고 확신하는 경우 문자열 인덱스 서명을 추가하는 것이 더 나은 접근 방법일 수 있습니다. `SquareConfig`가 위의 타입으로 `color`와 `width` 속성을 가질 수 있지만 또한 다른 수많은 속성을 가질 수 있다면 다음과 같이 정의할 수 있습니다.
+
+```typescript
+interface SquareConfig {
+  color?: string;
+  width?: number;
+  [propName: string]: any;
+}
+```
+
+여기서 우리는 `SquareConfig`가 `color`나 `width`가 아닌 다수의 속성을 가질 수 있고 그들의 타입은 중요하지 않다고 말하고 있습니다.
+
+이러한 검사를 우회하는 또 다른 방법으로는 조금 놀랄 수도 있지만 객체를 다른 변수에 할당하는 것입니다. `squareOptions` 할당이 초과 속성 검사를 거치지 않기 때문에 컴파일러는 오류를 주지 않습니다.
+
+```typescript
+let squareOptions = { colour: "red", width: 100 };
+let mySquare = createSquare(squareOptions);
+```
+
+위의 우회 방법은 `squareOptions`와 `SquareConfig` 사이에 공통 속성이 있는 한 작동합니다. 이 예에서는 `width` 속성이었습니다. 그러나 변수가 어떤 공통 객체 속성도 가지고 있지 않다면 실패할 것입니다. 예를 들어:
+
+```typescript
+let squareOptions = { colour: "red" };
+let mySquare = createSquare(squareOptions);
+// '{ colour: string; }' 타입은 'SquareConfig' 타입과 공통된 속성이 없습니다.
+```
+
+위와 같은 간단한 코드에 대해 이러한 검사를 "우회"하려고 시도하지 않아야 합니다. 메서드를 가지고 상태를 유지하는 더 복잡한 객체 리터럴에 대해서는 이러한 기술을 염두에 둘 필요가 있지만 대부분의 초과 속성 오류는 실제로 버그입니다.
+
+즉, 옵션 가방과 같은 것에 대한 초과 속성 검사 문제에 부딪힌다면 타입 선언을 몇 가지 수정해야 할 수도 있습니다. 이 인스턴스에서 `createSquare`에 `color` 또는 `colour` 속성을 가진 객체를 전달하는 것이 괜찮다면 `SquareConfig`의 정의를 그에 맞게 수정해야 합니다.
+
+
+## 타입 확장하기
+
+다른 타입의 보다 구체적인 버전일 수 있는 타입을 가지는 것은 꽤 일반적입니다. 예를 들어, 미국 내에서 편지와 소포를 보내기 위해 필요한 필드를 설명하는 `BasicAddress` 타입이 있을 수 있습니다.
+
+```typescript
+interface BasicAddress {
+  name?: string;
+  street: string;
+  city: string;
+  country: string;
+  postalCode: string;
+}
+```
+
+어떤 상황에서는 이것으로 충분하지만 주소에는 종종 건물에 여러 단위가 있을 경우 그 주소와 관련된 단위 번호가 있습니다. 그런 다음 `AddressWithUnit`을 설명할 수 있습니다.
+
+```typescript
+interface AddressWithUnit {
+  name?: string;
+  unit: string;
+  street: string;
+  city: string;
+  country: string;
+  postalCode: string;
+}
+```
+
+이것은 작업을 수행하지만 여기서의 단점은 변경사항이 순전히 추가적인 것임에도 불구하고 `BasicAddress`에서 다른 모든 필드를 반복해야 했다는 것입니다. 대신 원래의 `BasicAddress` 타입을 확장하고 `AddressWithUnit`에 고유한 새 필드만 추가할 수 있습니다.
+
+```typescript
+interface BasicAddress {
+  name?: string;
+  street: string;
+  city: string;
+  country: string;
+  postalCode: string;
+}
+
+interface AddressWithUnit extends BasicAddress {
+  unit: string;
+}
+```
+
+인터페이스에서 `extends` 키워드를 사용하면 다른 명명된 타입에서 멤버를 효과적으로 복사하고 우리가 원하는 새 멤버를 추가할 수 있습니다. 이는 타입 선언에 필요한 보일러플레이트를 줄이고, 같은 속성의 여러 다른 선언이 관련되어 있을 수 있음을 나타내는 데 유용합니다. 예를 들어, `AddressWithUnit`은 `street` 속성을 반복할 필요가 없었으며, `street`가 `BasicAddress`에서 유래했기 때문에 독자는 이 두 타입이 어떤 식으로든 관련이 있다는 것을 알 수 있습니다.
+
+인터페이스는 여러 타입에서도 확장될 수 있습니다.
+
+```typescript
+interface Colorful {
+  color: string;
+}
+
+interface Circle {
+  radius: number;
+}
+
+interface ColorfulCircle extends Colorful, Circle {}
+
+const cc: ColorfulCircle = {
+  color: "red",
+  radius: 42,
+}
+```
+
+## 교차 타입
+
+인터페이스는 다른 타입을 확장하여 새 타입을 구성할 수 있게 해줍니다. 타입스크립트는 기존 객체 타입을 결합하는 데 주로 사용되는 교차 타입이라는 또 다른 구조를 제공합니다.
+
+교차 타입은 `&` 연산자를 사용하여 정의됩니다.
+
+```typescript
+interface Colorful {
+  color: string;
+}
+interface Circle {
+  radius: number;
+}
+
+type ColorfulCircle = Colorful & Circle;
+```
+
+여기서 `Colorful`과 `Circle`을 교차시켜 `Colorful`과 `Circle`의 모든 멤버를 가진 새로운 타입을 생성했습니다.
+
+```typescript
+function draw(circle: Colorful & Circle) {
+  console.log(`색상은 ${circle.color}입니다`);
+  console.log(`반지름은 ${circle.radius}입니다`);
+}
+
+// 괜찮음
+draw({ color: "blue", radius: 42 });
+
+// 오류
+draw({ color: "red", raidus: 42 });
+// '{ color: string; raidus: number; }' 타입은 
+// 'Colorful & Circle' 타입의 매개변수에 할당할 수 없습니다.
+// 객체 리터럴은 알려진 속성만 명시할 수 있지만 'raidus'는 
+// 'Colorful & Circle' 타입에 존재하지 않습니다. 'radius'를 작성하려고 했나요?
+```
+
+## 인터페이스 대 교차 타입
+
+유사하지만 실제로 미묘하게 다른 두 가지 타입 결합 방법을 살펴보았습니다. 인터페이스를 사용하면 `extends` 절을 사용하여 다른 타입에서 확장할 수 있었고 교차를 통해 비슷한 작업을 수행하고 결과를 타입 별칭으로 명명할 수 있었습니다. 두 방식의 주요 차이점은 충돌을 처리하는 방식에 있으며 이 차이는 인터페이스와 교차 타입의 타입 별칭 중 하나를 선택하는 주된 이유 중 하나입니다.
+
+
+## 제네릭 객체 타입
+
+문자열, 숫자, 기린 등 어떤 값이든 담을 수 있는 Box 타입을 상상해 보세요.
+
+```typescript
+interface Box {
+  contents: any;
+}
+```
+
+현재 `contents` 속성은 `any`로 타입이 지정되어 있어 작동은 하지만 시간이 지남에 따라 실수로 이어질 수 있습니다.
+
+대신 `unknown`을 사용할 수도 있지만, `contents`의 타입을 이미 알고 있는 경우에는 예방적인 검사를 하거나 오류가 발생하기 쉬운 타입 단언을 사용해야 합니다.
+
+```typescript
+interface Box {
+  contents: unknown;
+}
+
+let x: Box = {
+  contents: "hello world",
+};
+
+// `x.contents`를 검사할 수 있습니다
+if (typeof x.contents === "string") {
+  console.log(x.contents.toLowerCase());
+}
+
+// 또는 타입 단언을 사용할 수 있습니다
+console.log((x.contents as string).toLowerCase());
+```
+
+타입 안전한 접근 방법은 `contents`의 모든 타입에 대해 다른 Box 타입을 만드는 것입니다.
+
+```typescript
+interface NumberBox {
+  contents: number;
+}
+
+interface StringBox {
+  contents: string;
+}
+
+interface BooleanBox {
+  contents: boolean;
+}
+```
+
+그러나 이는 이러한 타입들을 작동시키기 위해 다른 함수 또는 함수의 오버로드를 만들어야 함을 의미합니다.
+
+```typescript
+function setContents(box: StringBox, newContents: string): void;
+function setContents(box: NumberBox, newContents: number): void;
+function setContents(box: BooleanBox, newContents: boolean): void;
+function setContents(box: { contents: any }, newContents: any) {
+  box.contents = newContents;
+}
+```
+
+이것은 많은 보일러플레이트를 필요로 합니다. 더욱이, 나중에 새로운 타입과 오버로드를 도입해야 할 수도 있습니다. 이는 상자 타입과 오버로드가 모두 사실상 같기 때문에 좌절감을 줍니다.
+
+대신, 타입 매개변수를 선언하는 제네릭 Box 타입을 만들 수 있습니다.
+
+```typescript
+interface Box<Type> {
+  contents: Type;
+}
+```
+
+여기서 Box는 "Type의 Box는 contents가 Type 타입을 가지는 것"으로 읽을 수 있습니다. 나중에 Box를 참조할 때 Type 대신에 타입 인자를 제공해야 합니다.
+
+```typescript
+let box: Box<string>;
+```
+
+Box를 실제 타입의 템플릿으로 생각하고, Type은 다른 타입으로 대체될 자리표시자로 생각하세요. 타입스크립트가 `Box<string>`을 보면 `Box<Type>`의 모든 Type 인스턴스를 `string`으로 대체하고 `{ contents: string }`처럼 작동하는 것을 다루게 됩니다. 즉, `Box<string>`과 앞서의 `StringBox`는 동일하게 작동합니다.
+
+```typescript
+interface Box<Type> {
+  contents: Type;
+}
+interface StringBox {
+  contents: string;
+}
+
+let boxA: Box<string> = { contents: "hello" };
+boxA.contents;
+
+let boxB: StringBox = { contents: "world" };
+boxB.contents;
+```
+
+Box는 Type이 무엇이든 대체될 수 있어 재사용 가능합니다. 즉, 새로운 타입에 대한 상자가 필요할 때마다 새로운 Box 타입을 선언할 필요가 없습니다(물론 원한다면 할 수 있지만요).
+
+```typescript
+interface Box<Type> {
+  contents: Type;
+}
+
+interface Apple {
+  // ....
+}
+
+// '{ contents: Apple }'과 동일합니다.
+type AppleBox = Box<Apple>;
+```
+
+이는 또한 제네릭 함수를 사용하여 오버로드를 전혀 피할 수 있음을 의미합니다.
+
+```typescript
+function setContents<Type>(box: Box<Type>, newContents: Type) {
+  box.contents = newContents;
+}
+```
+
+타입 별칭도 제네릭일 수 있다는 점을 기억하세요. 우리가 `Box<Type>` 인터페이스로 정의했던 것을 타입 별칭을 사용해 다음과 같이 정의할 수 있습니다.
+
+```typescript
+type Box<Type> = {
+  contents: Type;
+};
+```
+
+인터페이스와 달리 타입 별칭은 객체 타입뿐만 아니라 다른 종류의 제네릭 도우미 타입을 작성하는 데도 사용될 수 있습니다.
+
+```typescript
+type OrNull<Type> = Type | null;
+
+type OneOrMany<Type> = Type | Type[];
+
+type OneOrManyOrNull<Type> = OrNull<OneOrMany<Type>>;
+
+type OneOrManyOrNullStrings = OneOrManyOrNull<string>;
+```
+
+곧 타입 별칭으로 돌아올 것입니다.
+
+
+### 배열 타입
+
+제네릭 객체 타입은 종종 그들이 담고 있는 요소의 타입에 독립적으로 작동하는 컨테이너 타입입니다. 데이터 구조가 이런 식으로 작동하는 것이 이상적이어서 다양한 데이터 타입에 걸쳐 재사용될 수 있습니다.
+
+우리가 이 핸드북을 통해 작업해 온 타입 중 하나가 바로 그런 타입입니다. 바로 Array 타입입니다. `number[]`나 `string[]` 같은 타입을 작성할 때 실제로는 `Array<number>`와 `Array<string>`의 축약형입니다.
+
+```typescript
+function doSomething(value: Array<string>) {
+  // ...
+}
+
+let myArray: string[] = ["hello", "world"];
+
+// 이 두 가지 방법 모두 작동합니다!
+doSomething(myArray);
+doSomething(new Array("hello", "world"));
+```
+
+위의 Box 타입과 마찬가지로 Array 자체도 제네릭 타입입니다.
+
+```typescript
+interface Array<Type> {
+  /**
+   * 배열의 길이를 가져오거나 설정합니다.
+   */
+  length: number;
+
+  /**
+   * 배열에서 마지막 요소를 제거하고 반환합니다.
+   */
+  pop(): Type | undefined;
+
+  /**
+   * 배열에 새 요소를 추가하고 배열의 새 길이를 반환합니다.
+   */
+  push(...items: Type[]): number;
+
+  // ...
+}
+```
+
+현대 자바스크립트는 `Map<K, V>`, `Set<T>`, `Promise<T>`와 같이 제네릭인 다른 데이터 구조도 제공합니다. 이 모든 것이 정말 의미하는 바는 Map, Set, Promise의 동작 방식으로 인해 이들이 어떤 타입 집합과도 작동할 수 있다는 것입니다.
+
+### ReadonlyArray 타입
+
+`ReadonlyArray`는 변경되지 않아야 하는 배열을 설명하는 특별한 타입입니다.
+
+```typescript
+function doStuff(values: ReadonlyArray<string>) {
+  // 'values'에서 읽을 수 있습니다...
+  const copy = values.slice();
+  console.log(`첫 번째 값은 ${values[0]}입니다`);
+
+  // ...하지만 'values'를 변형할 수는 없습니다.
+  values.push("hello!");
+  // 'push' 속성은 'readonly string[]' 타입에 존재하지 않습니다.
+}
+```
+
+속성에 대한 `readonly` 수정자처럼 주로 의도를 나타내는 도구로 사용됩니다. `ReadonlyArrays`를 반환하는 함수를 볼 때, 내용을 전혀 변경하지 않아야 함을 알 수 있고, `ReadonlyArrays`를 소비하는 함수를 볼 때는 해당 함수에 어떤 배열을 전달해도 내용이 변경되지 않을 것임을 알 수 있습니다.
+
+`Array`와 달리 `ReadonlyArray` 생성자를 사용할 수는 없습니다.
+
+```typescript
+new ReadonlyArray("red", "green", "blue");
+// 'ReadonlyArray'는 타입에만 해당되지만 여기서는 값으로 사용되고 있습니다.
+```
+
+대신, 일반 배열을 `ReadonlyArrays`에 할당할 수 있습니다.
+
+```typescript
+const roArray: ReadonlyArray<string> = ["red", "green", "blue"];
+```
+
+타입스크립트가 `Array<Type>`에 대한 축약형인 `Type[]`을 제공하는 것처럼, `ReadonlyArray<Type>`에 대한 축약형인 `readonly Type[]`도 제공합니다.
+
+```typescript
+function doStuff(values: readonly string[]) {
+  // 'values'에서 읽을 수 있습니다...
+  const copy = values.slice();
+  console.log(`첫 번째 값은 ${values[0]}입니다`);
+
+  // ...하지만 'values'를 변형할 수는 없습니다.
+  values.push("hello!");
+  // 'push' 속성은 'readonly string[]' 타입에 존재하지 않습니다.
+}
+```
+
+마지막으로 주목할 점은 readonly 속성 수정자와 달리, 일반 배열과 `ReadonlyArrays` 간에 할당 가능성이 양방향이 아니라는 것입니다.
+
+```typescript
+let x: readonly string[] = [];
+let y: string[] = [];
+
+x = y;
+y = x;
+// 'readonly string[]' 타입은 'readonly'이며 
+// 가변 타입 'string[]'에 할당할 수 없습니다.
+```
+
+
+### 튜플 타입
+
+튜플 타입은 정확히 몇 개의 요소를 포함하고 있으며, 특정 위치에 어떤 타입이 있는지 알고 있는 배열 타입의 다른 종류입니다.
+
+```typescript
+type StringNumberPair = [string, number];
+```
+
+여기서 `StringNumberPair`는 문자열과 숫자의 튜플 타입입니다. `ReadonlyArray`처럼 런타임에서의 표현은 없지만 타입스크립트에게 중요합니다. 타입 시스템에서 `StringNumberPair`는 0번 인덱스에 문자열이 있고 1번 인덱스에 숫자가 있는 배열을 설명합니다.
+
+```typescript
+function doSomething(pair: [string, number]) {
+  const a = pair[0];
+  const b = pair[1];
+  // ...
+}
+
+doSomething(["hello", 42]);
+```
+
+요소의 수를 넘어서 인덱스를 사용하려고 하면 오류가 발생합니다.
+
+```typescript
+function doSomething(pair: [string, number]) {
+  // ...
+  const c = pair[2];
+  // 튜플 타입 '[string, number]'의 길이 '2'에는 
+  // 인덱스 '2'에 해당하는 요소가 없습니다.
+}
+```
+
+자바스크립트의 배열 구조 분해를 사용하여 튜플을 분해할 수도 있습니다.
+
+```typescript
+function doSomething(stringHash: [string, number]) {
+  const [inputString, hash] = stringHash;
+  console.log(inputString);
+  console.log(hash);
+}
+```
+
+튜플 타입은 각 요소의 의미가 "명확한" 규약 기반 API에서 유용합니다. 이를 통해 구조 분해할 때 변수 이름을 원하는 대로 지정할 수 있는 유연성을 제공합니다. 위의 예에서는 요소 0과 1을 원하는 대로 이름 지을 수 있었습니다.
+
+그러나 모든 사용자가 무엇이 명확한지에 대해 같은 견해를 가지고 있지 않기 때문에, 설명적인 속성 이름을 가진 객체를 사용하는 것이 API에 더 좋을 수도 있습니다.
+
+길이 검사 외에 이런 간단한 튜플 타입은 특정 인덱스에 대한 속성을 선언하고 숫자 리터럴 타입으로 길이를 선언하는 배열의 버전과 동일합니다.
+
+```typescript
+interface StringNumberPair {
+  // 특수 속성
+  length: 2;
+  0: string;
+  1: number;
+  // 다른 'Array<string | number>' 멤버들...
+  slice(start?: number, end?: number): Array<string | number>;
+}
+```
+
+튜플이 선택적 속성을 가질 수 있다는 것도 관심을 가질 만한 사항입니다. 요소 타입 뒤에 물음표(?)를 작성하여 선택적 속성을 나타낼 수 있습니다. 선택적 튜플 요소는 마지막에만 올 수 있으며 길이 타입에도 영향을 미칩니다.
+
+```typescript
+type Either2dOr3d = [number, number, number?];
+
+function setCoordinate(coord: Either2dOr3d) {
+  const [x, y, z] = coord;
+  console.log(`제공된 좌표는 ${coord.length} 차원입니다`);
+}
+```
+
+튜플은 나머지 요소도 가질 수 있으며, 이는 배열/튜플 타입이어야 합니다.
+
+```typescript
+type StringNumberBooleans = [string, number, ...boolean[]];
+type StringBooleansNumber = [string, ...boolean[], number];
+type BooleansStringNumber = [...boolean[], string, number];
+```
+
+`StringNumberBooleans`는 처음 두 요소가 각각 문자열과 숫자이며 그 뒤에 불리언이 몇 개든 올 수 있는 튜플을 설명합니다. `StringBooleansNumber`는 첫 번째 요소가 문자열이고 그 뒤에 불리언이 몇 개든 오며 마지막에 숫자가 오는 튜플을 설명합니다. `BooleansStringNumber`는 시작 요소가 불리언 몇 개든 오고 마지막에 문자열과 숫자가 오는 튜플을 설명합니다.
+
+나머지 요소가 있는 튜플은 "길이"가 정해져 있지 않습니다. 다만 다른 위치에 잘 알려진 요소들이 있을 뿐입니다.
+
+```typescript
+const a: StringNumberBooleans = ["hello", 1];
+const b: StringNumberBooleans = ["beautiful", 2, true];
+const c: StringNumberBooleans = ["world", 3, true, false, true, false, true];
+```
+
+선택적 요소와 나머지 요소가 유용한 이유는 무엇일까요? 이는 타입스크립트가 튜플을 매개변수 목록과 일치시킬 수 있게 하기 때문입니다. 튜플 타입은 나머지 매개변수와 인수에서 사용될 수 있어 다음과 같은 경우:
+
+```typescript
+function readButtonInput(...args: [string, number, ...boolean[]]) {
+  const [name, version, ...input] = args;
+  // ...
+}
+```
+
+기본적으로 다음과 같이 동등합니다.
+
+```typescript
+function readButtonInput(name: string, version: number, ...input: boolean[]) {
+  // ...
+}
+```
+
+이는 나머지 매개변수로 가변적인 수의 인수를 받고 싶지만 중간 변수를 도입하고 싶지 않을 때 유용합니다.
+
+
+### 읽기 전용 튜플 타입
+
+튜플 타입에 대한 마지막 노트입니다. 튜플 타입은 읽기 전용 변형을 가지며, 배열 축약 문법과 마찬가지로 앞에 `readonly` 수정자를 붙여서 지정할 수 있습니다.
+
+```typescript
+function doSomething(pair: readonly [string, number]) {
+  // ...
+}
+```
+
+예상할 수 있듯이, 타입스크립트에서 읽기 전용 튜플의 어떤 속성에도 쓰기가 허용되지 않습니다.
+
+```typescript
+function doSomething(pair: readonly [string, number]) {
+  pair[0] = "hello!";
+  // '0'은 읽기 전용 속성이므로 할당할 수 없습니다.
+}
+```
+
+대부분의 코드에서 튜플은 생성되고 수정되지 않으므로, 가능할 때 읽기 전용 튜플로 타입을 주석 처리하는 것이 좋은 기본값입니다. 이는 `const` 단언으로 배열 리터럴이 읽기 전용 튜플 타입으로 추론될 때 특히 중요합니다.
+
+```typescript
+let point = [3, 4] as const;
+
+function distanceFromOrigin([x, y]: [number, number]) {
+  return Math.sqrt(x ** 2 + y ** 2);
+}
+
+distanceFromOrigin(point);
+// 'readonly [3, 4]' 타입의 인수는 
+// '[number, number]' 타입의 매개변수에 할당할 수 없습니다.
+// 'readonly [3, 4]' 타입은 
+// 'readonly'이며 가변 타입 '[number, number]'에 할당할 수 없습니다.
+```
+
+여기서 `distanceFromOrigin`은 요소를 수정하지 않지만 가변 튜플을 기대합니다. `point`의 타입이 읽기 전용 `[3, 4]`로 추론되었기 때문에, 이 타입은 `point`의 요소가 변경되지 않을 것임을 보장할 수 없는 `[number, number]`와 호환되지 않습니다.

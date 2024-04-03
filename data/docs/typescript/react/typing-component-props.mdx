@@ -1,0 +1,203 @@
+---
+title: 컴포넌트 프롭스 타입
+date: '2024-01-03 01:00'
+summary: 타입스크립트로 리액트 컴포넌트의 프롭스를 타이핑하는 방법에 대한 기본적인 가이드와 타입스크립트의 `object`, 인터페이스, 타입 등 다양한 특징을 활용한 리액트 Prop 타입 예시들을 제공하는 참고 자료입니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 기본 프롭 타입 예시
+
+리액트+타입스크립트 앱에서 자주 사용될 타입스크립트 타입 목록입니다.
+
+```tsx
+type AppProps = {
+  message: string;
+  count: number;
+  disabled: boolean;
+  /** 타입의 배열! */
+  names: string[];
+  /** 정확한 문자열 값 지정을 위한 문자열 리터럴, 유니온 타입으로 결합 */
+  status: "waiting" | "success";
+  /** 런타임에 더 많은 속성을 가질 수 있지만 알려진 속성이 있는 객체 */
+  obj: {
+    id: string;
+    title: string;
+  };
+  /** 객체의 배열! (흔함) */
+  objArr: {
+    id: string;
+    title: string;
+  }[];
+  /** 모든 비원시값 
+   * - 어떤 속성에도 접근할 수 없음 (흔하지 않지만 플레이스홀더로 유용) */
+  obj2: object;
+  /** 필수 속성이 없는 인터페이스 
+   * - (`React.Component<{}, State>` 같은 것을 제외하고 흔하지 않음) */
+  obj3: {};
+  /** 같은 타입의 무수히 많은 속성을 가진 딕셔너리 객체 */
+  dict1: {
+    [key: string]: MyTypeHere;
+  };
+  dict2: Record<string, MyTypeHere>; // dict1과 동일
+  /** 아무것도 받지 않고 반환하지 않는 함수 (매우 흔함) */
+  onClick: () => void;
+  /** 명명된 프롭이 있는 함수 (매우 흔함) */
+  onChange: (id: number) => void;
+  /** 이벤트를 받는 함수 타입 구문 (매우 흔함) */
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  /** 이벤트를 받는 대체 함수 타입 구문 (매우 흔함) */
+  onClick(event: React.MouseEvent<HTMLButtonElement>): void;
+  /** 호출하지 않는 한 어떤 함수라도 됨 (권장하지 않음) */
+  onSomething: Function;
+  /** 선택적 프롭 (매우 흔함!) */
+  optional?: OptionalType;
+  /** `useState`에 의해 반환된 상태 설정 함수를 자식 컴포넌트에 전달할 때. 
+   * `number`는 예시이며, 상태의 타입에 맞게 바꿔주세요 */
+  setState: React.Dispatch<React.SetStateAction<number>>;
+};
+```
+
+### 비원시 타입으로서의 `object`
+
+타입스크립트에서 `object`는 흔히 오해의 소지가 있습니다. 이는 "어떤 객체"를 의미하는 것이 아니라 "비원시 타입"을 의미하는데, 이는 `number`, `string`, `boolean`, `symbol`, `null`, `undefined`가 아닌 모든 것을 나타냅니다.
+
+"모든 비원시 값을 타이핑하는 것"은 리액트에서 자주 해야 할 일이 아니므로, `object`를 자주 사용하지 않을 것입니다.
+
+### 비어 있는 인터페이스, `{}`와 `Object`
+
+비어 있는 인터페이스, `{}`와 `Object`는 모두 "모든 비 null 값"을 나타냅니다—당신이 생각할 수 있는 "빈 객체"가 아닙니다. [이러한 타입을 사용하는 것은 흔한 오해의 원인이며 권장되지 않습니다](https://typescript-eslint.io/rules/no-empty-interface/).
+
+```ts
+// `type AnyNonNullishValue = {}` 또는 
+// `type AnyNonNullishValue = Object`와 동등
+interface AnyNonNullishValue {} 
+
+let value: AnyNonNullishValue;
+
+// 다음은 모두 괜찮지만 예상치 못한 것일 수 있음
+value = 1;
+value = "foo";
+value = () => alert("foo");
+value = {};
+value = { foo: "bar" };
+
+// 다음은 에러
+value = undefined;
+value = null;
+```
+
+
+## 유용한 리액트 Prop 타입 예시
+
+다른 리액트 컴포넌트를 prop으로 받는 컴포넌트에 관련된 예시입니다.
+
+```tsx
+export declare interface AppProps {
+  // 최선, 리액트가 렌더링할 수 있는 모든 것을 받아들임
+  children?: React.ReactNode;
+  // 단일 리액트 요소
+  childrenElement: React.JSX.Element; 
+  // 스타일 prop을 전달하기 위함
+  style?: React.CSSProperties; 
+  // 폼 이벤트! 제네릭 매개변수는 event.target의 타입
+  onChange?: React.FormEventHandler<HTMLInputElement>; 
+  // 버튼 요소의 모든 prop을 모방하고 명시적으로 ref를 전달하지 않음
+  props: Props & React.ComponentPropsWithoutRef<"button">; 
+  // MyButtonForwardedRef의 모든 prop을 모방하고 명시적으로 ref를 전달함
+  props2: Props & React.ComponentPropsWithRef<MyButtonWithForwardRef>; 
+}
+```
+
+<details>
+<summary><b>React 18 이전의 작은 <code>React.ReactNode</code> 에지 케이스</b></summary>
+
+[React 18 타입 업데이트](https://github.com/DefinitelyTyped/DefinitelyTyped/pull/56210) 이전에는 이 코드가 타입 체크되었지만 런타임 오류가 발생했습니다.
+
+```tsx
+type Props = {
+  children?: React.ReactNode;
+};
+
+function Comp({ children }: Props) {
+  return <div>{children}</div>;
+}
+function App() {
+  // React 18 이전: 런타임 오류 "객체는 리액트 자식으로 유효하지 않음"
+  // React 18 이후: 타입 체크 오류 "'{}' 타입을 'ReactNode' 타입에 할당할 수 없음"
+  return <Comp>{{}}</Comp>;
+}
+```
+
+이는 `ReactNode`가 React 18 이전에 `{}` 타입을 허용한 `ReactFragment`를 포함하기 때문입니다.
+
+[이 문제를 제기해준 @pomle에게 감사합니다.](https://github.com/typescript-cheatsheets/react/issues/357)
+
+</details>
+
+<details>
+ <summary><b>React.JSX.Element와 React.ReactNode의 차이는?</b></summary>
+
+[@ferdaber](https://github.com/typescript-cheatsheets/react/issues/57)의 인용: 더 기술적인 설명으로는 유효한 리액트 노드가 `React.createElement`에 의해 반환되는 것과 동일하지 않다는 것입니다. 컴포넌트가 최종적으로 무엇을 렌더링하든, `React.createElement`는 항상 객체를 반환합니다, 이는 `React.JSX.Element` 인터페이스입니다. 하지만 `React.ReactNode`는 컴포넌트의 모든 가능한 반환 값의 집합입니다.
+
+- `React.JSX.Element` -> `React.createElement`의 반환 값
+- `React.ReactNode` -> 컴포넌트의 반환 값
+
+</details>
+
+[더 많은 토론: ReactNode가 React.JSX.Element와 겹치지 않는 경우](https://github.com/typescript-cheatsheets/react/issues/129)
+
+[추가할 내용이 있으신가요? 이슈를 등록하세요](https://github.com/typescript-cheatsheets/react/issues/new).
+
+
+## 타입 또는 인터페이스?
+
+Props와 State를 타이핑하기 위해 타입 또는 인터페이스를 사용할 수 있으므로 당연히 어떤 것을 사용해야 할지에 대한 질문이 생깁니다.
+
+### 간단한 요약
+
+타입이 필요할 때까지 인터페이스 사용 - [orta](https://twitter.com/orta/status/1356129195835973632?s=20).
+
+### 추가 조언
+
+여기 도움이 되는 지침이 있습니다.
+
+- 라이브러리나 제3자 ambient 타입 정의를 작성할 때 공개 API의 정의에 항상 `interface`를 사용합니다. 이를 통해 소비자가 일부 정의가 누락된 경우 _선언 병합_을 통해 확장할 수 있습니다.
+
+- 일관성과 더 제한적이기 때문에 React 컴포넌트 Props와 State에 `type`을 사용하는 것을 고려하세요.
+
+이 지침의 배경이 되는 논리에 대해서는 [Interface vs Type alias in TypeScript 2.7](https://medium.com/@martin_hotell/interface-vs-type-alias-in-typescript-2-7-2a8f1777af4c)에서 더 자세히 읽어볼 수 있습니다.
+
+타입스크립트 핸드북에도 이제 [Type Aliases와 Interfaces 간의 차이점](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces)에 대한 안내가 포함되어 있습니다.
+
+> 참고: 규모가 큰 경우, 인터페이스를 선호하는 것이 성능상의 이유가 있습니다 ([이에 대한 공식 Microsoft 노트 참고](https://github.com/microsoft/TypeScript/wiki/Performance#preferring-interfaces-over-intersections)) 하지만 [이것을 경계로 받아들이세요](https://news.ycombinator.com/item?id=25201887)
+
+타입은 유니온 타입(`type MyType = TypeA | TypeB`)에 유용하며 인터페이스는 사전 형태를 선언한 다음 `구현`하거나 `확장`하는 데 더 적합합니다.
+
+### 타입 vs 인터페이스를 위한 유용한 표
+
+이 주제는 미묘하므로 너무 고민하지 마세요. 여기 유용한 표가 있습니다.
+
+| 항목                                          | 타입 | 인터페이스 |
+| ----------------------------------------------- | :--: | :-------: |
+| 함수를 설명할 수 있음                           |  ✅  |    ✅     |
+| 생성자를 설명할 수 있음                         |  ✅  |    ✅     |
+| 튜플을 설명할 수 있음                           |  ✅  |    ✅     |
+| 인터페이스가 확장할 수 있음                     |  ⚠️  |    ✅     |
+| 클래스가 확장할 수 있음                         |  🚫  |    ✅     |
+| 클래스가 구현할 수 있음 (`implements`)         |  ⚠️  |    ✅     |
+| 다른 타입과 교차할 수 있음                      |  ✅  |    ⚠️     |
+| 다른 타입과 유니온을 생성할 수 있음             |  ✅  |    🚫     |
+| 매핑된 타입을 생성할 수 있음                    |  ✅  |    🚫     |
+| 매핑된 타입으로 매핑될 수 있음                  |  ✅  |    ✅     |
+| 오류 메시지와 로그에서 확장됨                   |  ✅  |    🚫     |
+| 증강할 수 있음                                  |  🚫  |    ✅     |
+| 재귀적일 수 있음                                |  ⚠️  |    ✅     |
+
+(출처: [Karol Majewski](https://twitter.com/karoljmajewski/status/1082413696075382785))
+
+
+
+
+

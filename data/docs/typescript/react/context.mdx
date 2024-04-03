@@ -1,0 +1,155 @@
+---
+title: 컨텍스트
+date: '2024-01-03 07:00'
+summary: 리액트에서 컨텍스트를 생성하고 사용하는 방법, 기본값 없이 컨텍스트를 사용하는 방법과 `null`을 확인하지 않고 컨텍스트를 안전하게 사용하기 위한 타입 단언과 런타임 검사 방법을 설명합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 기본 예제
+
+활성 테마를 포함하는 컨텍스트를 생성하는 기본 예제입니다.
+
+```tsx
+import { createContext } from "react";
+
+type ThemeContextType = "light" | "dark";
+
+const ThemeContext = createContext<ThemeContextType>("light");
+```
+
+컨텍스트가 필요한 컴포넌트를 컨텍스트 제공자로 감쌉니다.
+
+```tsx
+import { useState } from "react";
+
+const App = () => {
+  const [theme, setTheme] = useState<ThemeContextType>("light");
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <MyComponent />
+    </ThemeContext.Provider>
+  );
+};
+```
+
+컨텍스트를 읽고 구독하기 위해 `useContext`를 호출합니다.
+
+```tsx
+import { useContext } from "react";
+
+const MyComponent = () => {
+  const theme = useContext(ThemeContext);
+
+  return <p>현재 테마는 {theme}입니다.</p>;
+};
+```
+
+## 기본값 없이 컨텍스트 사용하기
+
+의미 있는 기본값이 없다면 `null`을 지정하세요:
+
+```tsx
+import { createContext } from "react";
+
+interface CurrentUserContextType {
+  username: string;
+}
+
+const CurrentUserContext = createContext<CurrentUserContextType | null>(null);
+```
+
+```tsx
+const App = () => {
+  const [currentUser, setCurrentUser] = useState<CurrentUserContextType>({
+    username: "filiptammergard",
+  });
+
+  return (
+    <CurrentUserContext.Provider value={currentUser}>
+      <MyComponent />
+    </CurrentUserContext.Provider>
+  );
+};
+```
+
+컨텍스트 타입이 `null`일 수 있으므로, `username` 속성에 접근하려고 하면 TypeScript 오류 `'currentUser'가 'null'일 수 있습니다`를 발견하게 됩니다. `username`에 접근하기 위해 선택적 체이닝을 사용할 수 있습니다.
+
+```tsx
+import { useContext } from "react";
+
+const MyComponent = () => {
+  const currentUser = useContext(CurrentUserContext);
+
+  return <p>이름: {currentUser?.username}.</p>;
+};
+```
+
+그러나 컨텍스트가 `null`이 아님을 알고 있기 때문에 `null`을 확인할 필요가 없게 하는 것이 더 바람직합니다. 컨텍스트를 사용하기 위한 커스텀 훅을 제공하여 컨텍스트가 제공되지 않으면 오류를 발생시키는 방법이 있습니다.
+
+```tsx
+import { createContext, useContext } from "react";
+
+interface CurrentUserContextType {
+  username: string;
+}
+
+const CurrentUserContext = createContext<CurrentUserContextType | null>(null);
+
+const useCurrentUser = () => {
+  const currentUserContext = useContext(CurrentUserContext);
+
+  if (!currentUserContext) {
+    throw new Error(
+      "useCurrentUser는 <CurrentUserContext.Provider> 내부에서 사용되어야 합니다"
+    );
+  }
+
+  return currentUserContext;
+};
+```
+
+이 방법은 제공자가 컴포넌트를 제대로 감싸지 않았을 때 콘솔에 명확한 오류 메시지를 출력하는 이점이 있습니다. 이제 `null`을 확인하지 않고도 `currentUser.username`에 접근할 수 있습니다.
+
+```tsx
+import { useContext } from "react";
+
+const MyComponent = () => {
+  const currentUser = useCurrentUser();
+
+  return <p>사용자 이름: {currentUser.username}.</p>;
+};
+```
+
+
+### 타입 단언을 이용한 대안
+
+`null`을 확인할 필요가 없게 하기 위한 또 다른 방법은 타입 단언을 사용하여 타입스크립트에게 컨텍스트가 `null`이 아님을 알리는 것입니다.
+
+```tsx
+import { useContext } from "react";
+
+const MyComponent = () => {
+  const currentUser = useContext(CurrentUserContext);
+
+  return <p>이름: {currentUser!.username}.</p>;
+};
+```
+
+기본값으로 빈 객체를 사용하고 예상되는 컨텍스트 타입으로 캐스팅하는 방법도 있습니다.
+
+```tsx
+const CurrentUserContext = createContext<CurrentUserContextType>(
+  {} as CurrentUserContextType
+);
+```
+
+또한 non-null 단언을 사용하여 같은 결과를 얻을 수 있습니다.
+
+```tsx
+const CurrentUserContext = createContext<CurrentUserContextType>(null!);
+```
+
+무엇을 선택해야 할지 모를 때는 타입 단언보다는 런타임 검사와 예외 처리를 선호하세요.
