@@ -1,0 +1,194 @@
+---
+title: 클라이언트 업로드 가이드
+date: '2024-03-04 01:02'
+summary: 이 가이드는 Vercel Blob을 사용하여 클라이언트에서 직접 파일을 업로드하는 전체 과정을 단계별로 설명합니다.
+---
+
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## Vercel Blob을 이용한 클라이언트 업로드
+
+브라우저에서 4.5MB 이상의 파일을 직접 Vercel Blob으로 업로드하는 방법을 배우세요.
+
+이 빠른 시작 가이드에서 다음을 배울 수 있습니다.
+- Vercel 대시보드를 사용해 프로젝트에 연결된 Blob 스토어 만들기
+- 브라우저에서 Blob SDK를 사용해 파일 업로드하기
+
+
+## 사전 준비사항
+
+Vercel Blob은 모든 프론트엔드 프레임워크와 호환됩니다. 우선 패키지를 설치해야 합니다.
+
+```bash
+npm install @vercel/blob
+```
+
+## Blob 스토어 생성하기
+
+Blob 스토어를 추가하고 싶은 프로젝트로 이동하세요. 스토리지 탭을 선택한 후 데이터베이스 연결 버튼을 클릭하세요.
+
+새로 생성 탭에서 Blob을 선택하고 계속하기 버튼을 누릅니다.
+
+"Images"라는 이름을 사용해 새 Blob 스토어를 생성하세요. 읽기-쓰기 토큰을 포함시키길 원하는 환경을 선택하세요. 고급 옵션에서 환경 변수의 접두어도 업데이트할 수 있습니다.
+
+생성하면 Vercel Blob 스토어 페이지로 이동합니다.
+
+
+## 로컬 프로젝트 준비하기
+
+프로젝트에 Blob 스토어를 생성하셨으므로, 다음 환경 변수를 프로젝트에 자동으로 생성하고 추가했습니다.
+
+- `BLOB_READ_WRITE_TOKEN`
+
+
+이 환경 변수를 로컬에서 사용하기 위해서는 Vercel CLI를 통해 불러오는 것을 권장합니다.
+
+```bash
+vercel env pull .env.development.local
+```
+
+4.5MB 이상의 파일을 업로드할 필요가 있을 때는 클라이언트 업로드를 사용할 수 있습니다. 이 경우, 파일은 클라이언트(이 예제에서는 브라우저)에서 직접 Vercel Blob으로 전송됩니다. 이 전송은 Vercel Blob 스토어를 익명 업로드로 노출하지 않도록 보안을 유지하며 진행됩니다. 보안 메커니즘은 서버와 Vercel Blob 간의 토큰 교환에 기반합니다.
+
+
+## 클라이언트 업로드 페이지 생성하기
+
+이 페이지를 통해 사용자는 서버를 거치지 않고 직접 Vercel Blob으로 파일을 업로드할 수 있습니다. 보안을 위해 파일 업로드 전 서버와 토큰을 교환하여 업로드 과정이 이루어집니다.
+
+
+```typescript:src/app/avatar/upload/page.tsx
+'use client';
+ 
+import { type PutBlobResult } from '@vercel/blob';
+import { upload } from '@vercel/blob/client';
+import { useState, useRef } from 'react';
+ 
+function AvatarUploadPage() {
+  const inputFileRef = useRef<HTMLInputElement>(null);
+  const [blob, setBlob] = useState<PutBlobResult | null>(null);
+  return (
+    <>
+      <h1>아바타 업로드하기</h1>
+ 
+      <form
+        onSubmit={async (event) => {
+          event.preventDefault();
+ 
+          if (!inputFileRef.current?.files) {
+            throw new Error('파일이 선택되지 않았습니다');
+          }
+ 
+          const file = inputFileRef.current.files[0];
+ 
+          const newBlob = await upload(file.name, file, {
+            access: 'public',
+            handleUploadUrl: '/api/avatar/upload',
+          });
+ 
+          setBlob(newBlob);
+        }}
+      >
+        <input name="file" ref={inputFileRef} type="file" required />
+        <button type="submit">업로드</button>
+      </form>
+      {blob && (
+        <div>
+          Blob URL: <a href={blob.url}>{blob.url}</a>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default AvatarUploadPage;
+```
+
+## 클라이언트 업로드 라우트 생성하기
+
+이 클라이언트 업로드 라우트의 주요 역할은 다음과 같습니다.
+
+- 클라이언트 업로드를 위한 토큰 생성
+- 업로드된 파일의 URL을 예를 들어 데이터베이스에 업데이트할 수 있도록 완료된 클라이언트 업로드 수신
+
+`@vercel/blob` npm 패키지는 이러한 책임을 구현하는 데 도움이 되는 헬퍼를 제공합니다.
+
+
+
+```typescript:src/app/api/avatar/upload/route.ts
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import { NextResponse } from 'next/server';
+ 
+export async function POST(request: Request): Promise<NextResponse> {
+  const body = (await request.json()) as HandleUploadBody;
+ 
+  try {
+    const jsonResponse = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async (
+        pathname,
+        // 클라이언트 페이로드
+      ) => {
+        // 브라우저가 파일을 업로드할 수 있는 클라이언트 토큰 생성
+        // ⚠️ 토큰을 생성하기 전에 사용자 인증 및 권한 부여
+        // 그렇지 않으면 익명 업로드를 허용하게 됩니다.
+ 
+        return {
+          allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif'],
+          tokenPayload: JSON.stringify({
+            // 선택적, 업로드 완료 시 서버로 전송됨
+            // 인증에서 사용자 ID 또는 클라이언트 페이로드에서 값을 전달할 수 있음
+          }),
+        };
+      },
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // 클라이언트 업로드 완료 알림
+        // ⚠️ `localhost` 웹사이트에서는 작동하지 않음
+        // ngrok 또는 비슷한 서비스를 사용해 전체 업로드 흐름을 경험하세요
+ 
+        console.log('blob 업로드 완료', blob, tokenPayload);
+ 
+        try {
+          // 파일 업로드 완료 후 로직 실행
+          // const { userId } = JSON.parse(tokenPayload);
+          // await db.update({ avatar: blob.url, userId });
+        } catch (error) {
+          throw new Error('사용자를 업데이트할 수 없음');
+        }
+      },
+    });
+ 
+    return NextResponse.json(jsonResponse);
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 400 }, // 웹훅은 200을 받을 때까지 5번 재시도함
+    );
+  }
+}
+```
+
+로컬 웹사이트가 http://localhost:3000에서 제공될 때, `onUploadCompleted` 단계는 성공하지 않습니다. Vercel Blob이 로컬 호스트에 연결할 수 없기 때문입니다. 대신, ngrok과 같은 터널링 서비스를 통해 로컬 애플리케이션을 실행하여 로컬에서 전체 Vercel Blob 개발 흐름을 경험하는 것이 좋습니다.
+
+## 페이지 테스트하기
+
+### 애플리케이션 로컬에서 실행하기
+
+애플리케이션을 로컬에서 실행하고 `/avatar/upload`로 이동하여 파일을 스토어에 업로드하세요. 브라우저는 파일을 위해 생성된 고유 URL을 표시합니다.
+
+로컬 웹사이트가 http://localhost:3000에서 제공될 때, `onUploadCompleted` 단계는 성공하지 않습니다. 대신, ngrok과 같은 터널링 서비스를 통해 로컬 애플리케이션을 실행하여 로컬에서 전체 Vercel Blob 개발 흐름을 경험하는 것이 좋습니다.
+
+### Blob 객체 메타데이터 검토하기
+
+1. 스토어를 생성한 Vercel 프로젝트로 이동하세요.
+2. 스토리지 탭을 선택하고 새로운 스토어를 선택하세요.
+3. 이전 단계에서 반환된 blob 객체 URL을 브라우저 섹션의 Blob URL 입력 상자에 붙여넣고 조회를 선택하세요.
+4. 다음과 같은 blob 객체 메타데이터가 표시됩니다. 파일 이름, 경로, 크기, 업로드 날짜, 콘텐츠 유형 및 HTTP 헤더.
+5. 이 페이지에서 파일을 다운로드하거나 삭제할 수도 있습니다.
+
+Vercel Blob 스토어에 객체를 성공적으로 업로드했으며 해당 메타데이터를 검토하고 다운로드하고 삭제할 수 있습니다.
+
+
+
+
+

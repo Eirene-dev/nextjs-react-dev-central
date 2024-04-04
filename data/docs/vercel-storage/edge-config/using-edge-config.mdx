@@ -1,0 +1,127 @@
+---
+title: Edge 설정 사용하기
+date: '2024-03-05 01:02'
+summary: "Edge Config는 Vercel의 엣지 네트워크를 통해 초저 대기 시간의 글로벌 데이터 읽기를 가능하게 하며, 프로젝트에 최적화된 데이터 검색 및 저장 관리 솔루션을 제공합니다."
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## Edge 설정 사용하기
+
+프로젝트에서 Edge 설정을 사용하는 방법을 배워보세요.
+
+
+Edge 설정은 Vercel의 Edge 네트워크 덕분에 전 세계 어디서나 초저지연 속도로 데이터를 읽을 수 있는 전역 데이터 스토어입니다.
+
+Edge 설정에서 데이터를 읽기 위해 Edge 설정 클라이언트 SDK 사용을 권장합니다. Edge 설정에 데이터를 쓰기 위해서는 API를 관리하는 문서에 설명된 Vercel REST API를 사용하세요.
+
+이 페이지는 Edge 설정과 상호작용하는 모든 방법과 권장하는 최선의 접근법을 개요로 설명합니다.
+
+## Edge 설정에서 데이터 읽기
+
+Edge 설정에서 데이터를 읽는 여러 방법이 있지만, 프로젝트에서 Edge 설정 클라이언트 SDK 사용을 권장합니다.
+
+Edge 설정으로 직접 API 요청을 보내고 싶다면, Edge 설정 엔드포인트로 요청을 보내는 것이 좋습니다. Vercel REST API를 통해 데이터를 요청할 수는 있지만, 이 방법은 권장하지 않습니다. Vercel REST API로 요청하는 것은 Vercel이 Edge 설정 읽기에 적용하는 최적화의 이점을 받지 못합니다. 반면, Edge 설정 엔드포인트로의 요청은 이점을 받습니다.
+
+
+## Edge 설정 엔드포인트 이해하기
+
+Edge 설정은 서로 다른 사용 사례를 위해 구축된 두 개의 별도 REST API에서 사용할 수 있습니다.
+
+- `api.vercel.com`: Edge 설정을 관리하기 위해 구축된 Vercel REST API
+- `edge-config.vercel.com`: 고용량으로 Edge 설정을 읽기 위해 의도된 Edge 설정 엔드포인트
+
+### api.vercel.com
+- 이 엔드포인트는 Vercel REST API의 일부입니다.
+- Edge 설정을 관리하기 위해 의도되었습니다.
+- 이 엔드포인트를 사용하여 Edge 설정을 생성, 업데이트, 삭제할 수 있습니다.
+- 이 엔드포인트는 단일 지역에서 제공되며, 어떠한 읽기 최적화도 적용되지 않습니다.
+- 이 엔드포인트는 분당 20개의 Edge 설정 항목 읽기로 제한됩니다.
+- 이 엔드포인트에서 Edge 설정을 읽으면 항상 Edge 설정의 최신 버전이 반환됩니다.
+- 이 엔드포인트는 Vercel REST API 인증을 사용합니다.
+
+### edge-config.vercel.com
+- 이는 글로벌, 저지연, 고용량 읽기를 위해 구축된 고도로 최적화되고, 전 세계적으로 분산되며, 활발하게 복제된 엔드포인트입니다.
+- 이 엔드포인트에는 제한이 없습니다.
+- 이는 `@vercel/edge-config`가 읽어오는 엔드포인트입니다.
+- 이 엔드포인트는 Edge 설정의 자체 읽기 접근 토큰을 사용합니다.
+
+### Edge 설정 엔드포인트 쿼리하기
+Edge 설정 엔드포인트를 쿼리할 때 다음 라우트를 사용할 수 있습니다.
+
+- `/<edgeConfigId>/items`
+- `/<edgeConfigId>/item/<itemKey>`
+- `/<edgeConfigId>/digest`
+
+읽기 접근 토큰으로 인증할 수 있으며, 요청의 Authorization 헤더에 Bearer `<token>` 값을 추가하여 사용할 수 있습니다.
+
+## Edge 설정 ID 찾기
+
+Edge 설정 ID를 찾는 방법은 다음과 같습니다.
+
+- 대시보드에서, Edge 설정 탭 아래에서 찾을 수 있습니다. Edge 설정을 선택하면 페이지 상단 근처의 Edge 설정 ID 라벨 아래에서 ID를 볼 수 있습니다. 아래 스크린샷에서와 같이 표시됩니다.
+  - Vercel 대시보드에서의 Edge 설정 ID.
+  - Vercel 대시보드에서의 Edge 설정 ID.
+- Vercel REST API의 /edge-config 엔드포인트에 GET 요청을 보내는 것입니다. API 참조에서 설명한 대로, 응답은 계정(또는 teamId 쿼리 매개변수를 추가한 경우 팀)과 연관된 Edge 설정 목록이 됩니다.
+
+```
+https://api.vercel.com/v1/edge-config?teamId=<teamId>
+```
+
+## 읽기 접근 토큰 생성하기
+
+읽기 접근 토큰은 Edge 설정에 대해 여러 방법으로 생성할 수 있습니다.
+
+- 프로젝트 대시보드의 Edge 설정 탭에서 생성할 수 있습니다. 자세한 내용은 Edge 설정 대시보드 문서를 참조하세요.
+- Vercel REST API로 POST 요청을 보냄으로써 생성할 수 있습니다.
+- Vercel API 사용하기
+
+먼저, Vercel REST API에 대한 접근 토큰이 필요하며, 이를 Authorization 헤더에 Bearer `<token>` 패턴으로 추가하여 요청을 검증해야 합니다. 자세한 내용은 접근 토큰 생성하기를 참조하세요.
+
+그 다음, 아래와 같이 `/edge-config/<edgeConfigId>/token` 경로로 POST 요청을 보낼 수 있으며, 적절한 곳에 Edge 설정의 ID를 삽입하세요:
+
+```bash
+curl -X 'POST' 'https://api.vercel.com/v1/edge-config/\
+        my_edge_config_id/token' \
+     -H 'Authorization: Bearer your_vercel_api_token_here' \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{ "label": "my edge config token label" }'
+```
+
+설정이 Vercel 팀에 범위가 지정된 경우 `teamId` 쿼리 매개변수를 추가하세요.
+
+API로부터의 응답은 "token" 키를 포함하는 JSON 객체가 될 것이며, 이는 Edge 설정 읽기 접근 토큰의 값을 포함합니다.
+
+```json
+{ "token": "your_edge_config_read_access_token_here" }
+```
+
+## 연결 문자열 사용하기
+
+연결 문자열은 프로젝트를 Edge 설정에 연결하는 URL입니다.
+
+연결 문자열을 찾아 복사하는 방법은 다음과 같습니다.
+
+- 프로젝트의 스토리지 대시보드에서 토큰 탭으로 이동합니다.
+- 토큰 목록에 표시된 세 개의 점 아이콘을 선택합니다.
+- 드롭다운 메뉴에서 연결 문자열 복사를 선택합니다.
+- 대시보드에서 Edge 설정 연결 문자열을 복사합니다.
+
+계정 수준에서 Edge 설정을 생성할 때는 프로젝트를 연결할 때까지 연결 문자열이 생성되지 않습니다.
+
+연결 문자열을 환경 변수로 설정하면 Vercel이 읽기 속도를 최적화하여 더 빠르게 만들 수 있습니다. 응용 프로그램에 문자열로 연결 문자열을 하드 코딩하면 Vercel이 URL을 감지하고 읽기를 최적화할 수 없습니다.
+
+변수는 아무 이름이나 사용할 수 있지만, Edge 설정 클라이언트 SDK는 기본적으로 `process.env.EDGE_CONFIG`을 검색합니다. 하나를 생성하는 방법을 알아보려면 환경 변수 문서를 참조하세요.
+
+## Edge 설정에 데이터 쓰기
+
+Edge 설정은 많은 읽기와 적은 쓰기에 최적화되어 있습니다. Edge 설정에 데이터를 쓰는 방법은 Vercel REST API를 이용하는 문서를 참조하세요.
+
+### Edge 설정 백업
+Edge 설정 백업은 이전 시점으로 돌아갈 수 있는 백업 및 복원 기능을 제공합니다.
+
+백업을 복원하면 라이브 데이터가 즉시 업데이트되고 복원 전에 라이브였던 데이터는 새 백업으로 사용할 수 있게 됩니다.
+
+대시보드나 API를 통해 변경 사항을 만들 때마다 백업이 수행됩니다. 이는 스토리지 크기에 포함되지 않습니다. 각 백업이 보관되는 기간은 사용자의 플랜에 따라 다르며, 자세한 정보는 제한 및 가격 문서를 참조하세요.
+

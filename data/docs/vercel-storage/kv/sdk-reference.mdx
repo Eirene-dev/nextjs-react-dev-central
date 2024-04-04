@@ -1,0 +1,461 @@
+---
+title: KV SDK 레퍼런스
+date: '2024-03-02 01:02'
+summary: Vercel KV SDK 레퍼런스는 내구성 있는 Redis를 Vercel KV를 통해 사용하는 방법을 단계별로 안내합니다. 키 값부터 해시, 리스트, 세트, 정렬된 세트에 이르기까지 다양한 데이터 구조를 활용하는 명령어들을 소개합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## `@vercel/kv`
+
+Vercel KV는 간단한 키-값 데이터 구조를 전 세계적으로 엣지에서 저장하고 검색할 수 있게 해주는 내구성 있는 Redis 데이터베이스입니다.
+
+Vercel KV SDK를 사용하여 지원되는 모든 Redis 명령을 메서드로 호출하여 실행할 수 있습니다. 예를 들어, 키 값을 설정하려면 `kv.set()`을 호출하고, 키 값을 증가시키려면 `kv.incr()`을 호출합니다.
+
+이 페이지에서는 KV 스토어에 연결하는 방법을 배우고, 시작하고 Redis 명령이 KV SDK에 어떻게 매핑되는지 이해하는 데 도움이 되는 몇 가지 예제 명령을 시연합니다.
+
+- 지원되지 않는 Redis 명령에 대한 참조는 [Redis 호환성 문서](https://vercel.com/docs/storage/vercel-kv/redis-compatibility)를 참조하세요.
+- 모든 유효한 Redis 명령에 대한 참조는 [공식 Redis 문서](https://redis.io/commands/)를 참조하세요.
+- 모든 유효한 Redis 데이터 유형에 대한 참조는 [공식 Redis 문서](https://redis.io/docs/data-types/)를 참조하세요.
+
+
+
+### KV 스토어에 연결하기
+
+KV 스토어에 연결하는 두 가지 방법이 있습니다.
+
+- `kv` 클라이언트는 KV_REST_API_TOKEN과 KV_REST_API_URL을 사용하여 KV 스토어에 연결하는 풀링된 클라이언트입니다.
+- `createClient` 메서드
+
+두 방법 모두 사용하는 방법은 빠른 시작 가이드를 참조하세요.
+
+#### createClient
+
+`createClient` 메서드를 사용하면 사용자 정의 데이터베이스 URL과 액세스 토큰을 사용하여 Vercel KV 데이터베이스에 연결할 수 있습니다. 다음 속성을 포함하는 구성 객체를 받습니다.
+
+| 매개변수 | 필수 | 유형     | 설명                                          |
+|-------|----|--------|---------------------------------------------|
+| url   | 예  | string | Vercel 프로젝트에 KV 스토어를 연결할 때 생성되는 REST_API_URL |
+| token | 예  | string | Vercel 프로젝트에 KV 스토어를 연결할 때 생성되는 REST_API_TOKEN |
+
+#### createClient 예제
+
+Next.js (`/app`) 프레임워크를 위한 예는 아래와 같습니다.
+
+```TypeScript
+import { createClient } from '@vercel/kv';
+ 
+export async function GET() {
+  const users = createClient({
+    url: process.env.USERS_REST_API_URL,
+    token: process.env.USERS_REST_API_TOKEN,
+  });
+ 
+  const user = await users.hgetall('user:me');
+ 
+  const products = createClient({
+    url: process.env.PRODUCTS_REST_API_URL,
+    token: process.env.PRODUCTS_REST_API_TOKEN,
+  });
+ 
+  const product = await products.hgetall('product:shirt');
+  return Response.json(
+    {
+      user,
+      product,
+    },
+    {
+      status: 200,
+    },
+  );
+}
+```
+사용자와 제품 정보를 조회하여 JSON 형식으로 반환하는 API 라우트 예시입니다.
+
+
+## 키 값 명령어
+
+Vercel KV 데이터베이스에서 키 값과 상호 작용할 수 있는 다음 명령어들을 검토합니다.
+
+### 모든 문자열(키 값) 명령어 검토하기
+
+#### SET
+키를 생성하기 위해 Redis SET 명령어를 실행하려면 다음 매개변수와 함께 `.set()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형                      | 설명                                |
+|------|----|-------------------------|-----------------------------------|
+| key  | 예  | string                  | 키의 이름                            |
+| value| 예  | string, number, object, or boolean | 설정할 값                           |
+| options | 아니요 | object                  | 명령어 인자를 키로 가질 수 있는 객체         |
+
+#### SET 예제
+
+```TypeScript:set-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    await kv.set('setExample', '123abc', { ex: 100, nx: true });
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+#### GET
+키의 값을 가져오기 위해 Redis GET 명령어를 실행하려면 다음 매개변수와 함께 `.get()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형   | 설명     |
+|------|----|------|--------|
+| key  | 예  | string | 키의 이름 |
+
+#### GET 예제
+
+```TypeScript:get-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    const getExample = await kv.get('getExample');
+    console.log(getExample);
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 문서는 Vercel KV 데이터베이스에서 키 값을 설정하고 가져오는 방법을 보여주는 예제들을 포함하고 있습니다.
+
+
+## 해시
+
+해시는 자바스크립트 객체와 유사하게 여러 값을 저장할 수 있으며, 일반적으로 세션 캐시에 사용됩니다. 다음 명령어들을 통해 Vercel KV 데이터베이스 내의 해시 값과 상호 작용할 수 있습니다.
+
+### 모든 해시 명령어 검토하기
+
+#### HSET
+해시를 생성하기 위해 Redis HSET 명령어를 실행하려면 다음 매개변수와 함께 `.hset()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형   | 설명         |
+|------|----|------|------------|
+| key  | 예  | string | 키의 이름     |
+| value| 예  | object | 객체 값      |
+
+#### HSET 예제
+
+```TypeScript:hset-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    await kv.hset('userSession', { userId: 123, email: 'ex@example.com' });
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+#### HGET
+해시에서 키의 값을 가져오기 위해 Redis HGET 명령어를 실행하려면 다음 매개변수와 함께 `.hget()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형   | 설명                |
+|------|----|------|-------------------|
+| key  | 예  | string | 해시의 이름          |
+| field| 예  | string | 해시에서 가져올 키의 이름 |
+
+#### HGET 예제
+
+```TypeScript:hget-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    const userId = await kv.hget('userSession', 'userId');
+    console.log(userId);
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 문서는 Vercel KV 데이터베이스에서 해시를 생성하고, 해시 내의 키 값을 조회하는 방법을 보여주는 예제를 포함하고 있습니다.
+
+
+## 리스트
+
+리스트는 문자열 값의 연결 리스트입니다. 일반적으로 백그라운드 작업자 시스템에서 큐 관리에 사용됩니다. 다음 명령어들을 통해 Vercel KV 데이터베이스 내의 리스트와 상호 작용할 수 있습니다.
+
+### 모든 리스트 명령어 검토하기
+
+#### LPUSH
+리스트를 생성하거나 기존 리스트에 항목을 추가하기 위해 Redis LPUSH 명령어를 실행하려면 다음 매개변수와 함께 `.lpush()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형           | 설명                                       |
+|------|----|--------------|------------------------------------------|
+| key  | 예  | string       | 리스트의 이름                                |
+| ele1, ele2 | 예  | 같은 유형의 리스트 | 같은 유형의 매개변수를 원하는 만큼 전달할 수 있습니다. 이들은 리스트의 요소가 됩니다. |
+| options | 아니요 | object       | 명령어 인자를 키로 가질 수 있는 객체                   |
+
+#### LPUSH 예제
+
+```TypeScript:lpush-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    await kv.lpush(
+      'badIpList',
+      'abc12304040',
+      'xyz98773456',
+      '계속 추가할 수 있습니다',
+      "모두 같은 유형이라면",
+      '모든 같은 유형',
+    );
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 문서는 Vercel KV 데이터베이스에서 리스트를 생성하고, 기존 리스트에 항목을 추가하는 방법을 보여주는 예제를 포함하고 있습니다.
+
+## LRANGE
+
+리스트에서 값들을 가져오기 위해 Redis LRANGE 명령어를 실행하려면 다음 매개변수와 함께 `.lrange()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형   | 설명                                           |
+|------|----|------|----------------------------------------------|
+| key  | 예  | string | 리스트의 이름                                     |
+| start| 예  | number | 리스트에서 반환할 항목의 범위 시작 인덱스. 0은 첫 번째 요소입니다. |
+| end  | 예  | number | 리스트에서 반환할 항목의 범위 끝 인덱스. 0은 첫 번째 요소입니다.  |
+
+start 및 end 인덱스는 음수일 수 있습니다. -1은 리스트의 끝입니다.
+
+### LRANGE 예제
+
+```TypeScript:lrange-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    // 0은 첫 번째 요소이고, -1은 마지막 요소입니다.
+    // 따라서 이는 전체 리스트를 반환합니다.
+    const list = await kv.lrange('badIpList', 0, -1);
+    console.log(list);
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 예제는 Vercel KV 데이터베이스에서 리스트의 특정 범위 내의 값들을 가져오는 방법을 보여줍니다.
+
+## 세트
+
+세트는 유일한 문자열 값의 정렬되지 않은 컬렉션입니다. 일반적으로 고유 항목을 추적하고 관계를 나타내는 데 사용됩니다. 다음 명령어들을 통해 Vercel KV 데이터베이스 내의 세트와 상호 작용할 수 있습니다.
+
+### 모든 세트 명령어 검토하기
+
+#### SADD
+지정된 키에 저장된 세트에 지정된 멤버를 추가하기 위해 Redis SADD 명령어를 실행하려면 다음 매개변수와 함께 `.sadd()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형          | 설명                                |
+|------|----|-------------|-----------------------------------|
+| key  | 예  | string      | 세트의 이름                          |
+| mem1, mem2 | 예  | 문자열 리스트 | 원하는 만큼의 멤버를 전달할 수 있습니다. 이들은 리스트의 멤버가 됩니다. |
+
+#### SADD 예제
+
+```TypeScript:sadd-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    await kv.sadd('myset', 'mem1', 'mem2');
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 예제는 Vercel KV 데이터베이스에서 지정된 세트에 멤버를 추가하는 방법을 보여줍니다.
+
+
+
+## SREM
+
+지정된 키에 저장된 세트에서 지정된 멤버를 제거하기 위해 Redis SREM 명령어를 실행하려면 다음 매개변수와 함께 `.srem()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형       | 설명                              |
+|------|----|----------|---------------------------------|
+| key  | 예  | string   | 세트의 이름                        |
+| mem1, mem2 | 예  | 문자열 리스트 | 원하는 만큼의 멤버를 전달할 수 있습니다. 이들은 리스트의 멤버가 됩니다. |
+
+### SREM 예제
+
+```TypeScript:srem-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    await kv.srem('myset', 'mem1', 'mem2');
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 예제는 Vercel KV 데이터베이스에서 지정된 세트에서 멤버를 제거하는 방법을 보여줍니다.
+
+
+## SISMEMBER
+
+지정된 멤버가 지정된 키에 저장된 세트의 멤버인지 확인하기 위해 Redis SISMEMBER 명령어를 실행하려면 다음 매개변수와 함께 `.sismember()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형   | 설명                             |
+|------|----|------|--------------------------------|
+| key  | 예  | string | 세트의 이름                       |
+| member | 예  | string | 확인하고자 하는 멤버               |
+
+### SISMEMBER 예제
+
+```TypeScript:sismember-example.ts
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    const isMember = await kv.sismember('myset', 'member');
+    // 멤버가 세트의 일부이면 1을 반환하고 그렇지 않으면 0을 반환합니다.
+    console.log(isMember);
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 예제는 Vercel KV 데이터베이스에서 지정된 세트에 특정 멤버가 속해 있는지 확인하는 방법을 보여줍니다.
+
+
+## 정렬된 세트
+
+정렬된 세트는 연관된 점수에 의해 순서가 지정된 고유 문자열 값(멤버)의 컬렉션입니다. 일반적으로 고득점과 같은 순서가 있는 목록을 유지 관리하는 데 사용됩니다. 다음 명령어들을 통해 Vercel KV 데이터베이스 내의 세트와 상호 작용할 수 있습니다.
+
+### 모든 정렬된 세트 명령어 검토하기
+
+## ZADD
+
+지정된 키에 저장된 정렬된 세트에 지정된 점수가 있는 모든 멤버를 추가하기 위해 Redis ZADD 명령어를 실행하려면 다음 매개변수와 함께 `.zadd()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형                    | 설명                                       |
+|------|----|-----------------------|------------------------------------------|
+| key  | 예  | string                | 세트의 이름                                 |
+| `{score: 1, member: 'mem1'}, {score: 2, member: 'mem2'}` | 예  | 점수 객체 리스트: score: number, member: string | 원하는 만큼의 점수-멤버 객체를 전달할 수 있습니다. 각 객체의 점수에 따라 순서가 지정된 리스트의 멤버가 됩니다. |
+| options | 아니요 | object              | 명령어 인자를 키로 가질 수 있는 객체               |
+
+### ZADD 예제
+`zadd-example.ts`
+
+```TypeScript
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    await kv.zadd(
+      'mysortedset',
+      { score: 1, member: 'team1' },
+      { score: 2, member: 'team2' },
+    );
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 예제는 Vercel KV 데이터베이스에서 지정된 정렬된 세트에 멤버를 점수와 함께 추가하는 방법을 보여줍니다.
+
+
+## ZRANGE
+
+지정된 키에 저장된 정렬된 세트에서 지정된 점수 범위 내의 멤버(들)을 가져오기 위해 Redis ZRANGE 명령어를 실행하려면 다음 매개변수와 함께 `.zrange()` 메서드를 사용하세요.
+
+| 매개변수 | 필수 | 유형   | 설명                             |
+|------|----|------|--------------------------------|
+| key  | 예  | string | 세트의 이름                       |
+| start| 예  | number | 범위의 시작 점수                   |
+| stop | 예  | number | 범위의 끝 점수                     |
+| options | 아니요 | object | 명령어 인자를 키로 가질 수 있는 객체 |
+
+### ZRANGE 예제
+`zrange-example.ts`
+
+```TypeScript
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    const data = await kv.zrange('mysortedset', 1, 3);
+    console.log(data);
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 예제는 Vercel KV 데이터베이스에서 지정된 정렬된 세트의 지정된 점수 범위 내에서 멤버를 가져오는 방법을 보여줍니다.
+
+
+## 비트맵
+
+비트맵은 비트 벡터를 포함할 수 있는 문자열 데이터 유형의 확장입니다. 일반적으로 멤버가 0-N의 정수에 해당하는 효율적인 세트 표현이나 객체 권한에 사용됩니다. 다음 명령어들을 통해 Vercel KV 데이터베이스 내의 세트와 상호 작용할 수 있습니다.
+
+### 모든 비트맵 명령어 검토하기
+
+#### SETBIT
+지정된 키에 저장된 문자열 값에서 지정된 오프셋의 비트를 설정하거나 지우기 위해 Redis SETBIT 명령어를 실행하려면 다음 매개변수와 함께 `.setbit()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형   | 설명                           |
+|------|----|------|------------------------------|
+| key  | 예  | string | 문자열 값의 이름                  |
+| offset| 예  | number | 설정하거나 지울 비트의 오프셋         |
+| value | 예  | number | 비트를 설정하거나 지울 값: 1은 설정, 0은 지움 |
+
+##### SETBIT 예제
+`setbit-example.ts`
+
+```TypeScript
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    await kv.setbit('mybitmap', 7, 1);
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+#### GETBIT
+지정된 키에 저장된 문자열 값에서 지정된 오프셋의 비트 값을 가져오기 위해 Redis GETBIT 명령어를 실행하려면 다음 매개변수와 함께 `.getbit()` 메서드를 사용하세요:
+
+| 매개변수 | 필수 | 유형   | 설명                          |
+|------|----|------|-----------------------------|
+| key  | 예  | string | 문자열 값의 이름                 |
+| offset| 예  | number | 검색할 비트의 오프셋               |
+
+##### GETBIT 예제
+`getbit-example.ts`
+
+```TypeScript
+import { kv } from '@vercel/kv';
+ 
+async function exampleCommands() {
+  try {
+    const bitvalue = await kv.getbit('mybitmap', 7);
+    console.log(bitvalue);
+  } catch (error) {
+    // 오류 처리
+  }
+}
+```
+
+이 문서는 Vercel KV 데이터베이스에서 비트맵을 설정하고 비트 값을 가져오는 방법을 보여주는 예제를 포함하고 있습니다.

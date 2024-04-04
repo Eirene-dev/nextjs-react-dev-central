@@ -1,0 +1,71 @@
+---
+title: Vercel Postgres
+date: '2024-03-03 01:00'
+summary: Vercel Postgres는 Vercel 함수 및 프론트엔드 프레임워크와 통합되도록 설계된 서버리스 SQL 데이터베이스로, 고객 프로필 관리부터 금융 거래 처리에 이르기까지 복잡한 데이터를 효율적으로 관리할 수 있게 해줍니다.
+---
+
+## Vercel Postgres
+
+Vercel Postgres는 Vercel 함수 및 프론트엔드 프레임워크와 통합되도록 설계된 서버리스 SQL 데이터베이스입니다.
+
+Vercel Postgres를 사용하면 확장 가능하고 안전한 PostgreSQL 데이터베이스를 생성할 수 있습니다. 고객 프로필 관리, 사용자 생성 콘텐츠, 금융 거래 처리 또는 기타 복잡한 데이터를 관리해야 하는 경우 Vercel Postgres를 사용해야 합니다.
+
+데이터베이스는 단일 지역에 배포될 수 있으며 서버리스 및 엣지 함수와 호환됩니다.
+
+### 사용 사례
+Vercel Postgres에 대한 몇 가지 사용 사례는 다음과 같습니다.
+
+- **복잡한 트랜잭션 데이터 관리**: 금융 거래, 재고 기록 또는 기타 중요 데이터를 저장하는 데 이상적입니다. Postgres는 높은 일관성과 동시성을 보장하여 신뢰할 수 있는 실시간 데이터 관리가 필요한 애플리케이션에 적합합니다.
+- **다양한 데이터 유형 및 확장성**: JSON, 배열 또는 사용자 생성 콘텐츠와 같은 다양한 데이터 형식 또는 사용자 정의 데이터 유형을 처리하기 위해 Postgres를 선택하세요.
+
+### ORM 호환성
+대규모 애플리케이션에 Vercel Postgres를 사용할 때는 ORM을 사용하는 것이 좋습니다. 아래 옵션 중 하나를 선택하여 각 ORM에 대한 사전 제작된 템플릿을 확인하세요:
+
+- [Kysely](https://vercel.com/docs/storage/vercel-postgres/using-an-orm#kysely)
+- [Prisma](https://vercel.com/docs/storage/vercel-postgres/using-an-orm#prisma)
+- [Drizzle](https://vercel.com/docs/storage/vercel-postgres/using-an-orm#drizzle)
+
+### Vercel Postgres 작동 방식
+대시보드에서 Vercel Postgres 데이터베이스를 생성하면 지정한 지역에서 [PostgreSQL](https://www.postgresql.org/docs/) 버전 15를 실행하는 서버리스 데이터베이스가 제공됩니다. 이 지역은 읽기 및 쓰기 작업이 라우팅될 곳입니다.
+
+가장 빠른 응답 시간을 위해 서버리스 및 엣지 함수와 동일한 지역을 선택하는 것이 좋습니다. 데이터베이스 생성 후에는 지역을 변경할 수 없습니다. 데이터베이스를 생성하기 전에 프로젝트의 지역을 확인하세요.
+
+### Neon 파트너십
+Vercel Postgres는 [Neon](https://neon.tech/)과의 파트너십을 통해 제공됩니다. 이는 다음을 의미합니다.
+
+- Postgres 생성, 삭제 및 관리는 Vercel 대시보드에서 이루어집니다.
+- Vercel Postgres 사용을 위해 Neon 계정을 만들 필요가 없습니다.
+
+### Vercel Postgres를 워크플로우에 사용하기
+Vercel에서 Vercel Postgres를 워크플로우와 함께 사용하는 방법에 대해 몇 가지 중요한 점을 알아두어야 합니다.
+
+- 선호하는 PostgreSQL 클라이언트로 Vercel Postgres를 사용할 수 있습니다.
+- 어떤 PostgreSQL 클라이언트나 ORM으로 데이터베이스에 연결할 수 있습니다.
+- 계정당 여러 Vercel Postgres 데이터베이스를 가질 수 있으며, Postgres 제한 문서에서 설명한 계획에 따라 다릅니다.
+- 한 프로젝트에서 여러 Vercel Postgres 데이터베이스를 사용할 수 있습니다.
+- 여러 프로젝트를 단일 Vercel Postgres 데이터베이스에 연결할 수 있습니다.
+- Vercel Postgres 데이터베이스는 프로젝트 내 다른 환경에 환경 변수를 사용하여 범위를 지정할 수 있습니다.
+
+
+## 더 알아보기
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<Card href="/docs/vercel-storage/postgres/quick-start">
+### 시작하기
+
+Vercel KV를 사용하여 내구성 있는 Redis를 시작하는 방법과 함께 Postgres 데이터베이스를 시작하고 사용하는 방법에 대해 안내합니다.
+</Card>
+
+<Card href="/docs/vercel-storage/postgres/sdk-reference">
+### SDK 레퍼런스
+
+Vercel KV 및 @vercel/postgres SDK 레퍼런스는 데이터베이스 연결, 쿼리 실행, 보안 관행, ORM 사용 방법 등 Vercel Postgres를 효율적으로 사용하기 위한 모든 기본 사항을 다룹니다.
+</Card>
+
+<Card href="/docs/vercel-storage/postgres/using-an-orm">
+### ORM 사용
+
+Vercel Postgres 데이터베이스에 접근하기 위한 다양한 ORM 사용법을 소개하는 가이드입니다.
+</Card>
+
+</div>

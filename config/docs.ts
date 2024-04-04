@@ -15,21 +15,6 @@ export const docsConfig: DocsConfig = {
               href: '/docs/getting-started/nextjs-foundation/about-nextjs',
               disabled: false,
             },
-            // {
-            //   title: 'JavaScript에서 React로',
-            //   href: '/docs/getting-started/nextjs-foundation/from-javascript-to-react',
-            //   disabled: false,
-            // },
-            // {
-            //   title: 'React에서 Next.js로',
-            //   href: '/docs/getting-started/nextjs-foundation/from-react-to-nextjs',
-            //   disabled: false,
-            // },
-            // {
-            //   title: 'Next.js 동작 방식',
-            //   href: '/docs/getting-started/nextjs-foundation/how-nextjs-works',
-            //   disabled: false,
-            // },
             {
               title: '앱 라우터',
               href: '/docs/getting-started/nextjs-foundation/app-router',
@@ -734,11 +719,6 @@ export const docsConfig: DocsConfig = {
             },
           ],
         },
-        // {
-        //   title: '서버/클라이언트 컴포넌트',
-        //   href: '/docs/react/server-client-components',
-        //   disabled: false,
-        // },
       ],
     },
     {
@@ -849,28 +829,148 @@ export const docsConfig: DocsConfig = {
         },
       ],
     },
-    // {
-    //   title: 'JavaScript',
-    //   href: '/docs/javascript',
-    //   items: [
-    //     {
-    //       title: 'Introduction',
-    //       href: '/docs/javascript',
-    //       disabled: true,
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: 'CSS',
-    //   href: '/docs/css',
-    //   items: [
-    //     {
-    //       title: 'Introduction',
-    //       href: '/docs/css',
-    //       disabled: true,
-    //     },
-    //   ],
-    // },
+    {
+      title: 'Tailwind CSS',
+      href: '/docs/tailwind-css',
+      items: [
+        {
+          title: '핵심 개념',
+          href: '/docs/tailwind-css/core-concepts',
+          items: [
+            {
+              title: 'Utility-First',
+              href: '/docs/tailwind-css/core-concepts/utility-first',
+              disabled: false,
+            },
+            {
+              title: 'Handling Hover',
+              href: '/docs/tailwind-css/core-concepts/hover-focus-and-other-states',
+              disabled: false,
+            },
+            {
+              title: 'Responsive Design',
+              href: '/docs/tailwind-css/core-concepts/responsive-design',
+              disabled: false,
+            },
+            {
+              title: 'Dark Mode',
+              href: '/docs/tailwind-css/core-concepts/dark-mode',
+              disabled: false,
+            },
+            {
+              title: 'Reusing Styles',
+              href: '/docs/tailwind-css/core-concepts/reusing-styles',
+              disabled: false,
+            },
+            {
+              title: 'Adding Custom Styles',
+              href: '/docs/tailwind-css/core-concepts/adding-custom-styles',
+              disabled: false,
+            },
+            {
+              title: 'Functions & Directives',
+              href: '/docs/tailwind-css/core-concepts/functions-and-directives',
+              disabled: false,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: 'Vercel 스토리지',
+      href: '/docs/vercel-storage',
+      items: [
+        {
+          title: 'KV',
+          href: '/docs/vercel-storage/kv',
+          items: [
+            {
+              title: '시작하기',
+              href: '/docs/vercel-storage/kv/quick-start',
+              disabled: false,
+            },
+            {
+              title: 'SDK 레퍼런스',
+              href: '/docs/vercel-storage/kv/sdk-reference',
+              disabled: false,
+            },
+            {
+              title: 'Rest API',
+              href: '/docs/vercel-storage/kv/rest-api',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: 'Postgres',
+          href: '/docs/vercel-storage/postgres',
+          items: [
+            {
+              title: '시작하기',
+              href: '/docs/vercel-storage/postgres/quick-start',
+              disabled: false,
+            },
+            {
+              title: 'SDK 레퍼런스',
+              href: '/docs/vercel-storage/postgres/sdk-reference',
+              disabled: false,
+            },
+            {
+              title: 'ORM 사용',
+              href: '/docs/vercel-storage/postgres/using-an-orm',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: 'Blob',
+          href: '/docs/vercel-storage/blob',
+          items: [
+            {
+              title: '서버 업로드 가이드',
+              href: '/docs/vercel-storage/blob/server-upload',
+              disabled: false,
+            },
+            {
+              title: '클라이언트 업로드 가이드',
+              href: '/docs/vercel-storage/blob/client-upload',
+              disabled: false,
+            },
+            {
+              title: 'SDK 레퍼런스',
+              href: '/docs/vercel-storage/blob/using-blob-sdk',
+              disabled: false,
+            },
+          ],
+        },
+        {
+          title: 'Edge Config',
+          href: '/docs/vercel-storage/edge-config',
+          items: [
+            {
+              title: '시작하기',
+              href: '/docs/vercel-storage/edge-config/quick-start',
+              disabled: false,
+            },
+            {
+              title: '사용 방법',
+              href: '/docs/vercel-storage/edge-config/using-edge-config',
+              disabled: false,
+            },
+            {
+              title: 'Vercel API로 관리',
+              href: '/docs/vercel-storage/edge-config/vercel-api',
+              disabled: false,
+            },
+            {
+              title: 'SDK 레퍼런스',
+              href: '/docs/vercel-storage/edge-config/edge-config-sdk',
+              disabled: false,
+            },
+          ],
+        },
+      ],
+    },
   ],
   mainNav: [
     {

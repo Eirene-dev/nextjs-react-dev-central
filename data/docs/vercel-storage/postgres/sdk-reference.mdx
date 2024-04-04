@@ -1,0 +1,157 @@
+---
+title: SDK 레퍼런스
+date: '2024-03-03 01:02'
+summary: Vercel KV 및 @vercel/postgres SDK 레퍼런스는 데이터베이스 연결, 쿼리 실행, 보안 관행, ORM 사용 방법 등 Vercel Postgres를 효율적으로 사용하기 위한 모든 기본 사항을 다룹니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## `@vercel/postgres`
+
+Vercel Postgres SDK에 대한 API 레퍼런스를 확인하세요.
+
+
+`@vercel/postgres` SDK는 Postgres 데이터베이스와 상호 작용하는 효율적인 방법을 제공합니다. 이는 `node-postgres` 라이브러리와 100% 호환됩니다. 다음 옵션을 사용할 수 있습니다.
+
+- `sql` (추천)
+- `db`
+- `createClient()`
+
+## sql
+
+`sql` [템플릿 리터럴 태그](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Template_literals#tagged_templates)를 사용하여 SQL 쿼리를 구성합니다. 이 함수는 쿼리를 네이티브 Postgres 매개변수화된 쿼리로 변환하여 [SQL 주입을 방지](https://vercel.com/docs/storage/vercel-postgres/sdk#preventing-sql-injections)하는 데 도움을 줍니다. 일회성 쿼리에 권장됩니다.
+
+sql 함수는 자동으로 풀링된 데이터베이스 연결을 생성하고 `process.env.POSTGRES_URL` 환경 변수에 지정된 데이터베이스에 연결합니다.
+
+```TypeScript
+import { sql } from '@vercel/postgres';
+ 
+const likes = 100;
+const { rows, fields } =
+  await sql`SELECT * FROM posts WHERE likes > ${likes} LIMIT 5;`;
+```
+
+
+## 응답 페이징 처리하기
+
+많은 수의 행을 가진 데이터베이스를 쿼리할 때, 자원 공격을 방지하기 위해 응답을 페이징 처리할 수 있습니다. 이는 쿼리에서 `LIMIT`과 `OFFSET` 절을 사용함으로써 가능합니다.
+
+```TypeScript
+import { sql } from '@vercel/postgres';
+ 
+const pageSize = 10; // 페이지당 레코드 수
+const pageNumber = 1; // 특정 페이지 번호
+ 
+const offset = (pageNumber - 1) * pageSize;
+ 
+// 특정 페이지 번호에 대한 레코드를 가져오며 페이지당 10개의 레코드를 반환
+const { rows, fields } =
+  await sql`SELECT * FROM posts \
+      WHERE likes > ${likes} LIMIT ${pageSize} OFFSET ${offset};`;
+```
+
+## 예시
+
+쿼리 | 설명
+--- | ---
+`CREATE TABLE posts (likes INT);` | 데이터베이스에 새로운 테이블 생성
+`SELECT * FROM posts;` | 데이터베이스의 모든 게시물 가져오기
+`SELECT * FROM posts WHERE likes > ${likes};` | 좋아요가 100개 이상인 모든 게시물 가져오기
+`INSERT INTO posts (likes) VALUES (${likes});` | 데이터베이스에 새로운 게시물 삽입
+`UPDATE posts SET likes = 200;` | 모든 게시물의 좋아요를 200으로 업데이트
+`DELETE FROM posts;` | 데이터베이스의 모든 게시물 삭제
+
+`sql`을 일반 함수처럼 호출할 수 없습니다. 시도할 경우 오류가 발생합니다. 이는 SQL 주입 가능성을 방지하기 위한 보안 조치입니다.
+
+> 데이터베이스 쿼리는 내장 데이터 브라우저에서 실행할 수 있습니다. 대시보드에서 Postgres 데이터베이스로 이동하여 데이터 탭을 클릭하세요.
+
+
+## SQL 주입 방지하기
+
+sql 템플릿 태그로 보낸 쿼리가 SQL 주입을 방지하는 방법은 다음과 같습니다.
+
+- SDK는 매개변수를 추출하여 배열에 추가합니다.
+- SDK는 쿼리 문자열과 매개변수 배열을 PostgreSQL 서버로 보냅니다. 이것을 [매개변수화된 쿼리](https://node-postgres.com/features/queries#parameterized-query)라고 하며, 현대 JavaScript SQL 라이브러리에서 일반적인 패턴입니다.
+- Postgres 서버는 매개변수를 정화하고 쿼리에 삽입합니다.
+- 마지막으로 쿼리가 실행됩니다.
+
+이 과정의 모든 단계에서, 최종적으로 매개변수가 서버에 의해 다시 대입될 때까지 쿼리를 실행할 수 없습니다. 그 시점까지 매개변수는 정화되었습니다.
+
+
+## db
+
+`db` 메서드를 사용하면 Postgres 데이터베이스에 연결할 클라이언트(풀링됨)를 생성할 수 있습니다. Vercel은 데이터베이스에 대한 연결을 자동으로 관리해줍니다.
+
+```TypeScript
+import { db } from '@vercel/postgres';
+ 
+const client = await db.connect();
+await client.sql`SELECT 1`;
+```
+
+여러 쿼리를 실행하거나 트랜잭션을 실행하려는 경우, `sql` 도우미보다 클라이언트를 생성하는 것이 선호됩니다. sql은 쿼리마다 연결합니다.
+
+환경 변수를 사용하여 기본 데이터베이스가 아닌 다른 데이터베이스에 연결하려면, `connectionString` 매개변수와 함께 `createPool()` 메서드를 사용할 수 있습니다. `createPool`에서 반환된 풀은 `node-postgres`의 `Pool` 클래스의 인스턴스입니다.
+
+
+## `createClient()`
+
+각 쿼리마다 개별 클라이언트를 생성, 연결, 해제할 수 있습니다. 이 방법은 `db`를 사용하는 것보다 효율적이지 않으며, 단일 클라이언트가 필요한 경우에만 사용해야 합니다.
+
+
+
+```TypeScript:api/handler.ts
+import { createClient } from '@vercel/postgres';
+ 
+async function queryPosts() {
+  const client = createClient();
+  await client.connect();
+ 
+  try {
+    const likes = 100;
+    const { rows, fields } =
+      await client.sql`SELECT * FROM posts WHERE likes > ${likes};`;
+  } finally {
+    await client.end();
+  }
+}
+```
+
+특정 데이터베이스에 연결하기 위해 `createClient`에 `connectionString` 매개변수를 선택적으로 전달할 수 있습니다. `connectionString`이 제공되지 않으면 SDK는 기본 `process.env.POSTGRES_URL_NON_POOLING` 환경 변수를 사용합니다.
+
+`createClient`에서 반환된 클라이언트는 `node-postgres`의 `Client` 클래스의 인스턴스입니다.
+
+## 연결 종료하기
+
+`createClient()`를 사용할 때, 쿼리가 끝난 후 연결을 반드시 종료해야 합니다. 이는 `client.end()`를 사용하여 수행할 수 있습니다.
+
+```TypeScript
+import { createClient } from '@vercel/postgres';
+ 
+const client = createClient();
+await client.connect();
+ 
+try {
+  await client.sql`SELECT 1`;
+} finally {
+  await client.end();
+}
+```
+
+## ORM 사용하기
+
+Vercel Postgres는 많은 인기 있는 ORM과 함께 사용할 수 있습니다. 일반적으로, 우리는 권장하는 ORM 중 하나나, 여러분이 선호하는 클라이언트를 사용하여 Postgres 데이터베이스에 접근할 것을 추천합니다.
+
+Vercel Postgres와 ORM을 사용하는 방법에 대해 더 알아보세요.
+
+### 지원되는 Postgres 쿼리
+
+`@vercel/postgres`는 모든 유효한 PostgreSQL 15 쿼리를 지원합니다. 더 많은 정보는 Postgres 호환성을 참조하세요.
+
+
+## 보안
+
+`@vercel/postgres`는 브라우저와 같은 공개적으로 접근 가능한 클라이언트에서 사용하지 마세요. 이는 데이터베이스 URL을 노출시켜 사용자에게 쓰기 권한을 부여할 수 있습니다. 이 SDK는 서버에서만 사용하는 것을 추천합니다.
+
+사용자 정의 입력을 포함하는 쿼리를 생성할 때는 항상 매개변수화된 쿼리, ORM 또는 쿼리 빌더를 사용하여 SQL 주입 공격의 가능성을 최소화하세요. `@vercel/postgres` 패키지의 `sql` 함수는 원시 쿼리를 매개변수화된 쿼리로 변환해줍니다.
+

@@ -1,0 +1,97 @@
+---
+title: 시작하기
+date: '2024-03-05 01:01'
+summary: 이 문서는 자바스크립트를 사용하여 Edge 설정을 시작하고 필수 조건을 충족시키며 Edge 설정 스토어를 생성하고 사용하는 방법을 단계별로 설명하는 퀵스타트 가이드입니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## Edge 설정 시작하기
+
+이 퀵스타트 가이드를 따라 몇 분 안에 Edge 설정에서 데이터를 읽기 시작할 수 있습니다.
+
+프로젝트의 Edge 설정 탭에서 새 스토어를 생성함으로써 Edge 설정에서 데이터 읽기를 시작할 수 있습니다. 아래 단계를 따라 어떻게 하는지 알아보세요.
+
+또한, 모든 사용 사례를 위해 계정 수준에서 Edge 설정을 생성하고 구성할 수 있습니다.
+
+- 계정 수준에서 Edge 설정 생성
+- 읽기 접근 토큰 생성
+- 연결 문자열 설정
+
+## 필수 조건
+
+Edge Config SDK를 설치하세요.
+
+```bash
+npm i @vercel/edge-config
+```
+
+기존 프로젝트가 필요합니다. 이 퀵스타트는 Next.js를 사용하지만, Edge Config 스토리지와 함께 사용할 수 있는 지원되는 프레임워크라면 어떤 것이든 사용할 수 있습니다.
+
+최신 버전의 Vercel CLI를 설치하거나 업데이트하세요.
+
+```bash
+npm i -g vercel@latest
+```
+
+## Edge 설정 퀵스타트
+
+이 퀵스타트에서는 Vercel 대시보드를 통해 프로젝트 수준에서 `hello_world_store`라는 Edge 설정을 생성합니다. 토큰과 연결 문자열을 저장하는 환경 변수 `EDGE_CONFIG`이 자동으로 생성됩니다. 우리는 스토어에 키-값 데이터 쌍을 업데이트할 것이며, 그 후 로컬 Next.js 프로젝트에서 `"greeting"`의 값을 읽을 것입니다.
+
+### 1. Edge 설정 스토어 생성하기
+Edge 설정 스토어를 추가하고자 하는 프로젝트로 이동하세요. Edge 설정 탭을 클릭한 다음, 연결 스토어 버튼을 클릭하세요.
+
+대화상자에서 `hello_world_store`를 입력하여 새 스토어를 생성하고, 생성을 클릭하세요.
+
+### 2.생성된 것 검토하기
+생성된 후 `hello_world_store`를 선택하여 당신을 위해 생성된 것의 요약을 확인하세요. 다음을 주목하세요.
+
+프로젝트를 선택하면 환경 변수를 사용하여 프로젝트가 Edge 설정에 연결되었음을 볼 수 있습니다. 프로젝트의 설정 > 환경 변수로 이동하면 새로 생성된 환경 변수를 볼 수 있습니다.
+토큰을 선택하면 읽기 접근 토큰을 볼 수 있습니다. 이 토큰과 EDGE CONFIG ID는 연결 문자열을 생성하는 데 사용됩니다. 이 연결 문자열은 `EDGE_CONFIG` 환경 변수의 값으로 저장됩니다. 이를 통해 프로젝트에서 SDK를 사용하여 스토어의 내용을 읽을 수 있습니다.
+
+### 3. 키-값 쌍 추가하기
+항목에서 다음 키-값 쌍을 추가하고 항목 저장을 클릭하세요.
+
+```json
+{
+  "greeting": "hello world"
+}
+```
+
+### 4. Vercel 프로젝트 연결하기
+스토어를 생성한 후에는 프로젝트를 설정하여 스토어의 내용을 읽을 수 있도록 해야 합니다. 대시보드의 코드에서 이를 사용하는 방법을 자세히 설명하지만, 다음 단계에서 더 자세히 설명합니다.
+
+로컬 머신에서 Vercel 프로젝트를 연결하세요. 아직 하지 않았다면 필수 조건에서 언급한 대로 Edge 설정 SDK를 설치하세요.
+
+### 5. 최신 환경 변수 가져오기
+Vercel CLI를 사용하여 최신 환경 변수, 특히 `EDGE_CONFIG`을 로컬 프로젝트에서 사용할 수 있도록 가져오세요.
+
+```bash
+vercel env pull .env.development.local
+```
+
+### 6. Edge 미들웨어 생성하기
+프로젝트의 루트에 `middleware.js`라는 새 파일을 생성하고 Next.js를 사용하는 경우 다음 코드를 추가하세요.
+
+```typescript
+import { NextResponse } from 'next/server';
+import { get } from '@vercel/edge-config';
+ 
+export const config = { matcher: '/welcome' };
+ 
+export async function middleware() {
+  const greeting = await get('greeting');
+  return NextResponse.json(greeting);
+}
+```
+
+NextResponse.json은 최소 Next v13.1이 필요하거나 `next.config.js`에서 `experimental.allowMiddlewareResponseBody`를 활성화해야 합니다.
+
+### 7. 애플리케이션 로컬에서 실행하기
+애플리케이션을 로컬에서 실행하고 `localhost:3000/welcome`을 방문하여 인사말을 확인하세요. 미들웨어는 `localhost:3000/welcome`로의 요청을 가로채고 Edge 설정 스토어에서 읽은 인사말로 응답합니다.
+
+이제 프로젝트는 SDK나 Vercel REST API를 사용하여 `hello_world_store` Edge 설정에서 더 많은 키-값 데이터 쌍을 읽을 준비가 되었습니다.
+
+
+
+

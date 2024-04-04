@@ -1,0 +1,724 @@
+---
+title: SDK 레퍼런스
+date: '2024-03-04 01:03'
+summary: 이 문서는 @vercel/blob SDK를 사용하여 Blob 스토어를 시작하고 관리하는 방법에 대한 종합적인 레퍼런스를 제공합니다.
+---
+
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## @vercel/blob
+Vercel Blob SDK를 사용하여 앱에서 Edge 함수를 통해 blob 스토어에 접근하는 방법을 배워보세요.
+
+
+## 시작하기
+Vercel Blob SDK를 사용하기 시작하려면 다음 단계를 따르세요.
+
+Vercel Blob은 모든 프론트엔드 프레임워크와 호환됩니다. 패키지 설치부터 시작하세요.
+
+```bash
+npm install @vercel/blob
+```
+
+### Blob 스토어 생성하기
+
+Blob 스토어를 추가하고 싶은 프로젝트로 이동하세요. 스토리지 탭을 선택한 다음 데이터베이스 연결 버튼을 클릭합니다.
+
+새로 생성 탭에서 Blob을 선택하고 계속하기 버튼을 누릅니다.
+
+스토어의 이름을 정하고 새 Blob 스토어 생성을 선택하세요. 읽기-쓰기 토큰을 포함시키고 싶은 환경을 선택하세요. 고급 옵션에서 환경 변수의 접두사도 업데이트할 수 있습니다.
+
+생성하면 Vercel Blob 스토어 페이지로 이동합니다.
+
+
+### 로컬 프로젝트 준비하기
+
+프로젝트에서 Blob 스토어를 생성하면 환경 변수가 자동으로 생성되어 프로젝트에 추가됩니다.
+
+- `BLOB_READ_WRITE_TOKEN`
+
+
+이 환경 변수를 로컬에서 사용하려면 Vercel CLI를 이용하여 로컬 프로젝트로 값을 가져오세요.
+
+```bash
+vercel env pull .env.development.local
+```
+
+## 읽기-쓰기 토큰
+
+Blob SDK와 상호작용하기 위해서는 읽기-쓰기 토큰이 필요합니다. Vercel 대시보드에서 Blob 스토어를 생성할 때, 토큰 값이 담긴 환경 변수가 자동으로 생성됩니다. 애플리케이션을 배포할 때 다음 옵션을 사용할 수 있습니다.
+
+- Blob 스토어가 위치한 동일한 Vercel 프로젝트에 애플리케이션을 배포하는 경우, 토큰 매개변수를 지정할 필요가 없습니다. 기본값이 스토어의 토큰 환경 변수와 동일하기 때문입니다.
+- 애플리케이션을 다른 Vercel 프로젝트나 범위에 배포하는 경우, 해당 위치에 환경 변수를 생성하고 Blob 스토어 설정에서 토큰 값을 이 변수에 할당할 수 있습니다. 그 다음 이 환경 변수를 토큰 매개변수로 설정합니다.
+- 애플리케이션을 Vercel 외부에 배포하는 경우, 스토어 설정에서 토큰 값을 복사하여 Blob SDK 메소드를 호출할 때 토큰 매개변수로 전달할 수 있습니다.
+
+
+## SDK 메소드 사용하기
+
+Blob SDK의 메소드를 사용하려면 Edge 함수, 서버리스 함수 또는 심지어 브라우저 내에서 호출해야 합니다. 아래 예시에서는 Edge 함수를 사용할 예정입니다.
+
+
+## Blob 업로드하기
+
+이 예제는 `multipart/form-data` 폼에서 파일을 받아 Blob 스토어에 업로드하는 Edge 함수를 생성합니다. 함수는 blob의 고유 URL을 반환합니다.
+
+```typescript:app/upload/route.ts
+import { put } from '@vercel/blob';
+ 
+export const runtime = 'edge';
+ 
+export async function PUT(request: Request) {
+  const form = await request.formData();
+  const file = form.get('file') as File;
+  const blob = await put(file.name, file, { access: 'public' });
+ 
+  return Response.json(blob);
+}
+```
+
+### `put()` 메소드
+
+`put` 메소드는 Blob 스토어에 blob 객체를 업로드합니다.
+
+- `put(pathname, body, options);`
+
+
+다음 매개변수를 받습니다.
+
+- `pathname`: (필수) 반환 URL의 기본값을 지정하는 문자열입니다.
+- `body`: (필수) ReadableStream, String, ArrayBuffer, Blob 중 하나로, 지원되는 본문 유형에 기반한 blob 객체입니다.
+- `options`: (필수) 다음 필수 및 선택 매개변수가 포함된 JSON 객체입니다.
+
+| 매개변수              | 필수여부 | 값                                            |
+|-------------------|------|---------------------------------------------|
+| `access`          | 예    | `public` - `private` 지원 예정                      |
+| `contentType`     | 아니요 | 미디어 유형을 나타내는 문자열. 기본적으로는 pathname의 확장자에서 추출됩니다. |
+| `token`           | 아니요 | 요청 시 사용할 토큰을 지정하는 문자열. Vercel에 배포할 때 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+| `addRandomSuffix` | 아니요 | pathname에 무작위 접미사를 추가할지 여부를 지정하는 불리언. 기본값은 `true`입니다. |
+| `cacheControlMaxAge` | 아니요 | 엣지 및 브라우저 캐시를 구성하기 위한 초 단위의 숫자. 기본값은 1년입니다. |
+| `multipart`       | 아니요 | 큰 파일을 업로드할 때 `multipart: true`로 설정. 파일을 여러 부분으로 나누어 병렬로 업로드하고 실패한 부분을 재시도합니다. |
+
+`put()`은 생성된 blob 객체에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "pathname": "문자열",
+  "contentType": "문자열",
+  "contentDisposition": "문자열",
+  "url": "문자열",
+  "downloadUrl": "문자열"
+}
+```
+
+blob 예시:
+
+```json
+{
+  "pathname": "profilesv1/user-12345.txt",
+  "contentType": "text/plain",
+  "contentDisposition": "attachment; filename=\"user-12345.txt\"",
+  "url": "https://ce0rcu23vrrdzqap.public.blob.vercel-storage.com/\
+      profilesv1/user-12345-NoOVGDVcqSPc7VYCUAGnTzLTG2qEM2.txt",
+  "downloadUrl": "https://ce0rcu23vrrdzqap.public.blob.vercel-storage.com/\
+      profilesv1/user-12345-NoOVGDVcqSPc7VYCUAGnTzLTG2qEM2.txt?download=1"
+}
+```
+
+`addRandomSuffix: false`로 업로드한 blob 예시:
+
+```json
+{
+  "pathname": "profilesv1/user-12345.txt",
+  "contentType": "text/plain",
+  "contentDisposition": "attachment; filename=\"user-12345.txt\"",
+  "url": "https://ce0rcu23vrrdzqap.public.blob.vercel-storage.com/\
+      profilesv1/user-12345.txt",
+  "downloadUrl": "https://ce0rcu23vrrdzqap.public.blob.vercel-storage.com/\
+      profilesv1/user-12345.txt?download=1"
+}
+```
+
+## 멀티파트 업로드
+
+큰 파일을 업로드할 때는 더 안정적인 업로드 과정을 위해 멀티파트 업로드를 사용해야 합니다. 멀티파트 업로드는 파일을 여러 부분으로 나누어 병렬로 업로드하고 실패한 부분을 재시도합니다. 이 과정은 멀티파트 업로드 생성, 부분 업로드, 업로드 완료의 세 단계로 구성됩니다. @vercel/blob은 멀티파트 업로드를 생성하는 세 가지 방법을 제공합니다.
+
+### 자동
+
+이 방법은 모든 것이 내장되어 있어 가장 쉽게 사용할 수 있습니다. `put` 및 `upload` API의 일부로, 내부적으로 업로드를 시작하고, 파일을 동일한 크기의 여러 부분으로 나누어 병렬로 업로드한 다음 업로드를 완료합니다.
+
+```typescript
+const blob = await put('large-movie.mp4', file, {
+  access: 'public',
+  multipart: true,
+});
+```
+
+### 수동
+
+이 방법은 멀티파트 업로드 과정을 전적으로 제어할 수 있게 합니다. 세 단계로 구성됩니다.
+
+#### 단계 1: 멀티파트 업로드 생성
+
+```typescript
+const multipartUpload = await createMultipartUpload(pathname, options);
+```
+
+`createMultipartUpload`는 다음 매개변수를 받습니다.
+
+- `pathname`: (필수) Blob 스토어 내의 경로를 지정하는 문자열입니다. 이는 반환 URL의 기본값이 되며 파일명과 확장자를 포함합니다.
+- `options`: (필수) 다음 필수 및 선택 매개변수가 포함된 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `access` | 예 | `public` - `private` 지원 예정 |
+| `contentType` | 아니요 | 미디어 유형을 나타내는 문자열. 기본적으로는 pathname의 확장자에서 추출됩니다. |
+| `token` | 아니요 | 요청 시 사용할 토큰을 지정하는 문자열. 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+| `addRandomSuffix` | 아니요 | pathname에 무작위 접미사를 추가할지 여부를 지정하는 불리언. 기본값은 `true`입니다. |
+| `cacheControlMaxAge` | 아니요 | 엣지 및 브라우저 캐시를 구성하기 위한 초 단위의 숫자. 기본값은 1년입니다. |
+
+`createMultipartUpload()`는 생성된 업로드에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "key": "문자열",
+  "uploadId": "문자열"
+}
+```
+
+#### 단계 2: 모든 부분 업로드
+
+멀티파트 업로더 과정에서 메모리 사용량과 병렬 업로드 요청을 관리해야 합니다. 각 부분은 최소 5MB여야 하며, 마지막 부분은 더 작을 수 있고, 모든 부분은 동일한 크기여야 합니다.
+
+```typescript
+const part = await uploadPart(pathname, chunkBody, options);
+```
+
+`uploadPart`는 다음 매개변수를 받습니다.
+
+- `pathname`: (필수) `createMultipartUpload`에 전달된 pathname과 동일한 값
+- `chunkBody`: (필수) 지원되는 본문 유형에 기반한 blob 객체
+- `options`: (필수) 다음 필수 및 선택 매개변수가 포함된 JSON 객체:
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `access` | 예 | `public` - `private` 지원 예정 |
+| `partNumber` | 예 | 업로드되는 부분을 식별하는 숫자 |
+| `key` | 예 | `createMultipartUpload`에서 반환된 blob 객체를 식별하는 문자열 |
+| `uploadId` | 예 | `createMultipartUpload`에서 반환된 멀티파트 업로드를 식별하는 문자열 |
+
+`uploadPart()`는 업로드된 부분에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "etag": "문자열",
+  "partNumber": "문자열"
+}
+```
+
+#### 단계 3: 멀티파트 업로드 완료
+
+```typescript
+const blob = await completeMultipartUpload(pathname, parts, options);
+```
+
+`completeMultipartUpload`는 생성된 blob 객체에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "pathname": "문자열",
+  "contentType": "문자열",
+  "contentDisposition": "문자열",
+  "url": "문자열",
+  "downloadUrl": "문자열"
+}
+```
+
+
+## 업로더
+
+수동 과정보다 간결한 방법은 멀티파트 업로더 메소드입니다. 이는 수동 멀티파트 업로드 과정을 래핑하고 세 멀티파트 단계 모두에 대해 동일한 데이터를 처리합니다. 이로 인해 API가 더 간단해지지만, 여전히 메모리 사용량과 병렬 업로드 요청을 관리해야 합니다.
+
+### 단계 1: 멀티파트 업로더 생성
+
+```typescript
+const uploader = await createMultipartUploader(pathname, options);
+```
+
+`createMultipartUploader`는 다음 매개변수를 받습니다.
+
+- `pathname`: (필수) Blob 스토어 내의 경로를 지정하는 문자열입니다. 이는 반환 URL의 기본값이 되며 파일명과 확장자를 포함합니다.
+- `options`: (필수) 다음 필수 및 선택 매개변수가 포함된 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `access` | 예 | `public` - `private` 지원 예정 |
+| `contentType` | 아니요 | 미디어 유형을 나타내는 문자열. 기본적으로는 pathname의 확장자에서 추출됩니다. |
+| `token` | 아니요 | 요청 시 사용할 토큰을 지정하는 문자열. 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+| `addRandomSuffix` | 아니요 | pathname에 무작위 접미사를 추가할지 여부를 지정하는 불리언. 기본값은 `true`입니다. |
+| `cacheControlMaxAge` | 아니요 | 엣지 및 브라우저 캐시를 구성하기 위한 초 단위의 숫자. 기본값은 1년입니다. |
+
+`createMultipartUploader()`는 다음 메소드를 가진 Uploader 객체를 반환합니다.
+
+```json
+{
+  "key": "문자열",
+  "uploadId": "문자열",
+  "uploadPart": "함수",
+  "complete": "함수"
+}
+```
+
+### 단계 2: 모든 부분 업로드
+
+멀티파트 업로더 과정에서 메모리 사용량과 병렬 업로드 요청을 관리해야 합니다. 각 부분은 최소 5MB여야 하며, 마지막 부분은 더 작을 수 있고, 모든 부분은 동일한 크기여야 합니다.
+
+```typescript
+const part = await uploader.uploadPart(partNumber, chunkBody);
+```
+
+`uploader.uploadPart()`는 업로드된 부분에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "etag": "문자열",
+  "partNumber": "문자열"
+}
+```
+
+### 단계 3: 멀티파트 업로드 완료
+
+```typescript
+const blob = await uploader.complete(partNumber, chunkBody);
+```
+
+`uploader.complete()`는 생성된 blob 객체에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "pathname": "문자열",
+  "contentType": "문자열",
+  "contentDisposition": "문자열",
+  "url": "문자열",
+  "downloadUrl": "문자열"
+}
+```
+
+
+## Blob 삭제하기
+
+이 예시는 Blob 스토어에서 blob 객체를 삭제하는 Edge 함수를 생성합니다.
+
+
+```typescript:app/delete/route.ts
+import { del } from '@vercel/blob';
+ 
+export const runtime = 'edge';
+ 
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const urlToDelete = searchParams.get('url') as string;
+  await del(urlToDelete);
+ 
+  return new Response();
+}
+```
+
+### `del()`
+
+`del` 메소드는 Blob 스토어에서 blob 객체를 삭제합니다.
+
+```plaintext
+del(url, options);
+```
+
+다음 매개변수를 받습니다.
+
+- `url`: (필수) 삭제할 blob 객체의 고유 URL을 지정하는 문자열 또는 문자열 배열입니다.
+- `options`: (선택) 다음 선택 매개변수를 포함하는 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `token` | 아니요 | 요청 시 사용할 읽기-쓰기 토큰을 지정하는 문자열입니다. 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+
+`del()`은 응답을 반환하지 않습니다. blob URL이 존재하면 삭제 작업은 항상 성공합니다. blob URL이 존재하지 않아도 삭제 작업은 예외를 발생시키지 않습니다.
+
+
+## Blob 메타데이터 가져오기
+
+이 예제는 blob 객체의 메타데이터를 반환하는 Edge 함수를 생성합니다.
+
+```typescript:app/get-blob/route.ts
+import { head } from '@vercel/blob';
+ 
+export const runtime = 'edge';
+ 
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const blobUrl = searchParams.get('url');
+  const blobDetails = await head(blobUrl);
+ 
+  return Response.json(blobDetails);
+}
+```
+
+### `head()`
+
+`head` 메소드는 blob 객체의 메타데이터를 반환합니다.
+
+```plaintext
+head(url, options);
+```
+
+다음 매개변수를 받습니다.
+
+- `url`: (필수) 읽을 blob 객체의 고유 URL을 지정하는 문자열입니다.
+- `options`: (선택) 다음 선택 매개변수를 포함하는 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `token` | 아니요 | 요청 시 사용할 읽기-쓰기 토큰을 지정하는 문자열입니다. 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+
+`head()`는 다음 중 하나를 반환합니다.
+
+- 요청된 blob 객체의 메타데이터를 포함하는 JSON 객체
+- blob 객체를 찾을 수 없을 경우 BlobNotFoundError 예외 발생
+
+```json
+{
+  "size": "숫자",
+  "uploadedAt": "날짜",
+  "pathname": "문자열",
+  "contentType": "문자열",
+  "contentDisposition": "문자열",
+  "url": "문자열",
+  "downloadUrl": "문자열",
+  "cacheControl": "문자열"
+}
+```
+
+## Blob 목록 조회하기
+
+이 예제는 Blob 스토어에 있는 blob 객체의 목록을 반환하는 Edge 함수를 생성합니다.
+
+```typescript:app/get-blobs/route.ts
+import { list } from '@vercel/blob';
+ 
+export const runtime = 'edge';
+ 
+export async function GET(request: Request) {
+  const { blobs } = await list();
+  return Response.json(blobs);
+}
+```
+
+### `list()`
+
+`list` 메소드는 Blob 스토어에 있는 blob 객체의 목록을 반환합니다.
+
+```plaintext
+list(options);
+```
+
+다음 매개변수를 받습니다.
+
+- `options`: (선택) 다음 선택 매개변수를 포함하는 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `token` | 아니요 | 요청 시 사용할 읽기-쓰기 토큰을 지정하는 문자열입니다. 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+| `limit` | 아니요 | 반환할 blob 객체의 최대 수를 지정하는 숫자입니다. 기본값은 1000입니다. |
+| `prefix` | 아니요 | 특정 폴더에 포함된 blob 객체를 필터링하는 데 사용되는 문자열입니다. blob 객체가 업로드될 때 폴더 이름이 pathname에 사용되었다고 가정합니다. |
+| `cursor` | 아니요 | 결과의 페이징을 위해 이전 응답에서 얻은 문자열입니다. |
+| `mode` | 아니요 | 응답 형식을 지정하는 문자열입니다. `expanded`(기본값) 또는 `folded`가 될 수 있습니다. `folded` 모드에서는 폴더 내에 위치한 모든 blobs가 단일 폴더 문자열 항목으로 접힙니다. |
+
+`list()`는 다음 형식의 JSON 객체를 반환합니다.
+
+```json
+{
+  "blobs": [
+    {
+      "size": "숫자",
+      "uploadedAt": "날짜",
+      "pathname": "문자열",
+      "url": "문자열",
+      "downloadUrl": "문자열"
+    }
+  ],
+  "cursor": "문자열",
+  "hasMore": "불리언",
+  "folders": ["문자열"]
+}
+```
+
+### 페이징
+
+blob 객체의 긴 목록(기본 목록 제한은 1000개)을 처리할 때는 아래 예시와 같이 `cursor`와 `hasMore` 매개변수를 사용하여 결과를 페이징할 수 있습니다.
+
+```typescript
+let hasMore = true;
+let cursor;
+ 
+while (hasMore) {
+  const listResult = await list({
+    cursor,
+  });
+  hasMore = listResult.hasMore;
+  cursor = listResult.cursor;
+}
+```
+
+### 폴더
+
+Blob 스토어에서 폴더를 검색하려면 `list` 연산의 응답 형식을 변경하기 위해 `mode` 매개변수를 조정하세요. `mode`의 기본값은 `expanded`로, 객체의 단일 배열로 모든 blob을 반환합니다.
+
+대안으로, `mode`를 `folded`로 설정하여 폴더 내에 위치한 모든 blob을 단일 항목으로 묶을 수 있습니다. 이러한 항목들은 응답에서 폴더로 포함될 것입니다. 폴더에 위치하지 않은 blob은 여전히 `blobs` 속성에서 반환됩니다.
+
+`folded` 모드를 사용하면 폴더를 효율적으로 검색한 후 반환된 폴더를 접두사로 사용하여 그 안의 blob을 나열할 수 있습니다. `prefix` 매개변수를 전혀 생략하면 스토어의 루트에 있는 모든 폴더가 반환됩니다. blob의 경로명과 폴더 이름은 항상 전체 경로로 표시되며, 전달한 접두사에 상대적이지 않음을 유의하세요.
+
+```typescript
+const {
+  folders: [firstFolder],
+  blobs: rootBlobs,
+} = await list({ mode: 'folded' });
+ 
+const { folders, blobs } = 
+    await list({ mode: 'folded', prefix: firstFolder });
+```
+
+## Blob 복사하기
+
+이 예제는 기존 blob을 스토어의 새 경로로 복사하는 Edge 함수를 생성합니다.
+
+
+```typescript:app/copy-blob/route.ts
+import { copy } from '@vercel/blob';
+ 
+export const runtime = 'edge';
+ 
+export async function PUT(request: Request) {
+  const form = await request.formData();
+ 
+  const fromUrl = form.get('fromUrl') as string;
+  const toPathname = form.get('toPathname') as string;
+ 
+  const blob = await copy(fromUrl, toPathname, { access: 'public' });
+ 
+  return Response.json(blob);
+}
+```
+
+### `copy()`
+
+`copy` 메소드는 기존 blob 객체를 Blob 스토어 내의 새 경로로 복사합니다.
+
+소스 blob에서 `contentType`과 `cacheControlMaxAge`는 복사되지 않습니다. 이 값들이 복사본에도 적용되어야 한다면, `options` 객체에 다시 정의해야 합니다.
+
+`put()`과는 달리, `addRandomSuffix`의 기본값은 `false`입니다. 이는 blob URL에 자동 무작위 ID 접미사가 추가되지 않음을 의미하며, `addRandomSuffix: true`를 전달하지 않는 이상 기본적으로 파일을 덮어쓰게 됩니다. 이는 또한 `copy()`가 이미 존재하는 경로명을 대상으로 하는 경우 기본적으로 파일을 덮어쓰게 됨을 의미합니다.
+
+- `copy(fromUrl, toPathname, options);`
+
+
+다음 매개변수를 받습니다.
+
+- `fromUrl`: (필수) 이미 존재하는 blob을 식별하는 blob URL입니다.
+- `toPathname`: (필수) Blob 스토어 내의 새 경로를 지정하는 문자열입니다. 이는 반환 URL의 기본값이 됩니다.
+- `options`: (필수) 다음 필수 및 선택 매개변수를 포함하는 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `access` | 예 | `public` - `private` 지원 예정 |
+| `contentType` | 아니요 | 미디어 유형을 나타내는 문자열입니다. 기본적으로는 `toPathname`의 확장자에서 추출됩니다. |
+| `token` | 아니요 | 요청 시 사용할 토큰을 지정하는 문자열입니다. 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+| `addRandomSuffix` | 아니요 | pathname에 무작위 접미사를 추가할지 여부를 지정하는 불리언입니다. 기본값은 `false`입니다. |
+| `cacheControlMaxAge` | 아니요 | 엣지 및 브라우저 캐시를 구성하기 위한 초 단위의 숫자입니다. 기본값은 1년입니다. |
+
+`copy()`는 복사된 blob 객체에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "pathname": "문자열",
+  "contentType": "문자열",
+  "contentDisposition": "문자열",
+  "url": "문자열",
+  "downloadUrl": "문자열"
+}
+```
+
+blob 예시:
+
+```json
+{
+  "pathname": "profilesv1/user-12345-copy.txt",
+  "contentType": "text/plain",
+  "contentDisposition": "attachment; \
+      filename=\"user-12345-copy.txt\"",
+  "url": "https://ce0rcu23vrrdzqap.public.\
+      blob.vercel-storage.com/profilesv1/user-12345-copy.txt",
+  "downloadUrl": "https://ce0rcu23vrrdzqap.public.\
+      blob.vercel-storage.com/profilesv1/user-12345-copy.txt?download=1"
+}
+```
+
+## 클라이언트 업로드
+
+클라이언트 업로드 퀵스타트 문서에서 볼 수 있듯이, 클라이언트(예: 브라우저)에서 직접 Blob 스토어로 파일을 업로드할 수 있습니다.
+
+모든 클라이언트 업로드 관련 메소드는 `@vercel/blob/client` 아래에서 사용할 수 있습니다.
+
+### `upload()`
+
+`upload` 메소드는 클라이언트 업로드 전용입니다. 이 메소드는 blob 업로드 전에 서버에서 `handleUploadUrl`을 사용하여 클라이언트 토큰을 가져옵니다. 클라이언트 업로드 문서를 읽어보면 더 많은 정보를 얻을 수 있습니다.
+
+- `upload(pathname, body, options);`
+
+다음 매개변수를 받습니다.
+
+- `pathname`: (필수) 반환 URL의 기본값을 지정하는 문자열입니다.
+- `body`: (필수) 지원되는 본문 유형에 기반한 blob 객체입니다.
+- `options`: (필수) 다음 필수 및 선택 매개변수를 포함하는 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `access` | 예 | `public` - `private` 지원 예정 |
+| `contentType` | 아니요 | 미디어 유형을 나타내는 문자열입니다. 기본적으로는 `pathname`의 확장자에서 추출됩니다. |
+| `handleUploadUrl` | 예* | 클라이언트 업로드를 위한 클라이언트 토큰을 생성하기 위해 호출할 경로를 지정하는 문자열입니다. |
+| `clientPayload` | 아니요 | `handleUpload` 서버 코드로 보낼 문자열입니다. 예: 이미지가 관련된 게시물 ID를 첨부하는 경우. 데이터베이스를 업데이트하는 데 사용할 수 있습니다. |
+| `multipart` | 아니요 | 큰 파일을 업로드할 때 `multipart: true`로 설정합니다. 파일을 여러 부분으로 나누어 병렬로 업로드하고 실패한 부분을 재시도합니다. |
+
+`upload()`는 생성된 blob 객체에 대한 다음 데이터를 포함하는 JSON 객체를 반환합니다.
+
+```json
+{
+  "pathname": "문자열",
+  "contentType": "문자열",
+  "contentDisposition": "문자열",
+  "url": "문자열",
+  "downloadUrl": "문자열"
+}
+```
+
+예시 URL:
+
+`url: "https://ce0rcu23vrrdzqap.public.blob.vercel-storage.com/profilesv1/user-12345-NoOVGDVcqSPc7VYCUAGnTzLTG2qEM2.txt"`
+
+
+### `handleUpload()`
+
+클라이언트 업로드를 관리하기 위한 서버 측 라우트 헬퍼로, 두 가지 책임이 있습니다.
+
+- 클라이언트 업로드를 위한 토큰 생성
+- 클라이언트 업로드 완료를 청취하여 예를 들어 업로드된 파일의 URL로 데이터베이스를 업데이트
+
+```plaintext
+handleUpload(options);
+```
+
+다음 매개변수를 받습니다.
+
+- `options`: (필수) 다음 매개변수를 포함하는 JSON 객체입니다.
+
+| 매개변수 | 필수여부 | 값 |
+| --- | --- | --- |
+| `token` | 아니요 | 요청 시 사용할 읽기-쓰기 토큰을 지정하는 문자열입니다. 기본값은 `process.env.BLOB_READ_WRITE_TOKEN`입니다. |
+| `request` | 예 | 취할 행동을 결정하기 위해 사용되는 IncomingMessage 또는 Request 객체입니다. |
+| `onBeforeGenerateToken` | 예 | 클라이언트 업로드를 위한 클라이언트 토큰을 생성하기 바로 전에 호출될 함수입니다. 사용법은 아래를 참조하세요. |
+| `onUploadCompleted` | 예 | 클라이언트 업로드가 완료되었을 때 Vercel Blob에 의해 호출될 함수입니다. 업로드된 blob URL로 데이터베이스를 업데이트하는 데 유용합니다. |
+| `body` | 예 | 요청 본문입니다. |
+
+`handleUpload()`는 반환합니다.
+
+```plaintext
+Promise<
+  | { type: 'blob.generate-client-token'; clientToken: string }
+  | { type: 'blob.upload-completed'; response: 'ok' }
+>
+```
+
+
+### 클라이언트 업로드 라우트
+
+다음은 `handleUpload()`를 사용하는 Next.js App Router 라우트 핸들러의 예시입니다.
+
+```typescript:app/api/post/upload/route.ts
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import { NextResponse } from 'next/server';
+ 
+// 사용 사례: 블로그 게시물을 위한 이미지 업로드
+export async function POST(request: Request): Promise<NextResponse> {
+  const body = (await request.json()) as HandleUploadBody;
+ 
+  try {
+    const jsonResponse = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        // 브라우저가 파일을 업로드할 수 있는 클라이언트 토큰 생성
+        // ⚠️ 토큰 생성 전 사용자 인증 및 권한 부여
+        // 그렇지 않으면 익명 업로드를 허용하게 됩니다.
+ 
+        // ⚠️ clientPayload 기능 사용 시, 앱의 보안 문제를 초래할 수 있으므로
+        // 검증이 필요합니다. 예를 들어 사용자가 다른 사용자의 게시물을 수정할 수 있습니다.
+ 
+        return {
+          // 선택 사항, 기본값은 모든 콘텐츠 유형
+          allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif'], 
+          tokenPayload: JSON.stringify({
+            // 선택 사항, 업로드 완료 시 서버로 전송됨
+            // 인증에서 사용자 ID 또는 clientPayload에서 값을 전달할 수 있음
+          }),
+        };
+      },
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // 클라이언트 업로드 완료 알림
+        // ⚠️ `localhost` 웹사이트에서는 작동하지 않음
+        // ngrok 또는 유사 서비스를 사용하여 전체 업로드 흐름을 경험하세요
+ 
+        console.log('blob 업로드 완료', blob, tokenPayload);
+ 
+        try {
+          // 파일 업로드 완료 후 로직 실행
+        } catch (error) {
+          throw new Error('게시물을 업데이트할 수 없음');
+        }
+      },
+    });
+ 
+    return NextResponse.json(jsonResponse);
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 400 }, // 웹훅은 200을 받을 때까지 5번 재시도
+    );
+  }
+}
+```
+
+## 에러 처리하기
+
+SDK를 사용하여 요청을 할 때, 다음과 같은 이유로 요청이 실패하면 에러를 반환합니다.
+
+- 필수 매개변수 누락
+- 유효하지 않은 토큰 또는 Blob 객체에 접근할 수 있는 권한이 없는 토큰
+- 중단된 Blob 스토어
+- Blob 파일 또는 Blob 스토어를 찾을 수 없음
+- 예상치 못한 또는 알 수 없는 에러
+
+이러한 에러를 포착하려면, 아래와 같이 요청을 `try/catch` 구문으로 감싸세요.
+
+```typescript
+import { put, BlobAccessError } from '@vercel/blob';
+ 
+try {
+  await put(...);
+} catch (error) {
+  if (error instanceof BlobAccessError) {
+    // 인식된 에러 처리
+  } else {
+    // 알 수 없는 에러인 경우 다시 throw
+    throw error;
+  }
+}
+```
+
+
+

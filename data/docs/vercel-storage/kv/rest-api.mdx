@@ -1,0 +1,338 @@
+---
+title: KV Rest API
+date: '2024-03-02 01:04'
+summary: 시작하기부터 환경 변수 없이 요청하기, 읽기 전용 API 토큰 사용, 기본 명령어와 JSON, 이진 데이터로 명령어 보내기, 다중 명령어 처리(파이프라이닝 및 트랜잭션)와 오류 처리에 이르기까지 Vercel KV 데이터베이스를 효과적으로 활용하는 방법을 단계별로 안내합니다.
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+
+## Vercel KV Rest API
+
+Vercel KV Rest API를 통해 KV 데이터베이스에 접근하고 사용하는 방법을 배워보세요.
+
+다음 방법으로 Vercel KV에 Redis 명령어를 보낼 수 있습니다.
+
+- 어떤 Redis 클라이언트도
+- Vercel KV SDK
+- Vercel KV API
+
+> Redis 클라이언트를 사용하지 않거나, Node.js 또는 Edge를 지원하지 않는 런타임을 사용하는 경우에만 Vercel KV API를 사용해야 합니다.
+
+
+
+## 시작하기
+
+Vercel KV API를 사용하기 위해서는 프로젝트를 연결할 때 Vercel이 생성하는 데이터베이스의 REST API URL과 REST API 토큰이 필요합니다. 이 URL과 토큰은 프로젝트 대시보드의 다음 환경 변수에서 찾을 수 있습니다.
+
+- `KV_REST_API_URL`
+- `KV_REST_API_TOKEN`
+
+로컬에서 이러한 환경 변수에 접근하려면 Vercel CLI를 사용하여 프로젝트의 루트 디렉토리에서 다음 명령어를 실행하세요.
+
+```bash
+vercel env pull .env.development.local
+```
+
+코드 내에서 환경 변수를 `process.env`를 통해 사용할 수 있습니다.
+
+
+
+```TypeScript:basic-request-example.ts
+fetch(`${process.env.KV_REST_API_URL}`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+또는 요청을 인증하기 위해 `_token` 쿼리 매개변수를 사용할 수 있습니다.
+
+
+
+```TypeScript:token-param-example.ts
+const { KV_REST_API_URL, KV_REST_API_TOKEN } = process.env;
+ 
+fetch(`${KV_REST_API_URL}?_token=${KV_REST_API_TOKEN}`)
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+### 환경 변수 없이 요청하기
+프로젝트에 KV 데이터베이스를 연결하면 Vercel은 API URL을 자동으로 생성합니다. 이는 데이터베이스 정보 페이지의 엔드포인트 섹션에서 찾을 수 있습니다.
+
+API URL로 요청을 만들려면 대시보드 퀵스타트의 Fetch 탭에 있는 코드를 사용하여 `Authorization` 헤더에 API 토큰을 전달하세요:
+
+### 읽기 전용 API 토큰
+Vercel KV는 읽기 명령에만 접근을 허용하는 읽기 전용 API 토큰도 생성합니다. `KEYS` 명령도 비활성화됩니다. 읽기 전용 토큰에는 `KV_REST_API_READ_ONLY_TOKEN` 환경 변수를 통해 접근할 수 있습니다.
+
+
+## 기본 명령어 보내기
+
+기본 명령어는 두 가지 방법으로 보낼 수 있습니다.
+
+- API URL의 경로에 명령어를 추가하여, 각 명령어 요소를 `'/'`로 구분된 자신의 경로로 분리합니다.
+- 값에 슬래시가 포함된 경우, 예를 들어 `'redirectURL'`이라는 키를 'https://example.com'으로 설정하는 경우, 명령어를 본문에서 보내야 합니다.
+
+POST 요청의 본문에 Redis 명령어를 보내어 KV API URL로 명령어를 보냅니다. 명령어의 각 매개변수를 배열의 항목으로 분리해야 합니다. 명령어는 Redis 프로토콜이 허용하는 만큼의 매개변수를 가질 수 있습니다.
+
+### Set
+`[path]/set/{key}/{value}/{options}`
+
+#### 예시
+
+경로에서 정의:
+
+
+
+```TypeScript:define-in-path-example.ts
+// SET userId abc EX 100
+fetch(`${process.env.KV_REST_API_URL}/set/userId/abc/ex/100`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+본문에서 정의:
+
+
+
+```TypeScript:request-body-example.ts
+fetch(`${process.env.KV_REST_API_URL}/`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+  body: '["HSET", "sessionData", "username", "exampleUser123"]',
+  method: 'POST',
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+매개변수 | 필수 | 유형 | 설명
+--- | --- | --- | ---
+`key` | 예 | string | 키의 이름
+`value` | 예 | string, number, or boolean | 설정할 값
+`options` | 아니요 | object | 명령어 인자가 될 수 있는 키를 가진 객체
+
+### Get
+`[path]/get/{key}`
+
+#### 예시
+
+경로에서 정의:
+
+
+
+```TypeScript:define-in-path-example.ts
+fetch(`${process.env.KV_REST_API_URL}/get/userId`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+본문에서 정의:
+
+
+```TypeScript:request-body-example.ts
+fetch(`${process.env.KV_REST_API_URL}/`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+  body: '["GET", "userId"]',
+  method: 'POST',
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+매개변수 | 필수 | 유형 | 설명
+--- | --- | --- | ---
+key | 예 | string | 키의 이름
+
+
+## JSON 데이터로 명령어 보내기
+
+- url = `${process.env.KV_REST_API_URL}/set/{key}`
+- method = POST
+- Body = JSON 객체
+
+### 예시 코드
+
+
+
+```TypeScript:example-fetch.ts
+// SET userSession jsonObject
+fetch(`${process.env.KV_REST_API_URL}/set/userSession`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+  body: JSON.stringify({
+    sessid: '12345',
+    session_name: 'abcdef',
+    user: {
+      uid: 31,
+      name: 'test_user',
+      mail: 'user@example.com',
+    },
+  }),
+  method: 'POST',
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+### 경로 매개변수
+
+경로 매개변수 | 필수 | 유형 | 설명
+--- | --- | --- | ---
+`key` | 예 | string | 키의 이름
+
+
+## 이진 데이터로 명령어 보내기
+
+이 기능을 통해 사용자 파일 내용을 KV 데이터베이스에 저장할 수 있습니다.
+
+### 엔드포인트:
+
+- url = `${process.env.KV_REST_API_URL}/set/binaryKey`
+- method = POST
+- Body = 이진 데이터, HTML `<input>` 요소를 통해 첨부된 파일과 같은
+
+### 예시
+
+
+
+```TypeScript:file-input.tsx
+export default function FileInput() {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+ 
+  function setFileToKey() {
+    if (!fileInputRef?.current?.files) {
+      return console.log('파일을 찾을 수 없습니다');
+    }
+    fetch(`${process.env.KV_REST_API_URL}/set/binaryKey`, {
+      headers: {
+        Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+      },
+      body: fileInputRef.current.files[0],
+      method: 'POST',
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  }
+ 
+  return (
+    <>
+      <input ref={fileInputRef} type="file" />
+      <button onClick={setFileToKey}>파일 업로드</button>
+    </>
+  );
+}
+```
+
+이 예시는 사용자가 파일 입력을 통해 선택한 파일을 KV 데이터베이스에 이진 키로 저장하는 방법을 보여줍니다.
+
+
+## 다중 명령어 보내기
+
+Rest API를 통해 KV 데이터베이스에 다중 명령어를 보내는 두 가지 방법이 있습니다.
+
+- **파이프라이닝** - 파이프라이닝은 하나의 네트워크 요청에서 여러 명령어를 실행합니다. 그러나 파이프라이닝은 원자적이지 않으므로, 다른 클라이언트 요청이 사이에 처리될 수 있습니다.
+- **트랜잭션** - 트랜잭션을 사용하면 하나의 네트워크 요청으로 KV 데이터베이스에 여러 명령어를 보낼 수 있습니다. 그러나 트랜잭션은 원자적으로 실행되어, 트랜잭션의 명령어 사이에 다른 클라이언트 인스턴스에서 보낸 명령어가 실행되지 않습니다.
+
+### 파이프라이닝 사용하기
+
+엔드포인트:
+
+- url= `${process.env.KV_REST_API_URL}/pipeline`
+- method = POST
+- Body = 표준 Redis 명령어처럼 동일한 순서로 인수를 정의한 이차원 배열의 Redis 명령어
+
+#### 예시
+
+
+
+```TypeScript:pipelining-example.ts
+fetch(`${process.env.KV_REST_API_URL}/pipeline`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+  // SET userEmail example@example.com EX 100
+  // GET userEmail
+  body: `[
+    ["SET", "userEmail", "example@example.com", "EX", 100],
+    ["GET", "userEmail"]
+  ]`,
+  method: 'POST',
+})
+  .then((response) => response.json())
+  .then((data) => console.table(data));
+```
+
+### Redis 트랜잭션 보내기
+
+엔드포인트:
+
+- url = `${process.env.KV_REST_API_URL}/multi-exec`
+- method = POST
+- Body = 표준 Redis 명령어처럼 동일한 순서로 인수를 정의한 이차원 배열의 Redis 명령어
+
+#### 예시
+
+
+
+```TypeScript:transaction-example.ts
+fetch(`${process.env.KV_REST_API_URL}/multi-exec`, {
+  headers: {
+    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+  },
+  // HSET sessionData userEmail example@example.com
+  // HGET sessionData userEmail
+  body: `[
+    ["HSET", "sessionData", "userEmail", "example@example.com"],
+    ["HGET", "sessionData", "userEmail"]
+  ]`,
+  method: 'POST',
+})
+  .then((response) => response.json())
+  .then((data) => console.table(data));
+```
+
+### 응답
+
+트랜잭션이 성공하면 명령어 순서대로 결과 객체의 배열로 응답합니다. 다음은 예시 응답 배열입니다.
+
+트랜잭션 응답 예시
+
+```json
+[
+  {
+    "result": "OK"
+  },
+  {
+    "result": "example@example.com"
+  }
+]
+```
+
+## 오류
+
+다음 표는 API 요청으로부터 받을 수 있는 가능한 HTTP 응답들과 그 의미를 나타냅니다.
+
+| HTTP 코드 | HTTP 상태           | 의미                                                 |
+|--------|------------------|----------------------------------------------------|
+| 200    | OK               | 명령어가 성공적으로 실행되었습니다.                                    |
+| 400    | Bad Request      | 명령어가 유효하지 않거나 지원되지 않으며, 구문 오류가 있거나 실행에 실패했습니다. |
+| 401    | Unauthorized     | 인증에 실패했습니다. 일반적으로 API 토큰이 유효하지 않거나 누락되었기 때문입니다.    |
+| 405    | Method Not Allowed | 지원되지 않는 HTTP 메서드를 사용했습니다. API 요청 시 HEAD, GET, POST, PUT 메서드만 허용됩니다. |
+

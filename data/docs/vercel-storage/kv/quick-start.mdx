@@ -1,0 +1,119 @@
+---
+title: KV 시작하기
+date: '2024-03-02 01:01'
+summary: Vercel KV로 내구성 있는 Redis 사용하기
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+이 빠른 시작 가이드에서는 다음을 수행하는 방법을 배웁니다.
+
+- 프로젝트에 연결된 `my-store`라는 KV 스토어 생성
+- Vercel 대시보드를 사용하여 데이터베이스 생성 및 관리 방법 확인
+- CLI를 사용하여 KV 스토어 채우기
+- SDK를 사용하여 KV 스토어 조회하기
+- Vercel KV 작동 방식에 대해 자세히 알아보기
+
+## 전제 조건
+Vercel KV는 모든 프론트엔드 프레임워크 또는 독립형 Redis 데이터베이스와 함께 작동합니다. 먼저 패키지를 설치하세요.
+
+```bash
+npm i @vercel/kv
+```
+그런 다음, 환경 변수를 검색하기 위해 Vercel CLI를 설치합니다.
+
+```bash
+npm i -g vercel@latest
+```
+
+## 빠른 시작
+### KV 데이터베이스 생성
+KV 데이터베이스를 추가하려는 프로젝트로 이동합니다. 스토리지 탭을 선택한 후 데이터베이스 연결 버튼을 선택합니다.
+
+새로 만들기 탭에서 KV를 선택하고 계속하기 버튼을 클릭합니다.
+
+> Vercel KV를 사용하려면 약관에 동의해야 합니다.
+
+이제 다이얼로그에서 새 스토어를 생성합니다.
+- 데이터베이스 이름 아래에 `my-store`(또는 다른 이름)를 입력합니다. 이름은 32자를 초과할 수 없습니다.
+- 기본 지역 선택
+- 생성 및 계속 클릭
+- 데이터베이스를 사용할 프로젝트 환경 선택. 이는 환경 변수의 범위를 결정합니다.
+- 연결 클릭
+
+### 생성된 내용 검토
+지정한 기본 지역에 비어 있는 스토어가 생성되었습니다. 모든 쓰기 작업이 이 지역으로 라우팅됩니다.
+
+KV 스토어용 환경 변수가 프로젝트에 자동으로 추가되었습니다. 이 변수들은 스토어에 연결하는 데 사용됩니다. 이 가이드의 뒷부분에서 이러한 변수들을 로컬로 가져와 프로젝트에서 사용하는 방법을 배웁니다.
+
+- `KV_URL`
+- `KV_REST_API_URL`
+- `KV_REST_API_TOKEN`
+- `KV_REST_API_READ_ONLY_TOKEN`
+
+### 스토어 채우기
+대시보드의 CLI 인터페이스에서 CLI를 사용하여 KV 스토어에 Redis 명령을 보낼 수 있습니다. CLI에 접근하려면 KV 스토어를 선택하고 CLI 탭으로 이동합니다.
+
+다음 명령을 사용하여 `user:me` 해시를 생성합니다.
+
+```cli
+hset user:me email email@me.com id 123
+```
+다음 명령으로 해시를 읽을 수 있습니다.
+
+```cli
+hgetall user:me
+```
+CLI는 `email`, `email@me.com`, `id`, `123`으로 응답합니다.
+
+CLI는 대부분의 Redis 명령을 지원합니다. 사용 가능한 명령에 대해 자세히 알아보려면 호환성 문서를 확인하세요.
+
+### 로컬 프로젝트 준비
+KV 데이터베이스를 생성했을 때 `KV_REST_API_URL`과 `KV_REST_API_TOKEN`이 자동으로 환경 변수로 생성되었습니다.
+
+코드에서 이 환경 변수들을 사용하려면 다음 Vercel CLI 명령을 사용하여 로컬로 가져오는 것이 좋습니다.
+
+```terminal
+vercel env pull .env.development.local
+```
+
+### KV 스토어 조회하기
+이제 KV 스토어에서 데이터를 검색할 수 있습니다. Vercel KV 클라이언트는 JSON 데이터의 직렬화 및 역직렬화를 자동으로 처리하므로 JSON 객체뿐만 아니라 일반 문자열도 쉽게 저장할 수 있습니다.
+
+```TypeScript
+import { kv } from '@vercel/kv';
+import { NextResponse } from 'next/server';
+ 
+export async function GET() {
+  const user = await kv.hgetall('user:me');
+  return NextResponse.json(user);
+}
+```
+여러 KV 스토어에 연결하려면 createClient를 사용하세요.
+
+```TypeScript
+import { createClient } from '@vercel/kv';
+import { NextResponse } from 'next/server';
+ 
+export async function GET() {
+  const users = createClient({
+    url: process.env.USERS_REST_API_URL,
+    token: process.env.USERS_REST_API_TOKEN,
+  });
+ 
+  const user = await users.hgetall('user:me');
+ 
+  const products = createClient({
+    url: process.env.PRODUCTS_REST_API_URL,
+    token: process.env.PRODUCTS_REST_API_TOKEN,
+  });
+ 
+  const product = await products.hgetall('product:shirt');
+ 
+  return NextResponse.json({ user, product });
+}
+```
+사용 가능한 명령에 대해 더 알아보려면 Redis 호환성 문서를 참조하세요.
+
+애플리케이션을 로컬에서 실행하고 `/api/user`에 방문하여 데이터를 확인하세요.

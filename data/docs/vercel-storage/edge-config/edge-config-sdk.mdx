@@ -1,0 +1,175 @@
+---
+title: SDK 레퍼런스
+date: '2024-03-05 01:04'
+summary: "@vercel/edge-config는 Edge Config에서 데이터를 읽는 가장 편리한 방법으로, 여러 도우미 메서드를 제공하여 Node.js, 엣지 런타임 및 브라우저와 호환되며 새로운 Edge Config를 생성하고 기존 Edge Config에 쓰기를 수행할 수 있습니다."
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## @vercel/edge-config
+
+Edge 설정 클라이언트 SDK는 Edge 설정에서 데이터를 읽는 가장 편리한 방법입니다. 
+
+Edge 설정 클라이언트 SDK는 Edge 설정에서 값을 읽기 위한 여러 도우미 메서드를 제공하며, Node.js, Edge 런타임, 그리고 브라우저와 호환됩니다.
+
+이 SDK는 새로운 Edge 설정을 생성하고 기존 Edge 설정에 쓰는 기능은 포함하고 있지 않으며, 이는 Vercel REST API나 대시보드를 사용하여 수행할 수 있습니다.
+
+또한 Vercel REST API를 통해 Edge 설정 데이터를 읽을 수도 있습니다. SDK와 Vercel REST API를 언제 사용해야 하는지 이해하기 위해 'Edge 설정에서 읽기'를 검토하세요.
+
+## 요구 사항
+
+SDK를 사용하기 전에 다음 작업을 완료해야 합니다.
+
+- API 또는 대시보드를 사용하여 Edge 설정을 생성했어야 합니다.
+- Edge 설정에 접근하기 위해 Edge 설정 읽기 접근 토큰을 추가했어야 합니다.
+- Edge 설정 읽기 접근 토큰과 Edge 설정 ID를 포함한 연결 문자열을 정의하고 환경 변수로 저장했어야 합니다.
+
+
+## SDK 설정하기
+
+시작하려면 SDK를 설치하세요:
+
+```bash
+npm install @vercel/edge-config
+```
+
+
+## 연결 문자열 사용하기
+
+연결 문자열을 사용하여 Edge Config를 하나 이상의 프로젝트에 연결하세요. 이렇게 하면 SDK를 통해 Edge Config를 읽을 때 Vercel이 읽기를 최적화할 수 있습니다. 연결 문자열을 생성하는 방법은 여기서 알아볼 수 있습니다.
+
+기본적으로, SDK는 `EDGE_CONFIG` 환경 변수에 저장된 연결 문자열을 사용하여 모든 도우미 메소드를 실행합니다. 즉, 프로젝트에 `EDGE_CONFIG` 환경 변수를 설정한 경우, 어떤 도우미 메소드라도 가져와서 다음과 같이 사용할 수 있습니다.
+
+```typescript
+import { NextResponse } from 'next/server';
+import { getAll } from '@vercel/edge-config';
+const configItems = await getAll();
+```
+
+그러나 연결 문자열을 임의의 환경 변수로 저장하고, 환경 변수에 둘 이상의 연결 문자열을 저장함으로써 여러 Edge Config에 연결할 수도 있습니다.
+
+이를 위해 `createClient` 도우미를 사용해야 합니다.
+
+`createClient` 도우미 메소드는 연결 문자열을 받아 해당 Edge Config에서 도우미 메소드를 사용할 수 있는 객체를 반환합니다. `createClient`를 사용하여 여러 Edge Config를 환경 변수로 저장하고 모두에서 데이터를 읽을 수 있습니다.
+
+```typescript
+import { createClient } from '@vercel/edge-config';
+// 한 config에서 단일 값을 가져오기
+const firstConfig = createClient(process.env.FIRST_EDGE_CONFIG);
+const firstExampleValue1 = await firstConfig.get('other_example_key_1');
+ 
+// 다른 config에서 모든 값을 가져오기
+const secondConfig = createClient(process.env.SECOND_EDGE_CONFIG);
+const allValues = await secondConfig.getAll();
+```
+
+다음 섹션에서는 SDK의 모든 도우미 메소드 사용 방법을 알려드립니다.
+
+## 단일 값 읽기
+
+get 도우미 메소드를 사용하면 Edge Config에서 주어진 키에 있는 값을 가져올 수 있습니다. 프로젝트의 `pages/api` 또는 `api` 디렉토리에 `get` 도우미 메소드를 사용하여 API 라우트를 생성하세요.
+
+```typescript:app/api/get-example/route.ts
+
+import { NextResponse } from 'next/server';
+import { get } from '@vercel/edge-config';
+ 
+export const runtime = 'edge';
+ 
+export async function GET() {
+  const exampleValue1 = await get('example_key_1');
+  return NextResponse.json({
+    label: `"example_key_1"의 내 Edge Config에서의 값.`,
+    value: exampleValue1,
+  });
+}
+```
+
+## 다중 값 읽기
+
+`getAll` 도우미 메소드는 Edge Config의 모든 항목을 반환합니다.
+
+```typescript:app/api/getall-example/route.ts
+
+import { NextResponse } from 'next/server';
+import { getAll } from '@vercel/edge-config';
+ 
+export const runtime = 'edge';
+ 
+export async function GET() {
+  const configItems = await getAll();
+  return NextResponse.json({
+    label: `내 Edge Config에 있는 모든 값입니다.`,
+    value: configItems,
+  });
+}
+```
+
+키 이름의 배열을 전달하면 `getAll`은 지정된 키만 반환합니다.
+
+```typescript:app/api/getall-keys-example/route.ts
+
+import { NextResponse } from 'next/server';
+import { getAll } from '@vercel/edge-config';
+ 
+export const runtime = 'edge';
+ 
+export async function GET() {
+  const someItems = await getAll(['keyA', 'keyB']);
+  return NextResponse.json({
+    label: `내 Edge Config에 있는 몇몇 값입니다.`,
+    value: someItems,
+  });
+}
+```
+
+## 키 존재 여부 확인
+
+```typescript
+import { NextResponse } from 'next/server';
+import { has } from '@vercel/edge-config';
+
+export const runtime = 'edge';
+
+export async function GET() {
+  const exampleKeyExists = await has('example_key_1');
+  return NextResponse.json({
+    keyExists: exampleKeyExists ? `키가 존재합니다!` : `키가 존재하지 않습니다!`,
+  });
+}
+```
+이 예제는 Edge 설정에서 주어진 키가 존재하는지를 확인하는 방법을 보여줍니다. 키가 존재하면 참을, 존재하지 않으면 거짓을 반환합니다.
+
+## Edge 설정 버전 확인
+
+```typescript
+import { NextResponse } from 'next/server';
+import { digest } from '@vercel/edge-config';
+
+export const runtime = 'edge';
+
+export async function GET() {
+  const version = await digest();
+  return NextResponse.json({
+    digest: version,
+  });
+}
+```
+이 코드는 Edge 설정의 해시 문자열(버전)을 확인하는 방법을 보여줍니다. 설정이 업데이트될 때마다 변경되는 이 해시를 확인함으로써, 현재 작업 중인 Edge 설정의 버전을 확인할 수 있습니다.
+
+## Edge 구성 항목 작성
+
+Edge 구성 SDK를 사용하여 Edge 구성 항목을 작성할 수 없습니다. 대신, Vercel REST API를 사용하여 프로그래밍 방식으로 작성할 수 있습니다.
+
+Edge 구성 SDK는 읽기 전용 토큰을 사용하여 `edge-config.vercel.com` 엔드포인트에서 읽기를 인증하는 데 사용됩니다. 반면 쓰기는 Vercel REST API와 인증하기 위해 Vercel 액세스 토큰이 필요합니다. 이 핵심적인 차이로 인해 SDK를 쓰기에는 불편함이 있습니다.
+
+프로젝트에서 빈번한 쓰기가 필요한 경우 Vercel KV에 대해 자세히 알아보시기 바랍니다.
+
+## 에러
+
+모든 도우미 메소드는 다음 상황에서 에러를 발생시킵니다.
+
+- Edge 구성 읽기 액세스 토큰이 잘못된 경우
+- 읽고 있는 에지 구성이 존재하지 않는 경우
+- 네트워크 오류가 발생한 경우
+

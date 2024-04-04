@@ -1,0 +1,127 @@
+---
+title: Vercel Blob
+date: '2024-03-04 01:00'
+summary: "Vercel Blob은 정적 자산(예: 이미지, 동영상, 오디오 파일 등)을 위한 확장성이 뛰어나고 비용 효율적인 객체 저장소 서비스입니다."
+---
+
+## Vercel Blob
+
+Vercel Blob은 이미지, 동영상, 오디오 파일 등 정적 자산을 위한 확장 가능하고 비용 효율적인 객체 저장 서비스입니다. Hobby 및 Pro 요금제에서 베타 버전으로 제공되며, 소유자, 멤버, 개발자 역할을 가진 사용자가 이 기능에 접근할 수 있습니다.
+
+## Vercel Blob 사용 사례
+
+Vercel Blob은 자주 읽혀야 하는 [블롭](https://developer.mozilla.org/docs/Web/API/Blob)을 저장하기에 좋은 솔루션입니다. Vercel Blob에 적합한 예시는 다음과 같습니다.
+
+- 프로그래밍 방식으로 업로드되거나 빌드 시 생성되어 표시 및 다운로드되는 파일, 예를 들어 아바타, 스크린샷, 커버 이미지 및 동영상
+- 글로벌 네트워크를 활용한 대형 파일, 예를 들어 동영상 및 오디오
+- Amazon S3와 같은 외부 파일 저장 솔루션에 일반적으로 저장되는 파일. Vercel에서 호스팅되는 프로젝트를 통해 이러한 파일에 쉽게 접근하고 관리할 수 있습니다.
+
+
+## Vercel Blob을 워크플로우에 통합하기
+
+Vercel Blob을 워크플로우에 통합할 수 있는지 궁금하다면 다음 사항을 알아두는 것이 좋습니다.
+
+- Vercel 계정당 하나 이상의 Vercel Blob 저장소를 가질 수 있습니다.
+- 하나의 Vercel 프로젝트에서 여러 Vercel Blob 저장소를 사용할 수 있습니다.
+- 각 Vercel Blob 저장소는 여러 Vercel 프로젝트에서 접근할 수 있습니다.
+- Vercel Blob URL은 공개적으로 접근 가능하며, 추측할 수 없는 랜덤 ID로 생성되며 변경할 수 없습니다.
+- Blob 저장소의 내용을 추가하거나 삭제하려면 유효한 토큰이 필요합니다.
+- Blob을 비공개로 만드는 기능은 향후 출시될 예정입니다.
+
+### 서버 및 클라이언트 업로드
+
+Vercel Blob에 파일을 업로드하는 두 가지 방법이 있습니다.
+
+1. **서버 업로드**: 이는 파일을 업로드하는 가장 일반적인 방법입니다. 파일이 먼저 서버로 전송된 다음 Vercel Blob으로 전송됩니다. 구현이 간단하지만 서버가 처리할 수 있는 요청 본문의 한계에 제한됩니다. Vercel에서 호스팅하는 웹사이트의 경우 4.5MB입니다. 이 방법을 사용할 때 Vercel에서 4.5MB보다 큰 파일을 업로드할 수 없습니다.
+2. **클라이언트 업로드**: 더 큰 파일을 업로드해야 할 때 사용하는 보다 고급 솔루션입니다. 파일이 클라이언트(예: 브라우저)에서 직접 Vercel Blob으로 안전하게 전송됩니다. 구현에 약간 더 많은 작업이 필요하지만 최대 5TB(5,000GB)의 파일을 업로드할 수 있습니다.
+
+Vercel에서 호스팅하는 웹사이트에서 받지 않은 한, 스크립트 또는 서버 코드에서 직접 4.5MB 이상의 파일을 업로드할 수도 있습니다. 예를 들어 서버 측 `fetch()` 요청이 응답을 Vercel Blob으로 스트리밍하는 경우가 그러합니다.
+
+
+## 보안
+
+Vercel Blob URL은 공개적으로 접근 가능하나, 고유하고 추측하기 어려운 구성으로 되어 있습니다. 이는 고유한 저장소 ID, 경로명, 그리고 Blob이 생성될 때 생성되는 고유한 랜덤 Blob ID로 구성됩니다.
+
+> 이는 Google 문서에서 파일을 공개적으로 공유하는 것과 유사합니다. URL은 권한이 있는 사용자에게만 공유되어야 합니다.
+
+각 Blob에는 무단 다운로드를 방지하고 외부 콘텐츠가 포함되는 것을 차단하며, 악의적인 파일 유형 조작으로부터 보호하는 보안 헤더가 적용됩니다. 그것들은 다음과 같습니다.
+
+- `content-security-policy`: `default-src "none"`
+- `x-frame-options`: `DENY`
+- `x-content-type-options`: `nosniff`
+- `content-disposition`: `attachment/inline; filename="filename.extension"`
+
+### 암호화
+
+Vercel Blob에 저장된 모든 파일은 AES-256 암호화를 사용하여 보안이 유지됩니다. 이 암호화 과정은 투명하게 적용되며, 디스크에 저장되기 전에 파일이 암호화되고 검색 시 해독됩니다.
+
+
+## Blob 보기 및 다운로드
+
+각 Blob은 `content-disposition` 헤더와 함께 제공됩니다. 업로드된 파일의 MIME 유형에 따라 `attachment`(파일 다운로드 강제) 또는 `inline`(브라우저 탭에서 렌더링 가능)으로 설정됩니다. 이는 `@vercel/blob`에서 HTML 웹 페이지와 같은 특정 파일을 호스팅하는 것을 방지하기 위한 조치입니다. 이러한 경우 브라우저는 파일을 표시하는 대신 자동으로 다운로드합니다.
+
+현재 `text/plain`, `text/xml`, `application/json`, `application/pdf`, `image/*`, `audio/*` 및 `video/*`는 `content-disposition: inline` 헤더로 처리됩니다.
+
+모든 다른 MIME 유형은 기본적으로 `content-disposition: attachment`로 설정됩니다.
+
+항상 다운로드를 강제하는 Blob URL이 필요한 경우 blob 객체의 `downloadUrl` 속성을 사용할 수 있습니다. 이 URL은 `MIME` 유형에 관계없이 항상 `content-disposition: attachment` 헤더를 가집니다.
+
+```javascript
+import { list } from '@vercel/blob';
+
+export default async function Page() {
+  const response = await list();
+
+  return (
+    <>
+      {response.blobs.map((blob) => (
+        <a key={blob.pathname} href={blob.downloadUrl}>
+          {blob.pathname}
+        </a>
+      ))}
+    </>
+  );
+}
+```
+
+또한 SDK는 같은 URL을 반환하는 `getDownloadUrl`이라는 헬퍼 함수를 제공합니다.
+
+## 캐싱
+
+Vercel Blob은 브라우저에서 1년 동안, 엣지 캐시에서는 5분 동안 캐시됩니다. 이는 변경 사항이 Vercel 서버에 반영되어 사용자에게 제공되는 데 최대 5분이 소요될 수 있음을 의미합니다.
+
+이 캐싱 동작은 `put()` 메소드에서 `cacheControlMaxAge` 옵션을 사용하여 구성할 수 있습니다.
+
+브라우저와 엣지 캐시의 최소값은 0초이며, 엣지 캐시의 최대값은 5분, 브라우저 캐시의 최대값은 무제한입니다.
+
+Blob URL의 쿼리 문자열은 캐시 키의 일부이므로 필요할 때 URL에 고유한 쿼리 문자열을 추가하여 캐시를 우회할 수 있습니다.
+
+참고: 엣지 캐시에서 Blob을 제공할 때 기본 작업 수를 증가시키지 않으며 사용된 대역폭에 대해서만 요금을 청구합니다.
+
+
+## 범위 요청
+
+Vercel Blob은 부분 다운로드를 위한 범위 요청을 지원합니다. 이는 Blob의 일부만 다운로드할 수 있음을 의미합니다.
+
+## 더 알아보기
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<Card href="/docs/vercel-storage/blob/server-upload">
+### 서버 업로드 가이드
+
+이 가이드는 Vercel Blob을 사용하여 서버 업로드를 수행하는 방법을 단계별로 설명합니다.
+</Card>
+
+<Card href="/docs/vercel-storage/blob/client-upload">
+### 클라이언트 업로드 가이드
+
+이 가이드는 Vercel Blob을 사용하여 클라이언트에서 직접 파일을 업로드하는 전체 과정을 단계별로 설명합니다.
+</Card>
+
+<Card href="/docs/vercel-storage/blob/using-blob-sdk">
+### SDK 레퍼런스
+
+이 문서는 @vercel/blob SDK를 사용하여 Blob 스토어를 시작하고 관리하는 방법에 대한 종합적인 레퍼런스를 제공합니다.
+</Card>
+
+</div>
