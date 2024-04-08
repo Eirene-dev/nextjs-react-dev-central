@@ -38,11 +38,9 @@ const redirects = {
     '/blog/developer-experience-in-web': '/blog/web-dev/developer-experience-in-web',
     '/blog/frontend-web-developer-roadmap': '/blog/web-dev/frontend-web-developer-roadmap',
     '/blog/good-website-design': '/blog/web-dev/good-website-design',
-    '/blog/frontend-web-developer-roadmap': '/blog/web-dev/frontend-web-developer-roadmap',
+    '/blog/user-experience-in-web': '/blog/web-dev/user-experience-in-web',
     '/blog/web-address-understanding': '/blog/web-dev/web-address-understanding',
     '/blog/web-rendering-understanding': '/blog/web-dev/web-rendering-understanding',
-    
-    // 여기에 추가 경로들을 계속 추가
 };
 
 export function middleware(request: NextRequest) {
