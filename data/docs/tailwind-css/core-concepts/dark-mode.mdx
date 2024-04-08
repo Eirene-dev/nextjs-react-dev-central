@@ -1,12 +1,202 @@
 ---
-title: Tailwind CSS
+title: 다크 모드
 date: '2024-02-01 02:04'
-summary: CSS
-draft: true
+summary: Tailwind CSS를 사용하여 다크 모드에서 사이트 스타일링하기
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+
+
+## 기본 사용법
+
+다크 모드가 많은 운영체제의 일급 기능이 되면서 기본 디자인과 함께 웹사이트의 다크 버전을 디자인하는 것이 점점 더 일반적이 되고 있습니다.
+
+이를 가능한 한 쉽게 하기 위해 Tailwind는 `dark` 변형을 포함하고 있어 다크 모드가 활성화되었을 때 사이트를 다르게 스타일링할 수 있습니다.
+
+<div class="grid grid-cols-1 sm:grid-cols-2">
+  <div class="p-8 pt-7">
+    <p class="mb-2 text-sm font-medium text-slate-500">Light mode</p>
+    <div class="px-6 py-8 bg-white rounded-lg shadow-xl ring-1 ring-slate-900/5">
+      <div>
+        <span class="inline-flex items-center justify-center p-2 bg-indigo-500 rounded-md shadow-lg">
+          <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </span>
+      </div>
+      <h3 class="mt-5 text-base font-medium tracking-tight text-slate-900">Writes Upside-Down</h3>
+      <p class="mt-2 text-sm text-slate-500">
+        The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+      </p>
+    </div>
+  </div>
+  <div class="p-8 bg-slate-900 pt-7">
+    <p class="mb-2 text-sm font-medium text-slate-400">Dark mode</p>
+    <div class="px-6 py-8 rounded-lg shadow-xl bg-slate-800 ring-1 ring-slate-900/5">
+      <div>
+        <span class="inline-flex items-center justify-center p-2 bg-indigo-500 rounded-md shadow-lg">
+          <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </span>
+      </div>
+      <h3 class="mt-5 text-base font-medium tracking-tight text-white">Writes Upside-Down</h3>
+      <p class="mt-2 text-sm text-slate-400">
+        The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+      </p>
+    </div>
+  </div>
+</div>
+
+```html
+<div class="px-6 py-8 bg-white rounded-lg shadow-xl dark:bg-slate-800 ring-1 ring-slate-900/5">
+  <div>
+    <span class="inline-flex items-center justify-center p-2 bg-indigo-500 rounded-md shadow-lg">
+      <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><!-- ... --></svg>
+    </span>
+  </div>
+  <h3 class="mt-5 text-base font-medium tracking-tight text-slate-900 dark:text-white">Writes Upside-Down</h3>
+  <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+    The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+  </p>
+</div>
+```
+
+기본적으로 이는 `prefers-color-scheme` CSS 미디어 기능을 사용하지만, 다크 모드를 수동으로 토글하는 사이트를 지원하기 위해 ['selector' 전략](#toggling-dark-mode-manually)을 사용하여 구축할 수도 있습니다.
+
+## 기본 설정
+
+운영 체제의 선호도에 의존하지 않고 수동으로 다크 모드를 토글하고 싶다면, `media` 전략 대신 `selector` 전략을 사용하세요.
+
+> `selector` 전략은 Tailwind CSS v3.4.1에서 `class` 전략을 대체했습니다.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: 'selector',
+  // ...
+}
+```
+
+이제 `prefers-color-scheme`에 의해 적용되던 `dark:{class}` 클래스 대신 HTML 트리에서 앞서 `dark` 클래스가 있을 때 적용됩니다.
+
+```html
+<!-- 다크 모드 비활성화 -->
+<html>
+<body>
+  <!-- 흰색 배경 -->
+  <div class="bg-white dark:bg-black">
+    <!-- ... -->
+  </div>
+</body>
+</html>
+
+<!-- 다크 모드 활성화 -->
+<html class="dark">
+<body>
+  <!-- 검은색 배경 -->
+  <div class="bg-white dark:bg-black">
+    <!-- ... -->
+  </div>
+</body>
+</html>
+```
+
+Tailwind 설정에서 [접두어 설정](/docs/configuration#prefix)을 했다면, `dark` 클래스에 그 접두어를 추가해야 합니다. 예를 들어, 접두어가 `tw-`라면 다크 모드를 활성화하기 위해 `tw-dark` 클래스를 사용해야 합니다.
+
+`dark` 클래스를 `html` 요소에 추가하는 방법은 자유롭지만, 일반적으로 `localStorage`와 같은 곳에서 선호도를 읽어오는 자바스크립트를 사용하여 DOM을 업데이트하는 방법이 흔히 사용됩니다.
+
+
+---
+title: 다크 모드 선택자 사용자 정의
+description: 사용자 정의 선택자를 통해 다크 모드를 활성화하는 방법에 대해 알아보세요.
+---
+
+## 선택자 사용자 정의
+
+일부 프레임워크(예: NativeScript)는 다크 모드를 활성화할 때 고유한 클래스 이름을 추가하는 자체 방식이 있습니다.
+
+다음과 같이 `darkMode`를 배열로 설정하고 사용자 정의 선택자를 두 번째 항목으로 지정하여 다크 모드 선택자를 사용자 정의할 수 있습니다.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ['selector', '[data-mode="dark"]'],
+  // ...
+}
+```
+
+Tailwind는 사용자 정의 다크 모드 선택자를 `:where()` 의사 클래스로 자동 감싸서 `media` 전략을 사용할 때와 동일한 구체성을 유지하도록 합니다.
+
+```css
+.dark\:underline:where([data-mode="dark"], [data-mode="dark"] *){
+  text-decoration-line: underline
+}
+```
+
+### 시스템 선호도 및 수동 선택 지원
+
+`selector` 전략은 사용자의 시스템 선호도 또는 수동으로 선택된 모드를 지원하기 위해 [`window.matchMedia()` API](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia)를 사용할 수 있습니다.
+
+다음은 라이트 모드, 다크 모드를 지원하며 운영 체제의 선호도를 존중하는 방법에 대한 간단한 예입니다.
+
+```js
+// 페이지 로드 시나 테마 변경 시, FOUC를 피하기 위해 `head`에 인라인으로 추가하는 것이 좋습니다
+if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  document.documentElement.classList.add('dark')
+} else {
+  document.documentElement.classList.remove('dark')
+}
+
+// 사용자가 명시적으로 라이트 모드를 선택할 때
+localStorage.theme = 'light'
+
+// 사용자가 명시적으로 다크 모드를 선택할 때
+localStorage.theme = 'dark'
+
+// 사용자가 운영 체제의 선호도를 존중하기로 선택할 때
+localStorage.removeItem('theme')
+```
+
+이 설정을 어떻게 관리할지는 여러분에게 달려 있습니다. 예를 들어, 선호도를 서버 측 데이터베이스에 저장하고 서버에서 클래스를 렌더링할 수도 있습니다.
+
+
+---
+title: 다크 모드 변형
+description: Tailwind CSS의 기본 다크 변형을 사용자 정의 변형으로 교체하는 방법
+---
+
+## 다크 변형 교체하기
+
+Tailwind의 기본 다크 변형을 자신의 사용자 정의 변형으로 교체하고 싶다면, `variant` 다크 모드 전략을 사용하여 가능합니다.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ['variant', '&:not(.light *)'],
+  // ...
+}
+```
+
+이 전략을 사용할 때 Tailwind는 제공된 선택자를 전혀 수정하지 않으므로, 그 구체성에 주의하고 다른 유틸리티와 동일한 구체성을 보장하기 위해 `:where()` 의사 클래스를 사용하는 것을 고려해야 합니다.
+
+### 다중 선택자 사용하기
+
+다크 모드를 활성화해야 하는 여러 시나리오가 있다면, 모든 시나리오를 배열로 제공하여 지정할 수 있습니다.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ['variant', [
+    '@media (prefers-color-scheme: dark) { &:not(.light *) }',
+    '&:is(.dark *)',
+  ]],
+  // ...
+}
+```
+
+이 구성을 통해 다양한 조건에서 다크 모드를 활성화할 수 있으며, 사용자의 설정 또는 시스템 선호도에 따라 유연하게 대응할 수 있습니다.
+
+
 

@@ -1,17 +1,17 @@
 ---
-title: Tailwind CSS
+title: 유틸리티 중심의 기본 원리
 date: '2024-02-01 02:01'
-summary: CSS
-draft: true
+summary: 원시 유틸리티의 제한된 집합으로 복잡한 구성요소를 구축하는 방법
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+## 개요
 
+웹에서 스타일을 적용하려면 보통 CSS를 작성합니다.
 
-
+<Callout type="page" icon="기존 CSS 방식">
+기존 방식은 맞춤 디자인을 위해 맞춤 CSS를 사용합니다.
 
 <div class="flex items-center max-w-sm p-6 mx-auto space-x-4 bg-white shadow-lg rounded-xl">
   <div class="shrink-0">
@@ -23,6 +23,124 @@ draft: true
   </div>
 </div>
 
+```html
+<div class="chat-notification">
+  <div class="chat-notification-logo-wrapper">
+    <img class="chat-notification-logo" 
+        src="/img/logo.svg" alt="ChitChat 로고">
+  </div>
+  <div class="chat-notification-content">
+    <h4 class="chat-notification-title">ChitChat</h4>
+    <p class="chat-notification-message">새로운 메시지가 도착했습니다!</p>
+  </div>
+</div>
+
+<style>
+  .chat-notification {
+    display: flex;
+    align-items: center;
+    max-width: 24rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), \
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  .chat-notification-logo-wrapper {
+    flex-shrink: 0;
+  }
+  .chat-notification-logo {
+    height: 3rem;
+    width: 3rem;
+  }
+  .chat-notification-content {
+    margin-left: 1.5rem;
+  }
+  .chat-notification-title {
+    color: #1a202c;
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+  .chat-notification-message {
+    color: #718096;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+</style>
+```
+</Callout>
+
+Tailwind를 사용하면 HTML에서 미리 정의된 클래스를 직접 적용하여 요소를 스타일합니다.
+
+<Callout type="app" icon="Tailwind CSS 방식">
+
+맞춤 CSS 없이 유틸리티 클래스를 사용하여 맞춤 디자인 구현
+
+<div class="flex items-center max-w-sm p-6 mx-auto space-x-4 bg-white shadow-lg rounded-xl">
+  <div class="shrink-0">
+    <svg class="w-12 h-12" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="a"><stop stop-color="#2397B3" offset="0%"/><stop stop-color="#13577E" offset="100%"/></linearGradient><linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="b"><stop stop-color="#73DFF2" offset="0%"/><stop stop-color="#47B1EB" offset="100%"/></linearGradient></defs><g fill="none" fill-rule="evenodd"><path d="M28.872 22.096c.084.622.128 1.258.128 1.904 0 7.732-6.268 14-14 14-2.176 0-4.236-.496-6.073-1.382l-6.022 2.007c-1.564.521-3.051-.966-2.53-2.53l2.007-6.022A13.944 13.944 0 0 1 1 24c0-7.331 5.635-13.346 12.81-13.95A9.967 9.967 0 0 0 13 14c0 5.523 4.477 10 10 10a9.955 9.955 0 0 0 5.872-1.904z" fill="url(#a)" transform="translate(1 1)"/><path d="M35.618 20.073l2.007 6.022c.521 1.564-.966 3.051-2.53 2.53l-6.022-2.007A13.944 13.944 0 0 1 23 28c-7.732 0-14-6.268-14-14S15.268 0 23 0s14 6.268 14 14c0 2.176-.496 4.236-1.382 6.073z" fill="url(#b)" transform="translate(1 1)"/><path d="M18 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM24 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM30 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#FFF"/></g></svg>
+  </div>
+  <div>
+    <div class="text-xl font-medium text-black">ChitChat</div>
+    <p class="text-slate-500">You have a new message!</p>
+  </div>
+</div>
+
+
+
+<div>
+```html
+<div class="flex items-center max-w-sm p-6 mx-auto space-x-4 bg-white shadow-lg rounded-xl">
+  <div class="shrink-0">
+    <img class="w-12 h-12" src="/img/logo.svg" alt="ChitChat 로고">
+  </div>
+  <div>
+    <div class="text-xl font-medium text-black">ChitChat</div>
+    <p class="text-slate-500">새로운 메시지가 도착했습니다!</p>
+  </div>
+</div>
+
+```
+</div>
+
+</Callout>
+
+위 예시에서 사용된 Tailwind의 유틸리티는 다음과 같습니다.
+
+- 전체 카드 레이아웃을 제어하기 위한 [flexbox](/docs/display#flex)와 [패딩](/docs/padding) 유틸리티 (`flex`, `shrink-0`, `p-6`)
+- 카드 너비를 제한하고 수평으로 중앙에 배치하기 위한 [최대 너비](/docs/max-width)와 [여백](/docs/margin) 유틸리티 (`max-w-sm`와 `mx-auto`)
+- 카드 외관을 스타일링하기 위한 [배경색](/docs/background-color), [테두리 둥글기](/docs/border-radius), [박스 그림자](/docs/box-shadow) 유틸리티 (`bg-white`, `rounded-xl`, `shadow-lg`)
+- 로고 이미지 크기를 설정하기 위한 [너비](/docs/width)와 [높이](/docs/height) 유틸리티 (`w-12`, `h-12`)
+- 로고와 텍스트 사이의 간격을 처리하기 위한 [간격](/docs/space) 유틸리티 (`space-x-4`)
+- 카드 텍스트를 스타일링하기 위한 [글꼴 크기](/docs/font-size), [텍스트 색상](/docs/text-color), [글꼴 무게](/docs/font-weight) 유틸리티 (`text-xl`, `text-black`, `font-medium` 등)
+
+이 방법을 통해 단 한 줄의 맞춤 CSS 없이 완전히 맞춤형 구성요소 디자인을 구현할 수 있습니다.
+
+처음 보면 _"이건 끔찍하다, 정말 지저분해!"_ 라고 생각할 수 있습니다. 맞습니다, 조금 못생겼죠. 실제로 처음에는 이 방식이 좋은 아이디어로 보이지 않습니다. **실제로 시도해봐야 합니다.**
+
+하지만 이 방식으로 무언가를 실제로 만들어 보면 다음과 같은 중요한 이점들을 빠르게 알아차릴 수 있습니다.
+
+- **클래스 이름을 지어내는 데 에너지를 낭비하지 않습니다**. 무언가를 스타일링하기 위해 `sidebar-inner-wrapper`와 같은 어리석은 클래스 이름을 추가할 필요가 없고, 정말로 flex 컨테이너인 무언가에 완벽한 추상 이름을 고민할 필요가 없습니다.
+- **CSS가 더 이상 커지지 않습니다**. 전통적인 접근 방식을 사용하면 새 기능을 추가할 때마다 CSS 파일이 커집니다. 유틸리티를 사용하면 모든 것이 재사용 가능하므로 새로운 CSS를 거의 작성할 필요가 없습니다.
+- **변경하는 것이 더 안전하게 느껴집니다**. CSS는 전역이고 변경할 때 무엇을 깨뜨릴지 모릅니다. HTML의 클래스는 지역적이므로 다른 것이 깨지지 않을 걱정 없이 변경할 수 있습니다.
+
+미리 정의된 유틸리티 클래스만을 사용하여 HTML에서만 작업하는 생산성을 깨닫게 되면, 다른 방식으로 작업하는 것은 고문 같을 것입니다.
+
+
+
+
+## 인라인 스타일을 사용하지 않는 이유는?
+
+이 접근 방식에 대한 흔한 반응 중 하나는 "이건 그냥 인라인 스타일 아닌가요?"라는 의문입니다. 어떤 면에서는 맞습니다. 클래스 이름을 할당하고 그 클래스를 스타일링하는 대신 요소에 직접 스타일을 적용하니까요.
+
+그러나 유틸리티 클래스를 사용하는 것이 인라인 스타일보다 몇 가지 중요한 이점이 있습니다.
+
+- **제약이 있는 디자인**. 인라인 스타일을 사용하면 모든 값이 마법의 숫자입니다. 유틸리티를 사용하면 미리 정의된 [디자인 시스템](/docs/theme)에서 스타일을 선택하므로 시각적으로 일관된 UI를 쉽게 구축할 수 있습니다.
+- **반응형 디자인**. 인라인 스타일에서는 미디어 쿼리를 사용할 수 없지만 Tailwind의 [반응형 유틸리티](/docs/responsive-design)를 사용하여 쉽게 완전 반응형 인터페이스를 구축할 수 있습니다.
+- **호버, 포커스 및 기타 상태**. 인라인 스타일은 호버나 포커스와 같은 상태를 대상으로 할 수 없지만 Tailwind의 [상태 변형](/docs/hover-focus-and-other-states)은 유틸리티 클래스를 사용하여 이러한 상태를 쉽게 스타일링할 수 있게 해줍니다.
+
+이 구성요소는 완전히 반응형이며 호버와 포커스 스타일을 가진 버튼을 포함하고 있으며 전적으로 유틸리티 클래스로 구축되었습니다.
 
 <div class="max-w-sm px-8 py-8 mx-auto space-y-2 bg-white shadow-lg rounded-xl sm:flex sm:items-center sm:space-y-0 sm:space-x-6 sm:py-4">
   <img class="block h-24 mx-auto rounded-full sm:mx-0 sm:shrink-0" src="https://tailwindcss.com/img/erin-lindford.jpg" alt="Woman's Face" />
@@ -38,3 +156,51 @@ draft: true
     <button class="px-4 py-1 text-sm font-semibold text-purple-600 border border-purple-200 rounded-full hover:text-white hover:bg-purple-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2">Message</button>
   </div>
 </div>
+
+<div>
+```html
+<div class="py-8 px-8 max-w-sm mx-auto bg-white rounded-xl shadow-lg space-y-2 **sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6**">
+  <img class="block mx-auto h-24 rounded-full **sm:mx-0 sm:shrink-0**" src="/img/erin-lindford.jpg" alt="여성 얼굴" />
+  <div class="text-center space-y-2 **sm:text-left**">
+    <div class="space-y-0.5">
+      <p class="text-lg font-semibold text-black">
+        Erin Lindford
+      </p>
+      <p class="font-medium text-slate-500">
+        제품 엔지니어
+      </p>
+    </div>
+    <button class="px-4 py-1 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 **hover:text-white hover:bg-purple-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2**">메시지</button>
+  </div>
+</div>
+```
+</div>
+
+
+## 유지 관리에 대한 고려사항
+
+유틸리티 우선 접근 방식을 사용할 때 가장 큰 유지 관리 고려사항은 흔히 반복되는 유틸리티 조합을 관리하는 것입니다.
+
+이 문제는 [컴포넌트 및 부분 추출](/docs/reusing-styles#extracting-components-and-partials)을 통해 쉽게 해결될 수 있으며, 멀티 커서 편집 및 간단한 루프와 같은 [편집기 및 언어 기능](/docs/reusing-styles#using-editor-and-language-features)을 사용하면 더욱 편리합니다.
+
+<div>
+```html
+<!-- PrimaryButton.vue -->
+<template>
+  <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
+    <slot/>
+  </button>
+</template>
+```
+</div>
+
+그 외에 유틸리티 우선 CSS 프로젝트를 유지 관리하는 것은 큰 CSS 코드베이스를 유지 관리하는 것보다 훨씬 쉽다는 것이 밝혀졌습니다. HTML은 CSS보다 훨씬 쉽게 유지 관리할 수 있기 때문입니다. GitHub, Netflix, Heroku, Kickstarter, Twitch, Segment 등과 같은 대형 기업들이 이 접근 방식을 큰 성공으로 사용하고 있습니다.
+
+이 접근 방식에 대한 다른 사람들의 경험을 듣고 싶다면 다음 자료를 확인하세요:
+
+- John Polacek의 [숫자로 보는: 원자 CSS와 함께한 일년 반](https://medium.com/@johnpolacek/by-the-numbers-a-year-and-half-with-atomic-css-39d75b1263b4)
+- Algolia의 Sarah Dayan의 [아니요, 유틸리티 클래스는 인라인 스타일과 같지 않습니다](https://frontstuff.io/no-utility-classes-arent-the-same-as-inline-styles)
+- GitHub에서 유틸리티 클래스를 사용하는 Diana Mounter에 대한 [팟캐스트 인터뷰](http://www.fullstackradio.com/75)
+
+더 많은 정보를 원한다면, [John Polacek](https://twitter.com/johnpolacek)가 큐레이션한 [원자/유틸리티 우선 CSS를 위한 사례](https://johnpolacek.github.io/the-case-for-atomic-css/)를 확인하세요.
+

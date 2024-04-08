@@ -1,12 +1,149 @@
 ---
-title: Tailwind CSS
+title: 반응형 디자인
 date: '2024-02-01 02:03'
-summary: CSS
-draft: true
+summary: 반응형 유틸리티 변형을 사용하여 적응형 사용자 인터페이스 구축하기
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+## 개요
+
+Tailwind에서 제공하는 모든 유틸리티 클래스는 다양한 중단점에서 조건적으로 적용될 수 있어 복잡한 반응형 인터페이스를 HTML 내에서 쉽게 구현할 수 있습니다.
+
+기본적으로 다섯 가지 중단점이 있으며 이는 일반적인 디바이스 해상도에서 영감을 받았습니다.
+
+| 중단점 접두사 | 최소 너비 | CSS |
+| --- | --- | --- |
+| `sm` | 640px | `@media (min-width: 640px) { ... }` |
+| `md` | 768px | `@media (min-width: 768px) { ... }` |
+| `lg` | 1024px | `@media (min-width: 1024px) { ... }` |
+| `xl` | 1280px | `@media (min-width: 1280px) { ... }` |
+| `2xl` | 1536px | `@media (min-width: 1536px) { ... }` |
+
+특정 중단점에서만 유틸리티를 적용하려면 중단점 이름을 접두사로 사용하고 `:` 문자를 뒤에 붙이면 됩니다.
+
+```html
+<!-- 기본적으로 16의 너비, 중간 화면에서 32, 큰 화면에서 48 -->
+<img class="w-16 md:w-32 lg:w-48" src="...">
+```
+
+이 방식은 프레임워크 내의 **모든 유틸리티 클래스**에 대해 작동하므로, 주어진 중단점에서 글자 간격이나 커서 스타일과 같은 모든 것을 변경할 수 있습니다.
+
+다음은 작은 화면에서 쌓인 레이아웃을 사용하고 큰 화면에서는 나란히 레이아웃을 사용하는 마케팅 페이지 구성 요소의 간단한 예입니다(브라우저 크기를 조정하여 효과를 확인하세요).
+<iframe class="w-full h-[496px] pointer-events-none" src="https://tailwindcss.com/examples/responsive-design-demo"></iframe>
+
+```html
+<div class="max-w-md mx-auto overflow-hidden bg-white shadow-md rounded-xl md:max-w-2xl">
+  <div class="md:flex">
+    <div class="md:shrink-0">
+      <img class="object-cover w-full h-48 md:h-full md:w-48" src="/img/building.jpg" alt="Modern building architecture">
+    </div>
+    <div class="p-8">
+      <div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">Company retreats</div>
+      <a href="#" class="block mt-1 text-lg font-medium leading-tight text-black hover:underline">Incredible accommodation for your team</a>
+      <p class="mt-2 text-slate-500">Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of places to do just that.</p>
+    </div>
+  </div>
+</div>
+```
+
+위 예에서는 다음과 같이 작동합니다.
+
+- 기본적으로 외부 `div`는 `display: block`이지만 `md:flex` 유틸리티를 추가함으로써 중간 화면 이상에서 `display: flex`가 됩니다.
+- 부모가 flex 컨테이너일 때 이미지가 줄어들지 않도록 하기 위해 `md:shrink-0`을 추가했습니다. technically we could have just used `shrink-0` since it would do nothing on smaller screens, but since it only matters on `md` screens, it's a good idea to make that clear in the class name.
+- 작은 화면에서 이미지는 기본적으로 전체 너비입니다. 중간 화면 이상에서는 너비를 고정 크기로 제한하고 `md:h-full md:w-48`을 사용하여 이미지가 전체 높이가 되도록 했습니다.
+
+이 예제에서는 하나의 중단점만 사용했지만 `sm`, `lg`, `xl`, `2xl` 반응형 접두사를 사용하여 다른 크기에서 이 구성 요소를 쉽게 사용자 정의할 수 있습니다.
+
+## 모바일 우선 접근 방식
+
+기본적으로 Tailwind는 Bootstrap과 같은 다른 프레임워크에서 사용되는 모바일 우선 방식의 브레이크포인트 시스템을 사용합니다.
+
+이것은 `uppercase`와 같은 접두사가 없는 유틸리티는 모든 화면 크기에 적용되며, `md:uppercase`와 같은 접두사가 붙은 유틸리티는 지정된 브레이크포인트 이상에서만 적용된다는 것을 의미합니다.
+
+### 모바일 화면 타겟팅
+
+이 접근법에서 사람들이 가장 자주 놀라는 부분은 모바일용 스타일을 지정하려면 `sm:` 접두사 버전이 아니라 유틸리티의 접두사가 없는 버전을 사용해야 한다는 것입니다. `sm:`을 "작은 화면에서"라는 의미로 생각하지 말고 "작은 *브레이크포인트*에서"라고 생각하세요.
+
+<div class="sm:text-center"></div>
+- 이 코드는 640px 이상의 화면에서만 텍스트를 중앙에 배치하고, 작은 화면에서는 적용되지 않습니다.
+
+<div class="text-center sm:text-left"></div>
+- 이 코드는 모바일에서 텍스트를 중앙에 배치하고, 640px 이상의 화면에서 왼쪽 정렬합니다.
+
+이러한 이유로 디자인의 모바일 레이아웃을 먼저 구현한 다음 `sm` 화면을 위한 변경을 추가하고 그 다음 `md` 화면 등으로 조정하는 것이 종종 좋은 방법입니다.
+
+### 브레이크포인트 범위 지정하기
+
+기본적으로 `md:flex`와 같은 규칙으로 적용된 스타일은 해당 브레이크포인트와 그보다 더 큰 브레이크포인트에서 계속 적용됩니다.
+
+특정 브레이크포인트 범위에서만 스타일을 적용하려면, `md`와 같은 반응형 수정자를 `max-*` 수정자와 결합하여 특정 범위로 스타일을 제한하세요.
+
+```html
+<div class="md:max-xl:flex">
+  <!-- ... -->
+</div>
+```
+
+Tailwind는 각 브레이크포인트에 해당하는 `max-*` 수정자를 자동으로 생성합니다. 기본적으로 다음과 같은 수정자들이 사용 가능합니다.
+
+| 수정자 | 미디어 쿼리 |
+| --- | --- |
+| `max-sm` | `@media not all and (min-width: 640px) { ... }` |
+| `max-md` | `@media not all and (min-width: 768px) { ... }` |
+| `max-lg` | `@media not all and (min-width: 1024px) { ... }` |
+| `max-xl` | `@media not all and (min-width: 1280px) { ... }` |
+| `max-2xl` | `@media not all and (min-width: 1536px) { ... }` |
+
+### 단일 브레이크포인트 지정하기
+
+단일 브레이크포인트를 타겟팅하기 위해, `md`와 같은 반응형 수정자와 다음 브레이크포인트의 `max-*` 수정자를 결합하세요.
+
+```html
+<div class="md:max-lg:flex">
+  <!-- ... -->
+</div>
+```
+
+[브레이크포인트 범위 지정하기](#targeting-a-breakpoint-range)에 대해 더 알아보세요.
+
+
+### 테마 사용자화
+
+`tailwind.config.js` 파일에서 브레이크포인트를 완전히 사용자화할 수 있습니다.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    screens: {
+      'tablet': '640px',
+      // => @media (min-width: 640px) { ... }
+
+      'laptop': '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      'desktop': '1280px',
+      // => @media (min-width: 1280px) { ... }
+    },
+  }
+}
+```
+
+[브레이크포인트 사용자화 문서](/docs/breakpoints)에서 더 알아보세요.
+
+
+### 임의 값 사용
+
+테마에 포함시키기 어려운 일회성 브레이크포인트를 사용해야 할 경우, `min` 또는 `max` 수정자를 사용하여 임의의 값을 활용해 즉석에서 사용자 정의 브레이크포인트를 생성할 수 있습니다.
+
+```html
+<div class="min-[320px]:text-center max-[600px]:bg-sky-300">
+  <!-- ... -->
+</div>
+```
+
+임의 값 지원에 대한 자세한 내용은 [임의 값 문서](/docs/adding-custom-styles#using-arbitrary-values)에서 확인하세요.
+
+
 

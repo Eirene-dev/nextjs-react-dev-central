@@ -1,9 +1,339 @@
 ---
-title: Tailwind CSS
+title: Tailwind CSS 소개
 date: '2024-02-01 01:00'
-summary: CSS
-draft: true
+summary: Tailwind CSS는 HTML 내에서 직접 클래스를 사용하여 웹 인터페이스를 신속하게 구축할 수 있도록 설계된 유틸리티 우선의 현대적 CSS 프레임워크입니다.
 ---
 
-## 작성 예정
-작성 예정
+Tailwind CSS는 개발자가 HTML 내에서 직접 클래스를 사용하여 웹 인터페이스를 신속하게 구축할 수 있도록 설계된 유틸리티 우선 CSS 프레임워크입니다. 복잡한 CSS 사전 설정 작업 없이도 필요한 디자인을 빠르고 효율적으로 구현할 수 있는 도구를 제공하며 반응형 디자인을 손쉽게 적용할 수 있습니다.
+
+## 유틸리티 우선 디자인
+
+유틸리티 우선(Utility-first) 디자인은 많은 사전 스타일 구성 요소 대신, 낮은 수준의 유틸리티 클래스를 조합하여 사용함으로써 UI를 빌드하는 방식입니다. 이 접근법에서는 `padding`, `margin`, `text-color`와 같은 CSS 속성 각각에 대해 클래스를 제공하고 이러한 클래스들을 조합하여 다양한 디자인을 실현할 수 있습니다. 
+
+예를 들어, `pt-4`, `text-center`, `rotate-90`과 같은 클래스는 각각 패딩, 텍스트 정렬, 회전 효과를 적용합니다. 개발자는 필요에 따라 이러한 유틸리티 클래스를 선택하고 조합함으로써 복잡한 CSS 작성 없이도 원하는 디자인을 즉시 구현할 수 있습니다.
+
+
+## 장점
+
+유틸리티 우선 접근 방식은 다음과 같은 여러 가지 이점을 제공합니다.
+
+- **재사용성**: 일관된 유틸리티 클래스를 사용함으로써 코드의 재사용성을 높이고 프로젝트 전반에 걸쳐 일관된 스타일을 유지할 수 있습니다.
+- **유지보수성**: 디자인 요소를 수정할 때 CSS 파일 전체를 뒤져야 할 필요 없이 HTML에서 직접 클래스를 수정함으로써 빠르게 변경사항을 적용할 수 있습니다.
+- **생산성 향상**: 더 적은 코드로 더 많은 디자인을 신속하게 구현할 수 있어 개발 시간이 단축됩니다.
+
+
+Tailwind CSS는 유틸리티 우선의 접근 방식을 통해 웹 개발의 복잡성을 줄이고 빠른 디자인 변경을 가능하게 하는 현대적인 CSS 프레임워크입니다. 개발자가 프론트엔드 디자인을 보다 직관적이고 유연하게 다룰 수 있게 도와 신속한 개발과 높은 품질의 결과물을 동시에 달성할 수 있는 강력한 도구입니다.
+
+
+## 디자인 시스템을 위한 API
+
+Tailwind CSS는 디자인 시스템을 위한 API 역할을 합니다. 유틸리티 클래스는 스타일 시트에 임의의 값들을 남발하는 대신 시스템의 제약 내에서 작업을 도와줍니다. 이러한 클래스들은 색상 선택, 간격, 타이포그래피, 그림자 등 디자인 시스템을 구성하는 모든 요소에서 일관성을 유지하는 것을 쉽게 만들어 줍니다.
+
+유틸리티 클래스를 사용함으로써 개발자는 각각의 스타일 요소를 미리 정의된 디자인 규칙에 맞춰 쉽게 적용할 수 있습니다. 이는 통합된 디자인 언어를 통해 프로젝트 전반의 일관성을 보장하며 디자인 시스템의 체계적인 관리를 가능하게 합니다. 결과적으로, 유틸리티 클래스는 디자인 시스템이 더욱 잘 구조화되고 엔지니어링되도록 지원하며 프로젝트의 스타일 관련 결정들을 표준화하는 데 큰 도움을 줍니다.
+
+### 크기 조절
+
+<div class="p-1 space-y-4 bg-gray-50">
+  <div class="bg-white rounded shadow w-96">
+      w-96
+  </div>
+  <div class="bg-white rounded shadow w-80">
+      w-80
+  </div>
+  <div class="bg-white rounded shadow w-72">
+      w-72
+  </div>
+  <div class="w-64 bg-white rounded shadow">
+      w-64
+  </div>
+  <div class="bg-white rounded shadow w-60">
+      w-60
+  </div>
+  <div class="w-56 bg-white rounded shadow">
+      w-56
+  </div>
+  <div class="bg-white rounded shadow w-52">
+      w-52
+  </div>
+  <div class="w-48 bg-white rounded shadow">
+      w-48
+  </div>
+</div>
+
+```jsx
+<div class="space-y-4">
+  <div class="bg-white rounded shadow w-96">
+      w-96
+  </div>
+  <div class="bg-white rounded shadow w-80">
+      w-80
+  </div>
+  <div class="bg-white rounded shadow w-72">
+      w-72
+  </div>
+  <div class="w-64 bg-white rounded shadow">
+      w-64
+  </div>
+  <div class="bg-white rounded shadow w-60">
+      w-60
+  </div>
+  <div class="w-56 bg-white rounded shadow">
+      w-56
+  </div>
+  <div class="bg-white rounded shadow w-52">
+      w-52
+  </div>
+  <div class="w-48 bg-white rounded shadow">
+      w-48
+  </div>
+</div>
+```
+
+### 색상 관리
+<div class="p-1 space-y-4 bg-gray-50">
+    <div class="grid grid-cols-10 gap-2 ">
+    <div class="w-6 h-6 bg-sky-50"></div>
+    <div class="w-6 h-6 bg-sky-100"></div>
+    <div class="w-6 h-6 bg-sky-200"></div>
+    <div class="w-6 h-6 bg-sky-300"></div>
+    <div class="w-6 h-6 bg-sky-400"></div>
+    <div class="w-6 h-6 bg-sky-500"></div>
+    <div class="w-6 h-6 bg-sky-600"></div>
+    <div class="w-6 h-6 bg-sky-700"></div>
+    <div class="w-6 h-6 bg-sky-800"></div>
+    <div class="w-6 h-6 bg-sky-900"></div>
+    </div>
+    <div class="grid grid-cols-10 gap-2">
+    <div class="w-6 h-6 bg-blue-50"></div>
+    <div class="w-6 h-6 bg-blue-100"></div>
+    <div class="w-6 h-6 bg-blue-200"></div>
+    <div class="w-6 h-6 bg-blue-300"></div>
+    <div class="w-6 h-6 bg-blue-400"></div>
+    <div class="w-6 h-6 bg-blue-500"></div>
+    <div class="w-6 h-6 bg-blue-600"></div>
+    <div class="w-6 h-6 bg-blue-700"></div>
+    <div class="w-6 h-6 bg-blue-800"></div>
+    <div class="w-6 h-6 bg-blue-900"></div>
+    </div>
+    <div class="grid grid-cols-10 gap-2">
+    <div class="w-6 h-6 bg-indigo-50"></div>
+    <div class="w-6 h-6 bg-indigo-100"></div>
+    <div class="w-6 h-6 bg-indigo-200"></div>
+    <div class="w-6 h-6 bg-indigo-300"></div>
+    <div class="w-6 h-6 bg-indigo-400"></div>
+    <div class="w-6 h-6 bg-indigo-500"></div>
+    <div class="w-6 h-6 bg-indigo-600"></div>
+    <div class="w-6 h-6 bg-indigo-700"></div>
+    <div class="w-6 h-6 bg-indigo-800"></div>
+    <div class="w-6 h-6 bg-indigo-900"></div>
+    </div>
+    <div class="grid grid-cols-10 gap-2">
+    <div class="w-6 h-6 bg-violet-50"></div>
+    <div class="w-6 h-6 bg-violet-100"></div>
+    <div class="w-6 h-6 bg-violet-200"></div>
+    <div class="w-6 h-6 bg-violet-300"></div>
+    <div class="w-6 h-6 bg-violet-400"></div>
+    <div class="w-6 h-6 bg-violet-500"></div>
+    <div class="w-6 h-6 bg-violet-600"></div>
+    <div class="w-6 h-6 bg-violet-700"></div>
+    <div class="w-6 h-6 bg-violet-800"></div>
+    <div class="w-6 h-6 bg-violet-900"></div>
+    </div>
+</div>
+
+```jsx
+<div class="grid grid-cols-10 gap-2">
+  <div class="bg-sky-50 aspect-square"></div>
+  <div class="bg-sky-100 aspect-square"></div>
+  <div class="bg-sky-200 aspect-square"></div>
+  <div class="bg-sky-300 aspect-square"></div>
+  <div class="bg-sky-400 aspect-square"></div>
+  <div class="bg-sky-500 aspect-square"></div>
+  <div class="bg-sky-600 aspect-square"></div>
+  <div class="bg-sky-700 aspect-square"></div>
+  <div class="bg-sky-800 aspect-square"></div>
+  <div class="bg-sky-900 aspect-square"></div>
+</div>
+<div class="grid grid-cols-10 gap-2">
+  <div class="bg-blue-50 aspect-square"></div>
+  <div class="bg-blue-100 aspect-square"></div>
+  <div class="bg-blue-200 aspect-square"></div>
+  <div class="bg-blue-300 aspect-square"></div>
+  <div class="bg-blue-400 aspect-square"></div>
+  <div class="bg-blue-500 aspect-square"></div>
+  <div class="bg-blue-600 aspect-square"></div>
+  <div class="bg-blue-700 aspect-square"></div>
+  <div class="bg-blue-800 aspect-square"></div>
+  <div class="bg-blue-900 aspect-square"></div>
+</div>
+<div class="grid grid-cols-10 gap-2">
+  <div class="bg-indigo-50 aspect-square"></div>
+  <div class="bg-indigo-100 aspect-square"></div>
+  <div class="bg-indigo-200 aspect-square"></div>
+  <div class="bg-indigo-300 aspect-square"></div>
+  <div class="bg-indigo-400 aspect-square"></div>
+  <div class="bg-indigo-500 aspect-square"></div>
+  <div class="bg-indigo-600 aspect-square"></div>
+  <div class="bg-indigo-700 aspect-square"></div>
+  <div class="bg-indigo-800 aspect-square"></div>
+  <div class="bg-indigo-900 aspect-square"></div>
+</div>
+<div class="grid grid-cols-10 gap-2">
+  <div class="bg-violet-50 aspect-square"></div>
+  <div class="bg-violet-100 aspect-square"></div>
+  <div class="bg-violet-200 aspect-square"></div>
+  <div class="bg-violet-300 aspect-square"></div>
+  <div class="bg-violet-400 aspect-square"></div>
+  <div class="bg-violet-500 aspect-square"></div>
+  <div class="bg-violet-600 aspect-square"></div>
+  <div class="bg-violet-700 aspect-square"></div>
+  <div class="bg-violet-800 aspect-square"></div>
+  <div class="bg-violet-900 aspect-square"></div>
+</div>
+```
+
+### 타이포그래피
+
+
+
+<div class="space-y-5">
+  <div class="p-3 bg-white rounded-lg shadow">
+    <h3 class="text-xs border-b">font-sans</h3>
+    <p class="font-sans">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+  <div class="p-3 bg-white rounded-lg shadow">
+    <h3 class="text-xs border-b">font-serif</h3>
+    <p class="font-serif">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+  <div class="p-3 bg-white rounded-lg shadow">
+    <h3 class="text-xs border-b">font-mono</h3>
+    <p class="font-mono">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+</div>
+
+```jsx
+<div class="p-1 space-y-5 bg-gray-50">
+  <div class="p-3 bg-white rounded-lg shadow">
+    <h3 class="text-xs border-b">font-sans</h3>
+    <p class="font-sans">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+  <div class="p-3 bg-white rounded-lg shadow">
+    <h3 class="text-xs border-b">font-serif</h3>
+    <p class="font-serif">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+  <div class="p-3 bg-white rounded-lg shadow">
+    <h3 class="text-xs border-b">font-mono</h3>
+    <p class="font-mono">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+  </div>
+</div>
+```
+
+### 그림자 효과
+
+
+<div class="grid grid-cols-2 gap-6 p-1 bg-gray-50" >
+  <div class="bg-white rounded-lg shadow-sm">
+    shadow-sm
+  </div>
+  <div class="bg-white rounded-lg shadow">
+    shadow
+  </div>
+  <div class="bg-white rounded-lg shadow-md">
+    shadow-md
+  </div>
+  <div class="bg-white rounded-lg shadow-lg">
+    shadow-lg
+  </div>
+  <div class="bg-white rounded-lg shadow-xl">
+    shadow-xl
+  </div>
+  <div class="bg-white rounded-lg shadow-2xl">
+    shadow-2xl
+  </div>
+</div>
+
+```jsx
+<div class="grid grid-cols-2 gap-6">
+  <div class="bg-white rounded-lg shadow-sm">
+    shadow-sm
+  </div>
+  <div class="bg-white rounded-lg shadow">
+    shadow
+  </div>
+  <div class="bg-white rounded-lg shadow-md">
+    shadow-md
+  </div>
+  <div class="bg-white rounded-lg shadow-lg">
+    shadow-lg
+  </div>
+  <div class="bg-white rounded-lg shadow-xl">
+    shadow-xl
+  </div>
+  <div class="bg-white rounded-lg shadow-2xl">
+    shadow-2xl
+  </div>
+</div>
+```
+
+## 주요 특징
+### 반응형 디자인의 모든 것
+
+복잡한 미디어 쿼리로 고생하는 것은 번거로운 일입니다. 따라서 테일윈드를 사용하면 HTML 내에서 바로 반응형 디자인을 구축할 수 있습니다.
+
+어떤 유틸리티 클래스 앞에 화면 크기를 추가하기만 하면 지정된 브레이크포인트에서 마법처럼 적용됩니다.
+
+### 호버와 포커스 상태? 다 준비됨
+
+호버 상태에서 스타일을 적용하고 싶나요? 원하는 클래스 앞에 `hover:`를 붙이세요. `focus`, `active`, `disabled`, `focus-within`, `focus-visible` 등의 상태뿐만 아니라 `group-hover`와 같이 우리가 스스로 개발한 특별한 상태에도 작동합니다.
+
+### 중복 걱정은 노노
+
+같은 유틸리티를 계속 반복해서 사용한다면, 그것들을 컴포넌트나 템플릿 파셜로 추출하면 됩니다. 이렇게 하면 변경사항을 한 곳에서 관리할 수 있는 단일 출처를 갖게 됩니다.
+
+### 이제 다크 모드도 지원
+
+새벽 2시에 핸드폰으로 웹사이트를 열었을 때 사람들이 눈이 부시게 하고 싶지 않나요? 설정 파일에서 다크 모드를 활성화하고 원하는 색상 유틸리티 앞에 `dark:`를 추가하세요. 배경색, 텍스트 색상, 테두리 색상, 그리고 그라디언트에도 적용됩니다.
+
+### 확장하고, 조정하고, 변경 가능
+
+테일윈드는 기본적으로 전문적으로 제작된 기본 설정들을 포함하고 있지만, 색상 팔레트부터 간격 스케일, 상자 그림자, 마우스 커서에 이르기까지 모든 것을 사용자 정의할 수 있습니다.
+
+`tailwind.config.js` 파일을 사용하여 자신만의 디자인 시스템을 만들고 테일윈드를 통해 이를 사용자 정의 CSS 프레임워크로 변환하세요.
+
+### 최신 기능
+최신 기술은 우리의 편안한 영역입니다.
+
+테일윈드는 미안하지 않게 현대적이며, 가능한 한 개발자 경험을 즐겁게 만들기 위해 최신 최고의 CSS 기능을 모두 활용합니다.
+
+CSS 그리드 지원, CSS 변수로 구동되는 조합 가능한 변환과 그라디언트, `:focus-visible`과 같은 현대적 상태 선택자 지원 등이 포함되어 있습니다.
+
+### 세계 수준의 IDE 통합
+
+이 모든 클래스 이름을 기억하는 것이 걱정되나요? VS Code용 테일윈드 CSS IntelliSense 확장 프로그램이 해결해 드립니다.
+
+지능적인 자동완성 제안, 린팅, 클래스 정의 등을 에디터 내에서 구성 없이 모두 사용할 수 있습니다.
+
+
+## 더 알아보기
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<Card href="/docs/tailwind-css/core-concepts">
+### 핵심 개념
+
+전통적인 CSS 작성과 다른 테일윈드 CSS의 핵심 개념을 살펴보세요.
+</Card>
+
+
+</div>

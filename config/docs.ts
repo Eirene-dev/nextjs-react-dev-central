@@ -838,37 +838,37 @@ export const docsConfig: DocsConfig = {
           href: '/docs/tailwind-css/core-concepts',
           items: [
             {
-              title: 'Utility-First',
+              title: '유틸리티 중심',
               href: '/docs/tailwind-css/core-concepts/utility-first',
               disabled: false,
             },
             {
-              title: 'Handling Hover',
+              title: '호버, 포커스, 상태',
               href: '/docs/tailwind-css/core-concepts/hover-focus-and-other-states',
               disabled: false,
             },
             {
-              title: 'Responsive Design',
+              title: '반응형 디자인',
               href: '/docs/tailwind-css/core-concepts/responsive-design',
               disabled: false,
             },
             {
-              title: 'Dark Mode',
+              title: '다크 모드',
               href: '/docs/tailwind-css/core-concepts/dark-mode',
               disabled: false,
             },
             {
-              title: 'Reusing Styles',
+              title: '스타일 재사용',
               href: '/docs/tailwind-css/core-concepts/reusing-styles',
               disabled: false,
             },
             {
-              title: 'Adding Custom Styles',
+              title: '사용자 정의 스타일',
               href: '/docs/tailwind-css/core-concepts/adding-custom-styles',
               disabled: false,
             },
             {
-              title: 'Functions & Directives',
+              title: '함수와 지시어',
               href: '/docs/tailwind-css/core-concepts/functions-and-directives',
               disabled: false,
             },

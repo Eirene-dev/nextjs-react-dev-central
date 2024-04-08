@@ -1,12 +1,568 @@
 ---
-title: Tailwind CSS
+title: 사용자 정의 스타일 추가하기
 date: '2024-02-01 02:07'
-summary: CSS
-draft: true
+summary: Tailwind에 자신만의 사용자 정의 스타일을 추가하는 최선의 방법들
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+## 테마 사용자화
+
+색상 팔레트, 간격 스케일, 서체 스케일 또는 브레이크포인트와 같은 요소들을 변경하고 싶다면, `tailwind.config.js` 파일의 `theme` 섹션에 사용자 정의 설정을 추가하세요.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    screens: {
+      sm: '480px',
+      md: '768px',
+      lg: '976px',
+      xl: '1440px',
+    },
+    colors: {
+      'blue': '#1fb6ff',
+      'pink': '#ff49db',
+      'orange': '#ff7849',
+      'green': '#13ce66',
+      'gray-dark': '#273444',
+      'gray': '#8492a6',
+      'gray-light': '#d3dce6',
+    },
+    fontFamily: {
+      sans: ['Graphik', 'sans-serif'],
+      serif: ['Merriweather', 'serif'],
+    },
+    extend: {
+      spacing: {
+        '128': '32rem',
+        '144': '36rem',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+      }
+    }
+  }
+}
+```
+
+테마 구성에 대한 자세한 내용은 [테마 구성](/docs/theme) 문서에서 확인할 수 있습니다.
+
+## 임의 값 사용하기
+
+좋은 디자인을 만들기 위해 일정한 디자인 토큰 세트를 사용하는 것이 일반적이지만, 때로는 이러한 제약을 벗어나 완벽한 픽셀을 맞추기 위해 필요할 때가 있습니다.
+
+배경 이미지를 정확한 위치에 맞추기 위해 `top: 117px`과 같은 값을 필요로 할 때, Tailwind의 대괄호 표기법을 사용하여 임의의 값으로 클래스를 즉석에서 생성할 수 있습니다.
+
+```html
+<div class="top-[117px]">
+  <!-- ... -->
+</div>
+```
+
+이 방법은 인라인 스타일과 유사하지만, `hover`와 같은 상호 작용 수정자나 `lg`와 같은 반응형 수정자와 결합할 수 있다는 큰 장점이 있습니다.
+
+```html
+<div class="top-[117px] lg:top-[344px]">
+  <!-- ... -->
+</div>
+```
+
+이 기능은 프레임워크의 모든 것에 사용할 수 있으며, 배경 색상, 글꼴 크기, 의사 요소 내용 등을 포함합니다.
+
+```html
+<div class="bg-[#bada55] text-[22px] before:content-['Festivus']">
+  <!-- ... -->
+</div>
+```
+
+`tailwind.config.js` 파일의 디자인 토큰을 참조하기 위해 [`theme` 함수](/docs/functions-and-directives#theme)를 사용할 수도 있습니다.
+
+```html
+<div class="grid grid-cols-[fit-content(theme(spacing.32))]">
+  <!-- ... -->
+</div>
+```
+
+CSS 변수를 임의 값으로 사용할 때 `var(...)`로 변수를 감싸는 것은 필요하지 않으며, 실제 변수 이름을 제공하기만 하면 됩니다.
+
+```html
+<div class="bg-[--my-color]">
+  <!-- ... -->
+</div>
+```
+
+### 임의의 속성 사용
+
+Tailwind가 기본적으로 제공하지 않는 CSS 속성을 사용해야 할 경우, 완전히 임의의 CSS를 작성하기 위해 대괄호 표기법을 사용할 수도 있습니다.
+
+```html
+<div class="[mask-type:luminance]">
+  <!-- ... -->
+</div>
+```
+
+이 방법은 실질적으로 인라인 스타일과 매우 유사하지만, 수정자를 사용할 수 있다는 장점이 있습니다.
+
+```html
+<div class="[mask-type:luminance] hover:[mask-type:alpha]">
+  <!-- ... -->
+</div>
+```
+
+이는 조건에 따라 변경해야 하는 CSS 변수와 같은 것들에 특히 유용할 수 있습니다.
+
+```html
+<div class="[--scroll-offset:56px] lg:[--scroll-offset:44px]">
+  <!-- ... -->
+</div>
+```
+
+### 임의의 변형 사용
+
+임의의 _변형_은 `hover:{utility}` 또는 `md:{utility}`와 같은 내장 의사 클래스 변형이나 반응형 변형처럼 즉석에서 선택자를 수정하는 데 사용되며, HTML에서 직접 대괄호 표기법을 사용합니다.
+
+
+```html {{ filename: 'HTML' }}
+<ul role="list">
+  {#each items as item}
+    <li class="**lg:[&:nth-child(3)]:hover:underline**">{item}</li>
+  {/each}
+</ul>
+```
+
+```css {{ filename: 'Generated CSS' }}
+/* https://media.giphy.com/media/Sd3cd0SrUKZEyWmAlM/giphy.gif */
+@media (min-width: 1024px) {
+  .lg\:\[\&\:nth-child\(3\)\]\:hover\:underline:hover:nth-child(3) {
+    text-decoration-line: underline;
+  }
+}
+```
+
+
+[임의의 변형](/docs/hover-focus-and-other-states#using-arbitrary-variants) 문서에서 자세히 알아보세요.
+
+### 공백 처리
+
+임의 값에 공백이 포함되어야 하는 경우, 공백 대신 밑줄(`_`)을 사용하고 빌드 시 테일윈드가 자동으로 공백으로 변환합니다.
+
+```html
+<div class="grid **grid-cols-[1fr_500px_2fr]**">
+  <!-- ... -->
+</div>
+```
+
+밑줄이 일반적이지만 공백이 유효하지 않은 상황에서는, 예를 들어 URL에서는 테일윈드가 밑줄을 공백으로 변환하지 않고 그대로 유지합니다.
+
+```html
+<div class="bg-[url('/what_a_rush.png')]">
+  <!-- ... -->
+</div>
+```
+
+밑줄이 필요하지만 공백도 유효한 경우가 드물게 발생할 수 있습니다. 이 경우 백슬래시로 밑줄을 이스케이프하면 테일윈드가 공백으로 변환하지 않습니다.
+
+```html
+<div class="before:content-['hello\_world']">
+  <!-- ... -->
+</div>
+```
+
+JSX와 같은 환경에서 백슬래시가 렌더링된 HTML에서 제거되는 경우, 백슬래시가 자바스크립트 이스케이프 문자로 처리되지 않도록 [String.raw()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw)를 사용합니다.
+
+```jsx
+<div className={String.raw`before:content-['hello\_world']`}>
+  <!-- ... -->
+</div>
+```
+
+### 모호성 해결
+
+테일윈드의 많은 유틸리티는 공통의 네임스페이스를 공유하지만 다른 CSS 속성에 매핑됩니다. 예를 들어 `text-lg`와 `text-black`은 모두 `text-` 네임스페이스를 사용하지만 하나는 `font-size`용이고 다른 하나는 `color`용입니다.
+
+임의 값 사용 시 테일윈드는 일반적으로 전달한 값에 기반하여 이러한 모호성을 자동으로 처리할 수 있습니다.
+
+```html
+<!-- 폰트 크기 유틸리티를 생성합니다 -->
+<div class="text-[22px]">...</div>
+
+<!-- 색상 유틸리티를 생성합니다 -->
+<div class="text-[#bada55]">...</div>
+```
+
+그러나 때로는 정말로 모호할 수 있습니다. 예를 들어 CSS 변수를 사용하는 경우:
+
+```html
+<div class="text-[var(--my-var)]">...</div>
+```
+
+이러한 상황에서는 [CSS 데이터 유형](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Types)을 값 앞에 추가함으로써 테일윈드에게 기본 유형을 "힌트"할 수 있습니다.
+
+```html
+<!-- 폰트 크기 유틸리티를 생성합니다 -->
+<div class="text-[length:var(--my-var)]">...</div>
+
+<!-- 색상 유틸리티를 생성합니다 -->
+<div class="text-[color:var(--my-var)]">...</div>
+```
+
+
+### CSS와 @layer 사용하기
+
+테일윈드 프로젝트에 완전히 새로운 CSS 규칙을 추가할 필요가 있을 때, 가장 간단한 방법은 스타일시트에 커스텀 CSS를 직접 추가하는 것입니다.
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.my-custom-style {
+  /* ... */
+}
+```
+
+더 강력한 기능을 원한다면 `@layer` 지시어를 사용하여 테일윈드의 `base`, `components`, `utilities` 레이어에 스타일을 추가할 수 있습니다.
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .my-custom-style {
+    /* ... */
+  }
+}
+```
+
+<details className="-mt-0 mb-6 rounded-xl border px-6 py-3 prose prose-slate open:pb-5 dark:prose-dark dark:border-slate-800">
+  <summary className="font-medium cursor-default select-none text-slate-900 dark:text-slate-200">테일윈드가 스타일을 "레이어"로 그룹화하는 이유는 무엇인가요?</summary>
+
+CSS에서는 스타일시트 내 규칙의 순서가 동일한 특이성을 가진 두 선택자 사이에서 어떤 선언이 승리할지 결정합니다.
+
+```css
+.btn {
+  background: blue;
+  /* ... */
+}
+
+.bg-black {
+  background: black;
+}
+```
+
+여기서는 `.bg-black`이 `.btn`보다 CSS 내에서 뒤에 오기 때문에 모든 버튼이 검은색이 됩니다.
+
+```html
+<button class="bg-black btn">...</button>
+<button class="bg-black btn">...</button>
+```
+
+이를 관리하기 위해 테일윈드는 생성하는 스타일을 세 가지 다른 "레이어"로 구성합니다 — [ITCSS](https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/#what-is-itcss)에 의해 대중화된 개념입니다.
+
+- `base` 레이어는 HTML 요소에 적용된 리셋 규칙이나 기본 스타일에 사용됩니다.
+- `components` 레이어는 유틸리티로 덮어쓸 수 있도록 하고자 하는 클래스 기반 스타일에 사용됩니다.
+- `utilities` 레이어는 다른 모든 스타일보다 우선시되어야 하는 작고 단일 목적의 클래스에 사용됩니다.
+
+이렇게 명시적으로 구분하는 것은 스타일이 서로 어떻게 상호 작용하는지 이해하는 데 도움이 되며, `@layer` 지시어를 사용하면 실제 코드를 원하는 대로 구성하면서도 최종 선언 순서를 제어할 수 있습니다.
+
+</details>
+
+`@layer` 지시어는 `@tailwind` 지시어에 해당하는 곳으로 스타일을 자동으로 재배치하여 선언 순서를 제어하는 데 도움을 주며, 사용자의 커스텀 CSS에 [수정자](#using-modifiers-with-custom-css)와 [트리 쉐이킹](#removing-unused-custom-css) 기능을 활성화합니다.
+
+
+### 기본 스타일 추가하기
+
+페이지의 기본 설정(예: 텍스트 색상, 배경색, 글꼴)을 지정하려면 `html`이나 `body` 요소에 클래스를 추가하는 것이 가장 간단한 방법입니다.
+
+```html
+<!doctype html>
+<html lang="en" class="font-serif text-gray-900 bg-gray-100">
+  <!-- ... -->
+</html>
+```
+
+이렇게 하면 기본 스타일 결정이 마크업에 포함되어 다른 스타일과 함께 관리되며 별도의 파일에 숨겨져 있지 않습니다.
+
+특정 HTML 요소에 대한 기본 기본 스타일을 추가하고 싶다면 `@layer` 지시어를 사용하여 테일윈드의 `base` 레이어에 스타일을 추가하세요:
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  /* ... */
+}
+```
+
+[`theme`](/docs/functions-and-directives#theme) 함수나 [`@apply`](/docs/functions-and-directives#apply) 지시어를 사용해 커스텀 기본 스타일을 추가할 때는 [테마](/docs/theme)에서 정의된 값을 참조하고 싶을 때 사용하세요.
+
+### 컴포넌트 클래스 추가하기
+
+`components` 레이어는 유틸리티 클래스로 덮어쓸 수 있기를 원하는 프로젝트에 추가할 복잡한 클래스에 사용하세요.
+
+전통적으로 이것은 `card`, `btn`, `badge`와 같은 클래스에 해당합니다.
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .card {
+    background-color: theme('colors.white');
+    border-radius: theme('borderRadius.lg');
+    padding: theme('spacing.6');
+    box-shadow: theme('boxShadow.xl');
+  }
+  /* ... */
+}
+```
+
+`components` 레이어에서 컴포넌트 클래스를 정의함으로써 필요할 때 유틸리티 클래스로 이를 덮어쓸 수 있습니다.
+
+```html
+<!-- 카드처럼 보이지만 모서리가 둥글지 않음 -->
+<div class="rounded-none card">
+  <!-- ... -->
+</div>
+```
+
+테일윈드를 사용하면 생각하는 것보다 이런 유형의 클래스가 자주 필요하지 않습니다. [스타일 재사용](/docs/reusing-styles) 가이드에서 추천하는 방법을 확인하세요.
+
+`components` 레이어는 또한 사용 중인 서드파티 컴포넌트의 커스텀 스타일을 넣기에 좋은 장소입니다.
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .select2-dropdown {
+    @apply rounded-b-lg shadow-md;
+  }
+  .select2-search {
+    @apply border border-gray-300 rounded;
+  }
+  .select2-results__group {
+    @apply text-lg font-bold text-gray-900;
+  }
+  /* ... */
+}
+```
+
+커스텀 컴포넌트 스타일을 추가할 때 [테마](/docs/theme)에서 정의된 값을 참조하고 싶다면 [`theme`](/docs/functions-and-directives#theme) 함수나 [`@apply`](/docs/functions-and-directives#apply) 지시어를 사용하세요.
+
+### 사용자 지정 유틸리티 추가하기
+
+테일윈드의 `utilities` 레이어에 자신만의 사용자 지정 유틸리티 클래스를 추가하세요:
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+}
+```
+
+이는 테일윈드가 기본적으로 제공하지 않는 CSS 기능을 프로젝트에서 사용하고 싶을 때 유용합니다.
+
+### 사용자 지정 CSS에 수정자 사용하기
+
+`@layer`를 사용해 테일윈드에 추가한 사용자 지정 스타일은 자동으로 테일윈드의 수정자 문법을 지원하여 호버 상태, 반응형 브레이크포인트, 다크 모드 등을 처리할 수 있습니다.
+
+```css {{ filename: 'CSS' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+}
+```
+
+```html {{ filename: 'HTML' }}
+<div class="**lg:dark:content-auto**">
+  <!-- ... -->
+</div>
+```
+
+이 수정자들이 어떻게 작동하는지는 [호버, 포커스 및 기타 상태들](/docs/hover-focus-and-other-states) 문서에서 자세히 알아보세요.
+
+
+### 사용하지 않는 사용자 지정 CSS 제거하기
+
+`base`, `components`, `utilities` 레이어에 추가한 사용자 지정 스타일은 HTML에서 실제로 사용될 때만 컴파일된 CSS에 포함됩니다.
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* 실제로 사용하지 않으면 컴파일된 CSS에 포함되지 않습니다 */
+  .card {
+    /* ... */
+  }
+}
+```
+
+항상 포함되어야 하는 사용자 지정 CSS를 추가하려면 `@layer` 지시어 없이 스타일시트에 추가하세요:
+
+```css {{ filename: 'main.css' }}
+@tailwind base;
+@tailwind components;
+
+/* 항상 컴파일된 CSS에 포함됩니다 */
+.card {
+  /* ... */
+}
+
+@tailwind utilities;
+```
+
+원하는 우선순위 동작을 얻기 위해 사용자 지정 스타일을 적절한 위치에 추가하세요. 위 예제에서는 유틸리티가 여전히 덮어쓸 수 있도록 `@tailwind utilities` 전에 `.card` 클래스를 추가했습니다.
+
+### 여러 CSS 파일 사용하기
+
+많은 CSS를 작성하고 여러 파일로 구성하는 경우, 그 파일들을 테일윈드로 처리하기 전에 단일 스타일시트로 결합해야 합니다. 그렇지 않으면 `@layer`를 사용하는데 필요한 `@tailwind` 지시어 없이 오류가 발생할 수 있습니다.
+
+이를 수행하는 가장 쉬운 방법은 [postcss-import](https://github.com/postcss/postcss-import) 플러그인을 사용하는 것입니다.
+
+```diff-js {{ filename: 'postcss.config.js' }}
+  module.exports = {
+    plugins: {
++     'postcss-import': {},
+      tailwindcss: {},
+      autoprefixer: {},
+    }
+  }
+```
+
+자세한 내용은 [빌드 시간 임포트](/docs/using-with-preprocessors#build-time-imports) 문서에서 확인하세요.
+
+
+### 레이어와 컴포넌트별 CSS
+
+Vue와 Svelte 같은 컴포넌트 프레임워크는 각 컴포넌트 파일 내에 `<style>` 블록을 통해 컴포넌트별 스타일을 추가할 수 있는 기능을 지원합니다.
+
+이러한 컴포넌트 스타일 내에서 `@apply` 및 `theme` 같은 기능을 사용할 수 있지만, `@layer` 지시어는 작동하지 않으며 `@layer`가 일치하는 `@tailwind` 지시어 없이 사용되었다는 오류가 발생할 것입니다.
+
+> `@layer`를 컴포넌트 스타일에 사용하지 마세요.
+
+```html {{ filename: 'Card.svelte' }}
+<div>
+  <slot></slot>
+</div>
+
+<style>
+  /* 이 파일이 독립적으로 처리되기 때문에 작동하지 않습니다 */
+  @layer components {
+    div {
+      background-color: theme('colors.white');
+      border-radius: theme('borderRadius.lg');
+      padding: theme('spacing.6');
+      box-shadow: theme('boxShadow.xl');
+    }
+  }
+</style>
+```
+
+이는 Vue와 Svelte 같은 프레임워크가 내부적으로 `<style>` 블록을 독립적으로 처리하고, 각각에 대해 PostCSS 플러그인 체인을 실행하기 때문입니다.
+
+즉, `<style>` 블록이 있는 10개의 컴포넌트가 있다면 Tailwind는 10번 별도로 실행되며, 각 실행은 다른 실행에 대한 지식이 전혀 없습니다. 이로 인해 Tailwind는 `@layer`로 정의한 스타일을 해당 `@tailwind` 지시어로 이동시킬 수 없습니다. Tailwind가 판단할 때, 이동할 `@tailwind` 지시어가 없기 때문입니다.
+
+이 문제의 한 가지 해결책은 컴포넌트 스타일 내에서 `@layer`를 사용하지 않는 것입니다.
+
+> `@layer`를 사용하지 않고 스타일을 추가하세요
+
+```html {{ filename: 'Card.svelte' }}
+<div>
+  <slot></slot>
+</div>
+
+<style>
+  div {
+    background-color: theme('colors.white');
+    border-radius: theme('borderRadius.lg');
+    padding: theme('spacing.6');
+    box-shadow: theme('boxShadow.xl');
+  }
+</style>
+```
+
+스타일의 우선순위를 제어할 수 있는 능력을 잃게 되지만, 이는 이러한 도구가 작동하는 방식으로 인해 우리의 통제를 벗어난 문제입니다.
+
+우리의 추천은 이러한 컴포넌트 스타일을 전혀 사용하지 않고 Tailwind가 의도한 대로 사용하는 것입니다 — HTML 내에서 직접 클래스를 사용하는 단일 전역 스타일시트를 사용하는 것입니다.
+
+> Tailwind의 유틸리티를 컴포넌트 스타일 대신 사용하세요.
+
+```html {{ filename: 'Card.svelte' }}
+<div class="p-6 bg-white rounded-lg shadow-xl">
+  <slot></slot>
+</div>
+```
+
+
+
+
+
+### 플러그인 작성
+
+CSS 파일을 사용하는 대신 Tailwind의 플러그인 시스템을 이용해 프로젝트에 사용자 정의 스타일을 추가할 수 있습니다.
+
+```js {{ filename: 'tailwind.config.js' }}
+const plugin = require('tailwindcss/plugin')
+
+module.exports = {
+  // ...
+  plugins: [
+    plugin(function ({ addBase, addComponents, addUtilities, theme }) {
+      addBase({
+        'h1': {
+          fontSize: theme('fontSize.2xl'),
+        },
+        'h2': {
+          fontSize: theme('fontSize.xl'),
+        },
+      })
+      addComponents({
+        '.card': {
+          backgroundColor: theme('colors.white'),
+          borderRadius: theme('borderRadius.lg'),
+          padding: theme('spacing.6'),
+          boxShadow: theme('boxShadow.xl'),
+        }
+      })
+      addUtilities({
+        '.content-auto': {
+          contentVisibility: 'auto',
+        }
+      })
+    })
+  ]
+}
+```
+
+플러그인 작성에 대해 더 알아보기 위해서는 [플러그인](/docs/plugins) 문서를 참조하세요.
+
+
+
+
+
+
 

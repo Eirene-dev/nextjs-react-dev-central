@@ -1,12 +1,307 @@
 ---
-title: Tailwind CSS
+title: 스타일 재사용
 date: '2024-02-01 02:05'
-summary: CSS
-draft: true
+summary: 중복 관리 및 재사용 가능한 추상화 생성
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
+
+Tailwind는 유틸리티 우선 워크플로를 권장합니다. 이 방식에서는 낮은 수준의 유틸리티 클래스만을 사용하여 디자인을 구현합니다. 이는 조기 추상화와 그로 인한 문제점들을 피하는 강력한 방법입니다.
+
+하지만 프로젝트가 성장함에 따라, 동일한 디자인을 다양한 곳에서 반복적으로 재현하기 위해 일반적인 유틸리티 조합을 반복적으로 사용하게 될 것입니다.
+
+예를 들어, 아래 템플릿에서 각 아바타 이미지에 대한 유틸리티 클래스가 다섯 번 반복되는 것을 볼 수 있습니다.
+
+<div class="px-8 py-6 mx-auto bg-white shadow w-72 sm:w-96 sm:px-12 sm:py-8">
+  <div class="flex items-center space-x-2 text-base">
+    <h4 class="text-base font-semibold text-slate-900">Contributors</h4>
+    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">204</span>
+  </div>
+  <div class="flex mt-3 -space-x-2 overflow-hidden">
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+  </div>
+  <div class="mt-3 text-sm font-medium"><a href="#" class="text-blue-500">+ 198 others</a></div>
+</div>
+
+```html
+<div>
+  <div class="flex items-center space-x-2 text-base">
+    <h4 class="font-semibold text-slate-900">기여자</h4>
+    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">204</span>
+  </div>
+  <div class="flex mt-3 -space-x-2 overflow-hidden">
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+  </div>
+  <div class="mt-3 text-sm font-medium">
+    <a href="#" class="text-blue-500">+ 198 others</a>
+  </div>
+</div>
+```
+
+걱정하지 마세요! 이 가이드에서는 프로젝트에서 스타일을 재사용하는 다양한 전략과 각 전략을 사용할 때의 모범 사례에 대해 배울 수 있습니다.
+
+## 편집기 및 언어 기능 활용하기
+
+종종 이런 종류의 중복은 한 장소에 모여 있거나, 실제로는 존재하지 않는 경우가 많습니다. 왜냐하면 배열을 반복 처리하면서 마크업을 한 번만 작성하기 때문입니다.
+
+재사용이 필요한 스타일이 단일 파일 내에서만 재사용되어야 할 경우, 멀티 커서 편집과 반복문이 중복을 관리하는 가장 간단한 방법입니다.
+
+### 멀티 커서 편집
+
+중복이 단일 파일 내의 일련의 요소에 국한되어 있는 경우, [멀티 커서 편집](https://code.visualstudio.com/docs/editor/codebasics#_multiple-selections-multicursor)을 사용하여 각 요소의 클래스 목록을 한 번에 빠르게 선택하고 편집하는 것이 해결 방법 중 하나입니다.
+
+이 방법이 종종 최선의 해결책이 되는 경우가 많습니다. 모든 중복된 클래스 목록을 동시에 빠르게 편집할 수 있다면, 추가적인 추상화를 도입할 이유가 없습니다.
+
+
+## 반복문 활용하기
+
+컴포넌트를 추출하거나 사용자 정의 클래스를 만들기 전에, 실제로 템플릿에서 한 번 이상 사용하고 있는지 확인하세요.
+
+많은 경우, 렌더링된 페이지에서 여러 번 등장하는 디자인 요소가 실제로는 한 번만 작성되었기 때문에 반복문을 통해 마크업이 렌더링됩니다.
+
+예를 들어, 이 가이드 초반에 나온 중복 아바타는 실제 프로젝트에서 반복문을 사용하여 렌더링될 것입니다.
+
+<div class="px-8 py-6 mx-auto bg-white shadow w-72 sm:w-96 sm:px-12 sm:py-8">
+  <div class="flex items-center space-x-2 text-base">
+    <h4 class="text-base font-semibold text-slate-900">Contributors</h4>
+    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">204</span>
+  </div>
+  <div class="flex mt-3 -space-x-2 overflow-hidden">
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+    <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+  </div>
+  <div class="mt-3 text-sm font-medium"><a href="#" class="text-blue-500">+ 198 others</a></div>
+</div>
+
+```html
+<div>
+  <div class="flex items-center space-x-2 text-base">
+    <h4 class="font-semibold text-slate-900">Contributors</h4>
+    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">204</span>
+  </div>
+  <div class="flex mt-3 -space-x-2 overflow-hidden">
+    {#each contributors as user}
+      <img class="inline-block w-12 h-12 rounded-full ring-2 ring-white" src="{user.avatarUrl}" alt="{user.handle}"/>
+    {/each}
+  </div>
+  <div class="mt-3 text-sm font-medium">
+    <a href="#" class="text-blue-500">+ 198 others</a>
+  </div>
+</div>
+```
+
+네비게이션 예제도 원한다면 반복문이나 `map`을 사용하여 다시 작성할 수 있습니다.
+
+```html
+<div class="flex sm:px-8 sm:justify-center">
+  <div class="px-6 py-4 bg-white shadow">
+    <nav class="flex justify-center space-x-4">
+      <a href="#/dashboard" class="px-3 py-2 font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900">Home</a>
+      <a href="#/team" class="px-3 py-2 font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900">Team</a>
+      <a href="#/projects" class="px-3 py-2 font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900">Projects</a>
+      <a href="#/reports" class="px-3 py-2 font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900">Reports</a>
+    </nav>
+  </div>
+</div>
+```
+
+```jsx
+<nav className="flex sm:justify-center space-x-4">
+  {[
+    ['Home', '/dashboard'],
+    ['Team', '/team'],
+    ['Projects', '/projects'],
+    ['Reports', '/reports'],
+  ].map(([title, url]) => (
+    <a href={url} className="rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900">{title}</a>
+  ))}
+</nav>
+```
+
+이렇게 반복문으로 요소가 렌더링될 때, 실제 클래스 목록은 한 번만 작성되므로 실제 중복 문제를 해결할 필요가 없습니다.
+
+
+## 컴포넌트 및 부분 템플릿 추출하기
+
+여러 파일에 걸쳐 스타일을 재사용해야 하는 경우, React, Svelte, Vue와 같은 프론트엔드 프레임워크를 사용하고 있다면 _컴포넌트_를, Blade, ERB, Twig, Nunjucks와 같은 템플릿 언어를 사용하고 있다면 _템플릿 부분_을 생성하는 것이 최선의 전략입니다.
+
+
+<div class="px-8 py-6 mx-auto bg-white shadow w-72 sm:w-96 sm:px-12 sm:py-8">
+  <div>
+    <img class="rounded" src="https://images.unsplash.com/photo-1452784444945-3f422708fe5e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=512&q=80" width="512" height="341" alt="Beach" />
+    <div class="mt-2">
+      <div>
+        <div class="text-xs font-bold tracking-wider uppercase text-slate-600">Private Villa</div>
+        <div class="font-bold leading-snug text-slate-700">
+          <a href="#" class="hover:underline">Relaxing All-Inclusive Resort in Cancun</a>
+        </div>
+        <div class="mt-2 text-sm text-slate-600">$299 USD per night</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+```html
+<template>
+  <div>
+    <img class="rounded" :src="img" :alt="imgAlt">
+    <div class="mt-2">
+      <div>
+        <div class="text-xs font-bold tracking-wider uppercase text-slate-600">{{ eyebrow }}</div>
+        <div class="font-bold leading-snug text-slate-700">
+          <a :href="url" class="hover:underline">{{ title }}</a>
+        </div>
+        <div class="mt-2 text-sm text-slate-600">{{ pricing }}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    props: ['img', 'imgAlt', 'eyebrow', 'title', 'pricing', 'url']
+  }
+</script>
+```
+
+이제 이 컴포넌트를 원하는 만큼 여러 곳에서 사용할 수 있으면서도 스타일을 한 곳에서 쉽게 업데이트할 수 있는 단일 출처를 유지할 수 있습니다.
+
+## CSS 추상화와 비교
+
+컴포넌트가 단일 HTML 요소가 아닌 경우, 그것을 정의하는 데 필요한 정보를 CSS만으로 포착할 수 없습니다. 복잡한 것들에 대해 HTML 구조는 CSS만큼 중요합니다.
+
+> CSS 클래스에만 의존하여 복잡한 컴포넌트를 추출하지 마세요.
+
+```html
+<!-- 사용자 정의 CSS가 있어도 이 HTML 구조를 반복해야 합니다 -->
+<div class="chat-notification">
+  <div class="chat-notification-logo-wrapper">
+    <img class="chat-notification-logo" src="/img/logo.svg" alt="ChitChat 로고">
+  </div>
+  <div class="chat-notification-content">
+    <h4 class="chat-notification-title">ChitChat</h4>
+    <p class="chat-notification-message">새로운 메시지가 있습니다!</p>
+  </div>
+</div>
+
+<style>
+  .chat-notification { /* ... */ }
+  .chat-notification-logo-wrapper { /* ... */ }
+  .chat-notification-logo { /* ... */ }
+  .chat-notification-content { /* ... */ }
+  .chat-notification-title { /* ... */ }
+  .chat-notification-message { /* ... */ }
+</style>
+```
+
+이러한 컴포넌트의 다양한 요소에 클래스를 생성하더라도 _이 컴포넌트를 사용할 때마다 HTML을 반복해야 합니다_. 모든 인스턴스의 글꼴 크기를 한 곳에서 업데이트할 수 있지만 제목을 링크로 변경해야 하는 경우는 어떨까요?
+
+컴포넌트와 템플릿 부분은 HTML _및_ 스타일을 캡슐화할 수 있기 때문에 CSS만을 사용한 추상화보다 이 문제를 훨씬 잘 해결합니다. 모든 인스턴스의 글꼴 크기를 변경하는 것은 CSS를 사용할 때만큼 쉽지만 이제 모든 제목을 한 곳에서 링크로 변경할 수도 있습니다.
+
+> 템플릿 부분이나 JavaScript 컴포넌트를 생성하세요
+
+
+<div class="px-6 py-12">
+  <div class="flex items-center max-w-sm p-6 mx-auto space-x-4 bg-white shadow-md rounded-xl">
+    <div class="shrink-0">
+      <svg class="w-12 h-12" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="a"><stop stop-color="#2397B3" offset="0%"/><stop stop-color="#13577E" offset="100%"/></linearGradient><linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="b"><stop stop-color="#73DFF2" offset="0%"/><stop stop-color="#47B1EB" offset="100%"/></linearGradient></defs><g fill="none" fill-rule="evenodd"><path d="M28.872 22.096c.084.622.128 1.258.128 1.904 0 7.732-6.268 14-14 14-2.176 0-4.236-.496-6.073-1.382l-6.022 2.007c-1.564.521-3.051-.966-2.53-2.53l2.007-6.022A13.944 13.944 0 0 1 1 24c0-7.331 5.635-13.346 12.81-13.95A9.967 9.967 0 0 0 13 14c0 5.523 4.477 10 10 10a9.955 9.955 0 0 0 5.872-1.904z" fill="url(#a)" transform="translate(1 1)"/><path d="M35.618 20.073l2.007 6.022c.521 1.564-.966 3.051-2.53 2.53l-6.022-2.007A13.944 13.944 0 0 1 23 28c-7.732 0-14-6.268-14-14S15.268 0 23 0s14 6.268 14 14c0 2.176-.496 4.236-1.382 6.073z" fill="url(#b)" transform="translate(1 1)"/><path d="M18 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM24 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM30 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#FFF"/></g></svg>
+    </div>
+    <div>
+      <div class="text-base font-medium text-black sm:text-xl">ChitChat</div>
+      <p class="text-sm sm:text-base text-slate-500">You have a new message!</p>
+    </div>
+  </div>
+</div>
+
+
+
+```jsx
+function Notification({ imageUrl, imageAlt, title, message }) {
+  return (
+    <div className="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
+      <div className="shrink-0">
+        <img className="h-12 w-12" src={imageUrl.src} alt={imageAlt}>
+      </div>
+      <div>
+        <div className="text-xl font-medium text-black">{title}</div>
+        <p className="text-slate-500">{message}</p>
+      </div>
+    </div>
+  )
+}
+```
+
+이와 같이 컴포넌트와 템플릿 부분을 생성할 때 스타일의 단일 출처를 가질 수 있으므로 유틸리티 클래스만 사용해도 충분합니다.
+
+## @apply를 사용한 클래스 추출
+
+ERB나 Twig 같은 전통적인 템플릿 언어를 사용할 때 버튼과 같이 작은 요소에 템플릿 부분을 생성하는 것이 `btn` 같은 간단한 CSS 클래스를 사용하는 것보다 과한 느낌일 수 있습니다.
+
+보다 복잡한 컴포넌트에는 적절한 템플릿 부분을 생성하는 것이 매우 권장되지만, 템플릿 부분이 부담스러울 때 Tailwind의 `@apply` 지시어를 사용해 반복되는 유틸리티 패턴을 사용자 정의 CSS 클래스로 추출할 수 있습니다.
+
+다음은 기존 유틸리티를 사용하여 구성된 `btn-primary` 클래스의 모습입니다.
+
+
+
+<div class="text-center">
+  <button type="button" class="px-5 py-2 font-semibold text-white rounded-full shadow-md bg-violet-500 hover:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-400 focus:ring-opacity-75">
+    Save changes
+  </button>
+</div>
+
+```html
+<!-- 사용자 정의 클래스 추출 전 -->
+<button class="px-5 py-2 font-semibold text-white rounded-full shadow-md bg-violet-500 hover:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-400 focus:ring-opacity-75">
+  변경 사항 저장
+</button>
+
+<!-- 사용자 정의 클래스 추출 후 -->
+<button class="btn-primary">
+  변경 사항 저장
+</button>
+```
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply py-2 px-5 bg-violet-500 text-white font-semibold rounded-full shadow-md hover:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-400 focus:ring-opacity-75;
+  }
+}
+```
+
+`@apply` 및 `@layer`에 대해 자세히 알아보려면 [함수 및 지시어](/docs/functions-and-directives#layer) 문서를 참조하세요.
+
+
+
+## 섣부른 추상화 피하기
+
+무엇을 하든지 **단순히 "깔끔해 보이게" 하기 위해 <code>@apply</code>를 사용하지 마세요**. 예, Tailwind 클래스가 가득한 HTML 템플릿은 좀 지저분해 보일 수 있습니다. 많은 사용자 정의 CSS가 있는 프로젝트에서 변경하는 것은 더 나쁩니다.
+
+모든 것에 `@apply`를 사용하기 시작하면 사실상 다시 CSS를 작성하는 것이며, Tailwind가 제공하는 워크플로우와 유지보수의 이점을 잃게 됩니다. 예를 들어:
+
+- **항상 클래스 이름을 생각해내야 합니다** — 이름을 지어야 하는 것에 비해 이름을 지을 가치가 없는 것에 대한 클래스 이름을 생각하는 것이 당신을 느리게 하거나 에너지를 소모시킵니다.
+- **변경을 위해 여러 파일 간에 이동해야 합니다** — 모든 것을 함께 위치시키기 전에 생각했던 것보다 훨씬 더 큰 워크플로우의 장애물입니다.
+- **스타일 변경이 더 두려워집니다** — CSS는 전역적이기 때문에, 그 클래스의 최소 너비 값을 변경해도 사이트의 다른 부분에서 문제가 생기지 않을지 확실할 수 있나요?
+- **CSS 번들이 더 커질 것입니다** — 조심하시기 바랍니다.
+
+`@apply`를 사용하려면 버튼이나 폼 컨트롤 같이 매우 작고 재사용 가능성이 높은 것들에 대해서만 사용하세요 — 그리고 그마저도 React와 같은 프레임워크를 사용하고 있지 않는 경우에만 컴포넌트가 더 나은 선택일 때입니다.
+
+
+
 

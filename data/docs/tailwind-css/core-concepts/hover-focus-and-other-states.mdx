@@ -1,29 +1,147 @@
 ---
-title: Tailwind CSS
+title: 호버, 포커스 및 기타 상태 다루기
 date: '2024-02-01 02:02'
-summary: CSS
-draft: true
+summary: 호버, 포커스 등에서 요소를 스타일링하기 위해 유틸리티 사용하기
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-## 작성 예정
-작성 예정
 
+Tailwind의 모든 유틸리티 클래스는 원하는 조건을 명시하는 수정자를 클래스 이름 앞에 추가하여 _조건부로_ 적용될 수 있습니다.
+
+예를 들어, `bg-sky-700` 클래스를 호버 시 적용하려면 `hover:bg-sky-700` 클래스를 사용하세요.
+
+<div class="grid place-items-center">
+  <button class="px-5 py-2 text-sm font-semibold leading-5 text-white rounded-full bg-sky-500 hover:bg-sky-700">
+    Save changes
+  </button>
+</div>
+
+```html
 <button class="bg-sky-500 hover:bg-sky-700 ...">
   Save changes
 </button>
+```
+
+<details className="-mt-2 mb-10 rounded-xl border px-6 py-3 prose prose-slate open:pb-5 dark:prose-dark dark:border-slate-800">
+  <summary className="font-medium cursor-default select-none text-slate-900 dark:text-slate-200">이것이 전통적인 CSS와 어떻게 비교되나요?</summary>
+
+전통적인 방식으로 CSS를 작성할 때, 하나의 클래스 이름이 현재 상태에 따라 다른 작업을 수행합니다.
+
+<Callout type="page" icon="기존 CSS 방식">전통적으로 같은 클래스 이름이 호버 시 다른 스타일을 적용합니다</Callout>
+
+```css
+.btn-primary {
+  background-color: #0ea5e9;
+}
+.btn-primary:hover {
+  background-color: #0369a1;
+}
+```
+
+Tailwind에서는 기존 클래스에 호버 상태의 스타일을 추가하는 대신, _호버 시에만_ 작업을 수행하는 다른 클래스를 요소에 추가합니다.
+
+<Callout type="app" icon="Tailwind CSS 방식">Tailwind에서는 기본 상태와 호버 상태에 대해 별도의 클래스를 사용합니다</Callout>
+
+```css
+.bg-sky-500 {
+  background-color: #0ea5e9;
+}
+.hover\:bg-sky-700:hover {
+  background-color: #0369a1;
+}
+```
+
+`hover:bg-sky-700`이 _오직_ `:hover` 상태에 대한 스타일만 정의하는 것에 주목하세요? 기본적으로는 아무것도 하지 않지만, 그 클래스가 적용된 요소에 호버하면 배경색이 `sky-700`으로 변경됩니다.
+
+유틸리티 클래스를 _조건부로_ 적용할 수 있다고 말할 때 이런 의미입니다. 수정자를 사용함으로써 HTML을 떠나지 않고도 다양한 상태에서 디자인이 어떻게 행동할지 정확히 제어할 수 있습니다.
+
+</details>
 
 
+Tailwind는 필요한 거의 모든 것을 위한 수정자를 포함하고 있으며, 여기에는 다음이 포함됩니다.
+
+- [가상 클래스](#pseudo-classes)로는 `:hover`, `:focus`, `:first-child`, `:required` 등이 있습니다
+- [가상 요소](#pseudo-elements)로는 `::before`, `::after`, `::placeholder`, `::selection` 등이 있습니다
+- [미디어 및 기능 쿼리](#media-and-feature-queries)로는 반응형 브레이크포인트, 다크 모드, `prefers-reduced-motion` 등이 있습니다
+- [속성 선택자](#attribute-selectors)로는 `[dir="rtl"]` 및 `[open]` 등이 있습니다
+
+이러한 수정자는 특정 상황을 대상으로 더 구체적으로 변경하기 위해 [겹쳐서](#ordering-stacked-modifiers) 사용될 수 있습니다. 예를 들어, 다크 모드에서 중간 브레이크포인트에 호버할 때 배경색을 변경하는 경우:
+
+```html
+<button class="dark:md:hover:bg-fuchsia-600 ...">
+  Save changes
+</button>
+```
+
+이 가이드에서는 프레임워크에서 사용할 수 있는 모든 수정자, 자신의 맞춤 클래스와 함께 사용하는 방법, 심지어 자신만의 수정자를 만드는 방법에 대해 알아볼 것입니다.
+
+## 가상 클래스
+
+### 호버, 포커스, 활성화
+
+`hover`, `focus`, `active` 수정자를 사용하여 호버, 포커스, 활성화 시 요소를 스타일링하세요.
+
+<div class="grid place-items-center">
+  <button type="button" class="px-5 py-2 text-sm font-semibold leading-5 text-white rounded-full bg-violet-500 hover:bg-violet-600 focus:outline-none focus:ring focus:ring-violet-300 active:bg-violet-700">
+    Save changes
+  </button>
+</div>
 
 
+```html
 <button class="bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 ...">
   Save changes
 </button>
+```
+
+Tailwind는 `:visited`, `:focus-within`, `:focus-visible` 등과 같은 다른 대화형 상태를 위한 수정자도 포함하고 있습니다.
+
+사용 가능한 가상 클래스 수정자의 전체 목록은 [가상 클래스 참조](#pseudo-class-reference)를 참조하세요.
 
 
+### 첫 번째, 마지막, 홀수, 짝수
 
-{/* <ul role="list" class="p-6 divide-y divide-slate-200">
+`first`와 `last` 수정자를 사용하여 첫 번째 자식이나 마지막 자식일 때 요소를 스타일링하세요.
+
+<div class="px-4">
+  <div class="max-w-md mx-auto bg-white shadow">
+    <ul role="list" class="p-6 divide-y divide-slate-200">
+      <li class="flex py-4 first:pt-0 last:pb-0">
+        <img class="w-10 h-10 rounded-full" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        <div class="ml-3 overflow-hidden">
+          <p class="text-sm font-medium text-slate-900">Kristen Ramos</p>
+          <p class="text-sm truncate text-slate-500">kristen.ramos@example.com</p>
+        </div>
+      </li>
+      <li class="flex py-4 first:pt-0 last:pb-0">
+        <img class="w-10 h-10 rounded-full" src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        <div class="ml-3 overflow-hidden">
+          <p class="text-sm font-medium text-slate-900">Floyd Miles</p>
+          <p class="text-sm truncate text-slate-500">floyd.miles@example.com</p>
+        </div>
+      </li>
+      <li class="flex py-4 first:pt-0 last:pb-0">
+        <img class="w-10 h-10 rounded-full" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        <div class="ml-3 overflow-hidden">
+          <p class="text-sm font-medium text-slate-900">Courtney Henry</p>
+          <p class="text-sm truncate text-slate-500">courtney.henry@example.com</p>
+        </div>
+      </li>
+      <li class="flex py-4 first:pt-0 last:pb-0">
+        <img class="w-10 h-10 rounded-full" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        <div class="ml-3 overflow-hidden">
+          <p class="text-sm font-medium text-slate-900">Ted Fox</p>
+          <p class="text-sm truncate text-slate-500">ted.fox@example.com</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+```html
+<ul role="list" class="p-6 divide-y divide-slate-200">
+  {#each people as person}
     <li class="flex py-4 first:pt-0 last:pb-0">
       <img class="w-10 h-10 rounded-full" src="{person.imageUrl}" alt="" />
       <div class="ml-3 overflow-hidden">
@@ -31,8 +149,2015 @@ draft: true
         <p class="text-sm truncate text-slate-500">{person.email}</p>
       </div>
     </li>
+  {/each}
 </ul>
- */}
+```
+
+홀수 자식이나 짝수 자식일 때 요소를 스타일링하려면 `odd`와 `even` 수정자를 사용할 수도 있습니다.
+
+<div class="px-0 sm:px-6">
+  <div class="bg-white shadow">
+    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden">
+          <table class="min-w-full">
+            <thead class="border-b bg-slate-50 border-slate-200">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-sm font-medium text-left text-slate-900">
+                  Name
+                </th>
+                <th scope="col" class="px-6 py-3 text-sm font-medium text-left text-slate-900">
+                  Title
+                </th>
+                <th scope="col" class="px-6 py-3 text-sm font-medium text-left text-slate-900">
+                  Email
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="odd:bg-white even:bg-slate-50">
+                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-slate-900">
+                  Jane Cooper
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  Regional Paradigm Technician
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  jane.cooper@example.com
+                </td>
+              </tr>
+              <tr class="odd:bg-white even:bg-slate-50">
+                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-slate-900">
+                  Cody Fisher
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  Product Directives Officer
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  cody.fisher@example.com
+                </td>
+              </tr>
+              <tr class="odd:bg-white even:bg-slate-50">
+                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-slate-900">
+                  Leonard Krasner
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  Senior Designer
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  leonard.krasner@example.com
+                </td>
+              </tr>
+              <tr class="odd:bg-white even:bg-slate-50">
+                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-slate-900">
+                  Emily Selman
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  VP, Hardware Engineering
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  emily.selman@example.com
+                </td>
+              </tr>
+              <tr class="odd:bg-white even:bg-slate-50">
+                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-slate-900">
+                  Anna Roberts
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  Chief Strategy Officer
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-slate-600">
+                  anna.roberts@example.com
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+```html
+<table>
+  <!-- ... -->
+  <tbody>
+    {#each people as person}
+      <tr class="odd:bg-white even:bg-slate-50">
+        <td>{person.name}</td>
+        <td>{person.title}</td>
+        <td>{person.email}</td>
+      </tr>
+    {/each}
+  </tbody>
+</table>
+```
+
+Tailwind는 `:only-child`, `:first-of-type`, `:empty` 등과 같은 다른 구조적 가상 클래스를 위한 수정자도 포함하고 있습니다.
+
+사용 가능한 가상 클래스 수정자의 전체 목록을 보려면 [가상 클래스 참조](#pseudo-class-reference)를 참조하세요.
+
+
+### 폼 상태
+
+`required`, `invalid`, `disabled`와 같은 수정자를 사용하여 다양한 상태의 폼 요소를 스타일링하세요.
+
+<div class="max-w-sm px-6 py-5 mx-auto bg-white shadow">
+  <form>
+    <div>
+      <label for="username" class="block text-sm font-medium text-slate-700">Username</label>
+      <div class="mt-1">
+        <input type="text" name="username" id="username" class="block w-full px-3 py-2 bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 focus:outline-none focus:border-sky-500 focus:ring-sky-500 sm:text-sm focus:ring-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 disabled:shadow-none" value="tbone" disabled />
+      </div>
+    </div>
+    <div class="mt-6">
+      <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+      <div class="mt-1">
+        <input type="email" name="email" id="email" class="block w-full px-3 py-2 bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 focus:outline-none focus:border-sky-500 focus:ring-sky-500 sm:text-sm focus:ring-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 disabled:shadow-none" value="george@krugerindustrial." placeholder="you@example.com" />
+      </div>
+    </div>
+    <div class="mt-6">
+      <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+      <div class="mt-1">
+        <input type="password" name="password" id="password" class="block w-full px-3 py-2 bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 focus:outline-none focus:border-sky-500 focus:ring-sky-500 sm:text-sm focus:ring-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 disabled:shadow-none" value="Bosco" />
+      </div>
+    </div>
+    <div class="mt-6 text-right">
+      <button class="bg-sky-500 hover:bg-sky-700 px-5 py-2.5 text-sm leading-5 rounded-md font-semibold text-white">
+        Save changes
+      </button>
+    </div>
+  </form>
+</div>
+
+```html
+<form>
+  <label class="block">
+    <span class="block text-sm font-medium text-slate-700">Username</span>
+    <!-- 폼 상태 수정자를 사용하면, 모든 입력에 대해 클래스를 동일하게 사용할 수 있습니다 -->
+    <input type="text" value="tbone" disabled class="block w-full px-3 py-2 mt-1 text-sm bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 "/>
+  </label>
+  <!-- ... -->
+</form>
+```
+
+이런 식으로 수정자를 사용하면 템플릿에서 조건부 로직의 양을 줄일 수 있어 입력의 상태에 관계없이 동일한 클래스 세트를 사용할 수 있으며 브라우저가 적절한 스타일을 적용할 수 있습니다.
+
+Tailwind는 `:read-only`, `:indeterminate`, `:checked` 등과 같은 다른 폼 상태를 위한 수정자도 포함하고 있습니다.
+
+사용 가능한 가상 클래스 수정자의 전체 목록을 보려면 [가상 클래스 참조](#disabled)를 참조하세요.
+
+
+
+
+### 부모 상태에 따른 스타일링 <small>(group-{'{modifier}'})</small>
+
+어떤 _부모_ 요소의 상태에 따라 요소를 스타일링할 필요가 있을 때, 부모에 `group` 클래스를 표시하고 `group-*` 수정자들을 사용하여 대상 요소를 스타일링하세요. 예를 들어 `group-hover`와 같은 수정자를 사용할 수 있습니다.
+
+<a href="#" class="block max-w-xs p-4 mx-auto space-y-3 bg-white rounded-lg shadow-lg group ring-1 ring-slate-900/5 hover:bg-sky-500 hover:ring-sky-500">
+  <div class="flex items-center space-x-3">
+    <svg class="w-6 h-6 stroke-sky-500 group-hover:stroke-white" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M11 19H6.931A1.922 1.922 0 015 17.087V8h12.069C18.135 8 19 8.857 19 9.913V11" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M14 7.64L13.042 6c-.36-.616-1.053-1-1.806-1H7.057C5.921 5 5 5.86 5 6.92V11M17 15v4M19 17h-4" />
+    </svg>
+    <h3 class="text-sm font-semibold text-slate-900 group-hover:text-white">New project</h3>
+  </div>
+  <p class="text-sm text-slate-500 group-hover:text-white">Create a new project from a variety of starting templates.</p>
+</a>
+
+
+
+```html
+<a href="#" class="block max-w-xs p-6 mx-auto space-y-3 bg-white rounded-lg shadow-lg group ring-1 ring-slate-900/5 hover:bg-sky-500 hover:ring-sky-500">
+  <div class="flex items-center space-x-3">
+    <svg class="w-6 h-6 stroke-sky-500 group-hover:stroke-white" fill="none" viewBox="0 0 24 24"><!-- ... --></svg>
+    <h3 class="text-sm font-semibold text-slate-900 group-hover:text-white">새 프로젝트</h3>
+  </div>
+  <p class="text-sm text-slate-500 group-hover:text-white">다양한 시작 템플릿에서 새 프로젝트를 생성하세요.</p>
+</a>
+```
+
+이 패턴은 `group-focus`, `group-active`, 심지어 `group-odd`와 같은 모든 가상 클래스 수정자와 함께 작동합니다.
+
+
+#### 중첩된 그룹 구분하기
+
+그룹을 중첩할 때, `group/{name}` 클래스를 사용하여 특정 부모 그룹에 고유한 그룹 이름을 지정하고 `group-hover/{name}`과 같은 클래스를 사용하여 해당 이름을 수정자에 포함시켜 _특정_ 부모 그룹의 상태에 따라 스타일을 지정할 수 있습니다.
+
+
+<div class="px-4">
+  <ul role="list" class="max-w-md p-2 mx-auto bg-white shadow">
+    <li class="relative flex items-center justify-between p-4 group/item rounded-xl hover:bg-slate-100">
+      <div class="flex gap-4">
+        <div class="flex-shrink-0">
+          <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        </div>
+        <div class="w-full text-sm leading-6">
+          <a href="#" class="font-semibold text-slate-900"><span class="absolute inset-0 rounded-xl" aria-hidden="true"></span>Leslie Abbott</a>
+          <div class="text-slate-500">Co-Founder / CEO</div>
+        </div>
+      </div>
+      <a href="#" class="relative flex items-center invisible py-1 pl-4 pr-3 text-sm transition rounded-full group/edit whitespace-nowrap text-slate-500 hover:bg-slate-200 group-hover/item:visible">
+        <span class="font-semibold transition group-hover/edit:text-gray-700">Call</span>
+        <svg class="mt-px h-5 w-5 text-slate-400 transition group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </li>
+    <li class="relative flex items-center justify-between p-4 group/item rounded-xl hover:bg-slate-100">
+      <div class="flex gap-4">
+        <div class="flex-shrink-0">
+          <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        </div>
+        <div class="w-full text-sm leading-6">
+          <a href="#" class="font-semibold text-slate-900"><span class="absolute inset-0 rounded-xl" aria-hidden="true"></span>Hector Adams</a>
+          <div class="text-slate-500">VP, Marketing</div>
+        </div>
+      </div>
+      <a href="#" class="relative flex items-center invisible py-1 pl-4 pr-3 text-sm transition rounded-full group/edit whitespace-nowrap text-slate-500 hover:bg-slate-200 group-hover/item:visible">
+        <span class="font-semibold transition group-hover/edit:text-gray-700">Call</span>
+        <svg class="mt-px h-5 w-5 text-slate-400 transition group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </li>
+    <li class="relative flex items-center justify-between p-4 group/item rounded-xl hover:bg-slate-100">
+      <div class="flex gap-4">
+        <div class="flex-shrink-0">
+          <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        </div>
+        <div class="w-full text-sm leading-6">
+          <a href="#" class="font-semibold text-slate-900"><span class="absolute inset-0 rounded-xl" aria-hidden="true"></span>Blake Alexander</a>
+          <div class="text-slate-500">Account Coordinator</div>
+        </div>
+      </div>
+      <a href="#" class="relative flex items-center invisible py-1 pl-4 pr-3 text-sm transition rounded-full group/edit whitespace-nowrap text-slate-500 hover:bg-slate-200 group-hover/item:visible">
+        <span class="font-semibold transition group-hover/edit:text-gray-700">Call</span>
+        <svg class="mt-px h-5 w-5 text-slate-400 transition group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+```html
+<ul role="list">
+  {#each people as person}
+    <li class="group/item hover:bg-slate-100 ...">
+      <img src="{person.imageUrl}" alt="" />
+      <div>
+        <a href="{person.url}">{person.name}</a>
+        <p>{person.title}</p>
+      </div>
+      <a class="group/edit invisible hover:bg-slate-200 group-hover/item:visible ..." href="tel:{person.phone}">
+        <span class="group-hover/edit:text-gray-700 ...">Call</span>
+        <svg class="group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500 ...">
+          <!-- ... -->
+        </svg>
+      </a>
+    </li>
+  {/each}
+</ul>
+```
+
+그룹은 원하는 대로 이름을 지정할 수 있으며 어떤 방식으로도 설정할 필요가 없습니다. 마크업에서 직접 그룹을 이름 지정하면 Tailwind가 필요한 CSS를 자동으로 생성합니다.
+
+
+#### 임의 그룹
+
+대괄호 사이에 [임의 값](/docs/adding-custom-styles#using-arbitrary-values)으로 자신만의 선택자를 제공함으로써 즉석에서 `group-*` 수정자를 생성할 수 있습니다.
+
+```html
+<div class="group is-published">
+  <div class="hidden group-[.is-published]:block">
+    발행됨
+  </div>
+</div>
+```
+
+```css
+.group.is-published .group-\[\.is-published\]\:block {
+  display: block;
+}
+```
+
+
+
+더 많은 제어를 위해 최종 선택자에서 `.group`이 어떻게 나타날지를 표시하기 위해 `&` 문자를 사용할 수 있습니다.
+
+
+```html
+<div class="group">
+  <div class="group-[:nth-of-type(3)_&]:block">
+    <!-- ... -->
+  </div>
+</div>
+```
+
+```css
+:nth-of-type(3) .group .group-\[\:nth-of-type\(3\)_\&\]\:block {
+  display: block;
+}
+```
+
+### 형제 요소 상태에 따른 스타일링 <small>(peer-{'{modifier}'})</small>
+
+형제 요소의 상태에 따라 요소를 스타일링할 필요가 있을 때, 형제에 `peer` 클래스를 표시하고 `peer-*` 수정자를 사용하여 대상 요소를 스타일링하세요. 예를 들어 `peer-invalid`를 사용할 수 있습니다.
+
+<div class="max-w-sm px-6 pt-6 pb-5 mx-auto bg-white shadow">
+  <form>
+    <div>
+      <label for="email-2" class="block text-sm font-medium text-slate-700">Email</label>
+      <div class="mt-1">
+        <input type="email" name="email" id="email-2" class="block w-full px-3 py-2 bg-white border rounded-md shadow-sm peer border-slate-300 placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 focus:outline-none focus:border-sky-500 focus:ring-sky-500 sm:text-sm focus:ring-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 disabled:shadow-none" value="george@krugerindustrial." placeholder="you@example.com" />
+        <p class="invisible mt-2 text-sm text-pink-600 peer-invalid:visible">Please provide a valid email address.</p>
+      </div>
+    </div>
+  </form>
+</div>
+
+```html
+<form>
+  <label class="block">
+    <span class="block text-sm font-medium text-slate-700">Email</span>
+    <input type="email" class="peer ..."/>
+    <p class="invisible mt-2 text-sm text-pink-600 peer-invalid:visible">
+      Please provide a valid email address.
+    </p>
+  </label>
+</form>
+```
+
+이를 통해 JS 없이도 [플로팅 라벨](https://www.youtube.com/watch?v=nJzKi6oIvBA)과 같은 다양한 멋진 트릭을 구현할 수 있습니다.
+
+이 패턴은 `peer-focus`, `peer-required`, `peer-disabled` 등 모든 가상 클래스 수정자와 함께 작동합니다.
+
+CSS에서 [이후 형제 결합자](https://developer.mozilla.org/en-US/docs/Web/CSS/Subsequent-sibling_combinator)의 작동 방식 때문에 `peer` 마커는 _이전_ 형제에만 사용될 수 있다는 점을 알아두는 것이 중요합니다.
+
+<Callout type="page" icon="기존 CSS 방식">이전 형제만 피어로 표시될 수 있으므로 작동하지 않습니다</Callout>
+
+```html
+<label>
+  <span class="peer-invalid:text-red-500 ...">Email</span>
+  <input type="email" class="peer ..."/>
+</label>
+```
+
+
+
+#### 피어 구분하기
+
+여러 피어를 사용할 때, `peer/{name}` 클래스를 사용하여 특정 피어에 고유한 이름을 지정하고 `peer-checked/{name}`과 같은 클래스에서 그 이름을 수정자로 포함시켜 _특정_ 피어의 상태에 따라 스타일을 지정할 수 있습니다.
+
+<div class="px-4">
+  <fieldset class="max-w-md p-8 mx-auto text-sm bg-white shadow">
+    <div class="pb-2 mb-6 text-base font-semibold border-b border-slate-200">Published status</div>
+    <input id="draft" class="peer/draft form-radio mr-2 mb-0.5 border-slate-300 text-sky-400 focus:ring-sky-300" type="radio" name="status" checked /><label class="font-medium peer-checked/draft:text-sky-500" for="draft">Draft</label> <input id="published" class="peer/published form-radio mr-2 mb-0.5 ml-4 border-slate-300 text-sky-400 focus:ring-sky-300" type="radio" name="status" /><label class="font-medium peer-checked/published:text-sky-500" for="published">Published</label>
+    <div class="hidden mt-4 text-gray-500 peer-checked/draft:block">Drafts are only visible to administrators.</div>
+    <div class="hidden mt-4 text-gray-500 peer-checked/published:block">Your post will be publicly visible on your site.</div>
+  </fieldset>
+</div>
+
+
+```html
+<fieldset>
+  <legend>Published status</legend>
+
+  <input id="draft" class="peer/draft" type="radio" name="status" checked />
+  <label for="draft" class="peer-checked/draft:text-sky-500">Draft</label>
+
+  <input id="published" class="peer/published" type="radio" name="status" />
+  <label for="published" class="peer-checked/published:text-sky-500">Published</label>
+
+  <div class="hidden peer-checked/draft:block">Drafts are only visible to administrators.</div>
+  <div class="hidden peer-checked/published:block">Your post will be publicly visible on your site.</div>
+</fieldset>
+```
+
+피어는 원하는 대로 이름을 지정할 수 있으며 어떤 방식으로도 설정할 필요가 없습니다. 마크업에서 직접 피어를 이름 지정하면 Tailwind가 필요한 CSS를 자동으로 생성합니다.
+
+#### 임의의 피어
+
+대괄호 사이에 [임의 값](/docs/adding-custom-styles#using-arbitrary-values)으로 자신만의 선택자를 제공함으로써 즉석에서 `peer-*` 수정자를 생성할 수 있습니다.
+
+```html
+<form>
+  <label for="email">이메일:</label>
+  <input id="email" name="email" type="email" class="is-dirty peer" required />
+  <div class="peer-[.is-dirty]:peer-required:block hidden">이 필드는 필수입니다.</div>
+  <!-- ... -->
+</form>
+```
+
+```css
+.peer.is-dirty:required ~ .peer-\[\.is-dirty\]\:peer-required\:block {
+  display: block;
+}
+```
+
+최종 선택자에서 `.peer`가 어떻게 나타날지를 표시하기 위해 `&` 문자를 사용할 수 있으며, 이를 통해 전달한 선택자에 대해 더 많은 제어가 가능합니다.
+
+```html
+<div>
+  <input type="text" class="peer" />
+  <div class="hidden peer-[:nth-of-type(3)_&]:block">
+    <!-- ... -->
+  </div>
+</div>
+```
+
+```css
+:nth-of-type(3) .peer ~ .peer-\[\:nth-of-type\(3\)_\&\]\:block {
+  display: block;
+}
+```
+
+### 직계 자식 스타일링 <small>(*-{'{modifier}'})</small>
+
+일반적으로 자식 요소에 유틸리티 클래스를 직접 적용하는 것이 선호되지만, 제어할 수 없는 직계 자식을 스타일링해야 하는 상황에서는 `*` 수정자를 사용할 수 있습니다.
+
+<div class="max-w-md p-6 mx-auto bg-white shadow dark:bg-slate-800">
+  <h2 class="text-base font-semibold text-slate-900 dark:text-slate-200">Categories</h2>
+  <div class="flex flex-wrap gap-2 pt-4 text-sm text-sky-600 *:rounded-full *:border *:border-sky-100 *:bg-sky-50 *:px-2 *:py-0.5 dark:text-sky-300 dark:*:border-sky-500/15 dark:*:bg-sky-500/10">
+    <div>Sales</div>
+    <div>Marketing</div>
+    <div>SEO</div>
+    <div>Analytics</div>
+    <div>Design</div>
+    <div>Strategy</div>
+    <div>Security</div>
+    <div>Growth</div>
+    <div>Mobile</div>
+    <div>UX/UI</div>
+  </div>
+</div>
+
+
+```html
+<div>
+  <h2>Categories<h2>
+  <ul class="*:rounded-full *:border *:border-sky-100 *:bg-sky-50 *:px-2 *:py-0.5 dark:text-sky-300 dark:*:border-sky-500/15 dark:*:bg-sky-500/10 ...">
+    <li>Sales</li>
+    <li>Marketing</li>
+    <li>SEO</li>
+    <!-- ... -->
+  </ul>
+</div>
+```
+
+직접 자식에 유틸리티를 적용하여 스타일을 오버라이딩하는 것은 생성된 자식 선택자의 구체성 때문에 작동하지 않는다는 점을 알아두는 것이 중요합니다.
+
+<Callout type="page" icon="기존 CSS 방식">작동하지 않습니다, 자식은 자신의 스타일링을 오버라이드할 수 없습니다.</Callout>
+
+```html
+<ul class="*:bg-sky-50 ...">
+  <li class="bg-red-50 ...">Sales</li>
+  <li>Marketing</li>
+  <li>SEO</li>
+  <!-- ... -->
+</ul>
+```
+
+### 자손에 따른 스타일링 <small>(has-{'{modifier}'})</small>
+
+`has-*` 수정자를 사용하여 자손의 상태나 내용에 기반한 요소의 스타일을 지정하세요.
+
+<div class="max-w-md px-4 py-6 mx-auto bg-white shadow">
+  <fieldset>
+    <legend class="text-base font-semibold text-slate-900 dark:text-slate-200">Payment method</legend>
+    <div class="mt-4 space-y-2">
+      <label for="apple" class="text-slate-700 has-[:checked]:ring-indigo-200 has-[:checked]:text-indigo-900 has-[:checked]:bg-indigo-50 grid grid-cols-[24px_1fr_auto] items-center gap-6 rounded-lg p-4 ring-1 ring-transparent hover:bg-slate-100">
+        <svg class="w-8" fill="currentColor" viewBox="0 0 24 13">
+          <path d="M3.96299 1.735C3.22833 1.73504 2.50814 1.9393 1.88285 2.32497C1.25756 2.71063 0.751781 3.26252 0.42199 3.919C0.144511 4.47115 0 5.08054 0 5.6985C0 6.31645 0.144511 6.92584 0.42199 7.478C0.751781 8.13447 1.25756 8.68636 1.88285 9.07202C2.50814 9.45769 3.22833 9.66195 3.96299 9.662C5.03299 9.662 5.93299 9.31 6.58999 8.705C7.33799 8.015 7.76999 6.995 7.76999 5.789C7.76976 5.51882 7.74634 5.24916 7.69999 4.983H3.96399V6.509H6.10399C6.06043 6.75276 5.96798 6.98519 5.83221 7.19228C5.69644 7.39937 5.52016 7.57684 5.31399 7.714C4.95799 7.955 4.49999 8.093 3.96399 8.093C2.92999 8.093 2.05299 7.396 1.73899 6.457C1.57315 5.96493 1.57315 5.43207 1.73899 4.94C2.05299 4 2.92999 3.304 3.96399 3.304C4.52899 3.29475 5.07496 3.50811 5.48399 3.898L6.61599 2.768C5.89873 2.09384 4.94728 1.72362 3.96299 1.735ZM10.464 2.285V9.185H11.35V6.39H12.815C13.418 6.39 13.925 6.194 14.337 5.802C14.5421 5.61815 14.705 5.39214 14.8146 5.13945C14.9242 4.88676 14.9779 4.61337 14.972 4.338C14.9762 4.06405 14.9216 3.79238 14.8121 3.54125C14.7026 3.29011 14.5406 3.06533 14.337 2.882C14.1354 2.68674 13.897 2.53337 13.6358 2.43073C13.3746 2.32809 13.0956 2.27822 12.815 2.284L10.464 2.285ZM12.891 3.135C13.0456 3.13769 13.1981 3.17139 13.3395 3.23408C13.4808 3.29678 13.6082 3.3872 13.714 3.5C13.8267 3.60959 13.9162 3.74065 13.9774 3.88544C14.0385 4.03024 14.07 4.18582 14.07 4.343C14.07 4.50017 14.0385 4.65576 13.9774 4.80055C13.9162 4.94534 13.8267 5.07641 13.714 5.186C13.6007 5.30328 13.4642 5.39562 13.3132 5.45709C13.1622 5.51857 13 5.54783 12.837 5.543H11.35V3.135H12.837C12.855 3.13458 12.873 3.13458 12.891 3.135ZM17.015 4.31C16.173 4.31 15.538 4.618 15.108 5.235L15.889 5.726C16.177 5.309 16.569 5.1 17.064 5.1C17.3798 5.09612 17.6855 5.21145 17.92 5.423C18.0354 5.51846 18.1282 5.63844 18.1915 5.77423C18.2548 5.91001 18.2871 6.05818 18.286 6.208V6.41C17.946 6.217 17.512 6.121 16.986 6.121C16.369 6.121 15.876 6.266 15.507 6.555C15.137 6.843 14.953 7.232 14.953 7.72C14.949 7.9396 14.994 8.15734 15.0848 8.35733C15.1757 8.55732 15.31 8.73451 15.478 8.876C15.828 9.184 16.263 9.339 16.783 9.339C17.393 9.339 17.881 9.069 18.248 8.529H18.286V9.184H19.134V6.275C19.134 5.665 18.944 5.185 18.566 4.835C18.186 4.485 17.67 4.31 17.015 4.31ZM19.278 4.464L21.224 8.886L20.126 11.266H21.041L24 4.463H23.035L21.667 7.854H21.647L20.241 4.464H19.278ZM17.132 6.832C17.626 6.832 18.012 6.942 18.288 7.162C18.288 7.534 18.141 7.858 17.848 8.135C17.5835 8.39951 17.225 8.54839 16.851 8.549C16.6011 8.55376 16.3573 8.47178 16.161 8.317C16.0697 8.25093 15.9954 8.16402 15.9445 8.06349C15.8935 7.96295 15.8673 7.85171 15.868 7.739C15.868 7.482 15.988 7.269 16.231 7.092C16.471 6.919 16.772 6.832 17.132 6.832Z" />
+        </svg>
+        Google Pay
+        <input name="payment_method" id="apple" value="google" type="radio" class="box-content h-1.5 w-1.5 appearance-none rounded-full border-[5px] border-white bg-white bg-clip-padding outline-none ring-1 ring-gray-950/10 checked:border-indigo-500 checked:ring-indigo-500" checked />
+      </label>
+      <label for="google" class="text-slate-700 has-[:checked]:ring-indigo-200 has-[:checked]:text-indigo-800 has-[:checked]:bg-indigo-50 grid grid-cols-[24px_1fr_auto] items-center gap-6 rounded-lg p-4 ring-1 ring-transparent hover:bg-slate-100">
+        <svg class="w-8 mt-1 fill-current" fill="currentColor" viewBox="0 0 24 13">
+          <path d="M4.38526 1.86704C4.10401 2.19606 3.65392 2.45565 3.20387 2.41854C3.14762 1.97367 3.36793 1.50091 3.62579 1.20892C3.90704 0.870635 4.39932 0.62962 4.79781 0.611084C4.84468 1.07453 4.66182 1.52871 4.38526 1.86704ZM4.79312 2.50663C4.14146 2.46956 3.5836 2.87272 3.27418 2.87272C2.96012 2.87272 2.48659 2.52517 1.97092 2.53443C1.30056 2.5437 0.677025 2.91906 0.33479 3.51694C-0.368428 4.71265 0.151978 6.48308 0.831712 7.45632C1.16457 7.9383 1.56306 8.46662 2.0881 8.44809C2.58507 8.42955 2.78195 8.12834 3.38204 8.12834C3.98677 8.12834 4.16026 8.44809 4.68531 8.43882C5.2291 8.42955 5.57134 7.95688 5.9042 7.47485C6.28388 6.92799 6.43862 6.39499 6.44799 6.36718C6.43862 6.35791 5.3979 5.96402 5.38853 4.77753C5.37915 3.78576 6.20893 3.31304 6.24643 3.28524C5.77759 2.59931 5.04629 2.52517 4.79312 2.50663ZM8.55765 1.16258V8.38789H9.69212V5.91768H11.2626C12.6971 5.91768 13.7051 4.94445 13.7051 3.53552C13.7051 2.12664 12.7159 1.16262 11.3001 1.16262H8.5576L8.55765 1.16258ZM9.69212 2.10806H11.0001C11.9846 2.10806 12.5471 2.62711 12.5471 3.54011C12.5471 4.4531 11.9846 4.97684 10.9954 4.97684H9.69212V2.10806ZM15.7772 8.44345C16.4898 8.44345 17.1508 8.08664 17.4508 7.52119H17.4743V8.38785H18.5244V4.79143C18.5244 3.74868 17.6806 3.07666 16.3819 3.07666C15.1771 3.07666 14.2864 3.75795 14.2536 4.69412H15.2756C15.36 4.24921 15.7771 3.95722 16.3491 3.95722C17.043 3.95722 17.4321 4.27701 17.4321 4.86562V5.26415L16.0163 5.34756C14.6989 5.42634 13.9864 5.95934 13.9864 6.88629C13.9864 7.82245 14.7224 8.44345 15.7772 8.44345ZM16.0819 7.58607C15.4772 7.58607 15.0927 7.29876 15.0927 6.85844C15.0927 6.4043 15.4631 6.14012 16.171 6.09841L17.4321 6.01963V6.42743C17.4321 7.10408 16.8508 7.58607 16.0819 7.58607H16.0819ZM19.9261 10.3529C21.0325 10.3529 21.5529 9.93584 22.0076 8.67057L24 3.14617H22.8467L21.5107 7.41456H21.4872L20.1511 3.14617H18.9651L20.8871 8.40638L20.784 8.72618C20.6106 9.2684 20.3293 9.47698 19.8277 9.47698C19.7386 9.47698 19.5652 9.46771 19.4948 9.45844V10.3251C19.5604 10.3436 19.8417 10.3529 19.9261 10.3529Z" />
+        </svg>
+        Apple Pay
+        <input name="payment_method" id="google" value="apple" type="radio" class="box-content h-1.5 w-1.5 appearance-none rounded-full border-[5px] border-white bg-white bg-clip-padding outline-none ring-1 ring-gray-950/10 checked:border-indigo-500 checked:ring-indigo-500" />
+      </label>
+      <label for="credit-card" class="text-slate-700 has-[:checked]:ring-indigo-200 has-[:checked]:text-indigo-800 has-[:checked]:bg-indigo-50 grid grid-cols-[24px_1fr_auto] items-center gap-6 rounded-lg p-4 ring-1 ring-transparent hover:bg-slate-100">
+        <svg class="w-8" viewBox="0 0 24 13" fill="none">
+          <rect stroke="currentColor" x="0.5" y="0.5" width="23" height="11" rx="1.5" />
+          <path fill="currentColor" d="M16.539 3.18591C16.0742 3.01652 15.5828 2.93152 15.088 2.93491C13.488 2.93491 12.358 3.74091 12.35 4.89791C12.34 5.74791 13.153 6.22691 13.768 6.51091C14.399 6.80291 14.61 6.98691 14.608 7.24791C14.604 7.64491 14.104 7.82491 13.639 7.82491C13 7.82491 12.651 7.73591 12.114 7.51291L11.915 7.41991L11.688 8.75191C12.077 8.91391 12.778 9.05291 13.502 9.06491C15.203 9.06491 16.315 8.26391 16.328 7.03291C16.342 6.35391 15.902 5.84091 14.976 5.41691C14.413 5.14191 14.064 4.95791 14.064 4.67891C14.064 4.43191 14.363 4.16791 14.988 4.16791C15.404 4.15785 15.8174 4.23589 16.201 4.39691L16.351 4.46391L16.578 3.17691L16.539 3.18591ZM20.691 3.04291H19.441C19.052 3.04291 18.759 3.14991 18.589 3.53591L16.185 8.98191H17.886L18.226 8.08891L20.302 8.09091C20.351 8.29991 20.501 8.98191 20.501 8.98191H22.001L20.691 3.04291ZM10.049 2.99291H11.67L10.656 8.93491H9.03705L10.049 2.99091V2.99291ZM5.93405 6.26791L6.10205 7.09291L7.68605 3.04291H9.40305L6.85205 8.97391H5.13905L3.73905 3.95191C3.71637 3.8691 3.66312 3.79798 3.59005 3.75291C3.08545 3.49225 2.55079 3.29444 1.99805 3.16391L2.02005 3.03891H4.62905C4.98305 3.05291 5.26805 3.16391 5.36305 3.54191L5.93305 6.27091L5.93405 6.26791ZM18.691 6.87391L19.337 5.21191C19.329 5.22991 19.47 4.86891 19.552 4.64591L19.663 5.15891L20.038 6.87291H18.69L18.691 6.87391Z"  />
+        </svg>
+        Credit Card
+        <input name="payment_method" id="credit-card" value="credit-card" type="radio" class="box-content h-1.5 w-1.5 appearance-none rounded-full border-[5px] border-white bg-white bg-clip-padding outline-none ring-1 ring-gray-950/10 checked:border-indigo-500 checked:ring-indigo-500" />
+      </label>
+    </div>
+  </fieldset>
+</div>
+
+```html
+<label class="has-[:checked]:bg-indigo-50 has-[:checked]:text-indigo-900 has-[:checked]:ring-indigo-200 ..">
+  <svg fill="currentColor">
+    <!-- ... -->
+  </svg>
+  Google Pay
+  <input type="radio" class="checked:border-indigo-500 ..." />
+</label>
+```
+
+가상 클래스와 함께 `has-*`를 사용하여, 예를 들어 `has-[:focus]`를 통해 자손의 상태에 기반한 요소의 스타일을 지정할 수 있습니다. 또한 요소 선택자를 사용하여, `has-[img]`나 `has-[a]`와 같이 자손의 내용에 기반한 요소의 스타일을 지정할 수도 있습니다.
+
+
+
+### 그룹의 자손에 따른 스타일링 <small>(group-has-{'{modifier}'})</small>
+
+부모 요소의 자손에 기반하여 요소를 스타일링할 필요가 있을 때, 부모에 `group` 클래스를 표시하고 `group-has-*` 수정자를 사용하여 대상 요소를 스타일링할 수 있습니다.
+
+<div class="grid max-w-md mx-auto bg-white divide-y shadow divide-slate-100 text-slate-700">
+  <div class="group grid grid-cols-[32px_1fr_auto] pt-6 items-center gap-x-4 px-4 py-4">
+    <img class="size-[32px] rounded-full" src="https://spotlight.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Favatar.51a13c67.jpg&w=128&q=80" alt="" />
+    <h4 class="font-semibold text-slate-900">Spencer Sharp</h4>
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="size-4 group-has-[a]:block hidden">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+    </svg>
+    <p class="col-start-2 text-sm">Product Designer at <a href="#" class="text-blue-500 underline">planeteria.tech</a></p>
+  </div>
+  <div class="group grid grid-cols-[32px_1fr_auto] items-center gap-x-4 px-4 py-4">
+    <img class="size-[32px] rounded-full" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=256&h=256&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+    <h4 class="font-semibold text-slate-900">Casey Jordan</h4>
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="size-4 group-has-[a]:block hidden">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+    </svg>
+    <p class="col-start-2 text-sm">Just happy to be here.</p>
+  </div>
+  <div class="group grid grid-cols-[32px_1fr_auto] items-center gap-x-4 px-4 py-4">
+    <img class="size-[32px] rounded-full" src="https://images.unsplash.com/photo-1590895340509-793cb98788c9?q=80&w=256&h=256&&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+    <h4 class="font-semibold text-slate-900">Alex Reed</h4>
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="size-4 group-has-[a]:block hidden">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+    </svg>
+    <p class="col-start-2 text-sm">A multidisciplinary designer, working at the intersection of art and technology.<br/><a href="#" class="text-blue-500 underline">alex-reed.com</a> </p>
+  </div>
+  <div class="group grid grid-cols-[32px_1fr_auto] items-center pb-6 gap-x-4 px-4 py-4">
+    <img class="size-[32px] rounded-full" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=256&h=256&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+    <h4 class="font-semibold text-slate-900">Taylor Bailey</h4>
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="size-4 group-has-[a]:block hidden">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+    </svg>
+    <p class="col-start-2 text-sm">Pushing pixels. Slinging divs.</p>
+  </div>
+</div>
+
+```html
+<div class="group ...">
+  <img src="..." />
+  <h4>Spencer Sharp</h4>
+  <svg class="hidden group-has-[a]:block ...">
+    <!-- ... -->
+  </svg>
+  <p>Product Designer at <a href="...">planeteria.tech</a></p>
+</div>
+```
+
+### 형제의 자손에 따른 스타일링 <small>(peer-has-{'{modifier}'})</small>
+
+형제 요소의 자손에 기반하여 요소를 스타일링할 필요가 있을 때, 형제에 `peer` 클래스를 표시하고 `peer-has-*` 수정자를 사용하여 대상 요소를 스타일링할 수 있습니다.
+
+
+<div class="max-w-md px-4 py-6 mx-auto bg-white shadow">
+  <fieldset class="space-y-3">
+    <legend class="text-base font-semibold text-slate-900 dark:text-slate-200">Today</legend>
+    <div class="grid grid-cols-[1fr_24px] items-center gap-6">
+      <label class="peer grid grid-cols-[auto_1fr] items-center gap-3 rounded-md px-2 hover:bg-slate-100">
+        <input type="checkbox" class="peer size-3.5 appearance-none rounded-sm border border-slate-300 accent-pink-500 dark:accent-pink-600 checked:appearance-auto" checked />
+        <span class="select-none text-slate-700 peer-checked:text-slate-400 peer-checked:line-through">Create a to do list</span>
+      </label>
+      <div class="size-[26px] rounded-md p-1 hover:bg-red-50 hover:text-red-500 peer-has-[:checked]:hidden">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+    </div>
+    <div class="grid grid-cols-[1fr_24px] items-center gap-6">
+      <label class="peer grid grid-cols-[auto_1fr] items-center gap-3 rounded-md px-2 hover:bg-slate-100">
+        <input type="checkbox" class="peer size-3.5 appearance-none rounded-sm border border-slate-300 accent-pink-500 dark:accent-pink-600 checked:appearance-auto" />
+        <span class="select-none text-slate-700 peer-checked:text-slate-400 peer-checked:line-through">Check off first item</span>
+      </label>
+      <div class="size-[26px] rounded-md p-1 hover:bg-red-50 hover:text-red-500 peer-has-[:checked]:hidden">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+    </div>
+    <div class="grid grid-cols-[1fr_24px] items-center gap-6">
+      <label class="peer grid grid-cols-[auto_1fr] items-center gap-3 rounded-md px-2 hover:bg-slate-100">
+        <input type="checkbox" class="peer size-3.5 appearance-none rounded-sm border border-slate-300 accent-pink-500 dark:accent-pink-600 checked:appearance-auto"  />
+        <span class="select-none text-slate-700 peer-checked:text-slate-400 peer-checked:line-through">Investigate race condition</span>
+      </label>
+      <div class="size-[26px] rounded-md p-1 hover:bg-red-50 hover:text-red-500 block peer-has-[:checked]:hidden">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+```html
+<fieldset>
+  <legend>오늘</legend>
+
+  <div>
+    <label class="peer ...">
+      <input type="checkbox" name="todo[1]" checked />
+      할 일 목록 만들기
+    </label>
+    <svg class="peer-has-[:checked]:hidden ...">
+      <!-- ... -->
+    </svg>
+  </div>
+
+  <!-- ... -->
+</fieldset>
+```
+
+## 가상 요소
+
+### before와 after
+
+`before`와 `after` 수정자를 사용하여 `::before`와 `::after` 가상 요소를 스타일링하세요.
+
+<div class="max-w-sm px-6 pt-6 pb-5 mx-auto bg-white shadow">
+  <form>
+    <label class="block">
+      <span class="block text-sm font-medium text-slate-700 after:content-['*'] after:ml-0.5 after:text-red-500">Email</span>
+      <input type="email" name="email" id="email" class="block w-full px-3 py-2 mt-1 bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 sm:text-sm focus:ring-1" placeholder="you@example.com" />
+    </label>
+  </form>
+</div>
+
+```html
+<label class="block">
+  <span class="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-medium text-slate-700">
+    이메일
+  </span>
+  <input type="email" name="email" class="block w-full px-3 py-2 mt-1 bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 sm:text-sm focus:ring-1" placeholder="you@example.com" />
+</label>
+```
+
+이 수정자를 사용할 때, Tailwind는 기본적으로 `content: ''`를 자동으로 추가하므로 다른 값을 원하지 않는 한 지정할 필요가 없습니다.
+
+<div class="px-6">
+  <div class="max-w-lg px-6 py-8 mx-auto bg-white shadow">
+    <blockquote class="text-2xl italic font-semibold text-center text-slate-900">
+      When you look <span class="relative inline-block before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500"><span class="relative text-white">annoyed</span></span> all the time, people think that you're busy.
+    </blockquote>
+  </div>
+</div>
+
+```html
+<blockquote class="text-2xl italic font-semibold text-center text-slate-900">
+  When you look
+  <span class="relative inline-block before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500">
+    <span class="relative text-white">annoyed</span>
+  </span>
+  all the time, people think that you're busy.
+</blockquote>
+```
+
+대부분의 Tailwind 프로젝트에서 `::before`와 `::after` 가상 요소가 필요하지 않다는 점을 알아두는 것이 좋습니다 — 실제 HTML 요소를 사용하는 것이 보통 더 간단합니다.
+
+예를 들어, 위의 디자인을 `::before` 가상 요소 대신 `<span>`을 사용하여 표현한 것은 읽기 더 쉽고 실제로 코드도 더 적습니다.
+
+```html
+<blockquote class="text-2xl italic font-semibold text-center text-slate-900">
+  When you look
+  <span class="relative">
+    <span class="absolute block -skew-y-3 bg-pink-500 -inset-1" aria-hidden="true"></span>
+    <span class="relative text-white">annoyed</span>
+  </span>
+  all the time, people think that you're busy.
+</blockquote>
+```
+
+`before`와 `after`는 가상 요소의 내용이 실제 DOM에 없고 사용자가 선택할 수 없는 상황에서 중요할 때 사용하세요.
+
+[Preflight 기본 스타일](/docs/preflight)을 비활성화한 경우, `content` 속성이 기본적으로 빈 문자열로 설정되지 않으므로 `before`와 `after` 수정자를 사용할 때마다 `content-['']`를 포함해야 한다는 점을 참고하세요.
+
+> Preflight를 비활성화한 경우 content를 수동으로 설정하세요.
+
+```html
+<div class="before:content-[''] before:block ...">
+  <!-- ... -->
+</div>
+```
+
+
+### 플레이스홀더 텍스트 스타일링
+
+`placeholder` 수정자를 사용하여 입력란이나 텍스트 영역의 플레이스홀더 텍스트를 스타일링하세요.
+
+<div class="max-w-sm mx-auto">
+  <form>
+    <label class="relative block">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+        <svg class="w-5 h-5 fill-slate-300" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </span>
+      <span class="sr-only">검색</span>
+      <input type="text" name="search" class="block w-full py-2 pr-3 bg-white border rounded-md shadow-sm border-slate-300 pl-9 placeholder:italic placeholder:text-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="아무것이나 검색하세요..."
+      />
+    </label>
+  </form>
+</div>
+
+
+```html
+<label class="relative block">
+  <span class="sr-only">검색</span>
+  <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+    <svg class="w-5 h-5 fill-slate-300" viewBox="0 0 20 20"><!-- ... --></svg>
+  </span>
+  <input class="block w-full py-2 pr-3 bg-white border rounded-md shadow-sm placeholder:italic placeholder:text-slate-400 border-slate-300 pl-9 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="아무것이나 검색하세요..." type="text" name="search"/>
+</label>
+```
+
+### 파일 입력 버튼 스타일링
+
+`file` 수정자를 사용하여 파일 입력의 버튼을 스타일하세요.
+
+<div class="px-6">
+  <div class="max-w-sm px-6 py-8 mx-auto bg-white shadow">
+    <form class="flex items-center space-x-6">
+      <div class="shrink-0">
+        <img class="object-cover w-16 h-16 rounded-full" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80" alt="Current profile photo" />
+      </div>
+      <label class="block">
+        <span class="sr-only">Choose profile photo</span>
+        <input type="file" class="block w-full text-sm text-slate-500 file:text-sm file:font-semibold file:py-2 file:px-4 file:bg-violet-50 file:text-violet-700 file:rounded-full file:border-0 file:mr-4 hover:file:bg-violet-100"
+        />
+      </label>
+    </form>
+  </div>
+</div>
+
+
+```html
+<form class="flex items-center space-x-6">
+  <div class="shrink-0">
+    <img class="object-cover w-16 h-16 rounded-full" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80" alt="Current profile photo" />
+  </div>
+  <label class="block">
+    <span class="sr-only">프로필 사진 선택</span>
+    <input type="file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 "/>
+  </label>
+</form>
+```
+
+Tailwind의 [테두리 초기화](/docs/preflight#border-styles-are-reset-globally)는 파일 입력 버튼에 적용되지 않습니다. 이는 파일 입력 버튼에 테두리를 추가하려면 `file:border-solid`과 같은 클래스를 사용하여 명시적으로 [테두리 스타일](/docs/border-style)을 설정해야 함을 의미합니다.
+
+```html
+<input type="file" class="file:border file:border-solid ..." />
+```
+
+### 목록 마커 스타일링
+
+`marker` 수정자를 사용하여 목록의 카운터나 불릿을 스타일하세요.
+
+<div class="px-6">
+  <div class="max-w-sm px-8 py-8 mx-auto bg-white shadow dark:bg-slate-800">
+    <h2 class="text-base font-semibold text-slate-900 dark:text-slate-200">Ingredients</h2>
+    <ul role="list" class="pl-5 mt-3 space-y-3 list-disc text-slate-500 marker:text-sky-400 dark:text-slate-400">
+      <li>5 cups chopped Porcini mushrooms</li>
+      <li>1/2 cup of olive oil</li>
+      <li>3lb of celery</li>
+    </ul>
+  </div>
+</div>
+
+```html
+<ul role="list" class="pl-5 space-y-3 list-disc marker:text-sky-400 text-slate-500" dark-class="pl-5 space-y-3 list-disc marker:text-sky-400 text-slate-400">
+  <li>5컵의 다진 포르치니 버섯</li>
+  <li>올리브 오일 1/2컵</li>
+  <li>셀러리 3파운드</li>
+</ul>
+```
+
+`marker` 수정자는 상속 가능하게 디자인되어 있어서 `<li>` 요소에 직접 사용할 수 있지만, 반복을 피하기 위해 부모에도 사용할 수 있습니다.
+
+
+
+
+
+ ### 강조된 텍스트
+
+`selection` 수정자를 사용하여 활성 텍스트 선택을 스타일하세요.
+<div class="px-6">
+  <div class="max-w-lg px-6 py-8 mx-auto bg-white shadow text-slate-700 selection:bg-fuchsia-300 selection:text-fuchsia-900 dark:bg-slate-800 dark:text-slate-400">
+    <p>
+      So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I <em>was</em> a marine biologist.
+    </p>
+  </div>
+</div>
+
+```html
+<div class="selection:bg-fuchsia-300 selection:text-fuchsia-900">
+  <p>
+    So I started to walk into the water. I won't lie to you boys, I was terrified. But I pressed on, and as I made my way past the breakers a strange calm came over me. I don't know if it was divine intervention or the kinship of all living things but I tell you Jerry at that moment, I <em>was</em> a marine biologist.
+  </p>
+</div>
+```
+
+`selection` 수정자는 상속 가능하도록 설계되었으므로, 트리의 어디에나 추가할 수 있고 모든 자손 요소에 적용됩니다.
+
+이를 통해 사이트 전체에서 브랜드와 일치하는 선택 색상을 쉽게 설정할 수 있습니다.
+
+```html
+<html>
+<head>
+  <!-- ... -->
+</head>
+<body class="selection:bg-pink-300">
+  <!-- ... -->
+</body>
+</html>
+```
+
+
+### 첫 줄과 첫 글자 스타일링
+
+콘텐츠 블록의 첫 줄을 스타일링하려면 `first-line` 수정자를 사용하고, 첫 글자를 스타일링하려면 `first-letter` 수정자를 사용하세요.
+
+<div class="px-6">
+  <div class="max-w-lg px-6 py-8 mx-auto font-serif bg-white shadow text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+    <p class="first-line:uppercase first-line:tracking-widest first-letter:text-slate-900 first-letter:text-7xl first-letter:leading-none first-letter:float-left first-letter:font-bold first-letter:mr-3 dark:first-letter:text-white">
+      Well, let me tell you something, funny boy. Y'know that little stamp, the one that says "New York Public Library"? Well that may not mean anything to you, but that means a lot to me. One whole hell of a lot.
+    </p>
+    <p class="mt-6">
+      Sure, go ahead, laugh if you want to. I've seen your type before: Flashy, making the scene, flaunting convention. Yeah, I know what you're thinking. What's this guy making such a big stink about old library books? Well, let me give you a hint, junior.
+    </p>
+  </div>
+</div>
+
+```html
+<p class="first-line:uppercase first-line:tracking-widest first-letter:text-7xl first-letter:font-bold first-letter:text-slate-900 first-letter:mr-3 first-letter:float-left"
+ dark-class="first-line:uppercase first-line:tracking-widest first-letter:text-7xl first-letter:font-bold first-letter:text-white first-letter:mr-3 first-letter:float-left"
+">
+  Well, let me tell you something, funny boy. Y'know that little stamp, the one
+  that says "New York Public Library"? Well that may not mean anything to you,
+  but that means a lot to me. One whole hell of a lot.
+</p>
+```
+
+### 대화 상자 배경 스타일링
+
+`backdrop` 수정자를 사용하여 [기본 `<dialog>` 요소](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog)의 배경을 스타일하세요.
+
+```html
+<dialog class="backdrop:bg-gray-50">
+  <form method="dialog">
+    <!-- ... -->
+  </form>
+</dialog>
+```
+
+프로젝트에서 기본 `<dialog>` 요소를 사용하는 경우, `open` 수정자를 사용하여 [열린/닫힌 상태의 스타일링](/docs/hover-focus-and-other-states#open-closed-state)에 대해 알아볼 수도 있습니다.
+
+## 미디어 및 기능 쿼리
+
+### 반응형 브레이크포인트
+
+특정 브레이크포인트에서 요소를 스타일링하려면 `md`, `lg`와 같은 반응형 수정자를 사용하세요.
+
+예를 들어, 이 코드는 모바일에서 3열 그리드, 중간 너비 화면에서 4열 그리드, 넓은 너비 화면에서 6열 그리드를 렌더링합니다.
+
+```html
+<div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+  <!-- ... -->
+</div>
+```
+
+이러한 기능이 어떻게 작동하는지 자세히 알아보려면 [반응형 디자인](/docs/responsive-design) 문서를 확인하세요.
+
+
+### 선호 색상 체계
+
+`prefers-color-scheme` 미디어 쿼리는 사용자가 밝은 테마 또는 어두운 테마를 선호하는지 알려주며, 보통 운영 체제 수준에서 설정됩니다.
+
+밝은 모드를 대상으로 하려면 수정자 없이 유틸리티를 사용하고, 어두운 모드에 대한 오버라이드를 제공하려면 `dark` 수정자를 사용하세요.
+
+
+<div class="grid grid-cols-1 sm:grid-cols-2">
+  <div class="p-8 pt-7">
+    <p class="mb-2 text-sm font-medium text-slate-500">Light mode</p>
+    <div class="px-6 py-8 bg-white rounded-lg shadow-xl ring-1 ring-slate-900/5">
+      <div>
+        <span class="inline-flex items-center justify-center p-2 bg-indigo-500 rounded-md shadow-lg">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </span>
+      </div>
+      <h3 class="mt-5 text-base font-medium tracking-tight text-slate-900">Writes Upside-Down</h3>
+      <p class="mt-2 text-sm text-slate-500">
+        The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+      </p>
+    </div>
+  </div>
+  <div class="p-8 bg-slate-900 pt-7">
+    <p class="mb-2 text-sm font-medium text-slate-400">Dark mode</p>
+    <div class="px-6 py-8 rounded-lg shadow-xl bg-slate-800 ring-1 ring-slate-900/5">
+      <div>
+        <span class="inline-flex items-center justify-center p-2 bg-indigo-500 rounded-md shadow-lg">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </span>
+      </div>
+      <h3 class="mt-5 text-base font-medium tracking-tight text-white">Writes Upside-Down</h3>
+      <p class="mt-2 text-sm text-slate-400">
+        The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+```html
+<div class="px-6 py-8 bg-white rounded-lg shadow-xl dark:bg-slate-900 ring-1 ring-slate-900/5">
+  <div>
+    <span class="inline-flex items-center justify-center p-2 bg-indigo-500 rounded-md shadow-lg">
+      <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><!-- ... --></svg>
+    </span>
+  </div>
+  <h3 class="mt-5 text-base font-medium tracking-tight text-slate-900 dark:text-white">뒤집혀서 쓸 수 있음</h3>
+  <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+    제로 중력 펜은 어떤 방향으로도 쓸 수 있으며, 심지어 우주 공간에서도 작동합니다.
+  </p>
+</div>
+```
+
+이 기능이 어떻게 작동하는지 자세히 알아보려면 [다크 모드](/docs/dark-mode) 문서를 확인하세요.
+
+
+### 움직임 감소 선호
+
+`prefers-reduced-motion` 미디어 쿼리는 사용자가 필수적이지 않은 움직임을 최소화하도록 요청했는지 알려줍니다.
+
+사용자가 움직임 감소를 요청했을 때 조건부로 스타일을 추가하려면 `motion-reduce` 수정자를 사용하세요.
+<div class="flex items-center justify-center">
+  <button type="button" class="inline-flex items-center px-4 py-2 text-sm font-semibold leading-6 text-white bg-indigo-500 rounded-md shadow" disabled>
+    <svg class="w-5 h-5 mr-3 -ml-1 text-white motion-reduce:hidden animate-spin" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    Processing...
+  </button>
+</div>
+
+```html
+<button type="button" class="bg-indigo-500 ..." disabled>
+  <svg class="motion-reduce:hidden animate-spin ..." viewBox="0 0 24 24"><!-- ... --></svg>
+  처리 중...
+</button>
+```
+
+Tailwind는 또한 사용자가 움직임 감소를 요청하지 _않았을 때_만 스타일을 추가하는 `motion-safe` 수정자도 포함하고 있습니다. 이는 `motion-reduce` 도우미를 사용할 때 많은 스타일을 "되돌려야" 하는 경우 유용할 수 있습니다.
+
+```html
+<!-- `motion-reduce`를 사용하면 스타일을 많이 되돌려야 할 수 있습니다 -->
+<button class="hover:-translate-y-0.5 transition motion-reduce:hover:translate-y-0 motion-reduce:transition-none ...">
+  변경 사항 저장
+</button>
+
+<!-- 이런 상황에서 `motion-safe`는 코드가 더 적습니다 -->
+<button class="motion-safe:hover:-translate-x-0.5 motion-safe:transition ...">
+  변경 사항 저장
+</button>
+```
+
+### 대비 선호
+
+`prefers-contrast` 미디어 쿼리는 사용자가 더 높거나 낮은 대비를 요청했는지 알려줍니다.
+
+사용자가 더 높은 대비를 요청했을 때 조건부로 스타일을 추가하려면 `contrast-more` 수정자를 사용하세요.
+
+<div class="max-w-sm px-6 pt-6 pb-4 mx-auto bg-white shadow">
+  <form>
+    <div>
+      <label for="contrast-example" class="block text-sm font-medium text-slate-700">Social Security Number</label>
+      <div class="mt-1">
+        <input type="text" name="contrast-example" id="contrast-example" class="block w-full px-3 py-2 bg-white border rounded-md shadow-sm border-slate-200 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 sm:text-sm focus:ring-1 contrast-more:border-slate-400 contrast-more:placeholder-slate-500"  placeholder="000-00-0000" />
+        <p class="mt-2 text-sm text-slate-600 opacity-10 contrast-more:opacity-100 ">We need this to steal your identity.</p>
+      </div>
+    </div>
+  </form>
+</div>
+
+```html
+<form>
+  <label class="block">
+    <span class="block text-sm font-medium text-slate-700">사회 보장 번호</span>
+    <input class="border-slate-200 placeholder-slate-400 contrast-more:border-slate-400 contrast-more:placeholder-slate-500"/>
+    <p class="mt-2 text-sm opacity-10 contrast-more:opacity-100 text-slate-600">
+      이 정보는 귀하의 신원을 도용하기 위해 필요합니다.
+    </p>
+  </label>
+</form>
+```
+
+Tailwind는 또한 사용자가 낮은 대비를 요청했을 때 조건부로 스타일을 추가할 수 있는 `contrast-less` 수정자도 포함하고 있습니다.
+
+### 강제 색상 모드
+
+`forced-colors` 미디어 쿼리는 사용자가 강제 색상 모드를 사용하고 있는지를 나타냅니다. 이러한 모드는 사이트의 색상을 사용자가 정의한 팔레트로 텍스트, 배경, 링크 및 버튼의 색상을 덮어씁니다.
+
+사용자가 강제 색상 모드를 활성화했을 때 조건부로 스타일을 추가하려면 `forced-colors` 수정자를 사용하세요.
+
+<div class="max-w-sm px-6 pt-6 pb-4 mx-auto bg-white shadow">
+  <form>
+    <legend> Choose a theme: </legend>
+    <div class="grid grid-flow-col mt-4 ">
+      <label for="theme-1" class="text-sm font-medium text-slate-700">
+        <div class="relative h-16 w-16 rounded-xl forced-colors:border-0 bg-transparent border border-transparent text-white hover:bg-slate-50 has-[:checked]:border-cyan-500 has-[:checked]:bg-cyan-50 has-[:checked]:text-cyan-50 grid items-center justify-center">
+          <input type="radio" name="themes" id="theme-1" class="appearance-none forced-colors:appearance-auto" checked />
+          <p class="hidden forced-colors:block">
+            Cyan
+          </p>
+          <div class="absolute w-6 h-6 rounded-full left-3 top-3 bg-cyan-200 forced-colors:hidden"></div>
+          <div class="absolute w-6 h-6 rounded-full bottom-3 right-3 bg-cyan-500 ring-2 ring-current forced-colors:hidden"></div>
+        </div>
+      </label>
+      <label for="theme-2" class="text-sm font-medium text-slate-700">
+        <div class="relative h-16 w-16 rounded-xl forced-colors:border-0 bg-transparent border border-transparent text-white hover:bg-slate-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-50 grid items-center justify-center">
+          <input type="radio" name="themes" id="theme-2" class="appearance-none forced-colors:appearance-auto" />
+          <p class="hidden forced-colors:block">
+            Blue
+          </p>
+          <div class="absolute w-6 h-6 bg-blue-200 rounded-full left-3 top-3 forced-colors:hidden"></div>
+          <div class="absolute w-6 h-6 bg-blue-500 rounded-full bottom-3 right-3 ring-2 ring-current forced-colors:hidden"></div>
+        </div>
+      </label>
+      <label for="theme-3" class="text-sm font-medium text-slate-700">
+        <div class="relative h-16 w-16 rounded-xl forced-colors:border-0 border bg-transparent border-transparent text-white hover:bg-slate-50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50 has-[:checked]:text-indigo-50 grid items-center justify-center">
+          <input type="radio" name="themes" id="theme-3" class="appearance-none forced-colors:appearance-auto" />
+          <p class="hidden forced-colors:block">
+            Indigo
+          </p>
+          <div class="absolute w-6 h-6 bg-indigo-200 rounded-full left-3 top-3 forced-colors:hidden"></div>
+          <div class="absolute w-6 h-6 bg-indigo-500 rounded-full bottom-3 right-3 ring-2 ring-current forced-colors:hidden"></div>
+        </div>
+      </label>
+      <label for="theme-4" class="text-sm font-medium text-slate-700">
+        <div class="relative h-16 w-16 rounded-xl forced-colors:border-0 border bg-transparent border-transparent text-white hover:bg-slate-50 has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50 has-[:checked]:text-purple-50 grid items-center justify-center">
+          <input type="radio" name="themes" id="theme-4" class="appearance-none forced-colors:appearance-auto" />
+          <p class="hidden forced-colors:block">
+            Purple
+          </p>
+          <div class="absolute w-6 h-6 bg-purple-200 rounded-full left-3 top-3 forced-colors:hidden"></div>
+          <div class="absolute w-6 h-6 bg-purple-500 rounded-full bottom-3 right-3 ring-2 ring-current forced-colors:hidden"></div>
+        </div>
+      </label>
+    </div>
+  </form>
+</div>
+
+```html
+<form>
+  <legend> 테마 선택: </legend>
+  <label>
+    <input type="radio" class="appearance-none forced-colors:appearance-auto" />
+    <p class="hidden forced-colors:block">
+      시안
+    </p>
+    <div class="forced-colors:hidden h-6 w-6 rounded-full bg-cyan-200 ..."></div>
+    <div class="forced-colors:hidden h-6 w-6 rounded-full bg-cyan-500 ..."></div>
+  </label>
+  <!-- ... -->
+</form>
+```
+
+Tailwind는 강제 색상 조정을 위해 [forced color adjust](/docs/forced-color-adjust) 유틸리티도 포함하고 있어 강제 색상의 적용을 선택적으로 사용하거나 배제할 수 있습니다.
+
+### 뷰포트 방향
+
+`portrait`와 `landscape` 수정자를 사용하여 뷰포트의 특정 방향일 때 조건부로 스타일을 추가하세요.
+
+```html
+<div>
+  <div class="portrait:hidden">
+    <!-- ... -->
+  </div>
+  <div class="landscape:hidden">
+    <p>
+      이 경험은 가로 방향으로 보기 위해 디자인되었습니다. 사이트를 보려면 기기를 회전하세요.
+    </p>
+  </div>
+</div>
+```
+
+### 인쇄 스타일
+
+`print` 수정자를 사용하여 문서를 인쇄할 때만 적용되는 스타일을 조건부로 추가하세요.
+
+```html
+<div>
+  <article class="print:hidden">
+    <h1>나만의 비밀 피자 레시피</h1>
+    <p>이 레시피는 비밀이며, 누구와도 공유해서는 안 됩니다</p>
+    <!-- ... -->
+  </article>
+  <div class="hidden print:block">
+    진짜로 이걸 인쇄하려고 하나요? 비밀인데요!
+  </div>
+</div>
+```
+
+### 지원 규칙 사용하기
+
+사용자의 브라우저에서 특정 기능이 지원되는지 여부에 따라 스타일을 지정하려면 `supports-[...]` 수정자를 사용하세요.
+
+```html
+<div class="flex supports-[display:grid]:grid ...">
+  <!-- ... -->
+</div>
+```
+
+내부적으로 `supports-[...]` 수정자는 [`@supports 규칙`](https://developer.mozilla.org/en-US/docs/Web/CSS/@supports)을 생성하고, 대괄호 사이에 `@supports (...)`와 함께 사용할 수 있는 속성/값 쌍이나 `and`, `or`를 사용하는 표현식을 포함할 수 있습니다.
+
+간결성을 위해 특정 값을 확인할 필요 없이 속성이 지원되는지만 확인해야 할 경우, 속성 이름만 지정할 수 있습니다.
+
+```html
+<div class="bg-black/75 supports-[backdrop-filter]:bg-black/25 supports-[backdrop-filter]:backdrop-blur ...">
+  <!-- ... -->
+</div>
+```
+
+프로젝트에서 자주 사용하는 `@supports` 규칙을 `tailwind.config.js` 파일의 `theme.supports` 섹션에서 단축키로 구성할 수 있습니다.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    supports: {
+      grid: 'display: grid',
+    },
+  },
+}
+```
+
+이제 이러한 사용자 정의 `supports-*` 수정자를 프로젝트에서 사용할 수 있습니다.
+
+```html
+<div class="supports-grid:grid">
+  <!-- ... -->
+</div>
+```
+
+### 속성 선택자
+
+#### ARIA 상태
+
+[ARIA 속성](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes)을 기반으로 조건부로 스타일을 적용하려면 `aria-*` 수정자를 사용하세요.
+
+예를 들어, `aria-checked` 속성이 `true`로 설정된 경우 `bg-sky-700` 클래스를 적용하려면 `aria-checked:bg-sky-700` 클래스를 사용하세요.
+
+```html
+<div aria-checked="true" class="bg-gray-600 aria-checked:bg-sky-700">
+  <!-- ... -->
+</div>
+```
+
+
+
+기본적으로 가장 일반적인 불리언 ARIA 속성에 대한 수정자가 포함되어 있습니다.
+
+| 수정자 | CSS |
+| --- | --- |
+| `aria-busy` | [aria-busy="true"] |
+| `aria-checked` | [aria-checked="true"] |
+| `aria-disabled` | [aria-disabled="true"] |
+| `aria-expanded` | [aria-expanded="true"] |
+| `aria-hidden` | [aria-hidden="true"] |
+| `aria-pressed` | [aria-pressed="true"] |
+| `aria-readonly` | [aria-readonly="true"] |
+| `aria-required` | [aria-required="true"] |
+| `aria-selected` | [aria-selected="true"] |
+
+`tailwind.config.js` 파일의 `theme.aria` 또는 `theme.extend.aria`를 편집하여 사용 가능한 `aria-*` 수정자를 사용자 정의할 수 있습니다.
+
+```js
+module.exports = {
+  theme: {
+    extend: {
+      aria: {
+        asc: 'sort="ascending"',
+        desc: 'sort="descending"',
+      },
+    },
+  },
+};
+```
+
+테마에 포함시키기에 적합하지 않은 일회성 `aria` 수정자가 필요하거나 특정 값을 취하는 더 복잡한 ARIA 속성을 사용해야 하는 경우, 임의 값으로 속성을 생성하기 위해 대괄호를 사용할 수 있습니다.
+
+
+<div class="py-8">
+  <table class="w-full text-sm bg-white border-collapse shadow-sm border-y border-slate-400 dark:border-slate-500 dark:bg-slate-800">
+    <thead class="bg-slate-50 dark:bg-slate-700">
+      <tr>
+        <th class="px-4 py-3 font-semibold text-left border group first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-200" aria-sort="ascending">
+          <span class="flex items-center justify-between w-full gap-2">
+            Invoice #
+            <svg viewBox="0 0 20 20" class="w-5 h-5 fill-slate-500 group-aria-[sort=ascending]:rotate-0 group-aria-[sort=descending]:rotate-180">
+              <path fill-rule="evenodd" d="M10 5a.75.75 0 01.75.75v6.638l1.96-2.158a.75.75 0 111.08 1.04l-3.25 3.5a.75.75 0 01-1.08 0l-3.25-3.5a.75.75 0 111.08-1.04l1.96 2.158V5.75A.75.75 0 0110 5z" clip-rule="evenodd" />
+            </svg>
+          </span>
+        </th>
+        <th class="px-4 py-3 font-semibold text-left border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-200">Client</th>
+        <th class="px-4 py-3 font-semibold text-right border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-200">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="px-4 py-3 border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400">#100</td>
+        <td class="px-4 py-3 border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400">Pendant Publishing</td>
+        <td class="px-4 py-3 text-right border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 tabular-nums">$2,000.00</td>
+      </tr>
+      <tr>
+        <td class="px-4 py-3 border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400">#101</td>
+        <td class="px-4 py-3 border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400">Kruger Industrial Smoothing</td>
+        <td class="px-4 py-3 text-right border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 tabular-nums">$545.00</td>
+      </tr>
+      <tr>
+        <td class="px-4 py-3 border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400">#102</td>
+        <td class="px-4 py-3 border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400">J. Peterman</td>
+        <td class="px-4 py-3 text-right border first:border-l-0 last:border-r-0 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 tabular-nums">$10,000.25</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+```html
+<table>
+  <thead>
+    <tr>
+      <th aria-sort="ascending" class="aria-[sort=ascending]:bg-[url('/img/down-arrow.svg')] aria-[sort=descending]:bg-[url('/img/up-arrow.svg')]">
+        Invoice #
+      </th>
+      <!-- ... -->
+    </tr>
+  </thead>
+  <!-- ... -->
+</table>
+```
+
+```css
+.aria-[sort=ascending]:bg-[url('/img/down-arrow.svg')][aria-sort=ascending] {
+  background-image: url('/img/down-arrow.svg');
+}
+
+.aria-[sort=descending]:bg-[url('/img/up-arrow.svg')][aria-sort=descending] {
+  background-image: url('/img/up-arrow.svg');
+}
+```
+
+ARIA 상태 수정자는 `group-aria-*` 및 `peer-aria-*` 수정자를 사용하여 부모 및 형제 요소를 대상으로 할 수도 있습니다.
+
+```html
+<table>
+  <thead>
+    <tr>
+      <th aria-sort="ascending" class="group">
+        Invoice #
+        <svg class="group-aria-[sort=ascending]:rotate-0 group-aria-[sort=descending]:rotate-180"><!-- ... --></svg>
+      </th>
+      <!-- ... -->
+    </tr>
+  </thead>
+  <!-- ... -->
+</table>
+```
+
+```css
+.group[aria-sort=ascending] .group-aria-[sort=ascending]:rotate-0 {
+  --tw-rotate: 0deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group[aria-sort=descending] .group-aria-[sort=descending]:rotate-180 {
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+```
+
+### 데이터 속성
+
+[데이터 속성](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)을 기반으로 조건부로 스타일을 적용하려면 `data-*` 수정자를 사용하세요.
+
+정의에 따라 표준 `data-*` 속성이 없기 때문에 기본적으로는 임의의 값만 지원합니다. 예를 들어:
+
+```html
+<!-- 적용됩니다 -->
+<div data-size="large" class="data-[size=large]:p-8">
+  <!-- ... -->
+</div>
+
+<!-- 적용되지 않습니다 -->
+<div data-size="medium" class="data-[size=large]:p-8">
+  <!-- ... -->
+</div>
+```
+
+프로젝트에서 자주 사용하는 일반 데이터 속성 선택자에 대한 단축키를 `tailwind.config.js` 파일의 `theme.data` 섹션에서 구성할 수 있습니다.
+
+```js
+module.exports = {
+  theme: {
+    data: {
+      checked: 'ui~="checked"',
+    },
+  },
+}
+```
+
+그런 다음 이러한 사용자 정의 `data-*` 수정자를 프로젝트에서 사용할 수 있습니다.
+
+```html
+<div data-ui="checked active" class="data-checked:underline">
+  <!-- ... -->
+</div>
+```
+
+### RTL 지원
+
+다방향 레이아웃을 구축할 때 오른쪽에서 왼쪽(`rtl`)과 왼쪽에서 오른쪽(`ltr`) 모드에 각각 조건부로 스타일을 추가하기 위해 `rtl` 및 `ltr` 수정자를 사용하세요.
+
+<div class="grid max-w-lg grid-cols-1 mx-auto sm:grid-cols-2 gap-x-6 gap-y-10">
+  <div dir="ltr">
+    <p class="mb-4 text-sm font-medium">Left-to-right</p>
+    <div class="flex items-center group">
+      <img class="w-12 h-12 rounded-full shrink-0" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+      <div class="ml-3 rtl:ml-0 rtl:mr-3">
+        <p class="text-sm font-medium text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-white">Tom Cook</p>
+        <p class="text-sm font-medium text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">Director of Operations</p>
+      </div>
+    </div>
+  </div>
+  <div dir="rtl">
+    <p class="mb-4 text-sm font-medium">Right-to-left</p>
+    <div class="flex items-center group">
+      <img class="w-12 h-12 rounded-full shrink-0" src="https://images.unsplash.com/photo-1563833717765-00462801314e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+      <div class="ml-3 rtl:ml-0 rtl:mr-3">
+        <p class="text-sm font-medium text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-white">تامر كرم</p>
+        <p class="text-sm font-medium text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">الرئيس التنفيذي</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+```html
+<div class="flex items-center group">
+  <img class="w-12 h-12 rounded-full shrink-0" src="..." alt="" />
+  <div class="ltr:ml-3 rtl:mr-3">
+    <p class="text-sm font-medium text-slate-700 group-hover:text-slate-900" dark-class="text-sm font-medium text-slate-300 group-hover:text-white">...</p>
+    <p class="text-sm font-medium text-slate-500 group-hover:text-slate-700" dark-class="text-sm font-medium text-slate-500 group-hover:text-slate-300">...</p>
+  </div>
+</div>
+```
+
+`ltr` 수정자는 `dir` 속성이 명시적으로 `ltr`로 설정된 경우에만 효과가 나타나므로, 다방향 사이트를 구축할 때는 `rtl` 모드뿐만 아니라 항상 방향을 설정해야 합니다.
+
+> 왼쪽에서 오른쪽이 기본이라도 항상 방향을 설정하세요
+
+```html
+<html dir="ltr">
+  <!-- ... -->
+</html>
+```
+
+이러한 수정자는 왼쪽에서 오른쪽 및 오른쪽에서 왼쪽 레이아웃을 모두 지원해야 하는 사이트를 구축할 때만 유용합니다. 단일 방향만 지원해야 하는 사이트를 구축하는 경우 이러한 수정자는 필요 없으며, 내용에 맞는 스타일을 적용하기만 하면 됩니다.
+
+### 열림/닫힘 상태
+
+`<details>` 또는 `<dialog>` 요소가 열린 상태일 때 조건부로 스타일을 추가하려면 `open` 수정자를 사용하세요.
+<div class="max-w-lg mx-auto">
+  <details class="p-6 rounded-lg open:bg-white dark:open:bg-slate-900 open:ring-1 open:ring-black/5 dark:open:ring-white/10 open:shadow-lg" open>
+    <summary class="text-sm font-semibold leading-6 select-none text-slate-900 dark:text-white">
+      Why do they call it Ovaltine?
+    </summary>
+    <div class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400">
+      <p>The mug is round. The jar is round. They should call it Roundtine.</p>
+    </div>
+  </details>
+</div>
+
+
+```html
+<div class="max-w-lg p-8 mx-auto">
+  <details class="p-6 rounded-lg open:bg-white dark:open:bg-slate-900 open:ring-1 open:ring-black/5 dark:open:ring-white/10 open:shadow-lg" open>
+    <summary class="text-sm font-semibold leading-6 select-none text-slate-900 dark:text-white">
+      왜 오발틴이라고 부를까?
+    </summary>
+    <div class="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400">
+      <p>머그는 둥글고, 병도 둥글다. 라운드틴이라고 불러야 맞다.</p>
+    </div>
+  </details>
+</div>
+```
+
+## 사용자 정의 수정자
+
+### 임의의 변형 사용
+
+[임의 값](/docs/adding-custom-styles#using-arbitrary-values)을 사용해 유틸리티 클래스에 사용자 정의 값을 사용할 수 있듯이, 임의의 변형을 사용하면 HTML에서 직접 사용자 정의 선택자 수정자를 작성할 수 있습니다.
+
+임의의 변형은 선택자를 나타내는 형식 문자열로, 대괄호로 감싸집니다. 예를 들어, 다음 임의 수정자는 세 번째 자식 요소만을 선택합니다.
+
+```html
+<ul role="list">
+  {#each items as item}
+    <li class="[&:nth-child(3)]:underline">{item}</li>
+  {/each}
+</ul>
+```
+
+```css
+.[&:nth-child(3)]:underline:nth-child(3) {
+  text-decoration-style: underline
+}
+```
+
+형식 문자열은 [`addVariant` 플러그인 API](/docs/plugins#adding-variants)에서 사용하는 것과 동일하며, `&`는 수정되는 선택자를 나타냅니다.
+
+임의의 변형은 기본 수정자나 다른 임의의 수정자와 마찬가지로 쌓을 수 있습니다.
+
+```html
+<ul role="list">
+  {#each items as item}
+    <li class="lg:[&:nth-child(3)]:hover:underline">{item}</li>
+  {/each}
+</ul>
+```
+
+```css
+@media (min-width: 1024px) {
+  .lg:[&:nth-child(3)]:hover:underline:hover:nth-child(3) {
+    text-decoration-line: underline;
+  }
+}
+```
+
+선택자에 공백이 필요한 경우 밑줄을 사용할 수 있습니다. 예를 들어, 다음 임의 수정자는 클래스가 추가된 요소 내의 모든 `p` 요소를 선택합니다.
+
+```html
+<div class="[&_p]:mt-4">
+  <p>Lorem ipsum...</p>
+  <ul>
+    <li>
+      <p>Lorem ipsum...</p>
+    </li>
+    <!-- ... -->
+  </ul>
+</div>
+```
+
+```css
+.[&_p]:mt-4 p {
+    margin-top: 1rem;
+}
+```
+
+`@media`나 `@supports`와 같은 at-규칙도 임의의 변형에 사용할 수 있습니다.
+
+```html
+<div class="flex [@supports(display:grid)]:grid">
+  <!-- ... -->
+</div>
+```
+
+```css
+@supports (display: grid) {
+  .[@supports(display:grid)]:grid {
+    display: grid;
+  }
+}
+```
+
+at-규칙 사용자 정의 수정자에서는 `&` 자리표시자가 필요 없습니다. at-규칙 후에 중괄호 내에 일반 선택자 수정자를 포함시켜 at-규칙과 일반 선택자 수정자를 결합할 수도 있습니다.
+
+```html
+<button type="button" class="[@media(any-hover:hover){&:hover}]:opacity-100">
+  <!-- ... -->
+</button>
+```
+
+```css
+@media (any-hover: hover) {
+  .[@media(any-hover:hover){&:hover}]:opacity-100:hover {
+    opacity: 1
+  }
+}
+```
+
+### 플러그인 생성
+
+프로젝트에서 동일한 임의 수정자를 여러 번 사용하는 경우 `addVariant` API를 사용하여 플러그인으로 추출하는 것이 좋을 수 있습니다.
+
+```js
+let plugin = require('tailwindcss/plugin')
+
+module.exports = {
+  // ...
+  plugins: [
+    plugin(function ({ addVariant }) {
+      // 'third' 변형을 추가, 예: `third:pb-0`
+      addVariant('third', '&:nth-child(3)')
+    })
+  ]
+}
+```
+
+[변형 플러그인 추가](/docs/plugins#adding-variants) 문서에서 자세한 정보를 확인하세요.
+
+## 고급 주제
+
+### 자체 클래스와 함께 사용하기
+
+Tailwind의 [레이어](/docs/adding-custom-styles#using-css-and-layer) 중 하나에서 정의했거나 [플러그인](/docs/adding-custom-styles#writing-plugins)을 사용하여 추가한 경우, Tailwind의 모든 수정자를 자체 커스텀 클래스와 함께 사용할 수 있습니다.
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+}
+```
+
+```html
+<div class="lg:content-auto">
+  <!-- ... -->
+</div>
+```
+
+### 중첩 수정자 순서
+
+수정자를 중첩할 때는 중첩된 함수 호출처럼 안에서 바깥으로 적용됩니다.
+
+```js
+// 다음 수정자들:
+'dark:group-hover:focus:opacity-100'
+
+// 다음과 같이 적용됩니다.
+dark(groupHover(focus('opacity-100')))
+```
+
+대부분의 경우 이 순서는 실제로 중요하지 않지만, 사용하는 순서에 따라 의미 있는 차이를 만들어내는 몇 가지 상황이 있습니다.
+
+예를 들어, `darkMode`를 `class`로 설정한 경우 `dark`와 `group-hover` 수정자를 결합하면 사용하는 순서에 따라 다른 결과가 생성됩니다.
+
+```css
+/* dark:group-hover:opacity-100 */
+.dark .group:hover .dark\:group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+/* group-hover:dark:opacity-100 */
+.group:hover .dark .group-hover\:dark\:opacity-100 {
+  opacity: 1;
+}
+```
+
+첫 번째 예제에서는 `dark` 요소가 `group` 요소의 부모여야 하지만 두 번째 예제에서는 그 반대입니다.
+
+이것이 중요한 또 다른 경우는 공식 타이포그래피 플러그인과 함께 제공되는 `prose-headings`와 같은 수정자를 사용할 때입니다.
+
+```css
+/* prose-headings:hover:underline */
+.prose-headings\:hover\:underline:hover :is(:where(h1, h2, h3, h4, th)) {
+  text-decoration: underline;
+}
+
+/* hover:prose-headings:underline */
+.hover\:prose-headings\:underline :is(:where(h1, h2, h3, h4, th)):hover {
+  text-decoration: underline;
+}
+```
+
+첫 번째 예제에서는 기사 전체에 마우스를 올리면 모든 제목에 밑줄이 그어지지만, 두 번째 예제에서는 각 제목에 마우스를 올렸을 때만 해당 제목에 밑줄이 그어집니다.
+
+
+### 빠른 참조
+
+Tailwind에서 기본적으로 포함된 모든 수정자에 대한 빠른 참조 표입니다.
+
+<div className="overflow-scroll max-w-screen">
+
+| 수정자 | CSS |
+| --- | --- |
+| hover | `&:hover` |
+| focus | `&:focus` |
+| focus-within | `&:focus-within` |
+| focus-visible | `&:focus-visible` |
+| active | `&:active` |
+| visited | `&:visited` |
+| target | `&:target` |
+| * | `& > *` |
+| has | `&:has` |
+| first | `&:first-child` |
+| last | `&:last-child` |
+| only | `&:only-child` |
+| odd | `&:nth-child(odd)` |
+| even | `&:nth-child(even)` |
+| first-of-type | `&:first-of-type` |
+| last-of-type | `&:last-of-type` |
+| only-of-type | `&:only-of-type` |
+| empty | `&:empty` |
+| disabled | `&:disabled` |
+| enabled | `&:enabled` |
+| checked | `&:checked` |
+| indeterminate | `&:indeterminate` |
+| default | `&:default` |
+| required | `&:required` |
+| valid | `&:valid` |
+| invalid | `&:invalid` |
+| in-range | `&:in-range` |
+| out-of-range | `&:out-of-range` |
+| placeholder-shown | `&:placeholder-shown` |
+| autofill | `&:autofill` |
+| read-only | `&:read-only` |
+| before | `&::before` |
+| after | `&::after` |
+| first-letter | `&::first-letter` |
+| first-line | `&::first-line` |
+| marker | `&::marker` |
+| selection | `&::selection` |
+| file | `&::file-selector-button` |
+| backdrop | `&::backdrop` |
+| placeholder | `&::placeholder` |
+| sm | `@media (min-width: 640px)` |
+| md | `@media (min-width: 768px)` |
+| lg | `@media (min-width: 1024px)` |
+| xl | `@media (min-width: 1280px)` |
+| 2xl | `@media (min-width: 1536px)` |
+| min-[...] | `@media (min-width: ...)` |
+| max-sm | `@media not all and (min-width: 640px)` |
+| max-md | `@media not all and (min-width: 768px)` |
+| max-lg | `@media not all and (min-width: 1024px)` |
+| max-xl | `@media not all and (min-width: 1280px)` |
+| max-2xl | `@media not all and (min-width: 1536px)` |
+| max-[...] | `@media (max-width: ...)` |
+| dark | `@media (prefers-color-scheme: dark)` |
+| portrait | `@media (orientation: portrait)` |
+| landscape | `@media (orientation: landscape)` |
+| motion-safe | `@media (prefers-reduced-motion: no-preference)` |
+| motion-reduce | `@media (prefers-reduced-motion: reduce)` |
+| contrast-more | `@media (prefers-contrast: more)` |
+| contrast-less | `@media (prefers-contrast: less)` |
+| print | `@media print` |
+| supports-[...] | `@supports (...)` |
+| aria-checked | `&[aria-checked="true"]` |
+| aria-disabled | `&[aria-disabled="true"]` |
+| aria-expanded | `&[aria-expanded="true"]` |
+| aria-hidden | `&[aria-hidden="true"]` |
+| aria-pressed | `&[aria-pressed="true"]` |
+| aria-readonly | `&[aria-readonly="true"]` |
+| aria-required | `&[aria-required="true"]` |
+| aria-selected | `&[aria-selected="true"]` |
+| aria-[...] | `&[aria-...]` |
+| data-[...] | `&[data-...]` |
+| rtl | `[dir="rtl"] &` |
+| ltr | `[dir="ltr"] &` |
+| open | `&[open]` |
+
+</div>
+
+### 의사 클래스 참조
+
+이것은 Tailwind에 포함된 모든 의사 클래스 수정자에 대한 예시 목록으로, 이 가이드 초반의 [의사 클래스 문서](/docs/hover-focus-and-other-states#pseudo-classes)를 보완합니다.
+
+#### 호버 (:hover)
+
+사용자가 마우스 커서로 요소 위에 있을 때 스타일을 적용하려면 `hover` 수정자를 사용하세요.
+
+```html
+<div class="bg-black hover:bg-white ...">
+  <!-- ... -->
+</div>
+```
+
+#### 포커스 (:focus)
+
+요소가 포커스를 받았을 때 스타일을 적용하려면 `focus` 수정자를 사용하세요.
+
+```html
+<input class="border-gray-300 focus:border-blue-400 ..." />
+```
+
+#### 포커스-위딘 (:focus-within)
+
+요소나 그 자손 중 하나가 포커스를 받았을 때 스타일을 적용하려면 `focus-within` 수정자를 사용하세요.
+
+```html
+<div class="focus-within:shadow-lg ...">
+  <input type="text" />
+</div>
+```
+
+#### 포커스-비지블 (:focus-visible)
+
+키보드를 사용하여 포커스된 요소에 스타일을 적용하려면 `focus-visible` 수정자를 사용하세요.
+
+```html
+<button class="focus:outline-none focus-visible:ring ...">
+  제출
+</button>
+```
+
+### 의사 클래스 참조
+
+#### 활성 (:active)
+
+요소가 눌려질 때 스타일을 적용하려면 `active` 수정자를 사용하세요.
+
+```html
+<button class="bg-blue-500 active:bg-blue-600 ...">
+  제출
+</button>
+```
+
+#### 방문함 (:visited)
+
+링크가 이미 방문된 상태일 때 스타일을 적용하려면 `visited` 수정자를 사용하세요.
+
+```html
+<a href="https://seinfeldquotes.com" class="text-blue-600 visited:text-purple-600 ...">
+  영감
+</a>
+```
+
+#### 대상 (:target)
+
+ID가 현재 URL 조각과 일치하는 요소에 스타일을 적용하려면 `target` 수정자를 사용하세요.
+
+```html
+<div id="about" class="target:shadow-lg ...">
+  <!-- ... -->
+</div>
+```
+
+#### 첫 번째 (:first-child)
+
+요소가 첫 번째 자식일 때 스타일을 적용하려면 `first` 수정자를 사용하세요.
+
+```html
+<ul>
+  {#each people as person}
+    <li class="py-4 first:pt-0 ...">
+      <!-- ... -->
+    </li>
+  {/each}
+</ul>
+```
+
+### 의사 클래스 참조
+
+#### 마지막 자식 (:last-child)
+
+요소가 마지막 자식일 때 스타일을 적용하려면 `last` 수정자를 사용하세요.
+
+```html
+<ul>
+  {#each people as person}
+    <li class="py-4 last:pb-0 ...">
+      <!-- ... -->
+    </li>
+  {/each}
+</ul>
+```
+
+#### 유일한 자식 (:only-child)
+
+요소가 유일한 자식일 때 스타일을 적용하려면 `only` 수정자를 사용하세요.
+
+```html
+<ul>
+  {#each people as person}
+    <li class="py-4 only:py-0 ...">
+      <!-- ... -->
+    </li>
+  {/each}
+</ul>
+```
+
+#### 홀수 자식 (:nth-child(odd))
+
+요소가 홀수 번째 자식일 때 스타일을 적용하려면 `odd` 수정자를 사용하세요.
+
+```html
+<table>
+  {#each people as person}
+    <tr class="bg-white odd:bg-gray-100 ...">
+      <!-- ... -->
+    </tr>
+  {/each}
+</table>
+```
+
+### 의사 클래스 참조
+
+#### 짝수 자식 (:nth-child(even))
+
+요소가 짝수 번째 자식일 때 스타일을 적용하려면 `even` 수정자를 사용하세요.
+
+```html
+<table>
+  {#each people as person}
+    <tr class="bg-white even:bg-gray-100 ...">
+      <!-- ... -->
+    </tr>
+  {/each}
+</table>
+```
+
+#### 유형의 첫 번째 자식 (:first-of-type)
+
+특정 유형의 첫 번째 자식일 때 스타일을 적용하려면 `first-of-type` 수정자를 사용하세요.
+
+```html
+<nav>
+  <img src="/logo.svg" alt="Vandelay Industries" />
+  {#each links as link}
+    <a href="#" class="ml-2 first-of-type:ml-6 ...">
+      <!-- ... -->
+    </a>
+  {/each}
+</nav>
+```
+
+#### 유형의 마지막 자식 (:last-of-type)
+
+특정 유형의 마지막 자식일 때 스타일을 적용하려면 `last-of-type` 수정자를 사용하세요.
+
+```html
+<nav>
+  <img src="/logo.svg" alt="Vandelay Industries" />
+  {#each links as link}
+    <a href="#" class="mr-2 last-of-type:mr-6 ...">
+      <!-- ... -->
+    </a>
+  {/each}
+  <button>More</button>
+</nav>
+```
+
+#### 유형의 유일한 자식 (:only-of-type)
+
+특정 유형의 유일한 자식일 때 스타일을 적용하려면 `only-of-type` 수정자를 사용하세요.
+
+```html
+<nav>
+  <img src="/logo.svg" alt="Vandelay Industries" />
+  {#each links as link}
+    <a href="#" class="mx-2 only-of-type:mx-6 ...">
+      <!-- ... -->
+    </a>
+  {/each}
+  <button>More</button>
+</nav>
+```
+
+#### 내용이 없는 요소 (:empty)
+
+요소가 비어 있을 때 스타일을 적용하려면 `empty` 수정자를 사용하세요.
+
+```html
+<ul>
+  {#each people as person}
+    <li class="empty:hidden ...">{person.hobby}</li>
+  {/each}
+</ul>
+```
+
+#### 비활성화된 입력 요소 (:disabled)
+
+입력 요소가 비활성화되었을 때 스타일을 적용하려면 `disabled` 수정자를 사용하세요.
+
+```html
+<input class="disabled:opacity-75 ..." />
+```
+
+#### 활성화된 입력 요소 (:enabled)
+
+입력 요소가 활성화되었을 때 스타일을 적용하려면 `enabled` 수정자를 사용하세요. 이는 요소가 비활성화되지 않았을 때 다른 스타일을 적용하고 싶을 때 유용합니다.
+
+```html
+<input class="enabled:hover:border-gray-400 disabled:opacity-75 ..." />
+```
+
+#### 선택된 상태 (:checked)
+
+체크박스나 라디오 버튼이 선택된 상태일 때 스타일을 적용하려면 `checked` 수정자를 사용하세요.
+
+```html
+<input type="checkbox" class="appearance-none checked:bg-blue-500 ..." />
+```
+
+#### 불확정 상태 (:indeterminate)
+
+체크박스나 라디오 버튼이 불확정 상태일 때 스타일을 적용하려면 `indeterminate` 수정자를 사용하세요.
+
+```html
+<input type="checkbox" class="appearance-none indeterminate:bg-gray-300 ..." />
+```
+
+#### 기본값 상태 (:default)
+
+페이지가 처음 로드될 때 기본값이었던 옵션, 체크박스 또는 라디오 버튼에 스타일을 적용하려면 `default` 수정자를 사용하세요.
+
+```html
+<input type="checkbox" class="default:ring-2 ..." />
+```
+
+#### 필수 입력 필드 (:required)
+
+필수 입력 필드에 스타일을 적용하려면 `required` 수정자를 사용하세요.
+
+```html
+<input class="required:border-red-500 ..." />
+```
+
+#### 유효한 입력 필드 (:valid)
+
+입력 필드가 유효한 상태일 때 스타일을 적용하려면 `valid` 수정자를 사용하세요.
+
+```html
+<input class="valid:border-green-500 ..." />
+```
+
+#### 유효하지 않을 때 (:invalid)
+
+입력 필드가 유효하지 않은 상태일 때 스타일을 적용하려면 `invalid` 수정자를 사용하세요.
+
+```html
+<input class="invalid:border-red-500 ..." />
+```
+
+#### 범위 내 (:in-range)
+
+입력값이 지정된 범위 내에 있을 때 스타일을 적용하려면 `in-range` 수정자를 사용하세요.
+
+```html
+<input min="1" max="5" class="in-range:border-green-500 ..." />
+```
+
+#### 범위 초과 (:out-of-range)
+
+입력값이 지정된 범위를 벗어났을 때 스타일을 적용하려면 `out-of-range` 수정자를 사용하세요.
+
+```html
+<input min="1" max="5" class="out-of-range:border-red-500 ..." />
+```
+
+#### 플레이스홀더 표시 (:placeholder-shown)
+
+플레이스홀더가 표시될 때 스타일을 적용하려면 `placeholder-shown` 수정자를 사용하세요.
+
+```html
+<input class="placeholder-shown:border-gray-500 ..." placeholder="you@example.com" />
+```
+
+#### 자동 완성 (:autofill)
+
+브라우저에 의해 자동 완성된 입력 필드에 스타일을 적용하려면 `autofill` 수정자를 사용하세요.
+
+```html
+<input class="autofill:bg-yellow-200 ..." />
+```
+
+#### 읽기 전용 (:read-only)
+
+입력 필드가 읽기 전용일 때 스타일을 적용하려면 `read-only` 수정자를 사용하세요.
+
+```html
+<input class="read-only:bg-gray-100 ..." />
+```
+
+
+
+
+
 
 
 
