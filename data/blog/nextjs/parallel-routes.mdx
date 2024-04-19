@@ -1,0 +1,435 @@
+---
+title: "Next.js에서 병렬 라우팅과 모달 구현의 최적화 방법"
+summary: Next.js의 병렬 라우팅 기능을 활용하여 다이내믹한 웹 애플리케이션 구조를 설계하고, 효율적인 모달 상호작용을 실현하는 방법을 알아봅니다.
+tags: ['Routing', 'Nextjs', 'UX', 'Modal']
+images: ['/static/images/blog/nextjs/parallel-routes.jpg']
+date: "2024-04-16 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 병렬 라우팅의 개념과 필요성
+
+웹 개발에서 병렬 라우팅은 동시에 여러 페이지를 하나의 레이아웃 안에서 독립적으로 렌더링하고 관리할 수 있는 기술입니다. 이는 특히 동적인 웹 애플리케이션의 부분, 예를 들어 대시보드나 소셜 미디어 피드에서 유용하게 활용됩니다. 병렬 라우팅은 복잡한 사용자 인터페이스와 상호작용을 간소화하여 더욱 효과적으로 사용자 경험을 설계할 수 있게 돕습니다.
+
+### 병렬 라우팅의 정의
+
+병렬 라우팅은 동시에 또는 조건에 따라 하나 이상의 페이지를 같은 레이아웃 안에서 렌더링하는 기능을 말합니다. 예를 들어, 한 웹 애플리케이션의 대시보드에서는 팀 관리 페이지와 분석 페이지를 동시에 렌더링할 수 있습니다. 이러한 방식으로 사용자는 페이지를 전환하지 않고도 필요한 정보를 빠르게 파악할 수 있습니다.
+
+```jsx
+// app/layout.js 예시
+export default function Layout({ children, team, analytics }) {
+    return (
+        <>
+            {children}
+            {team}
+            {analytics}
+        </>
+    );
+}
+```
+
+위 코드는 `team`과 `analytics`라는 두 개의 병렬 라우트를 `children`과 함께 렌더링합니다. 각각의 병렬 라우트는 독립적인 기능을 수행하며, 사용자 인터페이스의 다른 부분과 상호작용하지 않습니다.
+
+### 병렬 라우팅이 필요한 이유
+
+병렬 라우팅은 웹 애플리케이션에 다음과 같은 중요한 이점을 제공합니다.
+
+1. **향상된 사용자 경험**: 사용자는 여러 페이지를 동시에 볼 수 있어, 애플리케이션 사용 중 필요한 정보에 더 빠르게 접근할 수 있습니다.
+2. **효율적인 자원 사용**: 페이지 간에 중복 로딩이 줄어들며, 서버와 클라이언트의 자원을 효율적으로 사용할 수 있습니다.
+3. **복잡한 인터페이스 관리**: 여러 데이터 소스와 상호작용하는 복잡한 대시보드를 관리하기에 적합합니다. 사용자는 한 화면에서 모든 필요한 정보를 조합하여 볼 수 있습니다.
+
+이처럼 병렬 라우팅은 현대 웹 애플리케이션의 다양하고 동적인 요구를 충족시키는 데 필수적인 기능입니다. 특히 정보를 신속하게 제공해야 하는 서비스에서 그 가치가 더욱 빛을 발합니다. Next.js와 같은 현대적인 프레임워크를 사용하면 이러한 복잡한 라우팅 요구사항을 효과적으로 해결할 수 있습니다.
+
+## 병렬 라우팅의 구조와 설정 방법
+
+웹 애플리케이션에서 효율적으로 복수의 정보를 동시에 처리하려면 병렬 라우팅이 중요합니다. Next.js에서는 `@folder` 규칙과 `layout.js` 파일을 활용하여 이를 구현할 수 있습니다. 이 섹션에서는 병렬 라우팅의 구조 설정 방법과 URL 구조에 미치는 영향을 알아봅니다.
+
+### `@folder` 규칙을 사용한 슬롯 정의
+
+병렬 라우팅을 위한 슬롯은 `@folder` 규칙을 사용하여 정의됩니다. 이 규칙은 특정 폴더가 병렬 라우팅의 독립된 영역으로 작동하도록 설정합니다. 예를 들어, `@analytics`와 `@team` 두 개의 슬롯을 정의하려면 다음과 같은 파일 구조를 사용합니다.
+
+```
+app/
+├── @analytics/
+│   └── page.js
+├── @team/
+│   └── page.js
+└── layout.js
+```
+
+이 구조에서 `@analytics`와 `@team`은 독립된 컨텐츠를 렌더링하는 병렬 슬롯으로 작동하며, 각각의 슬롯은 자체 페이지 컴포넌트를 가집니다.
+
+### `layout.js`를 활용한 병렬 라우팅 구현 예제
+
+병렬 라우팅을 구현하기 위해 `layout.js` 파일에서는 각 슬롯을 속성으로 받아 동시에 렌더링할 수 있습니다. 다음 예제는 두 슬롯을 병렬로 렌더링하는 방법을 보여줍니다.
+
+```jsx
+// app/layout.js
+export default function Layout({ children, analytics, team }) {
+  return (
+    <>
+      {children}
+      {analytics}
+      {team}
+    </>
+  );
+}
+```
+
+위 코드에서 `children`은 기본 라우트 컴포넌트를, `analytics`와 `team`은 각각 해당 슬롯의 컴포넌트를 렌더링합니다. 이렇게 하면 각 슬롯은 독립적으로 업데이트할 수 있으며 서로 영향을 주지 않습니다.
+
+### 슬롯이 URL 구조에 미치는 영향
+
+Next.js에서 슬롯은 URL 구조에 직접적인 영향을 주지 않습니다. 예를 들어, `/@analytics/views` 주소로 접근하더라도 실제 URL은 `/views`로 표시됩니다. 이는 `@analytics`가 슬롯으로서 URL의 일부가 아니기 때문입니다. 따라서 사용자는 URL을 통해 직접적으로 슬롯의 내용을 접근할 수 없으며, 이는 애플리케이션의 구조를 깔끔하게 유지하는 데 도움을 줍니다.
+
+병렬 라우팅은 현대 웹 애플리케이션에서 다양한 정보를 효과적으로 제공하고 사용자 경험을 개선하는 데 중요한 역할을 합니다. Next.js의 `@folder` 규칙과 `layout.js` 파일을 이용하면 개발자는 이러한 병렬 라우팅을 손쉽게 구현하고 관리할 수 있습니다.
+
+## 병렬 라우팅의 상태 관리
+
+병렬 라우팅에서 상태 관리는 애플리케이션의 사용자 경험을 결정짓는 중요한 요소입니다. 특히 소프트 네비게이션과 하드 네비게이션 간의 차이점을 이해하고 라우트가 부합하지 않을 때의 처리 방법을 알아야 합니다.
+
+### 소프트 네비게이션과 하드 네비게이션
+
+Next.js에서 소프트 네비게이션은 클라이언트 사이드에서 발생하는 라우트 변경을 의미합니다. 사용자가 애플리케이션 내에서 다른 페이지로 이동할 때 페이지 새로고침 없이 라우트가 변경되는 것입니다. 이 경우 Next.js는 선택된 슬롯의 내용만 변경하며, 다른 슬롯의 활성 상태는 유지합니다.
+
+반면, 하드 네비게이션은 브라우저의 새로고침을 포함하여 전체 페이지를 새로 불러올 때 발생합니다. 이 경우 Next.js는 현재 URL과 부합하지 않는 슬롯의 활성 상태를 판단할 수 없어 `default.js` 파일을 렌더링하거나 해당 파일이 없으면 404 에러를 표시합니다.
+
+### 라우트 부합하지 않을 때의 기본 처리: `default.js`
+
+라우트가 부합하지 않을 때의 처리는 `default.js` 파일을 이용하여 관리합니다. 예를 들어, `@team` 슬롯에는 `/settings` 페이지가 있지만 `@analytics` 슬롯에는 해당 페이지가 없는 경우를 가정해 봅시다. 사용자가 `/settings`에 접근하면 `@team` 슬롯은 설정 페이지를, `@analytics` 슬롯은 `default.js` 파일을 렌더링합니다.
+
+```javascript
+// app/@analytics/default.js
+export default function Default() {
+  return <p>선택된 페이지가 없습니다.</p>;
+}
+```
+
+이러한 기본 처리는 사용자가 예상치 못한 라우트로 접근했을 때 안정적인 사용자 경험을 제공하며 불필요한 에러 화면을 방지합니다. 또한, 슬롯 내에서 활성화된 라우트 상태의 관리를 돕습니다.
+
+병렬 라우팅의 상태 관리는 사용자 경험의 일관성을 유지하고 다양한 사용 시나리오에서 원활한 네비게이션을 가능하게 합니다. 소프트 네비게이션과 하드 네비게이션의 차이를 이해하고 적절히 대응하는 것이 중요하며 `default.js`의 활용은 예외 상황에서도 안정적인 애플리케이션 동작을 보장하는 데 필수적입니다.
+
+## 경로 가로채기와 모달 구현
+
+웹 애플리케이션에서 모달 창은 정보 제공, 사용자 입력 요청 등 다양한 상황에서 필수적인 요소입니다. Next.js의 경로 가로채기 기능을 활용하면 조건부로 모달 창을 렌더링하고 클라이언트 사이드와 서버 사이드에서 모달 로직을 효과적으로 분리할 수 있습니다. 이를 통해 URL을 공유 가능한 모달을 구현할 수 있어, 사용자 경험을 크게 향상시킬 수 있습니다.
+
+### 경로 가로채기를 통한 모달 창의 조건부 렌더링
+
+경로 가로채기는 특정 URL 접근을 가로채어 다른 동작을 유발하는 기법입니다. 예를 들어, 사용자가 특정 상품 정보를 요청하는 페이지로 이동하려 할 때, 전체 페이지 로드 대신 해당 정보를 모달 창으로 띄우는 방식을 구현할 수 있습니다. 이는 클라이언트 사이드 네비게이션을 활용하여 적용할 수 있으며 사용자가 경험하는 페이지 전환의 부담을 줄여줍니다.
+
+```javascript
+// pages/_app.js
+import { Modal } from '../components/Modal';
+import { useRouter } from 'next/router';
+
+function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+
+  const isModalOpen = router.query.modal === 'true';
+
+  return (
+    <Layout>
+      <Component {...pageProps} />
+      {isModalOpen && <Modal />}
+    </Layout>
+  );
+}
+```
+
+### 클라이언트 사이드와 서버 사이드에서 모달 로직 분리하기
+
+모달 구현 시 클라이언트 사이드와 서버 사이드 로직을 분리하는 것은 중요합니다. 클라이언트 사이드에서는 사용자의 상호작용에 따라 모달을 표시하거나 숨기는 동작을 처리합니다. 반면, 서버 사이드에서는 모달에 필요한 데이터를 처리하고, 필요한 경우 적절한 API를 통해 데이터를 클라이언트로 전송합니다. 이러한 분리는 애플리케이션의 유지보수성을 높이고 서버 부하를 줄이는 데 도움을 줍니다.
+
+```javascript
+// pages/api/productInfo.js
+export default function handler(req, res) {
+  const { productId } = req.query;
+  const productInfo = getProductInfo(productId);  // 가상의 함수로 상품 정보를 조회
+  res.status(200).json({ productInfo });
+}
+
+// components/Modal.js
+import useSWR from 'swr';
+
+function Modal({ productId }) {
+  const { data, error } = useSWR(`/api/productInfo?productId=${productId}`, fetcher);
+
+  if (error) return <div>데이터 로드 실패</div>;
+  if (!data) return <div>로딩 중...</div>;
+
+  return (
+    <div>
+      <h1>{data.productInfo.name}</h1>
+      <p>{data.productInfo.description}</p>
+      <button onClick={() => closeModal()}>닫기</button>
+    </div>
+  );
+}
+```
+
+### 경로 가로채기를 활용한 URL 공유 가능 모달
+
+Next.js에서 경로 가로채기를 사용하면 모달 창을 URL과 연동하여 공유 가능하게 만들 수 있습니다. 사용자가 모달을 통해 본 페이지를 다른 사람에게 링크로 공유할 경우, 링크를 통해 같은 페이지 상태를 볼 수 있게 됩니다. 이를 위해 모달이 활성화된 상태를 URL의 쿼리 파라미터에 포함시키는 방법을 사용할 수 있습니다.
+
+```javascript
+// pages/products/[id].js
+import { useRouter } from 'next/router';
+
+export default function ProductPage({ product }) {
+  const router = useRouter();
+  const openModal = () => {
+    router.push(`/products/${product.id}?modal=true`, undefined, { shallow: true });
+  };
+
+  return (
+    <div>
+      <h1>{product.name}</h1>
+      <button onClick={openModal}>상세 정보 보기</button>
+    </div>
+  );
+}
+```
+
+이와 같이 Next.js의 경로 가로채기와 모달 구현 기능을 효과적으로 사용하면 사용자 경험을 높이고 애플리케이션의 인터랙티브성을 강화할 수 있습니다. 이 기술을 활용해 다양한 상황에서 더 나은 사용자 상호작용을 설계하세요.
+
+## 조건별 라우팅
+
+조건별 라우팅은 사용자의 역할이나 상황에 따라 다른 컨텐츠나 페이지를 보여주는 기능입니다. Next.js에서 병렬 라우트를 활용하면 더욱 효율적으로 이를 구현할 수 있으며 사용자에게 맞춤형 경험을 제공할 수 있습니다.
+
+### 사용자 역할에 따른 다른 대시보드 페이지 렌더링
+
+웹 애플리케이션에서 사용자의 역할(예: 관리자, 일반 사용자)에 따라 다른 정보를 보여주어야 할 때가 많습니다. Next.js의 병렬 라우트 기능을 이용하면 각 사용자의 역할에 따라 적절한 대시보드를 조건부로 렌더링할 수 있습니다.
+
+```javascript
+// pages/dashboard/layout.js
+import { useEffect, useState } from 'react';
+import AdminDashboard from '../components/AdminDashboard';
+import UserDashboard from '../components/UserDashboard';
+
+function DashboardLayout() {
+    const [userRole, setUserRole] = useState(null);
+
+    useEffect(() => {
+        // 사용자 역할을 확인하는 API 호출 로직 (가정)
+        fetchUserRole().then(role => setUserRole(role));
+    }, []);
+
+    return (
+        <div>
+            {userRole === 'admin' ? <AdminDashboard /> : <UserDashboard />}
+        </div>
+    );
+}
+
+export default DashboardLayout;
+```
+
+이 예제에서는 사용자의 역할을 API를 통해 확인한 후, 역할에 따라 `AdminDashboard` 혹은 `UserDashboard` 컴포넌트를 조건부로 렌더링합니다.
+
+### 병렬 라우트를 이용한 탭 그룹 생성
+
+대시보드 내에서 여러 정보를 탭 형식으로 제공하고 싶을 때, 병렬 라우트를 사용하여 각 탭을 독립적으로 관리할 수 있습니다. 이렇게 구성된 탭은 사용자가 탭 간을 전환할 때마다 페이지를 새로 불러올 필요 없이, 해당 탭의 컨텐츠만 동적으로 변경하여 표시할 수 있습니다.
+
+```javascript
+// pages/dashboard/[tab].js
+import { useRouter } from 'next/router';
+
+function DashboardTabs() {
+    const router = useRouter();
+    const { tab } = router.query;
+
+    const renderTabContent = () => {
+        switch (tab) {
+            case 'sales':
+                return <SalesInfo />;
+            case 'messages':
+                return <Messages />;
+            default:
+                return <DefaultTab />;
+        }
+    };
+
+    return (
+        <div>
+            <nav>
+                <button onClick={() => router.push('/dashboard/sales')}>매출 정보</button>
+                <button onClick={() => router.push('/dashboard/messages')}>메시지</button>
+            </nav>
+            {renderTabContent()}
+        </div>
+    );
+}
+
+export default DashboardTabs;
+```
+
+이 코드에서는 URL의 파라미터를 사용하여 현재 선택된 탭을 결정하고 해당 탭에 맞는 컴포넌트를 렌더링합니다. 사용자가 탭을 클릭하면, 라우터의 `push` 메소드를 이용해 주소를 변경하고 변경된 주소에 따라 적절한 탭 내용을 보여줍니다.
+
+조건별 라우팅과 병렬 라우트를 통해 다양한 사용자 요구에 맞는 유연하고 동적인 웹 애플리케이션을 구현할 수 있습니다. 이 기능들을 활용해 사용자 개인의 경험을 개선하고 웹 사이트의 전반적인 효율성을 높이세요.
+
+
+
+## 실제 적용 사례
+
+Next.js의 병렬 라우팅과 모달 구현 기능은 동적인 웹 애플리케이션을 구축할 때 매우 유용합니다. 로그인 모달, 사진 갤러리, 쇼핑 카트와 같은 기능들은 웹사이트에서 흔히 볼 수 있는 요소로서, 사용자 경험을 크게 향상시킬 수 있습니다.
+
+### 로그인 모달 사례
+
+로그인 기능은 거의 모든 웹 애플리케이션에서 필수적인 부분입니다. 사용자가 로그인 할 필요가 있을 때, 페이지 전환 없이 모달 창을 통해 로그인 할 수 있게 하면 사용자 경험을 크게 개선할 수 있습니다. Next.js에서는 경로 가로채기 기능을 이용하여 이를 간편하게 구현할 수 있습니다.
+
+```javascript
+// pages/_app.js
+import Modal from '../components/Modal';
+import { useRouter } from 'next/router';
+
+function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+
+  const isLoginModalOpen = router.pathname === '/login';
+
+  return (
+    <>
+      {isLoginModalOpen && <Modal><Component {...pageProps} /></Modal>}
+      {!isLoginModalOpen && <Component {...pageProps} />}
+    </>
+  );
+}
+
+export default MyApp;
+```
+
+이 예제에서는 URL 경로가 '/login'일 때 로그인 모달을 활성화합니다. 모달 컴포넌트 안에서 로그인 페이지 컴포넌트를 렌더링하여 사용자가 현재 페이지를 벗어나지 않고 로그인 할 수 있게 합니다.
+
+### 사진 갤러리 사례
+
+사진 갤러리에서 사진을 크게 보여주는 기능도 모달을 사용하여 구현할 수 있습니다. 사용자가 사진 하나를 클릭하면 전체 페이지를 새로 불러오는 것이 아니라, 모달 창을 통해 크게 보여주는 것입니다.
+
+```javascript
+// pages/gallery/[id].js
+import ImageModal from '../components/ImageModal';
+import { useRouter } from 'next/router';
+
+function PhotoPage({ photo }) {
+  const router = useRouter();
+  const { id } = router.query;
+
+  return (
+    <ImageModal isOpen={true} onClose={() => router.push('/gallery')}>
+      <img src={photo.url} alt={`Photo ${id}`} />
+    </ImageModal>
+  );
+}
+
+export default PhotoPage;
+```
+
+이 코드에서는 각 사진 링크를 클릭할 때 해당 사진의 상세 페이지 대신에 모달을 이용하여 사진을 표시합니다.
+
+### 쇼핑 카트 사례
+
+쇼핑 카트를 사이드 모달로 구현하면 사용자가 쇼핑을 계속하면서도 카트에 담긴 물품을 쉽게 확인할 수 있습니다. 이런 방식은 사용자가 원하는 정보에 쉽게 접근할 수 있게 해서 사이트의 전환율을 높일 수 있습니다.
+
+```javascript
+// components/CartModal.js
+import { useRouter } from 'next/router';
+
+function CartModal({ isOpen, children }) {
+  const router = useRouter();
+
+  return (
+    <div className={isOpen ? 'open' : 'closed'}>
+      {children}
+      <button onClick={() => router.push('/shop')}>계속 쇼핑하기</button>
+      <button onClick={() => router.push('/checkout')}>결제하기</button>
+    </div>
+  );
+}
+
+export default CartModal;
+```
+
+이 컴포넌트는 쇼핑 카트 모달을 구현하며, 사용자가 '계속 쇼핑하기' 버튼을 클릭하면 쇼핑 페이지로 돌아갈 수 있도록 합니다.
+
+위의 사례들처럼 병렬 라우팅과 모달을 통합 사용함으로써, 복잡한 사용자 인터페이스를 간결하게 처리하고, 사용자의 웹 사이트 사용 경험을 극대화할 수 있습니다.
+
+## 스트리밍과 오류 UI
+
+병렬 라우팅을 활용하면 웹 애플리케이션의 각 부분을 독립적으로 스트리밍하고, 로딩 및 오류 상태를 관리할 수 있습니다. 이는 애플리케이션의 반응성을 높이고, 사용자 경험을 개선하는 데 큰 도움이 됩니다.
+
+### 라우트별 독립 스트리밍
+
+Next.js에서는 각 라우트를 독립적으로 스트리밍할 수 있어, 사용자는 필요한 부분만 불러와서 볼 수 있습니다. 이 기능은 특히 대용량 데이터나 복잡한 인터페이스를 가진 페이지에서 유용합니다. 
+
+```javascript
+// 예시 코드
+import { Suspense } from 'react';
+
+function Profile() {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <UserProfile />
+    </Suspense>
+  );
+}
+
+function UserProfile() {
+  const data = fetchUserProfile();
+  return (
+    <div>
+      <h1>{data.name}</h1>
+      <p>{data.bio}</p>
+    </div>
+  );
+}
+```
+
+위 코드에서 `Suspense` 컴포넌트를 사용하여 사용자 프로필 데이터를 스트리밍합니다. 데이터가 로딩 중일 때는 "로딩 중..."이라는 메시지를 표시하며, 데이터가 준비되면 사용자 프로필을 보여줍니다.
+
+### 오류 상태 관리
+
+스트리밍 중에 발생할 수 있는 오류를 관리하는 것도 중요합니다. 각 라우트마다 독립적인 오류 처리 로직을 구현함으로써, 오류 발생 시 전체 페이지가 아닌 해당 부분만 오류 메시지를 표시할 수 있습니다.
+
+```javascript
+// 예시 코드
+import { Suspense, ErrorBoundary } from 'react';
+
+function SafeProfile() {
+  return (
+    <ErrorBoundary fallback={<div>프로필을 불러오지 못했습니다.</div>}>
+      <Profile />
+    </ErrorBoundary>
+  );
+}
+```
+
+`ErrorBoundary` 컴포넌트를 사용하여 오류가 발생했을 때, "프로필을 불러오지 못했습니다."라는 메시지를 표시합니다. 이 방법은 사용자에게 오류 정보를 명확하게 제공하고, 개발자는 문제를 빠르게 파악하고 수정할 수 있는 장점이 있습니다.
+
+이처럼 독립적인 스트리밍과 세밀한 오류 관리를 통해, 웹 애플리케이션은 더 높은 수준의 사용자 맞춤 서비스를 제공할 수 있습니다. Next.js의 이러한 기능들을 활용하면, 사용자의 불편을 최소화하면서도 효율적으로 리소스를 관리할 수 있습니다.
+
+
+## 결론: 병렬 라우팅과 경로 가로채기의 혁신적 기여
+
+### 병렬 라우팅과 경로 가로채기의 이점
+
+병렬 라우팅과 경로 가로채기는 웹 애플리케이션의 다양성과 유연성을 크게 향상시키는 Next.js의 두 가지 주요 기능입니다. 이 두 기법은 동시에 여러 페이지를 렌더링하고, 독립적으로 각각의 상태를 관리할 수 있게 함으로써, 복잡한 웹 애플리케이션의 구현을 단순화합니다. 사용자는 더 빠른 반응 시간과 향상된 인터랙션을 경험할 수 있으며, 개발자는 유지보수가 용이한 코드베이스를 유지할 수 있습니다.
+
+### 미래 웹 개발에서 Next.js의 역할
+
+Next.js는 현대 웹 개발에서 빠르게 중심 기술로 자리잡고 있습니다. 병렬 라우팅과 경로 가로채기 같은 기능은 Next.js가 제공하는 다양한 혁신적인 해법 중 일부에 불과합니다. 이러한 기능들은 웹의 복잡성을 관리하고, 최종 사용자에게 매끄러운 웹 경험을 제공하기 위해 필수적인 요소입니다. 앞으로도 Next.js는 지속적인 업데이트와 커뮤니티의 지원을 통해 웹 개발의 표준을 높이는 데 기여할 것입니다.
+
+```javascript
+// 예시 코드: 조건별 라우팅 구현
+export default function Dashboard({ role }) {
+  return (
+    <div>
+      {role === 'admin' ? <AdminDashboard /> : <UserDashboard />}
+    </div>
+  );
+}
+```
+
+위 코드 예제는 사용자의 역할에 따라 다른 대시보드를 조건적으로 렌더링하는 간단한 방법을 보여줍니다. 이처럼 Next.js를 사용하면 복잡한 조건과 상황에 따라 유연하게 컴포넌트를 제어할 수 있습니다.
+
+Next.js의 지속적인 진화는 웹 애플리케이션의 효율성과 접근성을 향상시키는 새로운 가능성을 열고 있습니다. 병렬 라우팅과 경로 가로채기는 이러한 변화를 주도하는 기술로, 미래 웹 개발의 트렌드를 설정하는 데 중요한 역할을 하게 될 것입니다.
