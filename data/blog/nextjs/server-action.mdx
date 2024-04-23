@@ -1,0 +1,303 @@
+---
+title: "Next.js로 서버 액션을 활용하여 폼 제출과 데이터 관리 시작하기"
+summary: Next.js에서 폼 제출과 데이터 변경을 관리하는 서버 액션의 기초를 배워보세요. 이 가이드는 개발자가 서버와 클라이언트 컴포넌트를 활용하여 데이터를 효과적으로 처리하는 방법을 쉽게 설명합니다.
+tags: ['Server-Action', 'Nextjs', 'Form']
+images: ['/static/images/blog/nextjs/server-action.jpg']
+date: "2024-04-23 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 서론: Next.js에서 서버 액션 이해하기
+
+### 서버 액션의 개념
+서버 액션은 Next.js 애플리케이션에서 서버 측에서 실행되는 비동기 함수입니다. 이러한 함수는 데이터 변경과 폼 제출을 관리하는 데 사용됩니다. 서버 액션을 통해 사용자의 입력을 받아 서버에서 데이터를 처리하고 결과를 클라이언트에 전달할 수 있습니다.
+
+### 필요성 및 주요 기능
+웹 애플리케이션에서 폼 제출과 데이터 관리는 매우 중요합니다. 사용자의 입력을 효과적으로 처리하고 데이터의 일관성을 유지하는 것은 어플리케이션의 안정성과 사용자 경험을 크게 향상시킬 수 있습니다. 서버 액션은 다음과 같은 기능을 제공합니다.
+
+1. **폼 제출 처리:** 서버 액션은 `<form>` 태그와 연동되어 폼 제출을 처리합니다. 이를 통해 서버 측에서 사용자 입력을 받아 필요한 작업을 수행할 수 있습니다.
+2. **데이터 변형:** 데이터를 생성, 수정, 삭제하는 등의 변형 작업을 서버에서 처리합니다. 이 과정에서 데이터의 무결성을 보장하고, 필요한 경우 캐시를 재검증하여 최신 데이터를 사용자에게 제공할 수 있습니다.
+3. **클라이언트와 서버 컴포넌트 간의 재사용:** 서버 액션은 클라이언트 컴포넌트와 서버 컴포넌트 모두에서 사용할 수 있으며, `use server` 지시어를 통해 간단하게 설정할 수 있습니다.
+4. **비동기 처리:** 서버 액션은 비동기적으로 실행되므로, 서버와 클라이언트 간의 통신 동안 사용자 인터페이스가 멈추지 않고, 사용자는 애플리케이션을 계속 사용할 수 있습니다.
+
+이러한 기능들은 서버 액션을 통해 웹 애플리케이션의 성능을 향상시키고 사용자 경험을 개선하는 데 중요한 역할을 합니다.
+
+
+## 서버 액션 설정하기
+
+### `use server` 지시어의 이해와 활용
+`use server` 지시어는 Next.js에서 서버 액션을 정의할 때 사용하는 특별한 구문입니다. 이 지시어를 함수나 파일의 상단에 배치하여 해당 함수 또는 파일의 모든 내보내기가 서버에서만 실행되도록 지정할 수 있습니다. 서버 액션은 서버 측에서 데이터를 처리하고 클라이언트 측으로 결과를 반환할 수 있는 강력한 방법을 제공합니다.
+
+예를 들어, 간단한 서버 컴포넌트에서 데이터 생성 작업을 수행하는 서버 액션을 설정하는 방법은 다음과 같습니다.
+
+```tsx
+// 서버 컴포넌트 예제
+export default function Page() {
+  async function createData() {
+    'use server';
+    // 데이터 생성 로직
+  }
+
+  return (
+    <button onClick={createData}>생성하기</button>
+  );
+}
+```
+
+### 서버 컴포넌트와 클라이언트 컴포넌트에서의 활용
+Next.js에서는 서버 컴포넌트와 클라이언트 컴포넌트를 구분하여 서버 액션을 활용할 수 있습니다. 서버 컴포넌트에서는 서버 액션을 직접 호출하거나, 클라이언트 컴포넌트에서 재사용할 수 있는 모듈 수준에서 `use server` 지시어를 사용할 수 있습니다.
+
+클라이언트 컴포넌트에서 서버 액션을 활용하는 예는 다음과 같습니다. 여기서는 모듈 수준에서 `use server` 지시어를 사용하고, 해당 함수를 클라이언트 컴포넌트에서 호출합니다.
+
+```tsx
+// actions.ts - 서버 액션 파일
+'use server';
+
+export async function fetchData() {
+  // 데이터 페치 로직
+}
+
+// 클라이언트 컴포넌트
+import { fetchData } from './actions';
+
+export function DisplayData() {
+  async function handleFetch() {
+    const data = await fetchData();
+    console.log(data);
+  }
+
+  return <button onClick={handleFetch}>데이터 불러오기</button>;
+}
+```
+
+이러한 방식으로 서버 액션을 구성하면, Next.js 애플리케이션에서 비동기 작업을 효율적으로 관리할 수 있습니다. 서버에서 실행되는 액션을 통해 데이터 처리가 중앙에서 관리되며, 클라이언트와 서버 간의 일관된 데이터 흐름을 유지할 수 있습니다.
+
+## 3. 서버 액션의 동작 방식
+## 서버 액션의 동작 방식 이해하기
+
+### 폼 요소와 서버 액션 연동
+Next.js에서 서버 액션은 HTML `<form>` 요소와 연동하여 사용할 수 있습니다. 이를 통해 사용자의 폼 제출을 서버에서 처리하고 결과를 동적으로 반환할 수 있습니다. 폼 요소에 `action` 속성을 사용하면, 서버 액션은 폼이 제출될 때 자동으로 호출됩니다. 이 과정에서 서버 액션은 `<form>`에서 제공하는 `FormData` 객체를 자동으로 받아 처리합니다.
+
+예를 들어, 사용자 입력을 받아 서버에서 처리하는 간단한 예제는 다음과 같습니다.
+
+```jsx
+// 페이지 컴포넌트
+export default function Page() {
+  async function handleSubmit(formData) {
+    'use server'; // 서버 액션 지시어
+    // 폼 데이터 처리 로직
+    console.log(formData.get('username'));
+  }
+
+  return (
+    <form action={handleSubmit}>
+      <input name="username" type="text" placeholder="사용자 이름" />
+      <button type="submit">제출</button>
+    </form>
+  );
+}
+```
+
+### 비동기 함수 실행과 HTTP 메소드
+서버 액션은 비동기 함수로 정의되어 백엔드에서 데이터 처리와 같은 비동기 작업을 수행할 수 있습니다. HTTP `POST` 메소드는 서버 액션을 통해 자동으로 처리되며, 이는 클라이언트와 서버 간의 데이터 전송을 위해 주로 사용됩니다. 서버 액션을 통해 데이터를 수정하거나 업데이트할 때, Next.js는 캐싱 및 데이터 재검증 메커니즘과 통합되어 효율적으로 동작합니다.
+
+### 직렬화 가능한 인자와 반환 값
+서버 액션에서 사용되는 인자와 반환 값은 React에 의해 직렬화 가능해야 합니다. 이는 서버와 클라이언트 간의 데이터 전송 시 데이터가 올바르게 처리되고 전송되도록 보장하기 위함입니다. 직렬화 가능한 데이터는 문자열, 숫자, 날짜, 배열 등이 포함될 수 있으며, 복잡한 객체나 함수는 직접 전달할 수 없습니다.
+
+서버 액션을 구현할 때는 다음과 같이 직렬화 가능한 데이터를 사용하는 예제를 참고할 수 있습니다.
+
+```jsx
+// actions.js
+'use server';
+
+export async function updateData(userId, content) {
+  // 데이터베이스 업데이트 로직
+  return { success: true, userId, content }; // 직렬화 가능한 객체 반환
+}
+```
+
+이처럼 서버 액션을 활용하면 Next.js 애플리케이션에서 폼 처리, 데이터 관리 및 비동기 작업을 효율적으로 수행할 수 있습니다.
+
+
+## 실제 예제로 배우는 서버 액션 활용법
+
+### 폼 제출과 데이터 처리
+
+Next.js에서 폼 제출과 데이터 처리는 서버 액션을 통해 간단하게 구현할 수 있습니다. 사용자 입력을 받고 서버에서 이를 처리하여 결과를 반환하는 과정을 한 번에 처리합니다. 예를 들어, 사용자의 이름과 이메일을 입력받아 데이터베이스에 저장하는 기능은 다음과 같이 구현할 수 있습니다.
+
+```jsx
+// 페이지 컴포넌트
+export default function SignupForm() {
+  async function handleSignup(formData) {
+    'use server';
+    const name = formData.get('name');
+    const email = formData.get('email');
+    // 데이터베이스에 저장하는 로직
+    return { success: true, message: '가입 완료' };
+  }
+
+  return (
+    <form action={handleSignup}>
+      <input name="name" type="text" placeholder="이름" />
+      <input name="email" type="email" placeholder="이메일" />
+      <button type="submit">가입하기</button>
+    </form>
+  );
+}
+```
+
+### 서버 액션을 이용한 동적 데이터 변형
+
+서버 액션은 데이터를 동적으로 변형하고 클라이언트에 즉시 반영할 수 있는 강력한 수단을 제공합니다. 예를 들어, 사용자의 요청에 따라 데이터를 갱신하고 최신 상태를 반환할 수 있습니다. 이러한 과정은 모든 변형이 서버에서 처리되며 클라이언트는 최종 결과만을 받게 됩니다.
+
+```jsx
+// actions.js
+'use server';
+
+export async function updateProfile(userId, formData) {
+  const bio = formData.get('bio');
+  // 데이터베이스에서 사용자 프로필 업데이트
+  return { success: true, updatedBio: bio };
+}
+```
+
+### 추가 인자 전달 방법
+
+서버 액션에 추가 인자를 전달하는 방법은 여러 가지가 있습니다. 가장 간단한 방법은 `bind` 함수를 사용하여 필요한 인자를 사전에 바인딩하는 것입니다. 이 방법을 사용하면, 서버 액션 함수가 호출될 때 추가 인자를 함께 전달할 수 있습니다.
+
+```jsx
+// 클라이언트 컴포넌트
+import { updateProfile } from './actions';
+
+function UserProfile({ userId }) {
+  const handleUpdate = updateProfile.bind(null, userId);
+
+  return (
+    <form action={handleUpdate}>
+      <textarea name="bio"></textarea>
+      <button type="submit">업데이트</button>
+    </form>
+  );
+}
+```
+
+이렇게 서버 액션을 활용하면, 복잡한 서버 로직을 간결하게 클라이언트에서 처리할 수 있으며, 동시에 서버와 클라이언트 간의 데이터 동기화를 효과적으로 관리할 수 있습니다.
+
+
+## 서버 에러 처리와 데이터 재검증
+
+### 서버에서 발생하는 에러 처리 방법
+
+Next.js에서 서버 액션을 이용할 때 발생할 수 있는 에러를 효과적으로 처리하는 방법은 애플리케이션의 안정성을 크게 향상시킵니다. 서버 액션 내부에서 `try-catch` 구문을 사용하여 에러를 캡처하고 적절한 응답을 클라이언트로 전송할 수 있습니다. 이는 사용자에게 에러 발생 사실을 알리고, 필요한 경우 대응할 수 있도록 합니다.
+
+```jsx
+// 서버 액션 예시
+'use server';
+
+export async function processPayment(formData) {
+  try {
+    const paymentResult = await paymentGateway.process(formData);
+    return { success: true, message: '결제 성공' };
+  } catch (error) {
+    return { success: false, error: '결제 처리 중 오류 발생' };
+  }
+}
+```
+
+### 데이터 변형 후 캐시와 데이터 재검증
+
+데이터를 성공적으로 변형한 후, 클라이언트에 최신 정보를 반영하기 위해서는 데이터 캐시를 재검증하는 과정이 필수적입니다. Next.js는 `revalidatePath` 함수를 통해 특정 경로의 캐시를 갱신할 수 있도록 지원합니다. 이 함수를 호출하면 서버는 해당 경로에 대한 최신 데이터를 생성하여 응답하게 됩니다.
+
+```jsx
+// 캐시 재검증 예시
+'use server';
+import { revalidatePath } from 'next/server';
+
+export async function updateProfile(formData) {
+  // 프로필 업데이트 로직
+  await userProfile.update(formData);
+  
+  // 업데이트된 프로필 페이지 캐시 재검증
+  await revalidatePath('/profile');
+  
+  return { success: true, message: '프로필 업데이트 완료' };
+}
+```
+
+서버에서 에러 처리와 데이터 재검증을 적절히 구현하면, 사용자에게 안정적이고 신속한 응답을 제공할 수 있습니다. 이는 특히 동적인 데이터를 다루는 웹 애플리케이션에서 중요한 요소로 작용합니다.
+
+## 고급 사용법 및 보안
+
+### 최적화 업데이트와 리디렉션
+
+Next.js에서 서버 액션을 사용할 때 최적화된 사용자 경험을 제공하기 위해 업데이트 후 자동으로 다른 페이지로 리디렉션하는 기능을 구현할 수 있습니다. 이는 특히 폼 제출 후 결과 페이지로 넘어갈 필요가 있을 때 유용합니다. `redirect` 함수를 이용하면 서버 측에서 처리 후 클라이언트를 특정 URL로 안내할 수 있습니다.
+
+```js
+// 리디렉션 예시
+'use server';
+import { redirect } from 'next/navigation';
+
+export async function submitForm(formData) {
+  // 데이터 처리 로직
+  const result = await processData(formData);
+
+  if (result.success) {
+    // 성공 시 사용자를 결과 페이지로 리디렉션
+    redirect('/success-page');
+  } else {
+    // 실패 시 에러 페이지로 리디렉션
+    redirect('/error-page');
+  }
+}
+```
+
+### CSRF 공격 방지와 보안 설정
+
+크로스 사이트 요청 위조(CSRF)는 웹 애플리케이션에서 흔히 마주치는 보안 취약점 중 하나입니다. Next.js는 `POST` 메서드를 사용하는 서버 액션을 통해 이러한 공격을 방지할 수 있는 여러 기능을 제공합니다. 예를 들어, `allowedOrigins` 설정을 통해 신뢰할 수 있는 도메인만 서버 액션을 호출할 수 있도록 제한할 수 있습니다.
+
+```js
+// next.config.js에서 안전한 출처 설정
+module.exports = {
+  serverActions: {
+    allowedOrigins: ['https://trusteddomain.com'],
+  },
+}
+```
+
+또한, Next.js는 서버 액션을 호출할 때 `Origin` 헤더와 `Host` 헤더를 비교하여 일치하지 않는 경우 요청을 거부합니다. 이는 동일 출처 정책(Same-Origin Policy)을 강화하여 애플리케이션을 더욱 안전하게 만듭니다.
+
+서버 액션과 관련된 고급 사용법 및 보안 기능을 적절히 활용하면, Next.js 애플리케이션의 성능 최적화와 보안성을 동시에 강화할 수 있습니다. 이를 통해 사용자에게 안전하고 빠른 서비스를 제공할 수 있습니다.
+
+## 서버 액션을 통한 사용자 경험 향상
+
+### 사용자 경험과 응답성의 개선
+
+Next.js의 서버 액션은 웹 애플리케이션에서 사용자 경험을 혁신적으로 향상시킬 수 있는 강력한 도구입니다. 이 기술을 활용함으로써 서버와 클라이언트 간의 상호작용이 간소화되고, 페이지 새로고침 없이 데이터를 실시간으로 처리하고 업데이트 할 수 있습니다. 예를 들어, 사용자가 양식을 제출할 때 페이지를 새로 고침하지 않고도 서버에서 데이터를 처리하고 즉시 결과를 반환할 수 있습니다.
+
+```js
+// 예시: 서버 액션을 활용한 양식 제출
+'use server';
+export async function handleFormSubmission(formData) {
+  const response = await processData(formData);
+  return response;
+}
+```
+
+### Next.js에서 서버 액션의 미래 전망
+
+서버 액션은 웹 개발에서 서버와 클라이언트 간의 경계를 허무는 혁신적인 발전입니다. 이는 특히 하이브리드 렌더링 환경에서 더욱 효과적이며, 서버의 강력한 처리 능력과 클라이언트의 동적 사용자 인터페이스를 결합합니다. 미래에는 이러한 기술이 더욱 발전하여 더욱 직관적이고 상호작용적인 웹 애플리케이션 구현이 가능해질 것입니다.
+
+```js
+// 미래의 서버 액션 사용 예
+'use server';
+export async function advancedDataProcessing() {
+  const data = await fetchNewData();
+  processDataInRealTime(data);
+  return updateUI(data);
+}
+```
+
+서버 액션은 사용자 경험을 향상시키고, 응답성을 높이며, 개발자가 서버와 클라이언트의 최적의 기능을 활용할 수 있도록 돕습니다. Next.js는 이런 혁신적인 기능을 통해 현대 웹 개발의 패러다임을 재정립하고 있습니다. 이러한 기능은 앞으로도 계속 발전할 것이며, 웹 애플리케이션의 성능과 사용자 경험을 한 차원 높은 수준으로 이끌 것입니다.
+
