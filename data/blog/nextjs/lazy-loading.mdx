@@ -1,0 +1,305 @@
+---
+title: "Next.js에서 지연 로딩(Lazy Loading) 구현하기"
+summary: Next.js를 활용하여 애플리케이션의 초기 로딩 성능을 향상시키는 지연 로딩 기법을 소개합니다. 이 글에서는 리액트 클라이언트 컴포넌트와 외부 라이브러리의 지연 로딩 방법을 알아봅니다.
+tags: ['Performance', 'Optimization', 'Nextjs']
+images: ['/static/images/blog/nextjs/lazy-loading.jpg']
+date: "2024-04-25 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+
+## 지연 로딩의 개념과 Next.js에서의 중요성
+
+### 지연 로딩이란 무엇인가
+웹 개발에서 지연 로딩은 초기 페이지 로드 시 필요하지 않은 자원들을 처음에는 불러오지 않고 필요한 순간에 로드하여 사용하는 기법입니다. 이 방식은 사용자 경험을 개선하고 초기 로딩 시간을 단축시키며 자원 사용을 최적화하는 데 도움을 줍니다.
+
+### Next.js에서 지연 로딩의 중요성
+Next.js는 서버 사이드 렌더링을 지원하는 리액트 프레임워크로, 애플리케이션의 초기 로딩 성능에 큰 영향을 미칩니다. Next.js에서 제공하는 지연 로딩 기능을 활용하면 서버로부터 전송되는 데이터 양을 줄이고 필요한 컴포넌트나 라이브러리만을 선택적으로 불러와 처리 성능을 향상시킬 수 있습니다.
+
+### Next.js의 지연 로딩 구현 방식
+Next.js는 다음 두 가지 방법을 통해 지연 로딩을 지원합니다:
+1. `next/dynamic`: Next.js의 동적 임포트를 이용하여 컴포넌트를 지연 로딩합니다. 이는 `React.lazy()`와 `Suspense`를 결합한 형태로, 필요에 따라 클라이언트 컴포넌트를 로드할 수 있습니다.
+2. `React.lazy()`와 `Suspense`: 표준 리액트의 지연 로딩 방식을 사용하여, 사용자 정의 컴포넌트 또는 라이브러리를 비동기적으로 로드합니다.
+
+### 예제를 통한 설명
+다음 코드는 `next/dynamic`을 사용하여, 사용자가 '더 보기' 버튼을 클릭할 때만 특정 컴포넌트를 로드하는 예를 보여줍니다. 이와 같이 조건부로 컴포넌트를 로드함으로써, 초기 로드 시에는 해당 컴포넌트를 제외한 나머지 부분만 렌더링하여 성능을 최적화할 수 있습니다.
+
+```jsx:app/page.js
+'use client'
+
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
+
+const ComponentA = dynamic(() => import('../components/A'))
+const ComponentB = dynamic(() => import('../components/B'))
+
+export default function ClientComponentExample() {
+  const [showMore, setShowMore] = useState(false)
+
+  return (
+    <div>
+      <ComponentA />
+      {showMore && <ComponentB />}
+      <button onClick={() => setShowMore(!showMore)}>더 보기</button>
+    </div>
+  )
+}
+```
+
+
+## Next.js의 지연 로딩 구현 방법
+
+### `next/dynamic`을 이용한 동적 임포트
+
+Next.js에서 제공하는 `next/dynamic`은 리액트의 `React.lazy()`와 `Suspense`를 조합한 기능으로, 클라이언트 컴포넌트의 지연 로딩을 쉽게 구현할 수 있게 도와줍니다. 이 기능은 특히 앱과 페이지 라우터 모두에서 동일하게 작동하므로 점진적인 마이그레이션을 가능하게 합니다.
+
+#### 기본 사용법
+
+`next/dynamic`을 사용하면 다음과 같이 컴포넌트를 동적으로 임포트할 수 있습니다. 예를 들어, 사용자가 특정 조건을 만족시켰을 때만 컴포넌트를 로드하도록 설정할 수 있습니다.
+
+```jsx
+import dynamic from 'next/dynamic'
+
+const DynamicComponent = dynamic(() => import('../components/ExampleComponent'))
+
+function Home() {
+  return (
+    <div>
+      <h1>Welcome to Next.js!</h1>
+      <DynamicComponent />
+    </div>
+  )
+}
+```
+
+#### 서버 사이드 렌더링 비활성화
+
+특정 컴포넌트를 클라이언트 사이드에서만 로드하고 싶다면, `ssr` 옵션을 `false`로 설정합니다. 이는 서버 사이드 렌더링을 건너뛰고, 사용자의 브라우저에서만 컴포넌트를 로드하게 합니다.
+
+```jsx
+const NoSSRComponent = dynamic(() => import('../components/NoSSRComponent'), { ssr: false })
+```
+
+### `React.lazy()`와 Suspense를 사용한 방법
+
+리액트 자체적으로 제공하는 `React.lazy()`와 `Suspense`를 사용하여 Next.js 애플리케이션에서도 컴포넌트를 지연 로딩할 수 있습니다. 이 방법은 주로 클라이언트 사이드에서 렌더링할 때 사용됩니다.
+
+#### 기본 사용법
+
+`React.lazy()`는 동적 임포트(`import()`)를 통해 모듈을 불러오며, 이 모듈이 필요할 때까지 로딩을 지연시킵니다. `Suspense` 컴포넌트는 로딩 중 상태를 관리하며, 지연 로딩 중인 컴포넌트의 로드가 완료될 때까지 대체 컴포넌트를 렌더링합니다.
+
+```jsx
+import React, { Suspense } from 'react'
+
+const LazyComponent = React.lazy(() => import('../components/LazyComponent'))
+
+function App() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  )
+}
+```
+
+### 예제: 외부 라이브러리 지연 로딩
+
+사용자의 입력을 받아 검색 기능을 제공하는 경우, 검색 기능에 필요한 외부 라이브러리를 처음부터 불러오는 대신, 사용자가 검색을 시작할 때 라이브러리를 로드하도록 설정할 수 있습니다. 이렇게 하면 초기 로드 시 필요하지 않은 자바스크립트의 양을 줄일 수 있습니다.
+
+```jsx
+'use client'
+
+import { useState } from 'react'
+
+function SearchComponent() {
+  const [input, setInput] = useState('')
+  const [results, setResults] = useState([])
+
+  const handleSearch = async (event) => {
+    setInput(event.target.value)
+    if (event.target.value.length > 2) {
+      const Fuse = (await import('fuse.js')).default
+      const fuse = new Fuse(items, options)
+      setResults(fuse.search(event.target.value))
+    }
+  }
+
+  return (
+
+
+    <div>
+      <input type="text" value={input} onChange={handleSearch} placeholder="Search here..." />
+      {results.map(result => <div key={result.item.id}>{result.item.title}</div>)}
+    </div>
+  )
+}
+```
+
+
+## 지연 로딩 실제 구현 예제
+
+### 클라이언트 컴포넌트 동적 로딩
+Next.js의 `next/dynamic`을 활용하면 사용자의 상호작용에 따라 필요할 때만 컴포넌트를 로딩할 수 있습니다. 이 방법은 초기 페이지 로드 시 필요하지 않은 자원을 줄여 성능을 향상시킵니다.
+
+#### 조건에 따른 컴포넌트 로딩
+다음 예제에서는 사용자가 버튼을 클릭할 때만 특정 컴포넌트를 로드하는 방법을 보여줍니다. 이를 통해 불필요한 자원 로드를 방지하고 앱의 반응 속도를 높일 수 있습니다.
+
+```jsx
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+const LazyComponent = dynamic(() => import('../components/LazyComponent'));
+
+function HomePage() {
+  const [loadComponent, setLoadComponent] = useState(false);
+
+  return (
+    <div>
+      <button onClick={() => setLoadComponent(true)}>컴포넌트 보기</button>
+      {loadComponent && <LazyComponent />}
+    </div>
+  );
+}
+```
+
+#### 클라이언트 사이드에서만 로딩되는 컴포넌트
+어떤 컴포넌트는 서버에서 렌더링되지 않고 클라이언트 사이드에서만 로딩되어야 할 때가 있습니다. `next/dynamic`의 `ssr: false` 옵션을 사용하여 이를 쉽게 설정할 수 있습니다.
+
+```jsx
+const ClientOnlyComponent = dynamic(() => import('../components/ClientOnlyComponent'), { ssr: false });
+
+function SomePage() {
+  return (
+    <div>
+      <ClientOnlyComponent />
+    </div>
+  );
+}
+```
+
+### 서버 컴포넌트와의 차이점
+서버 컴포넌트는 클라이언트 컴포넌트와 달리 서버 사이드에서 렌더링되며, 그 자식 컴포넌트만 지연 로딩이 가능합니다. 서버 컴포넌트 자체는 지연 로딩의 대상이 되지 않습니다.
+
+### 외부 라이브러리 동적 로딩
+사용자의 입력을 기반으로 필요한 라이브러리를 동적으로 로딩하는 것도 지연 로딩의 좋은 예입니다. 다음은 `fuse.js` 라이브러리를 사용자가 검색을 시작할 때만 로드하는 방법을 보여줍니다.
+
+```jsx
+'use client'
+
+import { useState } from 'react';
+
+function SearchComponent() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+
+  async function handleSearch(event) {
+    const { value } = event.target;
+    setQuery(value);
+    if (value.length > 2) {
+      const Fuse = (await import('fuse.js')).default;
+      const fuse = new Fuse(items, options);
+      setResults(fuse.search(value));
+    }
+  }
+
+  return (
+    <div>
+      <input type="text" value={query} onChange={handleSearch} placeholder="검색어 입력" />
+      <ul>
+        {results.map(item => (
+          <li key={item.item.id}>{item.item.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+이 예제들을 통해 Next.js에서 지연 로딩을 구현하는 다양한 방법을 이해하고, 애플리케이션의 성능을 효과적으로 향상시킬 수 있습니다. 이 기법들은 초기 로드 시간을 줄이고, 중요한 컨텐츠의 렌더링을 가속화하여 사용자 경험을 개선하는 데 도움이 됩니다.
+
+## 고급 사용법 및 커스텀 로딩 컴포넌트 설정
+
+### 커스텀 로딩 컴포넌트 구현
+지연 로딩을 사용할 때, 컴포넌트가 로드되는 동안 사용자에게 로딩 상태를 표시하는 것이 중요합니다. Next.js의 `next/dynamic`을 사용하면 로딩 중에 표시할 커스텀 로딩 컴포넌트를 쉽게 설정할 수 있습니다. 이 기능은 사용자 경험을 향상시키고, 로딩 중인 컴포넌트를 더욱 명확하게 나타낼 수 있도록 돕습니다.
+
+```jsx
+import dynamic from 'next/dynamic';
+
+const LazyComponentWithLoading = dynamic(() => import('../components/LazyComponent'), {
+  loading: () => <div>로딩 중...</div>
+});
+
+function MyPage() {
+  return (
+    <div>
+      <LazyComponentWithLoading />
+    </div>
+  );
+}
+```
+
+이 예제에서는 `LazyComponent`가 로드되는 동안 사용자에게 "로딩 중..."이라는 메시지를 보여줍니다. 이 방법을 통해 페이지의 다른 요소들이 이미 로드되어 있어도 사용자는 자연스러운 인터페이스 변경을 경험할 수 있습니다.
+
+### Named Export 동적 임포트
+특정 모듈에서 여러 컴포넌트나 함수를 named export로 내보낸 경우, Next.js에서 이들을 동적으로 로드하는 것도 가능합니다. 이 기능은 필요한 시점에만 특정 기능이나 컴포넌트를 로딩할 때 유용하게 사용할 수 있습니다.
+
+```jsx
+import dynamic from 'next/dynamic';
+
+const DynamicHello = dynamic(() =>
+  import('../components/Hello').then(mod => mod.Hello)
+);
+
+function GreetingPage() {
+  return (
+    <div>
+      <DynamicHello />
+    </div>
+  );
+}
+```
+
+위 코드는 `Hello` 컴포넌트가 `named export`로 내보내진 상황에서 이를 동적으로 로딩하는 방법을 보여줍니다. `import()` 함수는 `Promise`를 반환하며, 이를 통해 필요한 컴포넌트만 선택적으로 로드할 수 있습니다.
+
+이렇게 지연 로딩을 활용하면 초기 로드 시 필요한 코드의 양을 줄이고, 애플리케이션의 성능을 개선할 수 있습니다. 사용자 경험을 저해하지 않으면서 필요한 리소스만을 로드하는 이런 접근 방식은 현대 웹 개발에서 매우 중요한 부분입니다.
+
+
+## 결론
+
+### 지연 로딩이 애플리케이션 성능에 미치는 영향
+지연 로딩은 웹 애플리케이션의 초기 로드 시간을 단축하여 사용자 경험을 크게 향상시킵니다. 사용자가 실제로 필요로 하는 시점에만 자원을 로드함으로써, 불필요한 데이터 전송을 줄이고 전체적인 트래픽을 관리하는 데에도 도움을 줍니다. 이는 특히 대규모 애플리케이션에서 성능 개선을 가져오는 중요한 기법 중 하나입니다.
+
+```jsx
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+const HeavyComponent = dynamic(() => import('../components/HeavyComponent'), {
+  loading: () => <p>로딩 중...</p>
+});
+
+function HomePage() {
+  const [loadHeavy, setLoadHeavy] = useState(false);
+
+  return (
+    <div>
+      <button onClick={() => setLoadHeavy(true)}>컴포넌트 로드</button>
+      {loadHeavy && <HeavyComponent />}
+    </div>
+  );
+}
+```
+
+위 예제에서는 사용자가 버튼을 클릭하는 순간에만 `HeavyComponent`를 로드합니다. 이러한 접근 방식은 초기 페이지 로드 시 필요한 자원을 최소화하여 빠른 사용자 상호작용을 가능하게 합니다.
+
+### Next.js에서 지연 로딩을 활용하는 최적의 전략
+Next.js에서 지연 로딩을 효과적으로 활용하기 위해서는 몇 가지 전략을 따를 수 있습니다. 첫째, 중요하지 않은 컴포넌트나 라이브러리는 사용자 상호작용이 필요할 때까지 로딩을 미루는 것이 좋습니다. 둘째, 서버 사이드 렌더링이 필요 없는 컴포넌트는 클라이언트 사이드에서만 로드하도록 설정하여 서버의 부담을 줄일 수 있습니다. 마지막으로, 다이나믹 임포트를 사용하여 애플리케이션의 시작 시점에는 최소한의 코드만 포함시키고, 필요에 따라 추가 기능을 로드하도록 계획하는 것이 좋습니다.
+
+Next.js는 이러한 전략을 구현하기 위한 다양한 도구와 기능을 제공하므로 개발자는 애플리케이션의 성능을 최적화하면서도 유연한 코드 관리가 가능합니다. 이를 통해 빌드 시간을 단축하고, 사용자에게 더 나은 인터랙티브 경험을 제공할 수 있습니다.
+
+위의 방법들을 적절히 활용하면 Next.js 애플리케이션의 성능을 크게 향상시킬 수 있습니다. 더 나아가, 지속적인 성능 모니터링을 통해 새로운 최적화 기회를 발견하고, 애플리케이션을 지속적으로 개선해 나갈 수 있습니다.
+
+
