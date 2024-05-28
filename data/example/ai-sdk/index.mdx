@@ -1,0 +1,106 @@
+---
+title: "App Playground 예제"
+summary: "Next.js 13 App Playground"
+date: "2023-09-23 00:00"
+tags: ['TypeScript', 'Tailwind CSS', 'App Router']
+images: ['/static/images/example/CleanShot_2022-10-25_at_14.png']
+authors: ['boilerplate']
+draft: true
+---
+
+
+
+## 설치
+
+```bash
+pnpm create next-app@latest my-ai-app
+```
+
+실행 결과는 다음과 같습니다.
+
+```bash
+.../Library/pnpm/store/v3/tmp/dlx-10233  |   +1 +
+.../Library/pnpm/store/v3/tmp/dlx-10233  | Progress: resolved 1, reused 0, downloaded 1, added 1, done
+✔ Would you like to use TypeScript? … No / Yes
+✔ Would you like to use ESLint? … No / Yes
+✔ Would you like to use Tailwind CSS? … No / Yes
+✔ Would you like to use `src/` directory? … No / Yes
+✔ Would you like to use App Router? (recommended) … No / Yes
+✔ Would you like to customize the default import alias (@/*)? … No / Yes
+✔ What import alias would you like configured? … @/*
+Creating a new Next.js app in /Users/juminho/Playground/60_NextJS/ai-sdk/my-ai-app.
+
+Using pnpm.
+
+Initializing project with template: app-tw 
+
+
+Installing dependencies:
+- react
+- react-dom
+- next
+
+Installing devDependencies:
+- typescript
+- @types/node
+- @types/react
+- @types/react-dom
+- postcss
+- tailwindcss
+- eslint
+- eslint-config-next
+
+
+   ╭─────────────────────────────────────────────────────────────────╮
+   │                                                                 │
+   │                Update available! 8.12.1 → 9.1.2.                │
+   │   Changelog: https://github.com/pnpm/pnpm/releases/tag/v9.1.2   │
+   │                Run "pnpm add -g pnpm" to update.                │
+   │                                                                 │
+   │     Follow @pnpmjs for updates: https://twitter.com/pnpmjs      │
+   │                                                                 │
+   ╰─────────────────────────────────────────────────────────────────╯
+
+Downloading registry.npmjs.org/typescript/5.4.5: 5.83 MB/5.83 MB, done
+Downloading registry.npmjs.org/next/14.2.3: 20.66 MB/20.66 MB, done
+Downloading registry.npmjs.org/@next/swc-darwin-arm64/14.2.3: 37.17 MB/37.17 MB, done
+ WARN  1 deprecated subdependencies found: inflight@1.0.6
+Packages: +349
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 357, reused 207, downloaded 142, added 349, done
+
+dependencies:
++ next 14.2.3
++ react 18.3.1
++ react-dom 18.3.1
+
+devDependencies:
++ @types/node 20.12.12
++ @types/react 18.3.3
++ @types/react-dom 18.3.0
++ eslint 8.57.0 (9.3.0 is available)
++ eslint-config-next 14.2.3
++ postcss 8.4.38
++ tailwindcss 3.4.3
++ typescript 5.4.5
+
+Done in 19.3s
+Initialized a git repository.
+
+Success! Created my-ai-app at /Users/juminho/Playground/60_NextJS/ai-sdk/my-ai-app
+```
+
+```bash
+cd my-ai-app
+```
+
+### 의존성 설치
+```bash
+pnpm install ai @ai-sdk/openai zod
+```
+
+### OpenAI API 키 설정
+
+```bash
+touch .env.local
+```

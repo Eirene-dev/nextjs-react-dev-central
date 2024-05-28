@@ -7,7 +7,7 @@ export const siteConfig: SiteConfig = {
   url: 'https://reactnext-central.xyz',
   ogImage: 'https://reactnext-central.xyz/og.jpg',
   links: {
-    twitter: 'https://twitter.com/IoPaxcode',
+    twitter: 'https://x.com/PaxCodeXyz',
     github: 'https://github.com/Eirene-dev/reactnext-central',
   },
 }
