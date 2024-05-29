@@ -66,12 +66,35 @@ export default function Main({ posts }) {
             </Link>
           </div>
           <p className="max-w-[42rem] leading-small text-muted-foreground sm:text-xl sm:leading-8">
+            또한, 『레벨업 리액트 프로그래밍 with Next.js』 도서에 대한 질문과 피드백을 환영합니다. 도서 내용 피드백이나 최신 기술 논의를 위해 아래 링크를 이용해 주세요.
+          </p>
+          <div className="py-1 space-x-2 space-y-2 md:space-x-2 md:space-y-0">
+            <Link
+              href="/levelup/book"
+              className={cn(buttonVariants({ variant: 'secondary', size: 'default' }))}
+            >
+              도서 소개
+            </Link>
+            <Link
+              href="/levelup/book/feedback"
+              className={cn(buttonVariants({ variant: 'secondary', size: 'default' }))}
+            >
+              피드백
+            </Link>
+            <Link
+              href="/levelup/book/discussion"
+              className={cn(buttonVariants({ variant: 'secondary', size: 'default' }))}
+            >
+              논의 및 요청
+            </Link>
+          </div>
+          <p className="max-w-[42rem] leading-small text-muted-foreground sm:text-xl sm:leading-8">
             초보자부터 경험 많은 개발자까지, 모든 레벨에서 필요한 통찰과 지식을 제공합니다. 지금
             바로 여러분의 개발 스킬을 향상시켜 보세요.
           </p>
         </div>
       </section>
-      <section id="blog" className="container items-center py-8 md:py-12 lg:py-16">
+      <section id="blog" className="container items-center py-4 md:py-12 lg:py-16">
         <div className="mx-auto flex max-w-[84rem] flex-col items-center justify-center gap-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             블로그 태그
@@ -142,12 +165,12 @@ export default function Main({ posts }) {
           <div className="relative p-2 overflow-hidden bg-white border rounded-lg dark:bg-transparent">
             <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
               <svg viewBox="0 0 24 24" className="w-12 h-12 fill-current">
-                <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z" />
+                <path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z" />
               </svg>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold">CSS 스타일</h3>
+                <h3 className="text-xl font-bold">Tailwind CSS</h3>
                 <p className="text-base text-muted-foreground">
-                  Tailwind CSS, CSS Modules, CSS-in-JS, Sass.
+                  유틸리티 우선 개념, 반응형 디자인, 다크 모드, 호버/포커스 등 상태, 커스텀 스타일.
                 </p>
               </div>
             </div>
@@ -155,12 +178,25 @@ export default function Main({ posts }) {
           <div className="relative p-2 overflow-hidden bg-white border rounded-lg dark:bg-transparent">
             <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
               <svg viewBox="0 0 24 24" className="w-12 h-12 fill-current">
-                <path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z" />
+                <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z" />
               </svg>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold">UI 컴포넌트</h3>
+                <h3 className="text-xl font-bold">타입스크립트</h3>
                 <p className="text-sm text-muted-foreground">
-                  Radix UI를 사용하여 구축된 UI 컴포넌트, Tailwind CSS로 스타일링.
+                  리액트와 Next.js 앱을 위한 타입스크립트 기본 문법.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="relative p-2 overflow-hidden bg-white border rounded-lg dark:bg-transparent">
+            <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
+              <svg viewBox="0 0 24 24" className="w-12 h-12 fill-current">
+                <path d="M0 12C0 5.373 5.373 0 12 0c4.873 0 9.067 2.904 10.947 7.077l-15.87 15.87a11.981 11.981 0 0 1-1.935-1.099L14.99 12H12l-8.485 8.485A11.962 11.962 0 0 1 0 12Zm12.004 12L24 12.004C23.998 18.628 18.628 23.998 12.004 24Z" />
+              </svg>
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold">최적화/테스트</h3>
+                <p className="text-base text-muted-foreground">
+                  검색 엔진 최적화, 웹 바이탈 및 Jest 기반 검증 기법.
                 </p>
               </div>
             </div>
@@ -184,19 +220,6 @@ export default function Main({ posts }) {
               </div>
             </div>
           </div>
-          <div className="relative p-2 overflow-hidden bg-white border rounded-lg dark:bg-transparent">
-            <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
-              <svg viewBox="0 0 24 24" className="w-12 h-12 fill-current">
-                <path d="M0 12C0 5.373 5.373 0 12 0c4.873 0 9.067 2.904 10.947 7.077l-15.87 15.87a11.981 11.981 0 0 1-1.935-1.099L14.99 12H12l-8.485 8.485A11.962 11.962 0 0 1 0 12Zm12.004 12L24 12.004C23.998 18.628 18.628 23.998 12.004 24Z" />
-              </svg>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold">최적화/테스트</h3>
-                <p className="text-base text-muted-foreground">
-                  검색 엔진 최적화, 웹 바이탈 및 Jest 기반 검증 기법.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
         <div className="mx-auto text-center md:max-w-[58rem]">
           <p className="leading-normal text-muted-foreground sm:text-lg sm:leading-7">
@@ -214,7 +237,7 @@ export default function Main({ posts }) {
             <p className="max-w-[50%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
               Available on{' '}
               <Link
-                href={siteConfig.links.github}
+                href="https://github.com/Eirene-dev/nextjs-react-dev-central-examples.git"
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-2xl bg-gray-200 dark:bg-transparent px-4 py-1.5 text-sm font-medium"
@@ -230,106 +253,32 @@ export default function Main({ posts }) {
           </div>
         </div>
       </section>
+      <section id="book" className="container items-center py-8 md:py-12 lg:py-16">
+        <div className="mx-auto flex max-w-[84rem] flex-col items-center justify-center gap-4 text-center">
+          <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
+            도서 질문 및 피드백
+          </h2>
+        </div>
+        <div className="flex flex-col items-start items-center justify-start divide-y divide-gray-200 dark:divide-gray-700 md:mt-0 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0">
+          <div className="items-center pt-4 pb-8 space-x-1 md:space-y-5">
+            <Image
+              src="/static/images/levelup/cover_front.png"
+              width={336}
+              height={480}
+              alt="book cover"
+            />
+          </div>
+          <div className="max-w-[50%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+            <h3 className="text-2xl font-bold">레벨업 리액트 프로그래밍 with Next.js</h3>
+            <p className="mt-2">
+              웹앱의 작동 원리부터 SSR 방식을 적용한 현대적 접근까지, 이 책은 리액트와 Next.js를
+              활용한 웹 개발의 모든 것을 안내합니다.<br /><br />
+              여기에서는 이 책에 대한 질문에 대한 답변을 제공하며, 최신 기법 등을 요청할 수 있는 소통의 공간을 마련했습니다.
+              독자 여러분의 적극적인 참여를 기대합니다.
+            </p>
+          </div>
+        </div>
+      </section>
     </>
   )
 }
-
-// TODO: Remove this code
-// FIXME: This code
-// export default function Home({ posts }) {
-//   return (
-//     <>
-//       <div className="divide-y divide-gray-200 dark:divide-gray-700">
-//         <div className="pt-6 pb-8 space-y-2 md:space-y-5">
-//           {/* <h1 className="text-2xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-10 md:text-5xl md:leading-14">
-//             웹 개발 전면전환: Next.js & React
-//           </h1> */}
-//           <Link
-//             href={siteConfig.links.twitter}
-//             className="rounded-2xl bg-muted px-4 py-1.5 text-sm font-medium"
-//             target="_blank"
-//           >
-//             Follow along on Twitter
-//           </Link>
-//           <h1 className="text-2xl font-extrabold leading-9 tracking-tight text-gray-900 md:leading-14 dark:text-gray-100 sm:text-3xl sm:leading-10 md:text-5xl">
-//             웹 개발 전면전환: Next.js & React
-//           </h1>
-//           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-//             ReactNext Central에서는 Next.js와 React 개발을 완벽하게 마스터할 수 있는 다양한 리소스를
-//             제공합니다. 최신 트렌드에 부합하는 업데이트된 튜토리얼, 기사, 그리고 부가 자료로
-//             여러분의 개발 능력을 한 단계 높일 수 있습니다. 초보자부터 경험 많은 개발자까지, 모든
-//             레벨에서 필요한 통찰과 지식을 제공합니다. 지금 바로 여러분의 개발 스킬을 향상시켜
-//             보세요.
-//           </p>
-//         </div>
-//         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-//           {!posts.length && 'No posts found.'}
-//           {posts.slice(0, MAX_DISPLAY).map((post) => {
-//             const { slug, date, title, summary, tags } = post
-//             return (
-//               <li key={slug} className="py-12">
-//                 <article>
-//                   <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-//                     <dl>
-//                       <dt className="sr-only">Published on</dt>
-//                       <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-//                         <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
-//                       </dd>
-//                     </dl>
-//                     <div className="space-y-5 xl:col-span-3">
-//                       <div className="space-y-6">
-//                         <div>
-//                           <h2 className="text-2xl font-bold leading-8 tracking-tight">
-//                             <Link
-//                               href={`/blog/${slug}`}
-//                               className="text-gray-900 dark:text-gray-100"
-//                             >
-//                               {title}
-//                             </Link>
-//                           </h2>
-//                           <div className="flex flex-wrap">
-//                             {tags.map((tag) => (
-//                               <Tag key={tag} text={tag} />
-//                             ))}
-//                           </div>
-//                         </div>
-//                         <div className="prose text-gray-500 max-w-none dark:text-gray-400">
-//                           {summary}
-//                         </div>
-//                       </div>
-//                       <div className="text-base font-medium leading-6">
-//                         <Link
-//                           href={`/blog/${slug}`}
-//                           className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-//                           aria-label={`Read "${title}"`}
-//                         >
-//                           Read more &rarr;
-//                         </Link>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </article>
-//               </li>
-//             )
-//           })}
-//         </ul>
-//       </div>
-//       {posts.length > MAX_DISPLAY && (
-//         <div className="flex justify-end text-base font-medium leading-6">
-//           <Link
-//             href="/blog"
-//             className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-//             aria-label="All posts"
-//           >
-//             All Posts &rarr;
-//           </Link>
-//         </div>
-//       )}
-//       {siteMetadata.newsletter?.provider && (
-//         <div className="flex items-center justify-center pt-4">
-//           <NewsletterForm />
-//         </div>
-//       )}
-//     </>
-//   )
-// }
