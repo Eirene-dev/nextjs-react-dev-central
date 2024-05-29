@@ -66,7 +66,8 @@ export default function Main({ posts }) {
             </Link>
           </div>
           <p className="max-w-[42rem] leading-small text-muted-foreground sm:text-xl sm:leading-8">
-            또한, 『레벨업 리액트 프로그래밍 with Next.js』 도서에 대한 질문과 피드백을 환영합니다. 도서 내용 피드백이나 최신 기술 논의를 위해 아래 링크를 이용해 주세요.
+            또한, 『레벨업 리액트 프로그래밍 with Next.js』 도서에 대한 질문과 피드백을 환영합니다.
+            도서 내용 피드백이나 최신 기술 논의를 위해 아래 링크를 이용해 주세요.
           </p>
           <div className="py-1 space-x-2 space-y-2 md:space-x-2 md:space-y-0">
             <Link
@@ -272,9 +273,11 @@ export default function Main({ posts }) {
             <h3 className="text-2xl font-bold">레벨업 리액트 프로그래밍 with Next.js</h3>
             <p className="mt-2">
               웹앱의 작동 원리부터 SSR 방식을 적용한 현대적 접근까지, 이 책은 리액트와 Next.js를
-              활용한 웹 개발의 모든 것을 안내합니다.<br /><br />
-              여기에서는 이 책에 대한 질문에 대한 답변을 제공하며, 최신 기법 등을 요청할 수 있는 소통의 공간을 마련했습니다.
-              독자 여러분의 적극적인 참여를 기대합니다.
+              활용한 웹 개발의 모든 것을 안내합니다.
+              <br />
+              <br />
+              여기에서는 이 책에 대한 질문에 대한 답변을 제공하며, 최신 기법 등을 요청할 수 있는
+              소통의 공간을 마련했습니다. 독자 여러분의 적극적인 참여를 기대합니다.
             </p>
           </div>
         </div>
