@@ -4,6 +4,7 @@ const headerNavLinks = [
   { href: '/tags', title: '태그' },
   { href: '/docs/getting-started', title: '문서' },
   { href: '/example', title: '예제' },
+  { href: '/levelup', title: '레벨업' },
   // { href: '/about', title: 'About' },
 ]
 

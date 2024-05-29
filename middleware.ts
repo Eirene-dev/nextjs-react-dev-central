@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const redirects = {
+    '/levelup': '/levelup/book',
     '/blog/eslint-with-prettier': '/blog/dev-env/eslint-with-prettier',
     '/blog/selecting-ide-for-nextjs': '/blog/dev-env/selecting-ide-for-nextjs',
     '/blog/hot-code-reloading-and-fast-refresh': '/blog/dev-env/hot-code-reloading-and-fast-refresh',
