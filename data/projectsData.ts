@@ -6,10 +6,10 @@ const projectsData = [
     href: '/example/boilerplate',
   },
   {
-    title: '날씨 AI 챗봇 - RSC',
+    title: '날씨 AI 챗봇',
     description: `Vercel Labs가 제작한 Next.js 기반의 AI 챗봇입니다. OpenAI, Hugging Face 등 다양한 AI 모델을 지원하며, Tailwind CSS와 Radix UI로 디자인되었고, Phosphor Icons를 사용했습니다.`,
     imgSrc: '/static/images/example/Chatbot.png',
-    href: '/example/weather-ai-chatbot-rsc',
+    href: '/example/weather-ai-chatbot',
   },
   // {
   //   title: 'Next.js 13 App Playground',
