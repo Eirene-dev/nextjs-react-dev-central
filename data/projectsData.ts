@@ -7,8 +7,8 @@ const projectsData = [
   },
   {
     title: '날씨 AI 챗봇',
-    description: `Vercel Labs가 제작한 Next.js 기반의 AI 챗봇입니다. OpenAI, Hugging Face 등 다양한 AI 모델을 지원하며, Tailwind CSS와 Radix UI로 디자인되었고, Phosphor Icons를 사용했습니다.`,
-    imgSrc: '/static/images/example/Chatbot.png',
+    description: `Next.js와 버셀 AI SDK를 활용하여 구축된 날씨 AI 챗봇입니다. OpenAI ChatGPT의 함수 호출 기능을 사용해 대화 중 날씨 문의 시  OpenWeatherMap API로 실시간 정보를 가져와 리액트 컴포넌트로 사용자 친화적인 UI를 제공합니다. 또한, ChatGPT의 기존 학습된 정보에 실시간 날씨 정보를 더해 더욱 풍부한 대화를 할 수 있게 합니다.`,
+    imgSrc: '/static/images/example/chatbot.png',
     href: '/example/weather-ai-chatbot',
   },
   // {
