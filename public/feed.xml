@@ -7,9 +7,19 @@
       <language>ko-kr</language>
       <managingEditor>paxcode.xyz@gmail.com (Pax Code)</managingEditor>
       <webMaster>paxcode.xyz@gmail.com (Pax Code)</webMaster>
-      <lastBuildDate>Mon, 18 Mar 2024 10:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Thu, 11 Jul 2024 00:00:00 GMT</lastBuildDate>
       <atom:link href="https://reactnext-central.xyz/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://reactnext-central.xyz/blog/ai/vercel-ai-sdk-overview</guid>
+    <title>버셀 AI SDK 소개: 사용 이유와 2.x에서 3.2 버전 변경 사항</title>
+    <link>https://reactnext-central.xyz/blog/ai/vercel-ai-sdk-overview</link>
+    <description>버셀 AI SDK가 무엇인지 알아보고 웹 개발 시 이 AI SDK를 사용해야 하는 이유를 논의합니다. 또한 2.x에서 3.x로의 버전 변경 사항을 살펴보겠습니다.</description>
+    <pubDate>Thu, 11 Jul 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel-AI-SDK</category><category>Chatbot</category><category>OpenAI</category>
+  </item>
+
   <item>
     <guid>https://reactnext-central.xyz/blog/dev-env/eslint-with-prettier</guid>
     <title>Next.js에서의 ESLint와 Prettier: 코드 품질과 개발자 생산성 극대화</title>
