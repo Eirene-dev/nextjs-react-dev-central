@@ -16,8 +16,8 @@ Next.js와 버셀 AI SDK를 활용하여 구축된 날씨 AI 챗봇입니다. Op
 > 이 예제는 도서 [『레벨업 리액트 프로그래밍 with Next.js』](https://reactnext-central.xyz/levelup/book)의 '12장. AI 챗봇을 통합하는 웹 애플리케이션'의 [실습 프로젝트](https://github.com/bjpublic/react_programming_with_Next.js/tree/main/chapter12)의 업데이트 버전입니다. 
 
 ### 실행 화면
-
-<div className="flex overflow-x-scroll gap-0 p-0">
+{/* <div className="flex justify-center p-1 bg-gray-50 overflow-hidden"> */}
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
   <Image src="/static/images/example/chatbot/levelup-weather-ai-app-v2_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
   <Image src="/static/images/example/chatbot/levelup-weather-ai-app-v2_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
   <Image src="/static/images/example/chatbot/levelup-weather-ai-app-v2_4.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 부산 날씨 문의" className="shrink-0" />
@@ -44,32 +44,39 @@ http://localhost:3000 하위 각 라우트에서 다음 실행 결과를 보여�
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-<Card href="">
-#### Completion 기반에서 날씨 컴포넌트를 클라이언트에서 렌더링
-
-`useChat` 훅과 라우트 핸들러에서 `streamText` 사용
-</Card>
-
-<Card href="">
+<Card href="/example/weather-ai-chatbot/server-rendering">
 #### Completion 기반에서 날씨 컴포넌트를 서버에서 렌더링
 
 `useActions` 훅과 서버 액션에서 `generateText` 사용
 </Card>
 
-<Card href="">
-#### OpenAI Assistants를 사용한 클라이언트 렌더링
+<Card href="/example/weather-ai-chatbot/client-rendering">
+#### Completion 기반에서 날씨 컴포넌트를 클라이언트에서 렌더링
 
-`useAssistant` 훅과 라우트 핸들러에서 `AssistantResponse` 사용
+`useChat` 훅과 라우트 핸들러에서 `streamText` 사용
 </Card>
 
-<Card href="">
+<Card href="/example/weather-ai-chatbot/assistants-server-rendering">
 #### OpenAI Assistants를 사용한 서버 렌더링
 
 `useActions` 훅과 서버 액션에서 `createStreamableUI` 사용
 </Card>
 
+
+<Card href="/example/weather-ai-chatbot/assistants-client-rendering">
+#### OpenAI Assistants를 사용한 클라이언트 렌더링
+
+`useAssistant` 훅과 라우트 핸들러에서 `AssistantResponse` 사용
+</Card>
+
 </div>
 
+> 실습에 앞서, 버셀 AI SDK의 기본 개념과 아키텍처가 궁금하신 분은 아래 블로그 글을 참고하세요.
+> <ToggleContent title="버셀 AI SDK 기본 개념 설명 블로그">
+> 1. [버셀 AI SDK 소개: 사용 이유와 2.x와 3.0, 3.1, 3.2 버전 주요 변경 사항](/blog/ai/vercel-ai-sdk-overview)
+> 2. [버셀 AI SDK 사용을 위한 필수 배경 지식: 모델 제공자, 프롬프트, 스트리밍, 도구(함수 호출), 어시스턴트](/blog/ai/background-for-vercel-ai-sdk)
+> 3. [버셀 AI SDK 아키텍처와 구현 방식: Core + UI와 Core + RSC](/blog/ai/architecture-for-vercel-ai-sdk)
+> </ToggleContent>
 
 ## 프로젝트 생성 및 설치
 
@@ -93,6 +100,125 @@ npm install ai @ai-sdk/openai @ai-sdk/react zod
 npm install remark-gfm @next/mdx @mdx-js/loader remark remark-html
 ```
 
+## 기본 채팅 UI 구현
+
+프로젝트가 정상적으로 생성되었는지 확인하려면 `npm run dev` 명령어를 실행하고 브라우저에서 `http://localhost:3000` 주소로 이동합니다. Next.js의 [Boilerplate 프로젝트](/example/boilerplate)와 동일하게 실행되는지 확인할 수 있습니다.
+
+이제 기본적인 채팅 UI로 바꾸어 보겠습니다.
+
+먼저 `app/globals.css` 파일에서 사용하지 않는 CSS 스타일 요소들을 삭제하고, 아래 코드만 남겨 둡니다.
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+이렇게 하면 Tailwind CSS의 기본 설정만 남겨져 필요한 스타일만 적용됩니다.
+
+
+### 기본 채팅 UI 구현
+
+프로젝트가 정상적으로 생성되었는지 확인하려면 `npm run dev` 명령어를 실행하고, 브라우저에서 `http://localhost:3000` 주소로 이동합니다. Next.js의 [Boilerplate 프로젝트](/example/boilerplate)와 동일하게 실행되는지 확인할 수 있습니다.
+
+이제 기본적인 채팅 UI로 바꾸어 보겠습니다.
+
+먼저 `app/globals.css` 파일에서 사용하지 않는 CSS 스타일 요소들을 삭제하고, 아래 코드만 남겨 둡니다.
+
+```css:app/globals.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+그 후 애플리케이션의 기본 레이아웃에서 메타데이터와 언어 설정을 한글로 변경합니다.
+
+```tsx:layout.tsx {7-10, 18, 19}
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: '레벨업 날씨 AI 챗봇 v2',
+  description: '실시간 날씨 정보와 AI 대화를 결합한 새로운 웹 경험',
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="ko">
+      <body className={`${inter.className} bg-gray-50`}>{children}</body>
+    </html>
+  );
+}
+```
+
+마지막으로 채팅 UI를 만들어 보기 위해서 아래와 같이 페이지를 변경합니다.
+
+```tsx:app/page.tsx
+export default function Home() {
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div className="overflow-y-auto"></div>
+          <form className="flex w-full mt-4">
+            <input
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              placeholder="제주도 오늘의 날씨는 어때?"
+            />
+            <button
+              className="px-4 text-sm text-white bg-blue-500 rounded-r-lg"
+              type="submit"
+            >
+              전송
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+브라우저에서 확인하면 변경된 기본 채팅 UI를 확인할 수 있습니다.
+
+<div className="flex justify-center p-1 bg-gray-50 overflow-hidden">
+  <Image
+    src="/static/images/example/chatbot/base_1_chat.png"
+    width="240"
+    height="480"
+    alt="제주도 날씨 문의 UI"
+    className="shrink-0 shadow-lg"
+  />
+</div>
+
+---
+
+이제 본격적으로 버셀의 AI SDK를 사용하여 채팅 서비스를 구축하는 방법에 대해서 다루어 보겠습니다.
 <Callout type="warning" icon="">
-추후 각 항목별로 구현 방법에 대해 설명할 예정입니다.
+1. [기본적인 AI 채팅 서비스 만들기: `AI SDK UI` 기반](/example/weather-ai-chatbot/chat-simple)
+1. 채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링 _(작성 예정)_
+1. `AI SDK RSC`를 사용하여 서버에서 날씨 컴포넌트 렌더링하여 스트리밍 _(작성 예정)_
+1. OpenAI Assistants 기반으로 클라이언트에서 날씨 컴포넌트 렌더링 _(작성 예정)_
+1. 서버에서 날씨 컴포넌트 렌더링하여 스트리밍하는 Assistants _(작성 예정)_
 </Callout>
+
+{/* 1. [채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/client-rendering)
+1. [`AI SDK RSC`를 사용하여 서버에서 날씨 컴포넌트 렌더링하여 스트리밍](/example/weather-ai-chatbot/server-rendering)
+1. [OpenAI Assistants 기반으로 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/assistants-client-rendering)
+1. [서버에서 날씨 컴포넌트 렌더링하여 스트리밍하는 Assistants](/example/weather-ai-chatbot/assistants-server-rendering) */}
+
+
+
+{/* 1. [클라언트 렌더링: useChat 훅과 라우트 핸들러에서 streamText 사용](/example/weather-ai-chatbot/client-rendering)
+1. [서버 렌더링: useActions 훅과 서버 액션에서 generateText 사용](/example/weather-ai-chatbot/server-rendering)
+1. [서버 렌더링(Assistants): useActions 훅과 서버 액션에서 createStreamableUI 사용](/example/weather-ai-chatbot/assistants-server-rendering)
+1. [클라이언트 렌더링(Assistants): useAssistant 훅과 라우트 핸들러에서 AssistantResponse 사용](/example/weather-ai-chatbot/assistants-client-rendering) */}
+
+

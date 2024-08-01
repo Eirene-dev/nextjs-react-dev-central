@@ -1,0 +1,500 @@
+---
+title: "기본적인 AI 채팅 서비스"
+summary: "Next.js AI Chatbot"
+date: "2024-08-01 01:00"
+tags: ['Vercel AI SDK', 'Chatbot', 'ChatGPT']
+images: ['/static/images/example/chatbot.png']
+draft: false
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 학습 목표 및 소개
+이제 ChatGPT를 기반으로 한 기본적인 AI 채팅 서비스를 구현해보겠습니다.
+서버 측에서는 라우트 핸들러를 이용하고, 클라이언트 측에서는 `useChat` 훅을 통해 접근합니다.
+
+> ChatGPT에서 제공하는 기본적인 언어 모델은 실시간 정보를 제공하지는 않습니다.
+
+<Callout type="warning" icon="">
+이 페이지의 예제 실습을 위해서는 [날씨 AI 챗봇 예제 소개](/example/weather-ai-chatbot)에 대한 사전 학습이 필요합니다.
+</Callout>
+
+### 실행 화면
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/1_usechat_1.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/1_usechat_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+</div>
+
+### 배울 내용
+이번 실습을 통해 배울 수 있는 내용은 다음과 같습니다.
+- [라우트 핸들러](/docs/nextjs/routing/route-handlers)를 이용해 서버 측에서 데이터를 처리하고 이를 클라이언트에서 받아 사용자에게 보여주기
+- 백엔드에서 [버셀 AI SDK](https://sdk.vercel.ai/)를 사용하여 OpenAI의 ChatGPT 모델과 연동하고 프론트엔드에 스트리밍으로 데이터를 제공하기
+   - 백엔드인 서버에서 `streamText` 함수를 이용하여 OpenAI의 언어 모델 접근
+   - 프론트엔드인 클라이언트에서 `useChat` 훅을 사용해 백엔드와 데이터를 주고받기
+- 프론트엔드에서 채팅 서비스를 위한 UI 구축하기하고 전송 받은 스트리밍 데이터를 실시간으로 보여주기
+- 리액트의 `useState`와 `useEffect` 훅을 사용하여 마크다운 형식 텍스트를 HTML로 변환하여 보여주기
+
+---
+
+## 동작 구조
+
+{/* 
+<MermaidChart className="justify-center p-0">
+{`
+graph LR
+    subgraph A[Client Tier]
+        A1[웹 브라우저]
+    end
+
+    subgraph B[Server Tier]
+        B1[라우트 핸들러]
+    end
+
+    subgraph C[AI Provider Tier]
+        C1[대규모 언어 모델]
+    end
+
+    A --> B
+    B --> C
+`}
+</MermaidChart> */}
+
+시퀀스 다이어그램으로 나타낸 전체 동작 구조는 아래와 같습니다.
+
+<MermaidChart className="justify-center p-0">
+{`
+sequenceDiagram
+    participant Client
+    participant Server
+    actor Provider
+    Client->>Server: useChat 훅 via 라우트 핸들러
+    Server->>Provider: streamText 함수
+    Provider-->>Server: stream message
+    Server-->>Client: stream message
+`}
+</MermaidChart>
+
+클라이언트(Client)는 사용자가 실행한 웹 브라우저나 모바일 앱입니다.
+서버(Server)는 Node.js 기반으로 동작되는 웹 서버로써 Next.js에서 제공하는 라우트 핸들로 방식으로 클라이언트에서 접근이 가능합니다.
+보안을 위해 OpenAI와 같은 AI Provider와 접근은 서버에서 이루어지며 Provider에게 받은 스트리잉 데이터를 클라이언트에게 다시 전송합니다.
+
+다음과 같이 한글로 번역하고 교정할 수 있습니다:
+
+---
+
+## 환경 변수 설정
+
+버셀 AI SDK를 기반으로 OpenAI의 대규모 언어 모델을 이용하기 위해 먼저 환경 변수를 설정해야 합니다.
+
+### OpenAI API 키 발급
+
+OpenAI API 키는 OpenAI의 서비스에 접근하기 위한 인증 키입니다. 이 키를 통해 애플리케이션은 OpenAI의 다양한 언어 모델과 상호작용할 수 있습니다. API 키는 OpenAI 계정을 통해 발급받을 수 있습니다.
+
+1. [OpenAI 웹사이트](https://platform.openai.com/)에 접속하여 계정을 만듭니다.
+2. 계정에 로그인한 후, **API 키** 섹션으로 이동합니다.
+3. "Create API Key" 버튼을 클릭하여 새로운 API 키를 생성합니다.
+4. 생성된 키를 복사하여 안전한 곳에 보관합니다.
+
+
+### OpenAI API 키를 환경 변수로 설정
+
+프로젝트 루트 디렉터리에 `.env.local` 파일을 생성하고 OpenAI API 키를 추가합니다. 이 키는 OpenAI 서비스와 애플리케이션을 인증하는 데 사용됩니다.
+
+1. `.env.local` 파일 생성:
+   ```bash
+   touch .env.local
+   ```
+
+2. `.env.local` 파일을 편집하여 다음과 같이 설정합니다:
+   ```plaintext:.env.local
+   OPENAI_API_KEY=xxxxxxxxx
+   ```
+
+   여기서 `xxxxxxxxx` 부분을 실제 OpenAI API 키로 교체하세요.
+
+> 버셀 AI SDK의 OpenAI Provider는 기본적으로 `OPENAI_API_KEY` 환경 변수를 사용하도록 설정되어 있습니다.
+
+---
+
+## 서버 측 구현
+
+이제 서버에서 동작되는 라우트 핸들러를 구현하겠습니다.
+`app/` 폴더 내에 `api/` 폴더를 생성하고 `route.ts` 파일을 생성하고 아래와 같이 구현합니다.
+
+```tsx:app/api/route.ts showLineNumbers
+import { openai } from '@ai-sdk/openai';
+import { convertToCoreMessages, streamText } from 'ai';
+
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = await streamText({
+    model: openai('gpt-4o'),
+    messages: convertToCoreMessages(messages),
+  });
+
+  return result.toAIStreamResponse();
+}
+```
+
+### 코드 설명
+
+1. [Line 6] **라우트 핸들러로써 POST를 사용한 이유:**
+   - `POST` 메서드는 서버 측에서 데이터를 처리하고 이를 기반으로 동작을 수행하는 데 사용됩니다.
+   - 클라이언트로부터 메시지를 받아 OpenAI의 모델을 사용해 응답을 생성하기 때문에, `POST` 메서드를 사용합니다.
+   - 이 메서드는 주로 데이터를 생성하거나 서버에 전달할 때 사용되며 보통 클라이언트로부터 입력 데이터를 받아 처리하는 경우에 적합합니다.
+
+2. [Line 4] **`export const maxDuration = 30;` 설정 이유:**
+   - 이 설정은 Next.js에서 제공하는 [라우트 세그먼트 설정 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#maxduration)입니다.
+     - `maxDuration`은 서버 측에서 실행되는 로직의 최대 실행 시간을 지정하는 설정입니다.
+     - 기본적으로 Next.js는 서버 측 로직의 실행 시간을 제한하지 않지만, 배포 플랫폼(예: Vercel)에서 특정 실행 시간 제한을 설정할 수 있습니다.
+   - 이 경우 `maxDuration`을 설정하여 해당 라우트 핸들러가 30초 이상 실행되지 않도록 제한할 수 있습니다. 이는 서버 리소스를 효율적으로 관리하고, 과도한 요청으로 인해 서버가 부담을 받지 않도록 하는 데 도움이 됩니다.
+
+3. [Line 1~2] **`import` 구문 설명:**
+   - `import { openai } from '@ai-sdk/openai';`:
+     - 이 구문은 OpenAI와 통신하기 위해 필요한 기능을 가져오는 것입니다. `@ai-sdk/openai` 패키지를 통해 OpenAI API를 사용할 수 있게 설정합니다.
+   - `import { convertToCoreMessages, streamText } from 'ai';`:
+     - `convertToCoreMessages` 함수는 클라이언트에서 받은 메시지를 OpenAI API와 호환되는 형식으로 변환하는 역할을 합니다.
+     - `streamText` 함수는 OpenAI 모델과 상호작용하여 텍스트 데이터를 스트리밍 방식으로 처리하고, 이를 클라이언트에 전달하는 기능을 합니다.
+
+4. [Line 7] **`req.json()`으로부터 메시지를 추출:**
+   - `const { messages } = await req.json();`:
+     - 이 구문은 클라이언트로부터 전송된 요청의 본문을 JSON 형식으로 파싱한 후, 그 안에 포함된 `messages` 데이터를 추출합니다. 이 `messages`는 사용자가 입력한 텍스트나 기타 데이터가 포함된 객체일 것입니다.
+
+5. [Line 9~14] **`streamText` 함수를 사용하고 반환하는 과정:**
+   - `const result = await streamText({ model: openai('gpt-4o'), messages: convertToCoreMessages(messages) });`:
+     - 이 구문은 `streamText` 함수를 호출하여 OpenAI의 `gpt-4o` 모델을 사용해 처리된 결과를 받습니다. 이때, `messages`는 `convertToCoreMessages` 함수를 통해 OpenAI API와 호환되는 형식으로 변환됩니다.
+   - `return result.toAIStreamResponse();`:
+     - 이 구문은 처리된 결과를 AI 스트림 응답 형식으로 변환한 후, 이를 클라이언트에 반환합니다. 스트리밍 방식의 응답은 대량의 데이터를 점진적으로 클라이언트로 전송하여 실시간 상호작용을 가능하게 합니다.
+
+---
+
+## 클라이언트 측 구현
+마지막으로 클라이언트에서 동작하는 프론트엔드 코드를 구현하겠습니다.
+
+### 재사용 가능한 공용 UI 컴포넌트 만들기
+먼저 채팅 UI에서 사용할 제출(Submit) 버튼과, 채팅 중 서버에서 데이터를 받을 동안 사용자에게 보여줄 로딩 인디케이터를 구현하겠습니다.
+
+프로젝트 최상단에 `components` 폴더를 생성하고, 공용 컴포넌트들을 이 폴더에 생성합니다.
+
+#### 제출 버튼
+`components` 폴더에 `submit-button.tsx` 파일을 생성하고, 아래와 같이 구현합니다.
+
+```tsx:components/submit-button.tsx showLineNumbers
+interface SubmitButtonProps {
+  isLoading: boolean;
+  isDisabled: boolean;
+  onStop: () => void;
+}
+
+function SubmitButton({ isLoading, isDisabled, onStop }: SubmitButtonProps) {
+  return (
+    <button
+      className={`px-1 text-sm text-white ${isLoading ? 'bg-red-500' : 'bg-blue-500'} rounded-r-lg`}
+      onClick={isLoading ? onStop : undefined}
+      type="submit"
+      disabled={isDisabled}
+    >
+      {isLoading ? '중지' : '전송'}
+    </button>
+  );
+}
+
+export default SubmitButton;
+```
+
+이 코드에서는 `SubmitButton` 컴포넌트를 정의하고 있습니다.
+
+- **`interface SubmitButtonProps`**: 이 인터페이스는 `SubmitButton` 컴포넌트에 전달되는 props의 타입을 정의합니다. `isLoading`은 버튼이 로딩 중인지 여부를 나타내고, `isDisabled`는 버튼이 비활성화 상태인지 나타내며, `onStop`은 로딩 중일 때 버튼을 클릭하면 실행되는 함수입니다.
+- **`SubmitButton` 컴포넌트**: 이 컴포넌트는 전달된 props에 따라 버튼의 텍스트와 동작을 결정합니다. 로딩 중일 때는 "중지" 버튼이 활성화되고, 그렇지 않을 때는 "전송" 버튼이 나타납니다.
+
+#### 로딩 인더케이터
+`components` 폴더에 `loading-indicator.tsx` 파일을 생성하고, 아래와 같이 구현합니다.
+이 코드는 `LoadingIndicator`라는 컴포넌트를 정의하고 있습니다. 이 컴포넌트는 로딩 상태를 시각적으로 표시하는 역할을 합니다.
+
+```tsx:components/loading-indicator.tsx showLineNumbers
+const LoadingIndicator = () => (
+  <div className="flex items-center justify-center w-full h-8 max-w-md p-2 mb-8">
+    <div className="w-8 h-8 mr-3 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+    로딩 중...
+  </div>
+);
+
+export default LoadingIndicator;
+```
+
+이 컴포넌트는 로딩 중임을 사용자에게 알리기 위해 다른 컴포넌트나 페이지에서 애니메이션 스피너와 "로딩 중..."이라는 텍스트를 화면에 표시합니다.
+
+### 채팅 UI 구성하고 `useChat` 훅으로 라우트 핸들러와 연동하기
+`app/` 폴더에서 `usechat/` 폴더를 생성하고 아래와 같이 `page.tsx` 파일을 구현합니다.
+
+```tsx:app/usechat/page.tsx showLineNumbers
+'use client';
+
+import { useChat } from 'ai/react';
+
+import LoadingIndicator from '@/components/loading-indicator';
+import SubmitButton from '@/components/submit-button';
+
+export default function Chat() {
+  const { messages, input, isLoading, handleInputChange, handleSubmit, stop } =
+    useChat({
+      maxToolRoundtrips: 5,
+    });
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div className="overflow-y-auto">
+            {messages.map((m) => (
+              <div key={m.id} className="space-y-4">
+                <strong>{m.role}:</strong>
+                { m.content }
+              </div>
+            ))}
+          </div>
+          {isLoading && <LoadingIndicator />}
+          <form onSubmit={handleSubmit} className="flex w-full mt-4">
+            <input
+              value={input}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              disabled={isLoading}
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={stop} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+이 코드에서는 `useChat` 훅을 사용하여 채팅 UI를 구성하고 사용자가 입력한 메시지를 서버와 주고받는 기능을 구현하고 있습니다. 각 부분을 단계별로 설명하겠습니다.
+
+#### `useChat` 훅을 이용한 채팅 UI 구성
+
+- `useChat` 훅은 채팅 애플리케이션에서 서버와 클라이언트 간의 상호작용을 관리하는 데 사용됩니다. 이 훅은 `messages`, `input`, `isLoading`, `handleInputChange`, `handleSubmit`, `stop` 등의 상태와 함수를 반환합니다.
+- `messages`: 현재까지 주고받은 메시지의 배열입니다.
+- `input`: 사용자가 입력한 현재 텍스트입니다.
+- `isLoading`: 서버로부터 응답을 기다리는 동안 로딩 상태를 나타냅니다.
+- `handleInputChange`: 입력 필드의 값이 변경될 때 호출되는 함수입니다.
+- `handleSubmit`: 폼이 제출될 때 호출되는 함수로, 메시지를 전송합니다.
+- `stop`: 로딩 중일 때 작업을 중지하는 함수입니다.
+
+#### `form`의 요소와 `useChat`의 연결
+
+- 사용자가 입력한 텍스트를 관리하고 서버로 전송하는 역할을 합니다.
+- `<input>` 요소는 사용자의 입력을 받아 `value={input}`, `onChange={handleInputChange}` 속성을 통해 `useChat` 훅과 연결됩니다. `input` 값은 사용자가 입력하는 텍스트를 나타내고, `handleInputChange` 함수는 입력 값이 변경될 때마다 호출됩니다.
+- `<form onSubmit={handleSubmit}>`: 사용자가 메시지를 제출할 때 `handleSubmit` 함수가 호출되어, 서버로 메시지를 전송합니다.
+- `<SubmitButton>` 컴포넌트는 로딩 상태일 때 버튼의 텍스트와 동작을 관리하며, `isLoading` 상태와 `stop` 함수를 통해 제어됩니다.
+
+#### 메시지 목록을 `map` 함수로 렌더링
+
+- `messages.map((m) => ...)` 구문을 통해 `messages` 배열에 있는 각 메시지를 순회하며 UI에 렌더링합니다.
+- 각 메시지는 `m.id`를 키로 사용하고, `m.role`과 `m.content`를 통해 메시지의 발신자와 내용을 표시합니다.
+- `overflow-y-auto` 클래스를 사용해 메시지가 많아지면 스크롤이 가능하도록 설정되어 있습니다.
+
+이 코드에서는 `useChat` 훅을 통해 클라이언트와 서버 간의 메시지 전송을 관리하며, 입력 폼과 메시지 리스트를 통해 채팅 UI를 구성하고 있습니다. `isLoading` 상태를 이용해 로딩 중일 때 로딩 인디케이터를 보여주는 기능도 포함되어 있습니다.
+
+위 코드를 실행하면 아래와 같이 동작됩니다.
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/1_usechat_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/1_usechat_4.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/1_usechat_5.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+</div>
+
+정상적으로 동작하지만, ChatGPT 언어 모델이 마크다운 형식으로 텍스트를 출력하기 때문에 읽기 불편할 수 있습니다.
+
+### 마크다운 텍스트를 HTML로 변환하기
+아래 코드에서는 ChatGPT 언어 모델이 마크다운 형식으로 출력한 텍스트를 HTML로 변환하여 화면에 표시하는 기능을 추가했습니다.
+
+```tsx:app/usechat/page.tsx showLineNumbers {3,4,9-11, 13-15, 23, 25-39, 46-54}
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Message, useChat } from 'ai/react';
+
+import LoadingIndicator from '@/components/loading-indicator';
+import SubmitButton from '@/components/submit-button';
+
+import { remark } from 'remark';
+import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
+
+interface ExtendedMessage extends Message {
+  htmlContent?: string;
+}
+
+export default function Chat() {
+  const { messages, input, isLoading, handleInputChange, handleSubmit, stop } =
+    useChat({
+      maxToolRoundtrips: 5,
+    });
+
+  const [renderedMessages, setRenderedMessages] = useState<ExtendedMessage[]>([]);
+
+  useEffect(() => {
+    const processMessages = async () => {
+      const updatedMessages = await Promise.all(
+        messages.map(async (m) => {
+          const processedContent = await remark()
+            .use(remarkGfm)
+            .use(html)
+            .process(m.content);
+          return { ...m, htmlContent: processedContent.toString() };
+        })
+      );
+      setRenderedMessages(updatedMessages);
+    };
+    processMessages();
+  }, [messages]);
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div className="overflow-y-auto">
+            {renderedMessages.map((m) => (
+              <div key={m.id} className="space-y-4">
+                <strong>{m.role}:</strong>
+                <div
+                  className="prose"
+                  dangerouslySetInnerHTML={{ __html: m.htmlContent || m.content }}
+                />
+              </div>
+            ))}
+          </div>
+          {isLoading && <LoadingIndicator />}
+          <form onSubmit={handleSubmit} className="flex w-full mt-4">
+            <input
+              value={input}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              disabled={isLoading}
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={stop} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+이 코드에서는 ChatGPT 언어 모델이 마크다운 형식으로 출력한 텍스트를 HTML로 변환하여 화면에 표시하는 기능을 추가했습니다. 변경된 부분을 중심으로 설명하겠습니다.
+
+1. [Line 9~11] **`remark`, `remark-html`, `remark-gfm` 패키지 추가:**
+   - 이 패키지들은 마크다운 텍스트를 HTML로 변환하기 위해 사용됩니다.
+   - `remark`는 마크다운을 파싱하는 데 사용되며, `remark-html`은 파싱된 마크다운을 HTML로 변환합니다.
+   - `remark-gfm`은 GitHub Flavored Markdown(GFM) 형식을 지원하기 위해 사용됩니다.
+
+2. [Line 13~15] **`ExtendedMessage` 인터페이스:**
+   - 기존의 `Message` 인터페이스를 확장하여, 변환된 HTML 콘텐츠를 저장할 `htmlContent` 속성을 추가했습니다.
+   - 이를 통해 각 메시지의 원본 마크다운과 변환된 HTML을 모두 관리할 수 있습니다.
+
+   ```tsx
+   interface ExtendedMessage extends Message {
+     htmlContent?: string;
+   }
+   ```
+
+3. [Line 3, 23, 25~39] **`useState`와 `useEffect` 훅을 사용한 메시지 처리:**
+   - `renderedMessages` 상태를 추가하여 변환된 메시지 목록을 관리합니다.
+   - `useEffect` 훅을 사용하여 `messages`가 업데이트될 때마다 각 메시지의 내용을 마크다운에서 HTML로 변환하고, 변환된 결과를 `renderedMessages` 상태에 저장합니다.
+   - 이 변환 과정은 `remark()`와 `.use(remarkGfm)` 및 `.use(html)`을 통해 이루어집니다.
+
+   ```tsx
+   const [renderedMessages, setRenderedMessages] = useState<ExtendedMessage[]>([]);
+
+   useEffect(() => {
+     const processMessages = async () => {
+       const updatedMessages = await Promise.all(
+         messages.map(async (m) => {
+           const processedContent = await remark()
+             .use(remarkGfm)
+             .use(html)
+             .process(m.content);
+           return { ...m, htmlContent: processedContent.toString() };
+         })
+       );
+       setRenderedMessages(updatedMessages);
+     };
+     processMessages();
+   }, [messages]);
+   ```
+
+4. [Line 46~54] **렌더링된 메시지 표시:**
+   - `renderedMessages` 배열을 순회하며 각 메시지를 렌더링합니다.
+   - `dangerouslySetInnerHTML` 속성을 사용하여 변환된 HTML을 안전하게 출력합니다. 여기서 `m.htmlContent`가 있으면 이를 출력하고, 없으면 원본 마크다운을 출력합니다.
+
+   ```tsx
+   {renderedMessages.map((m) => (
+     <div key={m.id} className="space-y-4">
+       <strong>{m.role}:</strong>
+       <div
+         className="prose"
+         dangerouslySetInnerHTML={{ __html: m.htmlContent || m.content }}
+       />
+     </div>
+   ))}
+   ```
+
+이 변경을 통해 마크다운 형식으로 출력된 텍스트를 사용자가 읽기 쉽게 HTML 형식으로 변환하여 화면에 표시할 수 있습니다. 이를 통해 코드가 보다 사용자 친화적인 인터페이스를 제공하게 됩니다.
+
+위 코드를 실행하면 아래와 같이 동작됩니다.
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/1_usechat_6.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+</div>
+
+### globals.css에 리스트 스타일 적용하기
+
+리스트 표기를 개선하기 위해 `app/globals.css` 파일에 아래의 코드를 추가합니다.
+
+```css:app/globals.css showLineNumbers {5-18}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.prose ul {
+  list-style-type: square;
+  padding-left: 1.25rem;
+}
+
+.prose ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+}
+
+.prose ul li::marker,
+.prose ol li::marker {
+  color: #3b82f6;
+}
+```
+
+- **`prose` 클래스:**
+  - `.prose`는 Tailwind CSS의 `@tailwindcss/typography` 플러그인에서 제공하는 유틸리티 클래스입니다. 이 클래스를 사용하면 텍스트 콘텐츠에 기본적인 서식이 적용됩니다.
+  
+- **리스트 스타일 설정:**
+  - `.prose ul` 및 `.prose ol`은 각각 순서 없는 리스트(`ul`)와 순서 있는 리스트(`ol`)에 대해 스타일을 정의합니다.
+  - `list-style-type: square;`은 순서 없는 리스트 항목을 사각형(`square`)으로 표시하며, `list-style-type: decimal;`은 순서 있는 리스트 항목을 숫자(`decimal`)로 표시합니다.
+  - `padding-left: 1.25rem;`은 리스트 항목에 들여쓰기를 적용하여 가독성을 높입니다.
+
+- **리스트 마커 색상 설정:**
+  - `.prose ul li::marker`와 `.prose ol li::marker`는 리스트 항목의 마커(기호 또는 번호)의 색상을 설정합니다.
+  - `color: #3b82f6;`은 마커의 색상을 Tailwind CSS에서 제공하는 `blue-500` 색상으로 설정하여 스타일을 통일합니다.
+
+이 설정을 통해, 마크다운 텍스트가 HTML로 변환되어 렌더링될 때 리스트 항목의 스타일이 일관되게 아래 실행 화면처럼 적용됩니다.
+
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/1_usechat_7.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+</div>
+
+---
+
+## 다음 과정 안내
+위 채팅 서비스에서는 실시간 날씨 정보를 제공하지는 않습니다.
+
+다음 과정인 [채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/client-rendering)에서는 OpenAI의 도구(함수 호출) 기능을 활용하여 채팅에서 날씨 실시간 정보를 물어보는 문맥이 있으면 외부 날씨 서비스와 연동하여 실시간 정보를 UI 컴포넌트로 보여주는 예제를 설명합니다.
