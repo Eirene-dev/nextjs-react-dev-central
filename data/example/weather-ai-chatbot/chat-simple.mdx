@@ -66,17 +66,17 @@ graph LR
 sequenceDiagram
     participant Client
     participant Server
-    actor Provider
+    actor OpenAI
     Client->>Server: useChat 훅 via 라우트 핸들러
-    Server->>Provider: streamText 함수
-    Provider-->>Server: stream message
+    Server->>OpenAI: streamText 함수
+    OpenAI-->>Server: stream message
     Server-->>Client: stream message
 `}
 </MermaidChart>
 
 클라이언트(Client)는 사용자가 실행한 웹 브라우저나 모바일 앱입니다.
 서버(Server)는 Node.js 기반으로 동작되는 웹 서버로써 Next.js에서 제공하는 라우트 핸들로 방식으로 클라이언트에서 접근이 가능합니다.
-보안을 위해 OpenAI와 같은 AI Provider와 접근은 서버에서 이루어지며 Provider에게 받은 스트리잉 데이터를 클라이언트에게 다시 전송합니다.
+보안을 위해 OpenAI와 같은 OpenAI(AI Provider)와 접근은 서버에서 이루어지며 OpenAI에게 받은 스트리잉 데이터를 클라이언트에게 다시 전송합니다.
 
 다음과 같이 한글로 번역하고 교정할 수 있습니다:
 

@@ -1,0 +1,526 @@
+---
+title: "채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링"
+summary: "Next.js AI Chatbot"
+date: "2024-08-01 02:00"
+tags: ['Vercel AI SDK', 'Chatbot', 'ChatGPT']
+images: ['/static/images/example/Chatbot.png']
+draft: false
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 학습 목표 및 소개
+이번 페이지에서는 AI 챗봇에 [OpenAI의 도구(함수 호출)](https://platform.openai.com/docs/guides/function-calling) 기능을 활용하여 대화 문맥 중 실시간 날씨 정보를 제공하는 방법을 학습합니다.
+또한, 외부 실시간 날씨 제공 서비스인 [OpenWeatherMap](https://openweathermap.org/) API를 연동하여 사용자의 위치나 요청에 따라 날씨 정보를 받아오고
+이 정보를 리액트 컴포넌트 UI로 표시하는 방법을 배웁니다.
+
+<Callout type="warning" icon="">
+이 페이지의 예제 실습을 위해서는 아래 항목에 대한 사전 학습이 필요합니다.
+- [날씨 AI 챗봇 예제 소개(앱 생성)](/example/weather-ai-chatbot)
+- [기본적인 AI 채팅 서비스](/example/weather-ai-chatbot/chat-simple)
+</Callout>
+
+### 실행 화면
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/2_usechat_1.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/2_usechat_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/2_usechat_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/2_usechat_4.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+</div>
+
+### 배울 내용
+이번 실습을 통해 배울 수 있는 내용은 다음과 같습니다.
+- OpenAI의 함수 호출 기능을 사용하여 챗봇과 외부 API를 연동하는 방법
+- OpenWeatherMap API를 활용하여 실시간 날씨 데이터를 받아오는 방법
+- 리액트 컴포넌트를 사용해 받은 날씨 정보를 실시간으로 UI에 렌더링하는 방법
+
+이 학습을 통해 AI 챗봇에 실시간 데이터를 연동하는 기술을 익히고 보다 동적이고 사용자 친화적인 챗봇 서비스를 구현할 수 있습니다.
+
+## 동작 구조
+
+시퀀스 다이어그램에 추가된 전체 동작 구조는 아래와 같습니다.
+
+<MermaidChart className="justify-center p-0">
+{`
+sequenceDiagram
+    participant Client
+    participant Server
+    actor OpenAI
+    actor OpenWeatherMap
+    Client->>Server: useChat 훅 via 라우트 핸들러
+    Server->>+OpenAI: streamText 함수
+    Server->>+OpenAI: getCurrentWeather 도구
+    OpenAI-->>-Server: weatherSchema 객체
+    OpenAI-->>-Server: stream message
+    Server-->>Client: stream message
+    opt weatherSchema
+        Server-->>Client: weatherSchema 객체
+        Client->>OpenWeatherMap: fetch() via REST API
+        OpenWeatherMap-->>Client: Weather JSON 객체
+    end
+`}
+</MermaidChart>
+
+이 시퀀스 다이어그램은 AI 챗봇이 실시간 날씨 정보를 제공하는 전체 동작 구조를 나타냅니다.
+
+1. **Client와 Server 간의 상호작용:**
+   - 클라이언트는 `useChat` 훅을 통해 서버에 메시지를 전송합니다.
+   - 서버는 OpenAI의 `streamText` 함수를 사용해 메시지를 처리하고, 필요한 경우 날씨 정보를 얻기 위해 `getCurrentWeather` 도구를 호출합니다.
+
+2. **Provider와 Server 간의 상호작용:**
+   - OpenAI의 도구 호출 기능을 통해 `getCurrentWeather` 도구가 실행되며, 서버는 날씨 정보를 포함하는 `weatherSchema` 객체를 받습니다.
+   - 서버는 이 `weatherSchema` 객체와 함께 메시지를 클라이언트로 스트리밍하여 전송합니다.
+
+3. **실시간 날씨 정보 연동:**
+   - 서버에서 클라이언트로 전송된 `weatherSchema` 객체를 클라이언트가 수신합니다.
+   - 클라이언트는 `weatherSchema` 객체를 바탕으로 OpenWeatherMap API에 요청을 보내 실시간 날씨 데이터를 받아옵니다.
+   - OpenWeatherMap API로부터 수신된 날씨 JSON 객체를 클라이언트가 처리하여 UI에 표시합니다.
+
+---
+
+## 날씨 관련 구현
+가장 먼저 날씨와 관련된 요소를 구현하겠습니다.
+
+### OpenWeatherMap 접근 키 설정
+먼저 OpenWeatherMap에서 발급받은 키를 환경 변수에 추가합니다.
+```bash:.env.local showLineNumbers {3}
+OPENAI_API_KEY="your-openai-key"
+
+NEXT_PUBLIC_OPENWEATHERMAP_KEY="your-openweathermap-key"
+```
+> 클라이언트에서 접근해야 하므로 환경 변수 이름 앞에 `NEXT_PUBLIC_`을 붙입니다.
+
+### 날씨 객체 정의와 실시간 날씨 정보 가져오기
+프로젝트 루트 폴더에 `base` 폴더를 생성하고, 그 안에 `weather.ts` 파일을 만들어 아래와 같이 구현합니다.
+
+```tsx:base/weather.ts showLineNumbers
+import { z } from 'zod';
+
+export const weatherSchema = z.object({
+  location: z.string().describe('The city and state in English, even if the input is in Korean, e.g., Seoul, Jeju.').describe('도시와 주의 이름은 영어로 입력해야 합니다. 입력이 한글일지라도 영어 도시 이름으로 변환되어야 합니다. 예: 서울 -> Seoul, 제주 -> Jeju'),
+  nation: z.string().describe('The country or nation of the location, e.g., S.Korea'),
+  unit: z.enum(['celsius', 'fahrenheit']).describe('The temperature unit to use. Infer this from the user\'s location.'),
+  language: z.string().describe('The language of the nation, e.g., 한국어'),
+});
+
+export type WeatherParams = z.infer<typeof weatherSchema>;
+
+export async function fetchWeatherData(params: WeatherParams) {
+  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHERMAP_KEY; // OpenWeatherMap API key
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${params.location}&appid=${apiKey}&units=metric`;
+
+  console.info('fetchWeatherData()', params.location)
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+    const data = await response.json();
+    console.info(data)
+
+    return {
+      location: params.location,
+      nation: params.nation,
+      temperature: data.main.temp,
+      weather: data.weather[0].description,
+      unit: params.unit,
+      language: params.language,
+      details: {
+        temperature: data.main.temp,
+        weather: data.weather[0].main,
+        info: data.weather[0].description,
+        feels_like: data.main.feels_like,
+        temp_min: data.main.temp_min,
+        temp_max: data.main.temp_max,
+        pressure: data.main.pressure,
+        humidity: data.main.humidity,
+        wind_speed: data.wind.speed,
+        wind_deg: data.wind.deg,
+        sunrise: data.sys.sunrise,
+        sunset: data.sys.sunset,
+        location: data.location,
+        nation: data.nation,
+        format: data.format,
+      },
+    };
+  } catch (error) {
+    console.error('Failed to fetch weather data:', error);
+    return null;
+  }
+}
+```
+
+이 코드는 날씨 정보를 처리하고 가져오기 위한 기능을 제공합니다. 
+
+1. **`z.object`와 `weatherSchema` 정의**
+
+    ```tsx
+    import { z } from 'zod';
+
+    export const weatherSchema = z.object({
+    location: z.string().describe('The city and state in English, even if the input is in Korean, e.g., Seoul, Jeju.').describe('도시와 주의 이름은 영어로 입력해야 합니다. 입력이 한글일지라도 영어 도시 이름으로 변환되어야 합니다. 예: 서울 -> Seoul, 제주 -> Jeju'),
+    nation: z.string().describe('The country or nation of the location, e.g., S.Korea'),
+    unit: z.enum(['celsius', 'fahrenheit']).describe('The temperature unit to use. Infer this from the user\'s location.'),
+    language: z.string().describe('The language of the nation, e.g., 한국어'),
+    });
+    ```
+
+    - **`z.object`**: `z.object`는 `zod` 라이브러리에서 제공하는 기능으로, 객체의 구조와 타입을 정의하는 데 사용됩니다. 이를 통해 특정 데이터 구조가 올바른 형식을 가지고 있는지 검증할 수 있습니다.
+    - **`weatherSchema`**: 이 객체는 날씨 데이터를 요청할 때 필요한 필드를 정의합니다. 
+
+    `z.object`를 사용하는 이유는 데이터의 유효성을 검증하기 위함입니다. 이를 통해 예상하지 못한 데이터 구조나 타입의 오류를 방지할 수 있습니다.
+
+2. **`export type WeatherParams = z.infer<typeof weatherSchema>;` 설명**
+
+    ```tsx
+    export type WeatherParams = z.infer<typeof weatherSchema>;
+    ```
+
+    - **`export type`**: 이 구문은 다른 파일에서 이 타입을 사용할 수 있도록 내보내는 역할을 합니다. 이렇게 함으로써 다른 컴포넌트나 모듈에서도 이 타입 정의를 참조할 수 있습니다.
+    - **`z.infer<typeof weatherSchema>`**: `z.infer`는 `zod` 스키마로부터 타입스크립트 타입을 자동으로 생성합니다. 즉, `weatherSchema`에서 정의된 필드와 타입에 따라 `WeatherParams` 타입을 유추하고 생성합니다. 이렇게 하면 스키마와 타입 정의가 일치하므로, 타입 관리가 더 쉬워지고 실수할 가능성이 줄어듭니다.
+
+3. **`fetchWeatherData()` 함수 동작 설명**
+
+    ```tsx
+    export async function fetchWeatherData(params: WeatherParams) {
+        const apiKey = process.env.NEXT_PUBLIC_OPENWEATHERMAP_KEY; // OpenWeatherMap API key
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${params.location}&appid=${apiKey}&units=metric`;
+        // ...
+    ```
+
+    - **`fetchWeatherData()`**: 이 함수는 `WeatherParams` 타입의 인자를 받아, OpenWeatherMap API를 호출하여 실시간 날씨 데이터를 가져옵니다.
+    - **API 키**: `process.env.NEXT_PUBLIC_OPENWEATHERMAP_KEY`를 통해 환경 변수에 저장된 OpenWeatherMap API 키를 불러옵니다. 이를 사용하여 API 요청을 인증합니다.
+    - **API 요청**: `fetch` 함수를 사용해 OpenWeatherMap API에 HTTP GET 요청을 보냅니다. 요청 URL에는 도시명과 API 키, 그리고 온도 단위가 포함됩니다.
+    - **에러 처리**: 요청이 실패할 경우 `response.ok`를 확인하여 오류를 감지하고, `Error` 객체를 생성해 예외를 발생시킵니다.
+    - **데이터 처리**: 성공적으로 데이터를 받아오면 `response.json()`을 호출해 JSON 객체로 변환한 후, 필요한 데이터(온도, 날씨 상태 등)를 추출하여 객체로 반환합니다.
+    - **반환 값**: 날씨 데이터와 관련된 여러 정보를 객체 형태로 반환하며, 만약 에러가 발생하면 `null`을 반환합니다.
+
+    이 함수는 실시간 날씨 정보를 가져오는 핵심 기능을 수행하며 가져온 데이터를 이후 컴포넌트에서 활용할 수 있도록 합니다.
+
+### 날씨 UI 컴포넌트 구현
+이제 날씨 정보를 리액트 컴포넌트로 렌더링하기 위해 UI를 구현하겠습니다.
+`components/` 폴더 내에 `weather-card.tsx` 파일을 생성하고 아래와 같이 구현합니다.
+
+```tsx:components/weather-card.tsx showLineNumbers
+export default function WeatherCard({ data }: { data: string }) {
+  const { location, nation, temperature, weather, unit, language, details } = JSON.parse(data);
+
+  function getWeatherIcon(weather: string) {
+    switch (weather) {
+      case 'Clear':
+        return '☀️';
+      case 'Clouds':
+        return '☁️';
+      case 'Rain':
+        return '🌧️';
+      case 'Snow':
+        return '❄️';
+      case 'Mist':
+        return '🌫️';
+      default:
+        return '🌈';
+    }
+  }
+
+  return (
+    <div className="p-6 text-white bg-blue-500 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold">{location}, {nation}</h2>
+      <div className="flex items-center justify-between">
+        <span>{weather}</span>
+        <span className="text-4xl">{getWeatherIcon(weather)}</span>
+      </div>
+      <p className="mt-2 text-4xl font-semibold">
+        {temperature}°{unit === 'celsius' ? 'C' : 'F'}
+      </p>
+    </div>
+  );
+}
+```
+이 코드에서는 `WeatherCard`라는 리액트 컴포넌트를 정의하여 날씨 정보를 시각적으로 표시합니다.
+
+- **`WeatherCard` 컴포넌트**: 이 컴포넌트는 `data`라는 prop을 받아, 이를 JSON 형식으로 파싱하여 날씨 정보(위치, 국가, 온도, 날씨 상태 등)를 추출합니다.
+- **`getWeatherIcon` 함수**: 날씨 상태(`weather`)에 따라 적절한 이모지를 반환하여 시각적으로 표현합니다.
+
+이 컴포넌트는 주어진 날씨 데이터를 기반으로 사용자가 이해하기 쉬운 UI를 제공합니다.
+
+---
+
+## 서버에서 OpenAI 도구(함수 호출) 정의
+
+이제 앞에서 구현한 함수를 이용하여, 서버에서 OpenAI의 도구(함수 호출)를 구현하겠습니다.
+`app/api/route.ts` 파일을 아래와 같이 추가로 구현합니다.
+
+
+```ts:app/api/route.ts showLineNumbers {4, 14-19}
+import { openai } from '@ai-sdk/openai';
+import { convertToCoreMessages, streamText } from 'ai';
+
+import { weatherSchema } from '@/base/weather';
+
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = await streamText({
+    model: openai('gpt-4o'),
+    messages: convertToCoreMessages(messages),
+    tools: {
+      getCurrentWeather: {
+        description: 'Get the current weather information for a specific city or region. The user can provide the name of the city and nation, and optionally specify the temperature unit (Celsius or Fahrenheit) and the language for the response.',
+        parameters: weatherSchema,
+      },
+    },
+  });
+
+  return result.toAIStreamResponse();
+}
+```
+
+이 코드는 OpenAI API와의 통신에서 특정 도구(함수 호출)를 설정하는 방법을 보여줍니다.
+
+1. **`import { weatherSchema } from '@/base/weather';`**
+
+    이 구문은 앞서 정의한 `weatherSchema` 객체를 가져오는 것입니다. 이 스키마는 날씨 정보를 요청할 때 필요한 파라미터(예: 위치, 국가, 온도 단위 등)의 구조와 타입을 정의합니다. 이를 통해, OpenAI가 해당 도구를 사용할 때 필요한 입력 데이터를 검증하고 처리할 수 있도록 합니다.
+
+2. **`tools` 설정과 OpenAI 도구(함수 호출)**
+
+    ```ts
+    tools: {
+        getCurrentWeather: {
+            description: 'Get the current weather information for a specific city or region. The user can provide the name of the city and nation, and optionally specify the temperature unit (Celsius or Fahrenheit) and the language for the response.',
+            parameters: weatherSchema,
+        },
+    },
+    ```
+
+    - **`tools`**: 이 객체는 OpenAI API와 통신할 때 사용할 도구(함수 호출)를 정의하는 부분입니다.
+    
+    - **`getCurrentWeather`**
+        - **description**: 이 도구가 하는 일을 설명하는 텍스트입니다. 이 경우, 사용자가 특정 도시나 지역의 현재 날씨 정보를 요청할 수 있음을 나타냅니다. 사용자는 도시와 국가의 이름을 제공할 수 있으며, 온도 단위와 응답 언어를 선택할 수 있습니다.
+        - **parameters**: 이 도구를 사용할 때 필요한 입력 파라미터를 정의하는 스키마입니다. 여기서는 앞서 가져온 `weatherSchema`를 사용하여, OpenAI가 이 도구를 호출할 때 어떤 형식의 데이터를 기대하는지 명확히 합니다.
+
+<ToggleContent title="OpenAI 도구(함수 호출)의 설정 의미">
+이 설정은 OpenAI가 `getCurrentWeather` 도구를 사용할 수 있도록 하는 것입니다.
+사용자가 챗봇과 대화 중 특정 도시의 날씨를 묻는다면, OpenAI는 이 도구를 호출하여 실시간 날씨 정보를 가져올수 있도록 사용자가 문의한 정보를 형식 있는 데이터로 전송해 줍니다.. 
+
+- `weatherSchema`를 통해 OpenAI는 입력 데이터의 형식을 검증하고 필요한 정보를 올바르게 처리합니다.
+- 도구의 설명은 OpenAI가 해당 도구를 언제, 어떻게 사용할지 이해하도록 돕습니다.
+</ToggleContent>
+
+---
+
+
+## 클라이언트에서 실시간 날씨 정보 연동 및 UI로 보여주기
+마지막으로, 클라이언트에서 실시간 날씨 정보를 가져와 UI 컴포넌트로 표시하기 위해
+`app/usechat/page.tsx` 파일에 아래와 같이 추가 구현합니다.
+
+
+```tsx:app/usechat/page.tsx showLineNumbers {5, 9-10, 21, 24-33, 66-93}
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Message, useChat } from 'ai/react';
+import { ToolInvocation } from 'ai';
+
+import LoadingIndicator from '@/components/loading-indicator';
+import SubmitButton from '@/components/submit-button';
+import WeatherCard from '@/components/weather-card';
+import { WeatherParams, fetchWeatherData } from '@/base/weather';
+
+import { remark } from 'remark';
+import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
+
+interface ExtendedMessage extends Message {
+  htmlContent?: string;
+}
+
+export default function Chat() {
+  const { messages, input, isLoading, handleInputChange, handleSubmit, stop, addToolResult } =
+    useChat({
+      maxToolRoundtrips: 5,
+      async onToolCall({ toolCall }) {
+        if (toolCall.toolName === 'getCurrentWeather') {
+            console.info('onToolCall(): ', toolCall);
+            const params = toolCall.args as WeatherParams;
+            console.info('onToolCall() params: ', params);
+            const weatherData = await fetchWeatherData(params);
+
+            return JSON.stringify(weatherData);
+        }
+      },
+    });
+
+  const [renderedMessages, setRenderedMessages] = useState<ExtendedMessage[]>([]);
+
+  useEffect(() => {
+    const processMessages = async () => {
+      const updatedMessages = await Promise.all(
+        messages.map(async (m) => {
+          const processedContent = await remark()
+            .use(remarkGfm)
+            .use(html)
+            .process(m.content);
+          return { ...m, htmlContent: processedContent.toString() };
+        })
+      );
+      setRenderedMessages(updatedMessages);
+    };
+    processMessages();
+  }, [messages]);
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div className="overflow-y-auto">
+            {renderedMessages.map((m) => (
+              <div key={m.id} className="space-y-4">
+                <strong>{m.role}:</strong>
+                <div
+                  className="prose"
+                  dangerouslySetInnerHTML={{ __html: m.htmlContent || m.content }}
+                />
+                {m.toolInvocations?.map((toolInvocation: ToolInvocation) => {
+                  const toolCallId = toolInvocation.toolCallId;
+                  const addResult = (result: string) =>
+                    addToolResult({ toolCallId, result });
+
+                  if (toolInvocation.toolName == 'getCurrentWeather') {
+                    return 'result' in toolInvocation ? (
+                      <div key={toolCallId} className="space-y-2">
+                        <WeatherCard data={toolInvocation.result} />
+                      </div>
+                    ) : (
+                      <div key={toolCallId} className="space-y-2">
+                        Calling {toolInvocation.toolName}...
+                      </div>
+                    );
+                  }
+
+                  return 'result' in toolInvocation ? (
+                    <div key={toolCallId} className="space-y-2">
+                      Tool call {`${toolInvocation.toolName}: `}
+                      {toolInvocation.result}
+                    </div>
+                  ) : (
+                    <div key={toolCallId} className="space-y-2">
+                      Calling {toolInvocation.toolName}...
+                    </div>
+                  );
+                })}
+                <br />
+              </div>
+            ))}
+          </div>
+          {isLoading && <LoadingIndicator />}
+          <form onSubmit={handleSubmit} className="flex w-full mt-4">
+            <input
+              value={input}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              disabled={isLoading}
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={stop} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### OpenAI 도구와 연동하여 실시간 날씨 가져오기
+아래 코드는 `useChat()` 훅 내에서 `onToolCall` 함수에서 OpenAI 도구 호출 시 실시간 날씨 데이터를 가져오는 과정을 처리합니다.
+
+```tsx
+async onToolCall({ toolCall }) {
+  if (toolCall.toolName === 'getCurrentWeather') {
+    const params = toolCall.args as WeatherParams;
+    const weatherData = await fetchWeatherData(params);
+    return JSON.stringify(weatherData);
+  }
+}
+```
+
+- **도구 호출 감지**: OpenAI가 `getCurrentWeather` 도구를 호출했는지 확인합니다.
+- **파라미터 추출**: 도구 호출 시 전달된 인자를 `WeatherParams` 타입으로 추출합니다.
+- **외부 API 호출**: `fetchWeatherData(params)`를 사용해 OpenWeatherMap API에서 실시간 날씨 데이터를 가져옵니다.
+- **데이터 반환**: 가져온 날씨 데이터를 JSON 문자열로 변환해 반환합니다.
+
+이 과정은 OpenAI 도구 호출에 따라 실시간 데이터를 가져와 UI에 반영하는 역할을 합니다.
+
+### 실시간 정보를 OpenAI 언어 모델에 다시 보내기
+
+이 코드는 실시간으로 가져온 정보를 OpenAI 언어 모델에 다시 보내고, 그 결과를 UI에 반영하는 과정을 처리합니다.
+
+- **`useChat()` 훅**에서 `addToolResult`는 도구 호출의 결과를 OpenAI 언어 모델로 전달하는 역할을 합니다.
+  ```tsx {3}
+  {m.toolInvocations?.map((toolInvocation: ToolInvocation) => {
+    const toolCallId = toolInvocation.toolCallId;
+    const addResult = (result: string) =>
+      addToolResult({ toolCallId, result });
+  ```
+  - `toolInvocation`을 통해 각 도구 호출에 대한 정보를 순회하며, 도구 호출 ID(`toolCallId`)를 기준으로 결과를 처리합니다.
+  - `addResult` 함수는 도구 호출의 결과를 OpenAI 모델에 전달하고, 그 결과를 다시 메시지에 반영합니다. 이를 통해 실시간 정보(예: 날씨 데이터)를 언어 모델의 응답에 포함시킬 수 있습니다.
+
+이 과정은 실시간으로 가져온 데이터를 모델에 반영하고 그 결과를 사용자에게 표시하는 데 사용됩니다.
+
+### 날씨 정보를 UI로 보여 주기
+이 코드는 OpenAI 도구 호출 결과를 UI에 표시하는 역할을 합니다. 특히, 사용자가 요청한 날씨 정보를 UI로 렌더링하는 부분을 다루고 있습니다.
+
+```tsx
+if (toolInvocation.toolName == 'getCurrentWeather') {
+  return 'result' in toolInvocation ? (
+    <div key={toolCallId} className="space-y-2">
+      <WeatherCard data={toolInvocation.result} />
+    </div>
+  ) : (
+    <div key={toolCallId} className="space-y-2">
+      Calling {toolInvocation.toolName}...
+    </div>
+  );
+}
+```
+
+- **`toolInvocation.toolName == 'getCurrentWeather'`**: 
+  - 이 조건문은 도구 호출이 'getCurrentWeather'라는 이름의 도구를 호출한 것인지 확인합니다. 이 도구는 실시간 날씨 정보를 가져오는 기능을 담당합니다.
+
+- **결과 처리 및 렌더링**:
+  - **결과가 있을 경우 (`'result' in toolInvocation`)**:
+    - `toolInvocation.result`에 저장된 날씨 정보를 UI에 표시하기 위해 `WeatherCard` 컴포넌트를 사용합니다. 
+    - `WeatherCard`는 날씨 정보를 보기 좋은 카드 형태로 렌더링하는 역할을 합니다.
+    - 이 컴포넌트를 포함한 `<div>` 요소는 `toolCallId`를 `key`로 사용하여 고유성을 보장합니다.
+  
+  - **결과가 아직 없을 경우**:
+    - 도구 호출이 진행 중임을 나타내는 메시지를 표시합니다. 예를 들어, "Calling getCurrentWeather..."라는 텍스트가 표시되어 사용자에게 도구 호출이 처리 중임을 알립니다.
+
+### 일반 도구 호출 처리
+
+```tsx
+return 'result' in toolInvocation ? (
+  <div key={toolCallId} className="space-y-2">
+    Tool call {`${toolInvocation.toolName}: `}
+    {toolInvocation.result}
+  </div>
+) : (
+  <div key={toolCallId} className="space-y-2">
+    Calling {toolInvocation.toolName}...
+  </div>
+);
+```
+- 위 코드 블록에서는 'getCurrentWeather' 외의 다른 도구 호출에 대해 비슷한 방식으로 결과를 처리합니다.
+- 결과가 있으면 도구 이름과 결과를 UI에 표시하고, 결과가 없으면 호출 중임을 나타내는 메시지를 표시합니다.
+
+---
+
+지금까지 구현한 내용을 저장한 후, `npm run dev` 명령어를 실행하면 처음에 보셨던 실행 화면처럼 동작하는 결과를 확인할 수 있습니다.
+
+## 다음 과정 안내
+
+지금까지 라우트 핸들러를 기반으로 채팅 서비스에 OpenAI 도구와 외부 서비스를 연동하는 방법을 구현했습니다.
+
+다음 과정인 [AI SDK RSC를 사용하여 서버에서 날씨 컴포넌트를 렌더링하여 스트리밍](/example/weather-ai-chatbot/server-rendering)에서는 라우트 핸들러 대신 리액트 서버 컴포넌트를 기반으로 동일한 기능을 구현해 보겠습니다.
+
