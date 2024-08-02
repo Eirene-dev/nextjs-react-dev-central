@@ -4,9 +4,839 @@ summary: "Next.js AI Chatbot"
 date: "2024-08-01 03:00"
 tags: ['Vercel AI SDK', 'Chatbot', 'ChatGPT']
 images: ['/static/images/example/Chatbot.png']
-draft: true
+draft: false
 ---
 
+<TOCInline toc={props.toc} asDisclosure />
+
+## 학습 목표 및 소개
+버셀 AI SDK에서는 Next.js 환경에서 리액트 서버 컴포넌트(React Server Componenet, RSC)를 기반으로 채팅 서비스를 구축할 수 있습니다.
+이 페이지에서는 이전에 다룬 라우트 핸들러와 `useChat` 훅 대신에, 서버 액션(Server Action)과 `useActions` 훅을 사용하여 클라이언트에서 서버와 통신 하는 방법에 대해서 알아 보겠습니다.
+
+이 방식에서는 서버에서 실시간으로 받아온 날씨 정보를 바탕으로 리액트 UI 컴포넌트를 생성하여 클라이언트에 전송합니다.
+
 <Callout type="warning" icon="">
-작성 예정입니다.
+이 페이지의 예제 실습을 위해서는 아래 항목에 대한 사전 학습이 필요합니다.
+- [날씨 AI 챗봇 예제 소개(앱 생성)](/example/weather-ai-chatbot)
+- [기본적인 AI 채팅 서비스](/example/weather-ai-chatbot/chat-simple)
+- [채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/client-rendering)
 </Callout>
+
+
+### 배울 내용
+이번 실습을 통해 배울 수 있는 내용은 다음과 같습니다.
+- 버셀 AI SDK RSC를 기반으로 하는 기본적인 사용법
+- 서버 측에서 `generateText()` 함수 사용법
+- 서버 및 클라이언트에서 `useAIState`와 `useUIState` 훅을 통한 AI 상태 및 UI 상태 관리 방법
+
+> 하지만 이 페이지에서는 버셀 AI SDK RSC의 가장 큰 강점 중 하나인 `streamUI()` 함수를 통한 리액트 UI 컴포넌트 스트리밍 방법에 대해서는 다루지 않습니다.
+
+<ToggleContent title="AI SDK RSC의 주요기능">
+AI SDK RSC에는 여러 기능이 포함되어 있으며 이를 통해 RSC를 사용한 AI 중심 애플리케이션을 쉽게 구축할 수 있습니다. 
+
+RSC는 서버에서 UI를 렌더링하고 클라이언트로 스트리밍할 수 있게 해주며, 클라이언트에서 서버 측 코드를 직접 호출할 수 있는 새로운 방법인 서버 액션을 가능하게 합니다. 이를 통해 대규모 언어 모델(LLM)을 사용하여 서버에서 클라이언트로 UI를 직접 생성하고 스트리밍하는 새로운 방식의 AI 애플리케이션을 구축할 수 있습니다.
+
+주요 함수는 다음과 같습니다.
+
+- **`streamUI`**: 모델을 호출하여 RSC로 응답을 스트리밍합니다.
+- **`useUIState`**: 현재 UI 상태와 UI 상태를 업데이트하는 함수를 반환합니다. 이 함수는 React의 `useState`와 유사하며, AI 상태의 시각적 표현을 관리합니다.
+- **`useAIState`**: 현재 AI 상태와 AI 상태를 업데이트하는 함수를 반환합니다. 이 함수는 AI 모델과 공유되는 컨텍스트와 정보를 포함합니다.
+- **`useActions`**: 클라이언트에서 서버 액션에 접근할 수 있게 합니다. 사용자와 서버 간의 상호작용이 필요한 인터페이스를 구축할 때 유용합니다.
+- **`createAI`**: 클라이언트-서버 컨텍스트 제공자를 생성하여 애플리케이션 트리의 일부를 감싸고, UI 및 AI 상태를 쉽게 관리할 수 있게 합니다.
+- **`createStreamableValue`**: 서버에서 클라이언트로 값을 스트리밍할 수 있는 스트림을 생성합니다.
+- **`readStreamableValue`**: 클라이언트에서 서버로부터 스트리밍된 값을 읽습니다.
+- **`createStreamableUI`**: 서버에서 클라이언트로 UI를 스트리밍할 수 있는 스트림을 생성합니다.
+- **`useStreamableValue`**: `createStreamableValue`로 생성된 스트림 값을 받아서 현재 값, 오류, 대기 상태를 반환합니다.
+
+</ToggleContent>
+
+## 동작 구조
+
+시퀀스 다이어그램에 추가된 전체 동작 구조는 아래와 같습니다.
+
+<MermaidChart className="justify-center p-0">
+{`
+sequenceDiagram
+    participant Client
+    participant Server
+    actor OpenAI
+    actor OpenWeatherMap
+    Client->>Server: useActions 훅 via 서버 액션
+    Server->>+OpenAI: generateText 함수
+    Server->>+OpenAI: getCurrentWeather 도구
+    OpenAI-->>-Server: weatherSchema 객체
+    OpenAI-->>-Server: stream message
+    Server-->>Client: stream message
+    opt weatherSchema
+        Server->>OpenWeatherMap: fetch() via REST API
+        OpenWeatherMap-->>Server: Weather JSON 객체
+        Server-->>Client: Weather 컴포넌트
+    end
+`}
+</MermaidChart>
+
+이 시퀀스 다이어그램은 클라이언트가 서버 액션을 통해 OpenAI 및 OpenWeatherMap과 상호작용하여 날씨 정보를 실시간으로 가져오는 전체 동작 구조를 보여줍니다. 다이어그램은 클라이언트 요청이 서버를 통해 OpenAI로 전달되고, OpenAI가 날씨 정보를 처리한 후, 필요 시 OpenWeatherMap API를 호출하여 최종적으로 클라이언트에 날씨 컴포넌트가 스트리밍되는 과정을 시각적으로 설명합니다.
+
+---
+
+## 기본적인 채팅 서비스 구현
+이제 본격적으로 구현을 시작해보겠습니다. 먼저, 기본적인 채팅 서비스를 구축해보겠습니다. 이 단계에서는 간단한 채팅 인터페이스를 만들어, 사용자와 AI 간의 메시지 교환이 원활히 이루어지도록 하는 기본 기능을 구현할 것입니다.
+
+실습을 위해 `app/` 폴더 안에 `chat/` 폴더를 생성합니다. 이 폴더 안에 `actions.tsx`, `page.tsx`, `layout.tsx` 파일을 생성하고 아래와 같이 구현합니다.
+
+> 이번 실습에서는 `actions.ts`가 아닌 `actions.tsx`를 사용합니다. 그 이유는 `actions.tsx` 파일 내에서 리액트 컴포넌트를 직접 사용할 수 있기 때문입니다. 이 파일은 타입스크립트와 JSX를 함께 사용하여 컴포넌트와 로직을 함께 작성할 수 있는 유연성을 제공합니다.
+
+### 서버 측 구현
+먼저 서버에서 동작되는 서버 액션을 구현하겠습니다.
+
+```tsx:app/chat/actions.tsx showLineNumbers
+'use server';
+
+import { generateText, generateId } from 'ai';
+import { createAI, getMutableAIState } from 'ai/rsc';
+import { openai } from '@ai-sdk/openai';
+
+export interface ServerMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ClientMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export async function continueConversation(input: string): Promise<ClientMessage> {
+  'use server';
+
+  const history = getMutableAIState();
+
+  try {
+    const { text } = await generateText({
+      model: openai('gpt-4o'),
+      messages: [...history.get(), { role: 'user', content: input }],
+    });
+
+    history.done([...history.get(), { role: 'assistant', content: text }]);
+
+    return {
+      id: generateId(),
+      role: 'assistant',
+      content: text,
+    };
+  } catch (error) {
+    console.error('Error in continueConversation:', error);
+    throw new Error('Failed to continue conversation');
+  }
+}
+
+export const AI = createAI<ServerMessage[], ClientMessage[]>({
+  actions: {
+    continueConversation,
+  },
+  initialAIState: [],
+  initialUIState: [],
+});
+```
+
+위의 코드는 서버에서 동작하는 서버 액션을 구현하여 AI와의 대화를 처리하는 방법을 보여줍니다. `continueConversation` 함수는 사용자의 입력을 받아 OpenAI 모델을 통해 응답을 생성하고, 이 응답을 서버와 클라이언트 간의 상태로 관리합니다.
+
+`AI` 객체는 `createAI`를 통해 생성되며, AI 상태와 UI 상태를 관리하는 데 사용됩니다. 여기서 AI 상태는 직렬화 가능한 형태로 저장되어 서버와 클라이언트 간의 데이터 동기화를 용이하게 하며, UI 상태는 클라이언트에서 실제로 렌더링되는 요소들을 관리합니다.
+
+이 구조를 통해 복잡한 AI 중심의 애플리케이션에서도 상태 관리와 UI 렌더링을 효율적으로 처리할 수 있습니다.
+
+
+### 레이아웃 구현
+RSC에서는 레이아웃 파일에도 구현이 필요합니다.
+
+```tsx:app/chat/layout.tsx showLineNumbers
+import { ReactNode } from 'react';
+import { AI } from './actions';
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: ReactNode }>) {
+  return (
+        <AI>{children}</AI>
+  );
+}
+```
+
+위의 코드는 애플리케이션의 전체 레이아웃을 정의하며 AI 컨텍스트로 애플리케이션을 감싸 AI와 UI 상태를 전역에서 관리할 수 있도록 합니다. 이로써 애플리케이션의 모든 컴포넌트에서 AI와 UI 상태를 쉽게 접근하고 설정할 수 있습니다.
+
+### 클라이언트 측 구현
+
+```tsx:app/chat/page.tsx showLineNumbers
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { ClientMessage } from './actions';
+import { useActions, useUIState } from 'ai/rsc';
+import { generateId } from 'ai';
+
+import LoadingIndicator from '@/components/loading-indicator';
+import SubmitButton from '@/components/submit-button';
+
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
+
+export default function Home() {
+  const [input, setInput] = useState<string>('');
+  const [conversation, setConversation] = useUIState();
+  const { continueConversation } = useActions();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = input.trim();
+    if (!value) return;
+
+    setIsLoading(true);
+
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: generateId(), role: 'user', content: value },
+    ]);
+
+    try {
+      const message = await continueConversation(value);
+      setConversation((currentConversation: ClientMessage[]) => [
+        ...currentConversation,
+        message,
+      ]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    setInput('');
+  };
+
+  const renderMessages = () =>
+    conversation.map((message: ClientMessage) => (
+      <div key={message.id} className="space-y-4">
+        {message.role && <strong>{`${message.role}: `}</strong>}
+        {message.content}
+      </div>
+    ));
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div className="overflow-y-auto">
+            {conversation.length > 0 && renderMessages()}
+          </div>
+          {isLoading && <LoadingIndicator />}
+
+          <form onSubmit={handleSubmit} className="flex w-full mt-4">
+            <input
+              ref={inputRef}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              value={input}
+              placeholder="제주도 오늘의 날씨는 어때?"
+              onChange={(e) => setInput(e.target.value)}
+              disabled={isLoading}
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={() => setIsLoading(false)} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+위 코드는 입력된 메시지를 서버로 보내고 서버에서 응답을 받아 대화를 이어나가는 기본적인 클라이언트 측 동작입니다.
+
+**1. 상태 및 참조 변수 초기화**
+- `useState`를 사용하여 입력값(`input`), 로딩 상태(`isLoading`), 그리고 대화 내용(`conversation`)을 관리합니다. 
+- `useUIState` 훅을 사용하여 UI 상태를 관리하고, `useActions` 훅을 통해 서버 액션(`continueConversation`)에 접근합니다.
+- `useRef`를 통해 입력 필드에 대한 참조(`inputRef`)를 설정하여 입력 필드에 쉽게 접근할 수 있습니다.
+
+**2. 입력 필드 포커스 처리**
+- `useEffect` 훅을 사용하여 로딩이 완료되었을 때 입력 필드에 자동으로 포커스를 맞추도록 설정합니다. 이는 사용자의 편의성을 높여줍니다.
+
+**3. 폼 제출 핸들러 (`handleSubmit`)**
+- 폼 제출 시 실행되는 `handleSubmit` 함수는 사용자가 입력한 텍스트를 가져와 대화 상태에 추가하고, 서버에 이 텍스트를 전송합니다.
+- 전송된 텍스트에 대해 서버에서 응답을 받으면, 그 응답도 대화 상태에 추가됩니다.
+- 이 과정에서 로딩 상태가 관리되며, 오류 발생 시 콘솔에 로그를 출력합니다.
+
+**4. 메시지 렌더링 (`renderMessages`)**
+- `renderMessages` 함수는 현재 대화 상태에 있는 모든 메시지를 렌더링합니다. 각 메시지는 사용자 또는 AI의 응답으로 구분되어 표시됩니다.
+
+**5. UI 구성**
+- 전체 UI는 Flexbox를 사용하여 화면 중앙에 정렬된 채팅 창을 구성합니다. 이 채팅 창에는 대화 내용이 스크롤 가능한 영역에 표시되며, 하단에는 메시지를 입력할 수 있는 폼이 배치됩니다.
+- 로딩 중일 때는 `LoadingIndicator` 컴포넌트가 표시되고, 입력 필드와 제출 버튼은 `SubmitButton` 컴포넌트를 사용하여 구현됩니다. 이 버튼은 로딩 중이거나 입력값이 없을 때 비활성화됩니다.
+
+### 실행 화면
+지금까지 구현한 파일들을 저장한 후, `npm run dev` 명령어를 실행하고 브라우저에서 `http://localhost:3000/chat`을 입력하여 접속하면, 다음과 같은 실행 결과를 확인할 수 있습니다.
+
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/3_rsc_1_1.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/3_rsc_1_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/3_rsc_1_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+</div>
+
+
+## OpenAI 도구(함수 호출) 적용하여 실시간 날씨 정보 제공
+이제 서버에서 OpenAI 도구를 적용하여 실시간 날씨 정보를 받아오고, 이를 기반으로 React 컴포넌트를 생성하여 클라이언트에 전송하겠습니다.
+
+### 서버 측 코드 추가 및 변경
+```tsx:app/chat/actions.tsx showLineNumbers {6, 20, 23-25, 37-60, 66-68, 70-79, 86}
+'use server';
+
+import { generateText, generateId } from 'ai';
+import { createAI, getMutableAIState } from 'ai/rsc';
+import { openai } from '@ai-sdk/openai';
+import { ReactNode } from 'react';
+
+import { weatherSchema, WeatherParams, fetchWeatherData } from '@/base/weather';
+import WeatherCard from '@/components/weather-card';
+
+export interface ServerMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ClientMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  display?: ReactNode;
+}
+
+export interface ToolResult {
+  result: string;
+}
+
+export async function continueConversation(input: string): Promise<ClientMessage> {
+  'use server';
+
+  const history = getMutableAIState();
+  let weatherCard: ReactNode | null = null;
+
+  try {
+    const { text, toolResults } = await generateText({
+      model: openai('gpt-4o'),
+      messages: [...history.get(), { role: 'user', content: input }],
+      tools: {
+        getCurrentWeather: {
+          description: 'Get the current weather information for a specific city or region. The user can provide the name of the city and nation, and optionally specify the temperature unit (Celsius or Fahrenheit) and the language for the response.',
+          parameters: weatherSchema,
+          execute: async (params: WeatherParams) => {
+            try {
+              const weatherData = await fetchWeatherData(params);
+
+              history.update((messages: ServerMessage[]) => [
+                ...messages,
+                {
+                  role: 'assistant',
+                  content: `The weather information ${params.location} with ${JSON.stringify(weatherData)}`,
+                },
+              ]);
+
+              weatherCard = <WeatherCard data={JSON.stringify(weatherData)} />;
+              return JSON.stringify(weatherData);
+            } catch (error) {
+              console.error('Error fetching weather data:', error);
+              throw new Error('Failed to fetch weather data');
+            }
+          },
+        },
+      },
+    });
+
+    history.done([...history.get(), { role: 'assistant', content: text }]);
+
+    const toolResultsContent = toolResults
+      ? (toolResults as ToolResult[]).map(toolResult => toolResult.result).join('\n')
+      : '';
+
+    let readableContent = toolResultsContent;
+    if (toolResultsContent) {
+      const { text: readableText } = await generateText({
+        model: openai('gpt-4o'),
+        messages: [
+          { role: 'system', content: '다음 날씨 데이터를 사람이 읽기 쉬운 형식으로 변환해 주세요. 유닉스 시간도 사람이 이해하기 편하게 바꾸어 주세요.' },
+          { role: 'user', content: toolResultsContent },
+        ],
+      });
+      readableContent = readableText;
+    }
+
+    return {
+      id: generateId(),
+      role: 'assistant',
+      content: text || readableContent,
+      display: weatherCard,
+    };
+  } catch (error) {
+    console.error('Error in continueConversation:', error);
+    throw new Error('Failed to continue conversation');
+  }
+}
+
+export const AI = createAI<ServerMessage[], ClientMessage[]>({
+  actions: {
+    continueConversation,
+  },
+  initialAIState: [],
+  initialUIState: [],
+});
+```
+
+다음은 추가 변경된 각 라인에 대한 간략한 설명입니다.
+
+- **6번 라인**: `ReactNode`를 임포트하여 리액트 컴포넌트 타입을 사용할 수 있도록 합니다. 이는 후에 날씨 정보를 컴포넌트로 렌더링하는 데 사용됩니다.
+- **20번 라인**: `ClientMessage` 인터페이스에 `display` 속성이 추가되었습니다. 이 속성은 ReactNode 타입으로, 클라이언트에 렌더링할 수 있는 컴포넌트를 포함할 수 있도록 합니다.
+- **23-25번 라인**: `ToolResult` 인터페이스가 추가되어 도구에서 반환되는 결과 형식을 정의합니다. 이는 서버 액션에서 도구의 실행 결과를 처리할 때 사용됩니다.
+- **37-60번 라인**: `generateText` 함수에서 `tools` 옵션을 사용하여 OpenAI 도구를 정의하고, `getCurrentWeather` 도구를 통해 특정 위치의 실시간 날씨 정보를 가져옵니다. 날씨 데이터는 `WeatherCard` 컴포넌트로 변환되어 클라이언트에 전달됩니다.
+- **66-68번 라인**: 도구의 결과를 사람이 읽기 쉬운 형식으로 변환하기 위해 추가적인 `generateText` 호출을 사용합니다. 이로써 날씨 데이터를 더 이해하기 쉽게 표현합니다.
+- **70-79번 라인**: 변환된 날씨 데이터를 사용하여 클라이언트 메시지를 생성하고, `display` 속성에 `WeatherCard` 컴포넌트를 설정하여 클라이언트에서 렌더링될 수 있도록 합니다.
+- **86번 라인**: `continueConversation` 함수에서 최종적으로 클라이언트에 반환할 메시지 객체를 생성합니다. 여기에는 생성된 텍스트와 함께 날씨 정보가 포함된 컴포넌트가 들어갑니다.
+
+이렇게 추가된 코드들은 OpenAI 도구를 사용해 실시간 날씨 정보를 가져오고, 이를 클라이언트에 적절한 형식으로 표시하기 위해 변경되었습니다.
+
+
+### 클라이언트 측 코드 추가 및 변경
+
+추가할 코드는 다음 두 라인입니다.
+
+```tsx {6,7}
+  const renderMessages = () =>
+    conversation.map((message: ClientMessage) => (
+      <div key={message.id} className="space-y-4">
+        {message.role && <strong>{`${message.role}: `}</strong>}
+        {message.content}
+        {message.display}
+        {message.display && <br />}
+      </div>
+    ));
+```
+
+<ToggleContent title="완성된 page.tsx 파일 전체 코드">
+
+```tsx:app/chat/page.tsx showLineNumbers {60, 61}
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { ClientMessage } from './actions';
+import { useActions, useUIState } from 'ai/rsc';
+import { generateId } from 'ai';
+
+import LoadingIndicator from '@/components/loading-indicator';
+import SubmitButton from '@/components/submit-button';
+
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
+
+export default function Home() {
+  const [input, setInput] = useState<string>('');
+  const [conversation, setConversation] = useUIState();
+  const { continueConversation } = useActions();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = input.trim();
+    if (!value) return;
+
+    setIsLoading(true);
+
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: generateId(), role: 'user', content: value },
+    ]);
+
+    try {
+      const message = await continueConversation(value);
+      setConversation((currentConversation: ClientMessage[]) => [
+        ...currentConversation,
+        message,
+      ]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    setInput('');
+  };
+
+  const renderMessages = () =>
+    conversation.map((message: ClientMessage) => (
+      <div key={message.id} className="space-y-4">
+        {message.role && <strong>{`${message.role}: `}</strong>}
+        {message.content}
+        {message.display}
+        {message.display && <br />}
+      </div>
+    ));
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div className="overflow-y-auto">
+            {conversation.length > 0 && renderMessages()}
+          </div>
+          {isLoading && <LoadingIndicator />}
+
+          <form onSubmit={handleSubmit} className="flex w-full mt-4">
+            <input
+              ref={inputRef}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              value={input}
+              placeholder="제주도 오늘의 날씨는 어때?"
+              onChange={(e) => setInput(e.target.value)}
+              disabled={isLoading}
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={() => setIsLoading(false)} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+</ToggleContent>
+
+이 코드는 `renderMessages` 함수 내에서 대화 내용을 렌더링할 때, 각 메시지 객체의 `display` 속성을 확인하여 해당 내용을 렌더링합니다.
+
+- **`{message.display}`**: `message.display`가 존재할 경우, 해당 내용을 화면에 렌더링합니다. 이 `display` 속성은 서버에서 생성된 React 컴포넌트(예: 날씨 정보 카드)가 될 수 있습니다.
+- **`{message.display && <br />}`**: `message.display`가 존재할 때, 줄바꿈(`<br />`)을 추가하여 화면에 렌더링된 내용이 메시지와 겹치지 않도록 합니다. 이는 UI가 깔끔하게 보이도록 하기 위한 간단한 레이아웃 조정입니다.
+
+
+### 실행 화면
+
+지금까지 구현한 파일들을 확인하기 위해, `npm run dev` 명령어를 실행하고 브라우저에서 `http://localhost:3000/chat`을 입력하면 다음과 같은 실행 결과를 확인할 수 있습니다.
+
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/3_rsc_2_1.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/3_rsc_2_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/3_rsc_2_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+</div>
+
+---
+
+## 마크다운을 HTML 변환하기
+이제 마지막 단계로 마크다운 텍스트를 HTML로 변환하여 사용자가 보기 편하게 표시하겠습니다.
+
+### 서버 측 코드 추가 및 변경
+
+다음은 추가된 라인에 대한 설명입니다.
+
+<ToggleContent title="최종 완성된 actions.tsx 파일 전체 코드">
+
+```tsx:app/chat/actions.tsx showLineNumbers {11-13, 84-90, 92-96, 101}
+'use server';
+
+import { generateText, generateId } from 'ai';
+import { createAI, getMutableAIState } from 'ai/rsc';
+import { openai } from '@ai-sdk/openai';
+import { ReactNode } from 'react';
+
+import { weatherSchema, WeatherParams, fetchWeatherData } from '@/base/weather';
+import WeatherCard from '@/components/weather-card';
+
+import { remark } from 'remark';
+import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
+
+export interface ServerMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ClientMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  display?: ReactNode;
+}
+
+export interface ToolResult {
+  result: string;
+}
+
+export async function continueConversation(input: string): Promise<ClientMessage> {
+  'use server';
+
+  const history = getMutableAIState();
+  let weatherCard: ReactNode | null = null;
+
+  try {
+    const { text, toolResults } = await generateText({
+      model: openai('gpt-4o'),
+      messages: [...history.get(), { role: 'user', content: input }],
+      tools: {
+        getCurrentWeather: {
+          description: 'Get the current weather information for a specific city or region. The user can provide the name of the city and nation, and optionally specify the temperature unit (Celsius or Fahrenheit) and the language for the response.',
+          parameters: weatherSchema,
+          execute: async (params: WeatherParams) => {
+            try {
+              const weatherData = await fetchWeatherData(params);
+
+              history.update((messages: ServerMessage[]) => [
+                ...messages,
+                {
+                  role: 'assistant',
+                  content: `The weather information ${params.location} with ${JSON.stringify(weatherData)}`,
+                },
+              ]);
+
+              weatherCard = <WeatherCard data={JSON.stringify(weatherData)} />;
+              return JSON.stringify(weatherData);
+            } catch (error) {
+              console.error('Error fetching weather data:', error);
+              throw new Error('Failed to fetch weather data');
+            }
+          },
+        },
+      },
+    });
+
+    history.done([...history.get(), { role: 'assistant', content: text }]);
+
+    const toolResultsContent = toolResults
+      ? (toolResults as ToolResult[]).map(toolResult => toolResult.result).join('\n')
+      : '';
+
+    let readableContent = toolResultsContent;
+    if (toolResultsContent) {
+      const { text: readableText } = await generateText({
+        model: openai('gpt-4o'),
+        messages: [
+          { role: 'system', content: '다음 날씨 데이터를 사람이 읽기 쉬운 형식으로 변환해 주세요. 유닉스 시간도 사람이 이해하기 편하게 바꾸어 주세요.' },
+          { role: 'user', content: toolResultsContent },
+        ],
+      });
+
+    const markdownToHtml = await remark()
+        .use(remarkGfm)
+        .use(html)
+        .process(readableText);
+
+      readableContent = markdownToHtml.toString();
+    }
+
+    const markdownToHtml = await remark()
+      .use(remarkGfm)
+      .use(html)
+      .process(text);
+    const markdownText = markdownToHtml.toString();
+
+    return {
+      id: generateId(),
+      role: 'assistant',
+      content: markdownText || readableContent,
+      display: weatherCard,
+    };
+  } catch (error) {
+    console.error('Error in continueConversation:', error);
+    throw new Error('Failed to continue conversation');
+  }
+}
+
+export const AI = createAI<ServerMessage[], ClientMessage[]>({
+  actions: {
+    continueConversation,
+  },
+  initialAIState: [],
+  initialUIState: [],
+});
+```
+</ToggleContent>
+
+**11-13번 라인**
+```tsx
+import { remark } from 'remark';
+import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
+```
+- `remark`, `remark-html`, `remark-gfm` 라이브러리를 임포트합니다. 이 라이브러리들은 마크다운 텍스트를 HTML로 변환하는 데 사용됩니다. `remark-gfm`은 GitHub Flavored Markdown(GFM)을 지원하도록 해줍니다.
+
+**84-90번 라인**
+```tsx
+const markdownToHtml = await remark()
+  .use(remarkGfm)
+  .use(html)
+  .process(readableText);
+
+readableContent = markdownToHtml.toString();
+```
+- 이 부분에서는 `remark` 라이브러리를 사용하여 `readableText`를 마크다운에서 HTML로 변환합니다. 변환된 HTML은 `readableContent`에 저장됩니다. 이 과정은 대화에 포함된 텍스트가 마크다운 형식일 경우, 이를 HTML로 변환하여 클라이언트에 표시하기 위함입니다.
+
+**92-96번 라인**
+```tsx
+const markdownToHtml = await remark()
+  .use(remarkGfm)
+  .use(html)
+  .process(text);
+const markdownText = markdownToHtml.toString();
+```
+- `text` 변수에 있는 기본 텍스트를 마크다운에서 HTML로 변환하는 부분입니다. `remark`와 `remark-html`, `remark-gfm`을 사용하여 변환을 수행하고, 변환된 HTML은 `markdownText`에 저장됩니다. 
+
+**101번 라인**
+```tsx
+content: markdownText || readableContent,
+```
+- 반환되는 메시지 객체의 `content` 속성에 변환된 HTML을 설정합니다. `markdownText`가 있으면 이를 사용하고, 그렇지 않으면 `readableContent`를 사용합니다. 이를 통해 클라이언트에서 마크다운 텍스트가 HTML로 변환된 상태로 표시됩니다.
+
+이 추가된 코드들은 대화에서 생성된 마크다운 텍스트를 클라이언트에 보기 좋게 표시하기 위해 HTML로 변환하는 기능을 구현합니다. 이를 통해 사용자는 AI가 생성한 내용을 더욱 읽기 쉽고 시각적으로 깔끔하게 확인할 수 있습니다.
+
+### 클라이언트 측 코드 추가 및 변경
+
+추가된 코드에 대해 간략하게 설명하겠습니다.
+
+```tsx {6-10}
+  const renderMessages = () =>
+    conversation.map((message: ClientMessage) => (
+      <div key={message.id} className="space-y-4">
+        {message.role && <strong>{`${message.role}: `}</strong>}
+        {message.content && (
+          <div
+            className="prose"
+            style={{ marginTop: 0 }}
+            dangerouslySetInnerHTML={{ __html: message.content }}
+          />
+        )}
+        {message.display}
+      </div>
+    ));
+```
+
+<ToggleContent title="최종 완성된 page.tsx 파일 전체 코드">
+
+```tsx:app/chat/page.tsx showLineNumbers {60-64}
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { ClientMessage } from './actions';
+import { useActions, useUIState } from 'ai/rsc';
+import { generateId } from 'ai';
+
+import LoadingIndicator from '@/components/loading-indicator';
+import SubmitButton from '@/components/submit-button';
+
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
+
+export default function Home() {
+  const [input, setInput] = useState<string>('');
+  const [conversation, setConversation] = useUIState();
+  const { continueConversation } = useActions();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = input.trim();
+    if (!value) return;
+
+    setIsLoading(true);
+
+    setConversation((currentConversation: ClientMessage[]) => [
+      ...currentConversation,
+      { id: generateId(), role: 'user', content: value },
+    ]);
+
+    try {
+      const message = await continueConversation(value);
+      setConversation((currentConversation: ClientMessage[]) => [
+        ...currentConversation,
+        message,
+      ]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    setInput('');
+  };
+
+  const renderMessages = () =>
+    conversation.map((message: ClientMessage) => (
+      <div key={message.id} className="space-y-4">
+        {message.role && <strong>{`${message.role}: `}</strong>}
+        {message.content && (
+          <div
+            className="prose"
+            style={{ marginTop: 0 }}
+            dangerouslySetInnerHTML={{ __html: message.content }}
+          />
+        )}
+        {message.display}
+      </div>
+    ));
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div className="overflow-y-auto">
+            {conversation.length > 0 && renderMessages()}
+          </div>
+          {isLoading && <LoadingIndicator />}
+
+          <form onSubmit={handleSubmit} className="flex w-full mt-4">
+            <input
+              ref={inputRef}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              value={input}
+              placeholder="제주도 오늘의 날씨는 어때?"
+              onChange={(e) => setInput(e.target.value)}
+              disabled={isLoading}
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={() => setIsLoading(false)} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+</ToggleContent>
+
+이 코드 변경 부분은 메시지 내용을 HTML로 렌더링하여 화면에 표시하는 역할을 합니다. 
+
+- `className="prose"`는 텍스트 스타일을 적용하고, `dangerouslySetInnerHTML` 속성을 사용해 `message.content`의 HTML 내용을 안전하게 렌더링합니다. 
+- 인라인 스타일 `marginTop: 0`은 요소의 상단 여백을 제거하여 이전 요소와의 간격을 최소화합니다. 
+
+### 실행 화면
+`npm run dev` 명령어를 실행하고 브라우저에서 `http://localhost:3000/chat`을 입력하여 실행하면,
+마크다운으로 작성된 텍스트가 HTML로 변환되어 가독성 있는 형식으로 사용자에게 표시됩니다.
+<div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
+  <Image src="/static/images/example/chatbot/3_rsc_3_1.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/3_rsc_3_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/3_rsc_3_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+</div>
+
+
