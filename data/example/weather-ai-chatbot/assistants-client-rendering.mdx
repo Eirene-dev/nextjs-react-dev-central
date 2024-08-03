@@ -1,5 +1,5 @@
 ---
-title: "OpenAI Assistants 기반으로 클라이언트에서 날씨 컴포넌트 렌더링"
+title: "4. OpenAI Assistants 기반으로 클라이언트에서 날씨 컴포넌트 렌더링"
 summary: "Next.js AI Chatbot"
 date: "2024-08-01 04:00"
 tags: ['Vercel AI SDK', 'Chatbot', 'ChatGPT']
@@ -15,10 +15,11 @@ draft: false
 
 <Callout type="warning" icon="">
 이 페이지의 예제 실습을 위해서는 아래 항목에 대한 사전 학습이 필요합니다.
-- [날씨 AI 챗봇 예제 소개(앱 생성)](/example/weather-ai-chatbot)
-- [기본적인 AI 채팅 서비스](/example/weather-ai-chatbot/chat-simple)
-- [채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/client-rendering)
-- [AI SDK RSC를 사용하여 서버에서 날씨 컴포넌트 렌더링하여 스트리밍](/example/weather-ai-chatbot/server-rendering)
+
+0. [날씨 AI 챗봇 예제 소개(앱 생성)](/example/weather-ai-chatbot)
+1. [기본적인 AI 채팅 서비스](/example/weather-ai-chatbot/chat-simple)
+2. [채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/client-rendering)
+3. [AI SDK RSC를 사용하여 서버에서 날씨 컴포넌트 렌더링하여 스트리밍](/example/weather-ai-chatbot/server-rendering)
 </Callout>
 
 
@@ -31,7 +32,7 @@ draft: false
 - OpenAI Assistant의 도구(함수 호출) 결과를 버셀 AI SDK에서 받아 실시간 날씨 정보를 연동하고 UI 컴포넌트로 렌더링하는 방법
 
 ### 실행 화면
-아래 실습한 파일을 저장하고 `npm run dev` 명령어를 실행하고 브라우저에서 `http://localhost:3000/chat`을 입력하여 접속하면, 다음과 같은 실행 결과를 확인할 수 있습니다.
+아래 실습한 파일을 저장하고 `npm run dev` 명령어를 실행하고 브라우저에서 `http://localhost:3000/assistants`을 입력하여 접속하면, 다음과 같은 실행 결과를 확인할 수 있습니다.
 이전 실습에서 했던 기능들과 동일합니다.
 
 <div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">

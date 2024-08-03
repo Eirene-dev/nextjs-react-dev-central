@@ -1,62 +1,825 @@
 ---
-title: "서버에서 날씨 컴포넌트 렌더링하여 스트리밍하는 Assistants"
+title: "5. 서버에서 날씨 컴포넌트 렌더링하여 스트리밍하는 Assistants"
 summary: "Next.js AI Chatbot"
 date: "2024-08-01 05:00"
 tags: ['Vercel AI SDK', 'Chatbot', 'ChatGPT']
 images: ['/static/images/example/Chatbot.png']
-draft: true
+draft: false
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
 ## 학습 목표 및 소개
 
-xxxx
+이번 마지막 과정에서는 OpenAI Assistant와 버셀 AI SDK RSC를 이용하여, 서버 액션에서 `createStreamableUI()` 및 `createStreamableValue()` 함수를 사용해 클라이언트로 UI와 텍스트를 스트리밍하는 방법을 알아보겠습니다.
 
 
 <Callout type="warning" icon="">
 이 페이지의 예제 실습을 위해서는 아래 항목에 대한 사전 학습이 필요합니다.
-- [날씨 AI 챗봇 예제 소개(앱 생성)](/example/weather-ai-chatbot)
-- [기본적인 AI 채팅 서비스](/example/weather-ai-chatbot/chat-simple)
-- [채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/client-rendering)
-- [AI SDK RSC를 사용하여 서버에서 날씨 컴포넌트 렌더링하여 스트리밍](/example/weather-ai-chatbot/server-rendering)
+
+0. [날씨 AI 챗봇 예제 소개(앱 생성)](/example/weather-ai-chatbot)
+1. [기본적인 AI 채팅 서비스](/example/weather-ai-chatbot/chat-simple)
+2. [채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/client-rendering)
+3. [AI SDK RSC를 사용하여 서버에서 날씨 컴포넌트 렌더링하여 스트리밍](/example/weather-ai-chatbot/server-rendering)
+4. [OpenAI Assistants 기반으로 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/assistants-client-rendering)
 </Callout>
 
 
 ### 배울 내용
-이번 실습을 통해 배울 수 있는 내용은 다음과 같습니다.
-- 
 
+이번 실습을 통해 다음과 같은 내용을 학습할 수 있습니다.
+
+- **OpenAI Assistant와 Vercel AI SDK RSC 통합**: Vercel AI SDK RSC를 활용하여 OpenAI Assistant를 설정하고 사용하는 방법을 학습합니다.
+- **외부 서비스와의 연동**: Assistant의 Thread에서 OpenAI의 도구(함수 호출) 데이터를 받아 외부 서비스와 효과적으로 연동하는 방법을 배웁니다.
+- **스트리밍 처리**: `createStreamableUI()` 및 `createStreamableValue()` 함수와 `useActions` 훅을 사용하여 클라이언트로 UI와 데이터를 실시간 스트리밍하는 방법을 익힙니다.
+- **마크다운 텍스트 변환**: OpenAI 언어 모델에서 스트리밍된 마크다운 텍스트를 HTML 형식으로 변환하여 렌더링하는 기술을 습득합니다.
 
 ### 실행 화면
-지금까지 구현한 파일들을 저장한 후, `npm run dev` 명령어를 실행하고 브라우저에서 `http://localhost:3000/chat`을 입력하여 접속하면, 다음과 같은 실행 결과를 확인할 수 있습니다.
+
+실습한 파일을 저장한 후, 터미널에서 `npm run dev` 명령어를 실행합니다. 그런 다음 브라우저에서 `http://localhost:3000/assistants-rsc`에 접속하면, 구현된 기능을 확인할 수 있습니다. 이번 실습의 결과는 이전 실습에서 구현한 기능들과 유사하나 Assistant의 상태까지 표시됩니다.
 
 <div className="flex overflow-x-scroll gap-0 justify-left p-1 bg-gray-50 overflow-hidden">
-  <Image src="/static/images/example/chatbot/4_assistant_1.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
-  <Image src="/static/images/example/chatbot/4_assistant_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
-  <Image src="/static/images/example/chatbot/4_assistant_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/5_assistant_rsc_1.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 시작" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/5_assistant_rsc_2.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
+  <Image src="/static/images/example/chatbot/5_assistant_rsc_3.png" width="240" height="480" alt="레벨업 날씨 AI 챗봇 v2의 제주도 날씨 문의 완료" className="shrink-0" />
 </div>
 
----
 
-## 추가적인 환경 설정
+### 구현 전에 설정 해야 할 요소
+이전 [OpenAI Assistants 기반으로 클라이언트에서 날씨 컴포넌트 렌더링](/example/weather-ai-chatbot/assistants-client-rendering)에서 설명 드린것과 같이 아래 요소들을 미리 설정해야 합니다.
 
----
-
-## OpenAI에서 Assistant 설정
-
-
+1. [OpenAI에서 Assistant 설정](/example/weather-ai-chatbot/assistants-client-rendering#openai에서-assistant-설정)
+1. [추가 패키지 설치](/example/weather-ai-chatbot/assistants-client-rendering#추가-패키지-설치)
+1. 이번 실습 코드 구현을 위해 `app/` 폴더 내 `assistants-rsc/` 폴더를 생성합니다.
 
 ---
 
-## 서버 측 라우트 핸들러 구현
+## 서버 측 서버 액션 구현
+`app/assistants-rsc/` 폴더에서 `actions.tsx` 파일을 생성하고 아래와 같이 구현합니다.
 
+```tsx:app/assistants-rsc/actions.tsx showLineNumbers
+'use server';
+
+import { generateId } from 'ai';
+import { createAI, createStreamableUI, createStreamableValue } from 'ai/rsc';
+import { OpenAI } from 'openai';
+import { ReactNode } from 'react';
+import { Message } from './message';
+
+import { fetchWeatherData, WeatherParams } from '@/base/weather';
+import WeatherCard from '@/components/weather-card';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export interface ClientMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  status: ReactNode;
+  text: ReactNode;
+  gui: ReactNode;
+}
+
+let THREAD_ID = '';
+let RUN_ID = '';
+
+export async function submitMessage(question: string): Promise<ClientMessage> {
+  const status = createStreamableUI('thread.init');
+  const textStream = createStreamableValue('');
+  const textUIStream = createStreamableUI(
+    <Message textStream={textStream.value} />,
+  );
+  const gui = createStreamableUI();
+
+  const runQueue: { id: string; run: AsyncIterable<any> }[] = [];
+
+  (async () => {
+    if (THREAD_ID) {
+      await openai.beta.threads.messages.create(THREAD_ID, {
+        role: 'user',
+        content: question,
+      });
+
+      const run = await openai.beta.threads.runs.create(THREAD_ID, {
+        assistant_id: process.env.ASSISTANT_ID ??
+          (() => {
+            throw new Error('ASSISTANT_ID is not set');
+          })(),
+        stream: true,
+      });
+
+      runQueue.push({ id: generateId(), run });
+    } else {
+      const run = await openai.beta.threads.createAndRun({
+        assistant_id: process.env.ASSISTANT_ID ??
+          (() => {
+            throw new Error('ASSISTANT_ID is not set');
+          })(),
+        stream: true,
+        thread: {
+          messages: [{ role: 'user', content: question }],
+        },
+      });
+
+      runQueue.push({ id: generateId(), run });
+    }
+
+    while (runQueue.length > 0) {
+      const latestRun = runQueue.shift();
+
+      if (latestRun) {
+        for await (const delta of latestRun.run) {
+          const { data, event } = delta;
+
+          status.update(event);
+
+          if (event === 'thread.created') {
+            THREAD_ID = data.id;
+          } else if (event === 'thread.run.created') {
+            RUN_ID = data.id;
+          } else if (event === 'thread.message.delta') {
+            data.delta.content?.map((part: any) => {
+              if (part.type === 'text') {
+                if (part.text) {
+                  textStream.append(part.text.value);
+                }
+              }
+            });
+          } else if (event === 'thread.run.requires_action') {
+            if (data.required_action) {
+              if (data.required_action.type === 'submit_tool_outputs') {
+                const { tool_calls } = data.required_action.submit_tool_outputs;
+                const tool_outputs: { tool_call_id: any; output: string }[] = [];
+
+                for (const tool_call of tool_calls) {
+                  const { id: toolCallId, function: fn } = tool_call;
+                  const { name, arguments: args } = fn;
+
+                  if (name === 'get_current_weather') {
+                    const weatherParams: WeatherParams = JSON.parse(args);
+
+                    console.info(weatherParams)
+                    const weatherData = await fetchWeatherData(weatherParams);
+
+                    if (weatherData && weatherData.location && weatherData.nation) {
+                      gui.append(
+                        <div className="flex flex-row items-center gap-2">
+                          <div>
+                            Searching for weather: {weatherData.location} in {weatherData.nation}
+                          </div>
+                        </div>,
+                      );
+
+                      gui.append(
+                        <div className="flex flex-col gap-2">
+                          <WeatherCard data={JSON.stringify(weatherData)} />
+                        </div>
+                      );
+                    }
+
+                    tool_outputs.push({
+                      tool_call_id: toolCallId,
+                      output: JSON.stringify(weatherData),
+                    });
+                  }
+                }
+
+                if (data.status === 'requires_action') {
+                  const nextRun: any =
+                    await openai.beta.threads.runs.submitToolOutputs(
+                      THREAD_ID,
+                      RUN_ID,
+                      {
+                        tool_outputs,
+                        stream: true,
+                      },
+                    );
+
+                  runQueue.push({ id: generateId(), run: nextRun });
+                }
+              }
+            }
+          } else if (event === 'thread.run.failed') {
+            console.log(data);
+          }
+        }
+      }
+    }
+
+    status.done();
+    textUIStream.done();
+    gui.done();
+  })();
+
+  return {
+    id: generateId(),
+    status: status.value,
+    text: textUIStream.value,
+    gui: gui.value,
+    role: 'assistant',
+  };
+}
+
+export const AI = createAI({
+  actions: { submitMessage },
+});
+```
+이 소스 코드는 서버 측에서 OpenAI Assistant와 연동하여 사용자의 질문에 대해 실시간으로 응답을 생성하고, 이를 클라이언트로 스트리밍하는 기능을 구현합니다. 아래에서 기능별로 나누어 설명하겠습니다.
+
+### 1. 기본 설정 및 모듈 임포트
+
+```tsx
+'use server';
+
+import { generateId } from 'ai';
+import { createAI, createStreamableUI, createStreamableValue } from 'ai/rsc';
+import { OpenAI } from 'openai';
+import { ReactNode } from 'react';
+import { Message } from './message';
+
+import { fetchWeatherData, WeatherParams } from '@/base/weather';
+import WeatherCard from '@/components/weather-card';
+```
+
+- **`'use server'`**: 서버 측에서 실행되는 파일임을 명시합니다.
+- **`generateId`**: 고유한 ID를 생성하는 함수입니다.
+- **`createAI`, `createStreamableUI`, `createStreamableValue`**: Vercel AI SDK의 서버 측 컴포넌트 스트리밍 기능을 사용하기 위한 함수들입니다.
+- **`OpenAI`**: OpenAI API 클라이언트를 초기화하는 객체입니다.
+- **`fetchWeatherData`, `WeatherParams`**: 날씨 데이터를 가져오기 위한 함수와 관련 타입입니다.
+- **`WeatherCard`**: 날씨 정보를 UI로 렌더링하는 컴포넌트입니다.
+
+### 2. OpenAI 클라이언트 및 인터페이스 정의
+
+```tsx
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export interface ClientMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  status: ReactNode;
+  text: ReactNode;
+  gui: ReactNode;
+}
+```
+
+- **`openai`**: OpenAI 클라이언트를 초기화하여 API 키를 설정합니다.
+- **`ClientMessage`**: 클라이언트와 서버 간 메시지의 구조를 정의하는 인터페이스로, 메시지의 역할(`role`), 상태(`status`), 텍스트(`text`), GUI 요소(`gui`)를 포함합니다.
+
+### 3. 메시지 제출 및 Assistant 실행
+
+```tsx
+export async function submitMessage(question: string): Promise<ClientMessage> {
+  const status = createStreamableUI('thread.init');
+  const textStream = createStreamableValue('');
+  const textUIStream = createStreamableUI(
+    <Message textStream={textStream.value} />,
+  );
+  const gui = createStreamableUI();
+
+  const runQueue: { id: string; run: AsyncIterable<any> }[] = [];
+```
+
+- **`submitMessage`**: 사용자가 제출한 메시지를 처리하고 OpenAI Assistant로 전달하는 함수입니다.
+- **`createStreamableUI`, `createStreamableValue`**: 서버 측에서 UI와 텍스트를 스트리밍하기 위한 기능을 제공합니다.
+- **`runQueue`**: Assistant의 실행 결과를 관리하는 큐입니다.
+
+### 4. 스레드 및 실행 관리
+
+```tsx
+  (async () => {
+    if (THREAD_ID) {
+      await openai.beta.threads.messages.create(THREAD_ID, {
+        role: 'user',
+        content: question,
+      });
+
+      const run = await openai.beta.threads.runs.create(THREAD_ID, {
+        assistant_id: process.env.ASSISTANT_ID ??
+          (() => {
+            throw new Error('ASSISTANT_ID is not set');
+          })(),
+        stream: true,
+      });
+
+      runQueue.push({ id: generateId(), run });
+    } else {
+      const run = await openai.beta.threads.createAndRun({
+        assistant_id: process.env.ASSISTANT_ID ??
+          (() => {
+            throw new Error('ASSISTANT_ID is not set');
+          })(),
+        stream: true,
+        thread: {
+          messages: [{ role: 'user', content: question }],
+        },
+      });
+
+      runQueue.push({ id: generateId(), run });
+    }
+```
+
+- **스레드 관리**: 기존 스레드가 존재하면 해당 스레드에 메시지를 추가하고 실행하며, 존재하지 않으면 새로운 스레드를 생성하고 실행합니다.
+- **Assistant 실행**: OpenAI Assistant를 실행하고 그 결과를 `runQueue`에 추가합니다.
+
+### 5. 도구 호출 처리 및 스트리밍
+
+```tsx
+    while (runQueue.length > 0) {
+      const latestRun = runQueue.shift();
+
+      if (latestRun) {
+        for await (const delta of latestRun.run) {
+          const { data, event } = delta;
+
+          status.update(event);
+
+          if (event === 'thread.created') {
+            THREAD_ID = data.id;
+          } else if (event === 'thread.run.created') {
+            RUN_ID = data.id;
+          } else if (event === 'thread.message.delta') {
+            data.delta.content?.map((part: any) => {
+              if (part.type === 'text') {
+                if (part.text) {
+                  textStream.append(part.text.value);
+                }
+              }
+            });
+          } else if (event === 'thread.run.requires_action') {
+            if (data.required_action) {
+              if (data.required_action.type === 'submit_tool_outputs') {
+                const { tool_calls } = data.required_action.submit_tool_outputs;
+                const tool_outputs: { tool_call_id: any; output: string }[] = [];
+
+                for (const tool_call of tool_calls) {
+                  const { id: toolCallId, function: fn } = tool_call;
+                  const { name, arguments: args } = fn;
+
+                  if (name === 'get_current_weather') {
+                    const weatherParams: WeatherParams = JSON.parse(args);
+
+                    console.info(weatherParams)
+                    const weatherData = await fetchWeatherData(weatherParams);
+
+                    if (weatherData && weatherData.location && weatherData.nation) {
+                      gui.append(
+                        <div className="flex flex-row items-center gap-2">
+                          <div>
+                            Searching for weather: {weatherData.location} in {weatherData.nation}
+                          </div>
+                        </div>,
+                      );
+
+                      gui.append(
+                        <div className="flex flex-col gap-2">
+                          <WeatherCard data={JSON.stringify(weatherData)} />
+                        </div>
+                      );
+                    }
+
+                    tool_outputs.push({
+                      tool_call_id: toolCallId,
+                      output: JSON.stringify(weatherData),
+                    });
+                  }
+                }
+
+                if (data.status === 'requires_action') {
+                  const nextRun: any =
+                    await openai.beta.threads.runs.submitToolOutputs(
+                      THREAD_ID,
+                      RUN_ID,
+                      {
+                        tool_outputs,
+                        stream: true,
+                      },
+                    );
+
+                  runQueue.push({ id: generateId(), run: nextRun });
+                }
+              }
+            }
+          } else if (event === 'thread.run.failed') {
+            console.log(data);
+          }
+        }
+      }
+    }
+
+    status.done();
+    textUIStream.done();
+    gui.done();
+  })();
+```
+
+- **도구 호출 처리**: Assistant의 실행 중 특정 도구가 호출되면 이를 처리하여 외부 API(예: 날씨 데이터)를 호출하고, 결과를 클라이언트로 스트리밍합니다.
+- **스트리밍 관리**: 실시간으로 Assistant의 상태와 텍스트, GUI를 클라이언트로 스트리밍하여 동적인 사용자 경험을 제공합니다.
+
+### 6. 결과 반환 및 AI 생성
+
+```tsx
+  return {
+    id: generateId(),
+    status: status.value,
+    text: textUIStream.value,
+    gui: gui.value,
+    role: 'assistant',
+  };
+}
+
+export const AI = createAI({
+  actions: { submitMessage },
+});
+```
+
+- **결과 반환**: 최종적으로 클라이언트에 반환될 메시지 객체를 생성하여 반환합니다.
+- **AI 생성**: `createAI` 함수를 사용하여 `submitMessage` 액션을 포함한 AI 객체를 생성합니다.
+
+이 소스 코드는 사용자의 메시지를 받아 OpenAI Assistant와 상호작용하고, 실시간으로 처리된 결과를 클라이언트로 스트리밍하여 표시하는 기능을 제공합니다. 전체적으로 버셀 AI SDK의 스트리밍 기능과 OpenAI의 Assistant API를 효과적으로 활용한 예제입니다.
+
+---
+
+## 레이아웃 설정
+
+이전 [AI SDK RSC 예제](/example/weather-ai-chatbot/server-rendering#레이아웃-구현)에서 설명한 것처럼, 레이아웃 구현이 필요합니다. 아래와 같이 `layout.tsx` 파일을 생성하고 구현합니다.
+
+```tsx:app/assistants-rsc/layout.tsx showLineNumbers
+import { ReactNode } from 'react';
+import { AI } from './actions';
+
+export default function Layout({ children }: { children: ReactNode }) {
+  return <AI>{children}</AI>;
+}
+```
 
 ---
 
 ## 클라이언트 측 구현
 
+### 스트리밍 된 마크다운 텍스트를 HTML 형식으로 변환
+클라이언트 채팅 페이지에서 사용하기 위한 `Message` 컴포넌트를 `message.tsx` 파일을 생성하여 아래와 같이 구현합니다.
+
+```tsx:app/assistants-rsc/messsage.tsx showLineNumbers
+'use client';
+
+import { StreamableValue, useStreamableValue } from 'ai/rsc';
+import { useEffect, useState } from 'react';
+
+import { remark } from 'remark';
+import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
+
+export function Message({ textStream }: { textStream: StreamableValue }) {
+  const [text] = useStreamableValue(textStream);
+  const [htmlContent, setHtmlContent] = useState<string>('');
+
+  useEffect(() => {
+    if (text) {
+      remark()
+        .use(remarkGfm)
+        .use(html)
+        .process(text)
+        .then(processedText => {
+          setHtmlContent(processedText.toString());
+        })
+        .catch(error => {
+          console.error('Error processing markdown:', error);
+        });
+    }
+  }, [text]);
+
+  return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+}
+```
+이 소스 코드는 클라이언트 측에서 스트리밍된 마크다운 텍스트를 HTML 형식으로 변환하여 표시하는 `Message` 컴포넌트를 구현합니다. 아래에서 기능별로 나누어 설명하겠습니다.
+
+#### 1. 모듈 임포트 및 기본 설정
+
+```tsx
+'use client';
+
+import { StreamableValue, useStreamableValue } from 'ai/rsc';
+import { useEffect, useState } from 'react';
+
+import { remark } from 'remark';
+import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
+```
+
+- **`'use client'`**: 이 파일이 클라이언트 측에서 실행된다는 것을 명시합니다.
+- **`StreamableValue`, `useStreamableValue`**: Vercel AI SDK의 스트리밍 값을 관리하고 사용할 수 있는 훅과 타입입니다.
+- **`useEffect`, `useState`**: 리액트 훅으로, 사이드 이펙트를 관리하고 컴포넌트의 상태를 관리하는 데 사용됩니다.
+- **`remark`, `html`, `remarkGfm`**: 마크다운 텍스트를 HTML로 변환하기 위한 라이브러리입니다.
+
+#### 2. `Message` 컴포넌트 정의
+
+```tsx
+export function Message({ textStream }: { textStream: StreamableValue }) {
+  const [text] = useStreamableValue(textStream);
+  const [htmlContent, setHtmlContent] = useState<string>('');
+```
+
+- **`Message` 컴포넌트**: 이 컴포넌트는 스트리밍된 텍스트를 받아 HTML로 변환하여 표시합니다.
+- **`textStream`**: 스트리밍된 텍스트 데이터를 전달받는 prop으로, `StreamableValue` 타입입니다.
+- **`useStreamableValue`**: 스트리밍된 값을 구독하여 `text` 상태로 저장합니다.
+- **`htmlContent`**: 변환된 HTML 콘텐츠를 저장하기 위한 상태입니다.
+
+#### 3. 마크다운 텍스트를 HTML로 변환
+
+```tsx
+  useEffect(() => {
+    if (text) {
+      remark()
+        .use(remarkGfm)
+        .use(html)
+        .process(text)
+        .then(processedText => {
+          setHtmlContent(processedText.toString());
+        })
+        .catch(error => {
+          console.error('Error processing markdown:', error);
+        });
+    }
+  }, [text]);
+```
+
+- **`useEffect`**: `text`가 업데이트될 때마다 실행되어 마크다운 텍스트를 HTML로 변환합니다.
+- **`remark()`**: `remark` 라이브러리를 사용해 마크다운을 처리합니다.
+  - **`remarkGfm`**: GitHub Flavored Markdown(GFM)을 지원하기 위한 플러그인입니다.
+  - **`html`**: 마크다운을 HTML로 변환하는 플러그인입니다.
+- **`process(text)`**: 전달받은 마크다운 텍스트를 처리하고, 변환된 결과를 `htmlContent` 상태에 저장합니다.
+- **에러 처리**: 변환 과정에서 오류가 발생할 경우, 콘솔에 에러 메시지를 출력합니다.
+
+#### 4. 변환된 HTML 렌더링
+
+```tsx
+  return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+}
+```
+
+- **`dangerouslySetInnerHTML`**: 변환된 HTML 콘텐츠를 안전하게 렌더링하기 위한 속성입니다.
+- **`htmlContent`**: 변환된 HTML 콘텐츠가 이 속성을 통해 화면에 표시됩니다.
+
+### 채팅 페이지 구현
+마지막으로 `page.tsx` 파일을 생성해 사용자가 채팅하는 페이지를 구현합니다.
+이 코드는 사용자가 채팅을 통해 메시지를 입력하고 서버에서 처리된 응답을 클라이언트에 렌더링하는 기능을 제공합니다. 상태 관리와 서버 액션 호출을 통해 실시간으로 채팅 메시지를 주고받고, 입력 필드의 포커스를 관리하여 사용자 경험을 향상시킵니다.
+
+
+```tsx:app/assistants-rsc/page.tsx showLineNumbers
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { ClientMessage } from './actions';
+import { useActions } from 'ai/rsc';
+import { generateId } from 'ai';
+
+import SubmitButton from '@/components/submit-button';
+
+export default function Home() {
+  const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [messages, setMessages] = useState<ClientMessage[]>([]);
+  const { submitMessage } = useActions();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
+
+  const handleSubmission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = input.trim();
+    if (!value) return;
+
+    setIsLoading(true);
+    setMessages(currentMessages => [
+      ...currentMessages,
+      {
+        id: generateId(),
+        status: 'user.message.created',
+        text: input,
+        gui: null,
+        role: 'user',
+      },
+    ]);
+
+    try {
+      const response = await submitMessage(value);
+      setMessages(currentMessages => [...currentMessages, response]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    setInput('');
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div>
+            {messages.map(message => (
+              <div key={message.id} className="flex flex-col gap-1 p-2 border-b">
+                <div className="flex flex-row justify-between">
+                  {message.role && <strong>{`${message.role}: `}</strong>}
+                  <div className="text-sm text-zinc-500">{message.status}</div>
+                </div>
+                <div className="flex flex-col gap-2">{message.gui}</div>
+                <div>{message.text}</div>
+              </div>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmission} className="flex w-full mt-4">
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={event => setInput(event.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              disabled={isLoading}
+              placeholder="현재 제주도 날씨 어때?"
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={() => setIsLoading(false)} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+이 소스 코드는 클라이언트 측에서 사용자가 채팅할 수 있는 페이지를 구현합니다. 사용자는 메시지를 입력하고 제출하면, 서버에서 처리된 응답이 화면에 표시됩니다. 아래에서 기능별로 나누어 설명하겠습니다.
+
+#### 1. 모듈 임포트 및 기본 설정
+
+```tsx
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { ClientMessage } from './actions';
+import { useActions } from 'ai/rsc';
+import { generateId } from 'ai';
+
+import SubmitButton from '@/components/submit-button';
+```
+
+- **`'use client'`**: 이 파일이 클라이언트 측에서 실행된다는 것을 명시합니다.
+- **`useState`, `useEffect`, `useRef`**: 리액트의 상태 관리와 사이드 이펙트 관리를 위한 훅입니다.
+- **`ClientMessage`**: 메시지의 구조를 정의하는 타입입니다.
+- **`useActions`**: Vercel AI SDK에서 제공하는 훅으로, 서버 액션을 호출하는 기능을 제공합니다.
+- **`generateId`**: 고유한 ID를 생성하는 함수입니다.
+- **`SubmitButton`**: 메시지 제출 버튼을 렌더링하는 컴포넌트입니다.
+
+#### 2. 상태 관리 및 참조 설정
+
+```tsx
+export default function Home() {
+  const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [messages, setMessages] = useState<ClientMessage[]>([]);
+  const { submitMessage } = useActions();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+```
+
+- **`input`**: 사용자가 입력한 메시지를 저장하는 상태입니다.
+- **`inputRef`**: 입력 필드를 참조하기 위한 Ref입니다.
+- **`messages`**: 채팅 기록을 저장하는 상태입니다.
+- **`submitMessage`**: 서버에 메시지를 제출하기 위한 액션입니다.
+- **`isLoading`**: 메시지를 처리 중인지 여부를 관리하는 상태입니다.
+
+#### 3. 입력 필드 포커스 관리
+
+```tsx
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
+```
+
+- **`useEffect`**: `isLoading` 상태가 `false`일 때 입력 필드에 자동으로 포커스가 가도록 설정합니다.
+
+#### 4. 메시지 제출 처리
+
+```tsx
+  const handleSubmission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = input.trim();
+    if (!value) return;
+
+    setIsLoading(true);
+    setMessages(currentMessages => [
+      ...currentMessages,
+      {
+        id: generateId(),
+        status: 'user.message.created',
+        text: input,
+        gui: null,
+        role: 'user',
+      },
+    ]);
+
+    try {
+      const response = await submitMessage(value);
+      setMessages(currentMessages => [...currentMessages, response]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    setInput('');
+  };
+```
+
+- **`handleSubmission`**: 사용자가 메시지를 제출할 때 호출됩니다.
+  - 메시지를 빈값 확인 후, `isLoading`을 `true`로 설정해 제출 상태를 관리합니다.
+  - 새 메시지를 `messages` 상태에 추가합니다.
+  - 서버에 메시지를 제출하고, 서버에서 반환된 응답을 `messages` 상태에 추가합니다.
+  - 메시지 제출이 완료되면 `isLoading`을 `false`로 설정하고 입력 필드를 초기화합니다.
+
+#### 5. 메시지 렌더링
+
+```tsx
+  return (
+    <div className="flex flex-col items-center justify-between w-full h-screen">
+      <div className="w-full h-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <div className="flex flex-col justify-between h-full">
+          <div>
+            {messages.map(message => (
+              <div key={message.id} className="flex flex-col gap-1 p-2 border-b">
+                <div className="flex flex-row justify-between">
+                  {message.role && <strong>{`${message.role}: `}</strong>}
+                  <div className="text-sm text-zinc-500">{message.status}</div>
+                </div>
+                <div className="flex flex-col gap-2">{message.gui}</div>
+                <div>{message.text}</div>
+              </div>
+            ))}
+          </div>
+```
+
+- **`messages.map()`**: `messages` 배열을 순회하며 각 메시지를 UI에 렌더링합니다.
+  - 각 메시지의 역할(`role`), 상태(`status`), 텍스트(`text`), GUI 요소(`gui`)를 표시합니다.
+
+#### 6. 입력 필드 및 제출 버튼
+
+```tsx
+          <form onSubmit={handleSubmission} className="flex w-full mt-4">
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={event => setInput(event.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
+              disabled={isLoading}
+              placeholder="현재 제주도 날씨 어때?"
+            />
+            <SubmitButton isLoading={isLoading} isDisabled={!input.trim()} onStop={() => setIsLoading(false)} />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+- **입력 필드**: 사용자가 메시지를 입력하는 텍스트 필드입니다.
+  - `ref={inputRef}`: 입력 필드를 참조하여 포커스를 제어합니다.
+  - `disabled={isLoading}`: 메시지가 처리 중일 때 입력 필드를 비활성화합니다.
+  - `placeholder="현재 제주도 날씨 어때?"`: 입력 필드에 힌트를 제공합니다.
+- **제출 버튼**: 메시지를 제출하는 버튼입니다.
+  - `isLoading` 상태에 따라 버튼이 활성화/비활성화됩니다.
 
 ---
 
-## 다음 과정 안내
+## 마무리
+
+이번 학습에서는 Vercel의 AI SDK를 사용하여 AI 기반 채팅 서비스를 구축하는 방법을 단계별로 다루었습니다. 각 과정에서는 다양한 기능과 기술을 사용하여, AI 챗봇의 기본적인 구현부터 실시간 날씨 정보를 연동하고 스트리밍하는 고급 기능까지 학습했습니다. 아래는 각 단계에서 다룬 주요 내용입니다:
+
+1. **기본적인 AI 채팅 서비스 만들기: `AI SDK UI` 기반**  
+   - AI SDK를 사용하여 기본적인 AI 채팅 서비스를 구축하는 방법을 학습했습니다. UI 컴포넌트를 사용하여 사용자와의 상호작용을 처리하고, OpenAI 모델을 활용해 응답을 생성하는 과정을 배웠습니다.
+
+2. **채팅 서비스에 실시간 날씨 연동: 클라이언트에서 날씨 컴포넌트 렌더링**  
+   - 실시간 날씨 정보를 OpenAI 모델과 연동하여, 클라이언트 측에서 날씨 컴포넌트를 렌더링하는 방법을 다루었습니다. 외부 API를 활용해 데이터를 가져오고, 이를 UI에 반영하는 과정을 학습했습니다.
+
+3. **`AI SDK RSC`를 사용하여 서버에서 날씨 컴포넌트 렌더링하여 스트리밍**  
+   - 서버 측에서 날씨 정보를 처리하고, 이를 클라이언트로 스트리밍하는 방법을 배웠습니다. `AI SDK RSC`를 활용하여 효율적인 데이터 처리와 스트리밍을 구현하는 방법을 학습했습니다.
+
+4. **OpenAI Assistants 기반으로 클라이언트에서 날씨 컴포넌트 렌더링**  
+   - OpenAI Assistants API를 사용하여 클라이언트에서 실시간 데이터를 렌더링하는 방법을 다루었습니다. Assistant와의 통합을 통해 AI 기반의 고도화된 기능을 구현하는 방법을 배웠습니다.
+
+5. **서버에서 날씨 컴포넌트 렌더링하여 스트리밍하는 Assistants**  
+   - 서버 측에서 OpenAI Assistants API를 활용하여 실시간 데이터를 처리하고, 이를 스트리밍하는 방법을 학습했습니다. 고급 기술을 사용하여 사용자에게 실시간 정보를 제공하는 과정을 다루었습니다.
+
+### AI 기술의 발전과 지속적인 학습의 중요성
+
+현재 AI 분야는 빠르게 발전하고 있으며, 버셀의 AI SDK도 지속적으로 개발되고 업데이트되고 있습니다. 새로운 기능과 개선 사항에 빠르게 대응하기 위해 지속적인 학습과 실험이 필요합니다. 이러한 변화에 맞춰 자신의 기술을 업데이트하고, 새로운 도구와 기능을 활용하는 것이 중요합니다.
+
+이번 학습이 많은 도움이 되었기를 바라며, 궁금하거나 논의하고 싶은 내용이 있다면 언제든지 아래의 giscus 게시판을 이용해 주시기 바랍니다. AI 기술에 대한 이해와 활용 능력을 지속적으로 향상시키는 데 도움이 되었기를 바랍니다.
