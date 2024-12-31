@@ -190,3 +190,34 @@ summary: 웹앱의 작동 원리부터 SSR 방식을 적용한 현대적 접근�
   3. [버셀 AI SDK 아키텍처와 구현 방식: Core + UI와 Core + RSC](/blog/ai/architecture-for-vercel-ai-sdk)
 
 </Callout>
+
+### 「11.3 버셀 Postgres 데이터베이스 생성 및 환경 변수 설정」 Neon Postgres 데이터베이스 생성으로 변환
+> 기존 버셀 Postgres가 Neon Postgres로 전환되었습니다.
+
+책에서 다룬 `버셀 Postgres` 관련 챕터나 코드는 **Neon Postgres를 위한 설정**으로 간단히 대체 가능하며 **접속 정보 변경** 이외의 구조나 문법은 거의 동일합니다.
+오히려 Neon 측 대시보드와 관리 기능이 더 세분화·전문화되었으므로 **서버리스 Postgres** 환경을 좀 더 편리하고 안정적으로 사용할 수 있게 되었습니다.
+
+1. **인프라 제공 주체 변경**  
+   - 예전엔 Vercel이 직접 Postgres를 관리했지만, 이제는 **Neon**이라는 전문 서비스가 Postgres 인프라를 호스팅합니다.  
+   - 기존에 버셀 Postgres를 사용하던 분들은 **자동 전환**되므로 큰 코드 수정 없이 새 환경을 쓸 수 있습니다.
+
+2. **데이터베이스 생성 및 관리**  
+   - Vercel 대시보드에서 **Neon Postgres**를 생성한 뒤, 더 자세한 DB 관리는 **Neon Dashboard**에서 이루어집니다.  
+   - ‘버셀 Postgres 데이터베이스 생성’이라는 용어가 책에 나와 있다면, 지금은 **Neon Postgres 생성**으로 바뀌었다고 보면 됩니다.
+
+3. **환경 변수 설정**  
+   - 책에서 안내하던 `DATABASE_URL` 기반 설정은 그대로 유효합니다.  
+   - 다만 연결 정보가 Vercel Postgres가 아닌 **Neon Postgres** 주소로 바뀌며, 책의 코드 예시와 마찬가지로 `.env.local` 혹은 Vercel 대시보드의 Environment Variables에 저장해 사용하면 됩니다.
+
+4. **쿼리 실행 및 테이블 관리**  
+   - 책에서 Vercel 대시보드에서 SQL 쿼리를 실행하거나 테이블을 만드는 과정을 설명했다면, 이제는 **Neon Dashboard**(또는 제공되는 SQL 에디터)를 통해 진행합니다.  
+   - 사용 방법은 유사하지만, DB 관리 인터페이스가 **Neon** 쪽으로 옮겨갔다고 이해하면 됩니다.
+
+5. **트랜잭션 및 서버리스 특성**  
+   - 서버리스 Postgres라는 점은 동일하지만, Neon은 **자동 확장**, **Branching** 등 더 발전된 기능을 제공합니다.  
+   - 책의 예제 코드를 그대로 사용하되, DB 연결 부분만 새로 생성된 Neon Postgres 정보로 교체하면 됩니다.
+
+<Callout type="warning" icon="Neon Postgres 상세 설명">
+- 책 새로운 본문: [Neon Postgres 「11.3 버셀 Postgres 데이터베이스 생성 및 환경 변수 설정」](/levelup/book/neon-postgres)
+- 관련 블로그: [Neon Postgres: 달라진 Vercel 환경에서의 완성도 높은 업그레이드](/blog/web-dev/vercel-neon-postgres)
+</Callout>
