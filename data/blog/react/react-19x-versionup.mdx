@@ -1,0 +1,272 @@
+---
+title: "React 18 → 19: 구조적 대변동 없이 완성도를 높인 새로운 도약"
+summary: React가 18에서 19로 넘어가며 큰 구조 변화 없이 서버 액션(Server Actions), 자동 메모이제이션, 에러 복구 등을 개선해 개발 생산성과 사용자 경험을 한층 끌어올렸습니다.
+tags: ['React19', 'WebDev', 'Performance']
+images: ['https://i.ibb.co/LzxB5tK/image.png']
+date: "2024-12-31 10:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+아직 **React 18** 환경에서 **Next.js**를 사용 중이신가요?
+이미 **서버 컴포넌트**(Server Components)와 **서버 액션**(Server Actions) 등을 활용해 보셨을 텐데, **React 19**에서는 이 기능이 좀 더 **공식적이고 안정된 형태**로 자리 잡았습니다.
+
+결론부터 말씀드리면, **Next.js 개발자**라면 기존 방식에서 **대규모 변경** 없이도 **React 19**로 자연스럽게 업그레이드가 가능하며, 오히려 **더 깔끔해진 표준 API**와 **자동 메모이제이션**(React Forget)의 이점을 쉽게 누릴 수 있습니다.
+
+<div class="p-4 bg-gray-100 rounded-lg">
+    <strong class="block">React 19에서 소개된 `React Compiler`는 React 애플리케이션의 성능을 자동으로 최적화하는 혁신적인 도구입니다. 이 컴파일러는 개발자들이 수동으로 최적화를 구현할 필요 없이 코드를 자동으로 분석하고 최적화합니다.</strong> 
+</div>
+
+---
+
+## 1. Next.js 개발자 입장에서 달라지는 점
+
+1. **서버 컴포넌트(Server Components) 안정화**  
+   - Next.js 13.x~14.x 단계에서 이미 **app/ 디렉터리**와 함께 서버 컴포넌트를 사용해 왔다면 **React 19**에 오면서 해당 기능이 **React 공식 API**로 좀 더 안정화되었습니다.  
+   - 구조 자체는 크게 바뀌지 않으니, **기존 코드를 유지하면서** 자동화된 최적화나 에러 처리(에러 바운더리 개선) 등 **추가 이점**을 얻을 수 있습니다.  
+
+2. **서버 액션(Server Actions) 표준화**  
+   - Next.js 13~15 버전에서 일부 *실험적*으로 제공되던 서버 액션이, **React 19**에서는 `use server` 디렉티브 등 **공식 표준**에 맞춰 자리를 잡았습니다.  
+   - 이미 Next.js에서 “서버 액션”을 사용하고 있었다면, 기본적인 로직 변경 없이 **React 19 표준**에 발맞춰 더욱 견고한 형태로 유지·개선할 수 있습니다.  
+   - 즉, **코드 자체를 전면 수정**할 필요는 없으며 React 19 버전을 도입함으로써 **호환성과 안정성**이 올라간다는 점이 핵심입니다.
+
+3. **자동 메모화(React Forget)와 성능 최적화**  
+   - Next.js를 사용하며 `useMemo`, `useCallback` 등을 활용해 오셨다면, **React 19** 컴파일러가 **자동 메모화**를 지원함에 따라, “어디에 메모를 걸어야 하나” 하는 고민이 상당히 줄어듭니다.  
+   - 아직 베타 단계로 일부 환경(Instagram 프로덕션 등)에서 먼저 테스트 중이지만, **차후 정식화**되면 Next.js 앱 전체에서 **추가 리렌더**를 자동으로 최소화해, 개발자 입장에서 성능 최적화 부담이 줄어듭니다.
+
+<ToggleContent title="React Compiler의 주요 특징">
+**자동 메모이제이션**
+
+React Compiler는 코드를 자동으로 메모이제이션합니다. 이는 기존에 개발자들이 `useMemo`, `useCallback`, `React.memo` 등을 사용하여 수동으로 구현하던 최적화를 자동화합니다. 컴파일러가 JavaScript와 React의 규칙을 이해하고 컴포넌트와 훅 내의 값들을 자동으로 메모이제이션합니다.
+
+**성능 향상**
+
+React Compiler를 도입한 Instagram과 Quest Store의 사례에서 다음과 같은 성능 향상이 있다고 합니다.
+
+- 상호작용 속도 2.5배 향상
+- 초기 로딩 시간 12% 개선
+- 메모리 사용량 증가 없음
+
+**개발자 경험 개선**
+
+개발자들은 성능 최적화에 신경 쓰지 않고 비즈니스 로직 작성에 집중할 수 있게 되었습니다. 컴파일러가 자동으로 최적화를 처리하므로 개발자들은 더 깨끗하고 유지보수가 쉬운 코드를 작성할 수 있습니다.
+</ToggleContent>
+
+<ToggleContent title="React Compiler 사용 방법">
+Next.js에서 React Compiler를 사용하려면 다음 단계를 따르면 됩니다.
+
+**설치 및 설정**
+
+1. Next.js 15 이상 버전으로 업그레이드합니다.
+
+2. React Compiler 플러그인을 설치합니다:
+
+```bash
+npm install babel-plugin-react-compiler
+```
+
+3. `next.config.js` 파일에 실험적 옵션을 추가합니다.
+
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    reactCompiler: true,
+  },
+};
+
+module.exports = nextConfig;
+```
+
+**사용 모드**
+
+React Compiler는 두 가지 모드로 사용할 수 있습니다.
+
+1. **전체 활성화 모드**: 위의 설정만으로 프로젝트 전체에 React Compiler가 적용됩니다.
+2. **옵트인 모드**: 특정 컴포넌트나 훅에만 선택적으로 적용할 수 있습니다. 이를 위해 `next.config.js`를 다음과 같이 수정합니다:
+
+```javascript
+const nextConfig = {
+  experimental: {
+    reactCompiler: {
+      compilationMode: 'annotation',
+    },
+  },
+};
+```
+
+옵트인 모드에서는 최적화하고자 하는 컴포넌트나 훅에 `"use memo"` 지시어를 추가합니다.
+
+```javascript
+export default function Page() {
+  "use memo";
+  // 컴포넌트 코드
+}
+```
+
+**주의사항**
+
+1. React Compiler는 아직 실험적 기능이므로 프로덕션 환경에서는 주의해서 사용해야 합니다.
+2. 현재는 Babel 플러그인을 통해서만 사용 가능하며, 이로 인해 빌드 시간이 늘어날 수 있습니다.
+3. Next.js의 기본 Rust 기반 컴파일러와 함께 사용할 수 없으므로, 빌드 성능에 영향을 줄 수 있습니다.
+
+React Compiler를 사용하면 `useMemo`와 `useCallback` 같은 수동 최적화 작업을 줄일 수 있어 개발 생산성과 애플리케이션 성능을 향상시킬 수 있습니다. 하지만 실험적 기능이므로 프로젝트의 요구사항과 안정성을 고려하여 도입을 결정해야 합니다.
+</ToggleContent>
+
+
+4. **Ref & Context 개선**  
+   - `forwardRef` 없이 **`ref`를 바로 프롭으로** 넘길 수 있는 기능, `<Context.Provider>` 대신 `<Context>`를 직접 사용하는 방식 등이 **React 19**에서 본격화되었습니다.  
+   - Next.js 프로젝트에서도 이러한 **신규 문법**을 점차 도입하면 **컴포넌트 구조**가 단순해지고 **코드 가독성**이 올라갈 수 있습니다.  
+   - 다만 이 역시 **단계적 적용**이 가능하므로, 한 번에 모든 코드를 바꾸지 않아도 됩니다.
+
+<ToggleContent title="Ref & Context 예제 코드">
+**React 19**에서 개선된 **Ref** 및 **Context** 사용 방식을 간단한 예제 코드로 설명하겠습니다. 기존 **`forwardRef`** 없이도 `ref`를 직접 넘길 수 있고 **`<Context>`** 자체를 **Provider**처럼 사용합니다.
+
+**1) Ref as a prop**
+
+**기존 방식 (React 18 이하)**
+- `forwardRef`를 사용하여 자식 컴포넌트에서 `ref`를 전달받아야 했습니다.
+
+```tsx {4}
+import React, { useRef, forwardRef } from 'react';
+
+// 자식 컴포넌트
+const TextInput = forwardRef((props, ref) => {
+  return <input ref={ref} placeholder="Type here..." />;
+});
+
+// 부모 컴포넌트
+export default function Parent() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
+
+  return (
+    <div>
+      <TextInput ref={inputRef} />
+      <button onClick={focusInput}>Focus Input</button>
+    </div>
+  );
+}
+```
+
+**개선된 방식 (React 19)**
+- `forwardRef` 없이도 **`ref`를 직접 프롭**으로 받아서 사용할 수 있게 됩니다.
+
+```tsx {3}
+import React, { useRef } from 'react';
+
+function TextInput({ ref, ...props }) {
+  return <input ref={ref} placeholder="Type here..." {...props} />;
+}
+
+export default function Parent() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
+
+  return (
+    <div>
+      {/* forwardRef 없이 ref 바로 전달 */}
+      <TextInput ref={inputRef} />
+      <button onClick={focusInput}>Focus Input</button>
+    </div>
+  );
+}
+```
+
+> **핵심**: 이제 별도의 `forwardRef` 래퍼를 만들지 않고도 `ref`를 넘겨받아 사용할 수 있으므로, **코드가 훨씬 단순**해집니다.
+
+**2) Context as a provider**
+
+**기존 방식 (React 18 이하)**
+- `<Context.Provider>`로 감싸야 했습니다.
+
+```tsx {7, 10, 16, 18}
+import React, { createContext } from 'react';
+
+const ThemeContext = createContext('light');
+
+export default function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      {/* 자식 컴포넌트들 */}
+      <ChildComponent />
+    </ThemeContext.Provider>
+  );
+}
+
+function ChildComponent() {
+  return (
+    <ThemeContext.Consumer>
+      {(value) => <div>Current theme: {value}</div>}
+    </ThemeContext.Consumer>
+  );
+}
+```
+
+**개선된 방식 (React 19)**
+- **`<Context>`** 자체를 **Provider**처럼 사용할 수 있어, **한층 간결**해집니다.
+
+```tsx {8-11, 16, 17}
+import React, { createContext, useContext } from 'react';
+
+// Context 생성
+const ThemeContext = createContext('light');
+
+export default function App() {
+  return (
+    <ThemeContext value="dark">
+      {/* Provider 없이 <Context>에서 value를 직접 지정 */}
+      <ChildComponent />
+    </ThemeContext>
+  );
+}
+
+function ChildComponent() {
+  const theme = useContext(ThemeContext);
+  return <div>Current theme: {theme}</div>;
+}
+```
+
+> **핵심**: `<Context.Provider>`를 쓰던 것을 `<Context>` 태그에 **value**만 바로 지정하면 되므로, **코드 보일러플레이트가 크게 줄어듭니다.**  
+
+**정리**
+- **`ref`를 바로 프롭으로 전달**할 수 있게 되면서, `forwardRef`를 매번 감싸는 번거로움을 줄일 수 있습니다.  
+- **`<Context>` 자체**가 Provider처럼 동작하기 때문에, 이전보다 **Context 생성·사용**이 직관적입니다.
+- 이러한 기능들은 **단계적으로** 도입해도 무방하며, 기존 코드와 큰 충돌 없이 점진적으로 **React 19** 스타일을 적용해 나갈 수 있습니다.
+</ToggleContent>
+
+## 2. 업그레이드 시 고려해야 할 점
+
+1. **대규모 리팩터링은 불필요**  
+   - Next.js 개발자가 이미 **서버 컴포넌트**와 **서버 액션**을 사용 중이었다면, React 19로 가더라도 **큰 코드 변경** 없이 그대로 활용 가능합니다.  
+   - 오히려 **React 19**는 기존 실험 기능을 **정식 표준**으로 삼아 **호환성**과 **안정성**을 높였으므로, “**기존 코드를 깨지 않고** 더 나은 기능을 누릴 수 있는 기회”로 보면 됩니다.
+
+2. **프로덕션 환경 테스트**  
+   - 자동 메모이제이션(`React Forget`)이나 서드파티 라이브러리 호환성 등은 아직 **베타 or 점진적 지원**인 경우가 있습니다.  
+   - 프로덕션에서 사용하기 전, 스테이징 환경에서 **충분한 테스트**를 거치고, Next.js 15 버전과 함께 테스트해 보시길 권장합니다.
+
+3. **Next.js 버전 확인**  
+   - **Next.js 15**와 **React 19**는 서로를 **공식적으로 지원**하는 구조이므로 함께 업그레이드하면 더 매끄러운 결과를 얻을 수 있습니다.  
+   - 만약 아직 Next.js 13~14대를 사용 중이라면 React 19를 도입하기 전이나 후에 **Next.js 15**로 함께 올리는 것이 가장 이상적입니다.
+
+4. **서버 액션 보안 & 설계**  
+   - “서버 액션” 로직을 이미 사용 중이셨다면, React 19로 넘어가면서 `use server` 디렉티브 같은 **표준 형식**에 맞춰 코드 가독성을 높이는 정도만 고려하시면 됩니다.  
+   - 보안 측면(예: 인증, 권한 체크) 역시 기존 방식대로 **서버 액션 내부**에서 처리하면 되므로 추가 수정이 필요한 부분은 거의 없습니다.
+
+## 3. 마무리 & 한줄 요약
+
+- Next.js 개발자 입장에서 **React 19**로 업그레이드는, 이미 사용하던 **서버 컴포넌트**와 **서버 액션**을 **더욱 안정적**인 표준 API로 활용하게 된다는 뜻입니다.  
+- 기존 코드를 대규모로 변경할 필요 없이, **React 19 표준화**와 **자동 메모화** 등 새 기능을 **점진적으로 도입**하면 성능과 생산성을 동시에 잡을 수 있습니다.  
+- 최종적으로는 **“Next.js 15 + React 19”** 조합을 통해 **더 깔끔해진 서브·클라이언트 경계**, **자동 최적화**, **개발 편의성**을 모두 누릴 수 있습니다.
+
+<Callout type="warning" icon="">
+React 19는 Next.js와의 궁합을 고려해 **서버 액션**과 **서버 컴포넌트**를 **공식**적으로 다듬은 릴리스입니다. 즉, 이미 서버 측 로직을 잘 활용 중이던 Next.js 개발자라면 **더 강력해진 표준**으로 **코드 수정 부담 없이** 업그레이드할 수 있다는 점이 가장 큰 이점입니다.  
+</Callout>
+
