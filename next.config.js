@@ -74,6 +74,12 @@ module.exports = () => {
           port: '',
           pathname: '/**',
         },
+        {
+          protocol: 'https',
+          hostname: 'i.ibb.co', // 추가
+          port: '',
+          pathname: '/**',
+        },
       ],
     },
     experimental: {
