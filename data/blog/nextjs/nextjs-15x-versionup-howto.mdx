@@ -1,0 +1,180 @@
+---
+title: "React와 Next.js 업그레이드 방법: React 19 호환성 확인 및 의존성 충돌 해결 가이드"
+summary: React 19 업그레이드 시 발생할 수 있는 의존성 충돌을 해결하고, Next.js 15.1의 새로운 기능과 호환성을 유지하는 방법을 알아봅니다.
+tags: ['Nextjs', 'React', 'VersionUp']
+images: ['https://i.ibb.co/HhFtKMh/image.png']
+date: "2025-01-06 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+React와 Next.js를 최신 버전으로 업그레이드하려면 프로젝트에서 사용하는 의존성 라이브러리들이 새로운 React 버전을 지원하는지 확인해야 합니다. 이 글에서는 React 19로 업그레이드 시 발생할 수 있는 의존성 충돌을 확인하고 해결하는 방법을 자세히 알아보겠습니다.
+
+## 1. 현재 설치된 버전 확인
+
+먼저, 프로젝트에서 사용 중인 React, React-DOM, Next.js의 현재 버전을 확인합니다. 이를 통해 어떤 버전으로 업그레이드해야 하는지 명확히 할 수 있습니다.
+
+```bash
+npm list react react-dom next
+```
+
+**출력 예시:**
+```bash
+project-name@1.0.0 /path/to/project
+├─┬ @headlessui/react@2.2.0
+│ └── react@18.3.1 deduped
+├─┬ @tremor/react@3.18.6
+│ └── react@18.3.1 deduped
+├─┬ next@15.1.3
+│ └── react@18.3.1 deduped
+└── react@18.3.1
+```
+
+위와 같은 출력에서 **React**와 **React-DOM** 버전이 `18.3.1`로 고정되어 있음을 확인할 수 있습니다. 
+
+
+## 2. 최신 버전 확인
+
+현재 React와 Next.js의 최신 버전을 확인하려면 아래 명령어를 실행하세요:
+
+```bash
+npm info react version
+npm info next version
+```
+
+**출력 예시:**
+```bash
+19.0.0
+15.1.3
+```
+
+이 출력은 React의 최신 버전이 `19.0.0`, Next.js의 최신 버전이 `15.1.3`임을 나타냅니다.
+
+
+## 3. 업그레이드 시 충돌 확인
+
+### React 19 업그레이드 시 발생할 수 있는 문제 사례: 의존성 충돌
+
+React 19로 업그레이드하는 과정에서 의존성 라이브러리와의 충돌은 흔히 발생하는 문제 중 하나입니다. 다음은 실제 발생할 수 있는 에러 메시지와 이를 해결하는 방법에 대한 사례입니다.
+
+
+<Callout type="warning" icon="">
+**문제 사례: 의존성 충돌**
+
+React 19로 업그레이드하려는 상황에서 다음과 같은 오류가 발생할 수 있습니다.
+
+```bash
+npm install next@latest
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE could not resolve
+npm ERR! 
+npm ERR! While resolving: @tremor/react@3.18.6
+npm ERR! Found: react@19.0.0
+npm ERR! node_modules/react
+npm ERR!   peer react@">=16.8.0" from @floating-ui/react@0.26.28
+npm ERR!   node_modules/@floating-ui/react
+npm ERR!     @floating-ui/react@"^0.26.16" from @headlessui/react@2.2.0
+npm ERR!     node_modules/@headlessui/react
+npm ERR!       @headlessui/react@"2.2.0" from @tremor/react@3.18.6
+npm ERR!       node_modules/@tremor/react
+npm ERR!         @tremor/react@"^3.18.6" from the root project
+npm ERR! 
+npm ERR! Could not resolve dependency:
+npm ERR! peer react@"^18.0.0" from @tremor/react@3.18.6
+npm ERR! node_modules/@tremor/react
+npm ERR!   @tremor/react@"^3.18.6" from the root project
+```
+
+**문제 원인**
+위 오류는 `@tremor/react@3.18.6` 라이브러리가 **React 18**만 지원하며, React 19와의 호환성을 보장하지 않기 때문에 발생합니다.
+
+- `peerDependencies`로 정의된 React 버전 충돌:
+  - `@tremor/react`는 `react@"^18.0.0"`을 요구합니다.
+  - 하지만 프로젝트는 `react@19.0.0`을 사용하려고 하면서 충돌이 발생합니다.
+</Callout>
+
+### 명령어: 의존성 트리 확인
+`npm ls react` 명령어를 실행하여 프로젝트에서 React를 사용하는 라이브러리 목록과 해당 라이브러리가 요구하는 React 버전을 확인합니다.
+
+```bash
+npm ls react
+```
+<Callout type="warning" icon="">
+**출력 예시:**
+```bash
+project-name@1.0.0 /path/to/project
+├─┬ @headlessui/react@2.2.0
+│ └── react@18.3.1 deduped
+├─┬ @tremor/react@3.18.6
+│ └── react@18.3.1 deduped
+├─┬ next@15.1.3
+│ └── react@18.3.1 deduped
+└── react@18.3.1
+```
+
+### 출력 분석
+- `deduped`: 동일한 버전의 React가 여러 라이브러리에서 공유되고 있음을 나타냅니다.
+- `@tremor/react@3.18.6`: 이 라이브러리는 React 18만 지원하며, React 19로 업그레이드하면 의존성 충돌이 발생할 수 있습니다.
+- `@headlessui/react@2.2.0`: 마찬가지로 React 18만 지원합니다.
+</Callout>
+
+## 4. React 19 업그레이드 전략
+
+### 옵션 1: React 18 유지
+모든 의존성이 React 19를 지원하지 않는다면 React 18을 유지하는 것이 가장 안전한 선택입니다.
+
+#### 명령어: React 18 설치
+```bash
+npm install react@18 react-dom@18
+npm install next@latest
+```
+
+### 옵션 2: React 19 업그레이드 및 호환성 확인
+React 19를 업그레이드하려면 호환되지 않는 라이브러리를 확인하고 대응해야 합니다.
+
+#### 1. React 19 설치
+```bash
+npm install react@latest react-dom@latest
+npm install next@latest
+```
+
+#### 2. 충돌 해결
+호환되지 않는 라이브러리(`@tremor/react`, `@headlessui/react`, 등)의 최신 버전을 확인하거나 대체 라이브러리를 탐색합니다. 
+
+- **대체 라이브러리 예시**
+  - `@tremor/react` → [Material-UI](https://mui.com/)
+  - `@headlessui/react` → 최신 버전 지원 여부 확인
+
+#### 3. 강제 설치 (권장하지 않음)
+`--legacy-peer-deps` 옵션을 사용하여 강제로 설치할 수도 있지만, 이는 런타임 충돌을 유발할 가능성이 있습니다.
+
+```bash
+npm install react@latest react-dom@latest next@latest --legacy-peer-deps
+```
+
+
+## 5. 주요 업데이트 후 테스트
+
+React와 Next.js 업그레이드 후, 애플리케이션이 정상적으로 작동하는지 확인합니다.
+
+### 1. 개발 서버 실행
+```bash
+npm run dev
+```
+
+### 2. 프로덕션 빌드 테스트
+```bash
+npm run build && npm start
+```
+
+
+## 결론
+
+React와 Next.js를 업그레이드하려면 의존성 라이브러리의 호환성을 철저히 확인해야 합니다. 특히 `npm ls react` 명령어를 통해 충돌 가능성이 있는 라이브러리를 식별하고, 필요한 경우 대체 라이브러리를 도입하거나 React 18을 유지하세요.
+
+> React 19의 새로운 기능이 반드시 필요하지 않다면, 안정성을 위해 React 18을 유지하는 것도 좋은 선택입니다. 필요한 경우 [React](https://react.dev/blog)와 [Next.js](https://nextjs.org/blog) 공식 릴리즈 노트를 참조하여 업데이트 내용을 검토하세요.
+
+
+
+
