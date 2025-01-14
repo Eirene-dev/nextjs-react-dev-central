@@ -1,0 +1,390 @@
+---
+title: "Next.js 15에서 Async Request APIs 전환하기: 간단한 마이그레이션 가이드"
+summary: Next.js 15로의 업그레이드에서 바뀐 비동기 Request APIs의 변경점과 Asynchronous 및 Synchronous Page·Layout·Route Handlers 각각에서 어떻게 코드를 수정해야 하는지를 다룹니다.
+tags: ['Nextjs', 'React', 'VersionUp']
+images: ['https://i.ibb.co/m4CVJXV/image.png']
+date: "2025-01-14 09:00"
+---
+아래 글에서는 **Next.js 15**에서 바뀐 **Async Request APIs**(cookies, headers, draftMode, params, searchParams)와 그 영향, 그리고 코드를 어떻게 수정해야 하는지 자세히 살펴보겠습니다.
+
+<TOCInline toc={props.toc} asDisclosure />
+
+---
+
+## 1. 들어가며
+
+`Next.js 15`로 업그레이드하면 `cookies`, `headers`, `draftMode`, `params`, `searchParams`와 같은 **런타임 정보에 의존하는 API**들이 **비동기(`async`)** 로 동작합니다. 기존에 이 API들을 동기(`synchronous`) 방식으로 사용했다면, 소스 코드에 적지 않은 변경이 필요할 수 있습니다.
+
+이 글에서는 **왜 이렇게 바뀌었는지**, **무엇을 수정해야 하는지**, 그리고 **Asynchronous / Synchronous layout, Asynchronous / Synchronous page, Route Handlers** 각각에서 어떻게 코드를 고쳐야 하는지를 예시와 함께 차근차근 알아보겠습니다.
+
+<ToggleContent title="동기 vs. 비동기란?">
+동기(Synchronous)는 **하나의 작업이 끝난 뒤에야** 다음 작업을 진행할 수 있는 방식입니다.  
+비동기(Asynchronous)는 **어떤 작업이 진행 중이라도** 다른 작업을 동시에 시작할 수 있는 방식입니다.
+
+예를 들어,  
+- **동기 방식**은 “A 작업이 끝날 때까지 B 작업은 잠시 멈춘 상태”를 뜻합니다.  
+- **비동기 방식**은 “A 작업을 처리하는 동안에도 B 작업을 따로 처리할 수 있음”을 뜻합니다.
+
+Next.js 15에서 `cookies()`나 `headers()` 같은 API들이 **비동기**로 전환됐다는 것은, 이 API들이 **다른 작업을 막지 않고** 처리되도록 동작 방식이 바뀌었음을 의미합니다.  
+동기 코드에서는 함수가 끝날 때까지 전부 기다려야 했다면, 비동기 코드에서는 **필요한 순간**에만 `await`를 통해 결과를 받아오고, 그동안 다른 로직을 진행할 수 있게 됩니다.
+</ToggleContent>
+
+## 2. Next.js 15의 Async Request APIs 변경사항
+
+### 2.1 왜 비동기로 바뀌었을까?
+
+Next.js 15 이전에는 `cookies()`, `headers()` 등의 함수를 **동기**로 호출했습니다. 요청(Request)이 들어올 때마다 필요한 데이터를 바로 가져올 수 있었죠.
+
+그런데 실제로 모든 컴포넌트가 요청 기반으로만 동작하지는 않습니다. 요청이 오기 전에도 **미리 렌더링**할 수 있다면 서버가 더 빠르게 준비를 마칠 수 있습니다. 이를 위해서는 “이 컴포넌트가 **정말** 요청 정보에 의존하는지”를 명확히 구분해야 합니다. 그러려면 요청 정보가 필요한 시점에만 **비동기로** 받아오고, 그렇지 않은 컴포넌트들은 미리 렌더링해놓아야 합니다.
+
+결국 **비동기 API**로 전환하면,  
+1) **요청 정보가 필요한 경우**만 기다리고  
+2) 다른 부분은 이미 렌더링해놓는 구조로 최적화가 가능해집니다.
+
+### 2.2 어떤 API들이 영향을 받는가?
+
+- [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies)  
+- [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers)  
+- [`draftMode()`](https://nextjs.org/docs/app/api-reference/functions/draft-mode)  
+- **`params`** (주로 `layout.js`, `page.js`, `route.js` 등에서 사용)  
+- **`searchParams`** (`page.js`에서 사용)
+
+### 2.3 변경 요약
+
+- **이전**: `const cookieStore = cookies()` 처럼 동기로 호출  
+- **이후**: `const cookieStore = await cookies()` 처럼 비동기로 호출  
+
+
+## 3. 업그레이드 준비: 자동화 방법과 수동 방법
+
+### 3.1 Codemod 활용
+
+Next.js 15로 올리면서 변경해야 하는 코드가 많다면, [공식 Codemod](https://nextjs.org/docs/app/building-your-application/upgrading/codemods#150)를 활용하는 것이 좋습니다.
+
+```bash
+npx @next/codemod@canary next-async-request-api .
+```
+
+이렇게 하면 **대부분**의 코드를 자동 변환해줍니다. 단, 특정 경우(예: 추가 로직이 있는 특수 상황)에는 완벽히 옮겨주지 못할 수도 있으니 변경사항을 수동으로 한 번 더 확인해야 합니다.
+
+### 3.2 수동 변경 시 필수 점검 사항
+
+1. `cookies()`, `headers()`, `draftMode()` 등을 **비동기(`await`)**로 바꾸기  
+2. `params`, `searchParams`를 **`Promise`** 형태로 받아서(`await params` 형태) 사용하도록 수정  
+3. **Asynchronous layout / page**와 **Synchronous layout / page**에서 각각 어떻게 `params`를 받아오는지 확인  
+4. Route Handlers(`app/api/route.js`)에서 `params`를 `await` 처리  
+
+
+## 4. 변경 상세: API별 사용 방법
+
+이제 각 API별로 **어떻게** 바뀌는지 구체적으로 살펴보겠습니다.
+
+### 4.1 `cookies()`
+
+#### 4.1.1 권장되는 비동기 사용 방법
+
+```tsx
+import { cookies } from 'next/headers'
+
+// 기존 방식 (동기)
+const cookieStore = cookies()
+const token = cookieStore.get('token')
+
+// 변경 후 (비동기)
+const cookieStore = await cookies()
+const token = cookieStore.get('token')
+```
+
+- **사용할 때마다 `await`를 붙여주어야** 합니다.
+
+#### 4.1.2 임시 동기 사용 방법(경고 발생)
+
+```tsx
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers'
+
+// 기존 (동기)
+const cookieStore = cookies()
+const token = cookieStore.get('token')
+
+// 변경 후 (동기 -> Unsafe 변환)
+const cookieStore = cookies() as unknown as UnsafeUnwrappedCookies
+// 개발 모드에서 경고가 뜸
+const token = cookieStore.get('token')
+```
+
+이 방법은 **권장되지 않으며**, 다음 메이저 버전에서 제거될 예정입니다.  
+가능하다면 비동기 코드로 전환하시길 권장합니다.
+
+
+### 4.2 `headers()`
+
+#### 4.2.1 권장되는 비동기 사용 방법
+
+```tsx
+import { headers } from 'next/headers'
+
+// 기존 방식 (동기)
+const headersList = headers()
+const userAgent = headersList.get('user-agent')
+
+// 변경 후 (비동기)
+const headersList = await headers()
+const userAgent = headersList.get('user-agent')
+```
+
+#### 4.2.2 임시 동기 사용 방법(경고 발생)
+
+```tsx
+import { headers, type UnsafeUnwrappedHeaders } from 'next/headers'
+
+// 기존 (동기)
+const headersList = headers()
+const userAgent = headersList.get('user-agent')
+
+// 변경 후 (동기 -> Unsafe 변환)
+const headersList = headers() as unknown as UnsafeUnwrappedHeaders
+// 개발 모드에서 경고
+const userAgent = headersList.get('user-agent')
+```
+
+
+### 4.3 `draftMode()`
+
+#### 4.3.1 권장되는 비동기 사용 방법
+
+```tsx
+import { draftMode } from 'next/headers'
+
+// 기존 방식 (동기)
+const { isEnabled } = draftMode()
+
+// 변경 후 (비동기)
+const { isEnabled } = await draftMode()
+```
+
+#### 4.3.2 임시 동기 사용 방법(경고 발생)
+
+```tsx
+import { draftMode, type UnsafeUnwrappedDraftMode } from 'next/headers'
+
+// 기존 (동기)
+const { isEnabled } = draftMode()
+
+// 변경 후 (동기 -> Unsafe 변환)
+const { isEnabled } = draftMode() as unknown as UnsafeUnwrappedDraftMode
+// 개발 모드에서 경고
+```
+
+## 5. `params`와 `searchParams` 변경 사항
+
+`params`와 `searchParams`는 **페이지나 레이아웃 컴포넌트**가 **서버 컴포넌트**인지, 혹은 **클라이언트 컴포넌트**인지에 따라 적용 방식이 달라집니다. 특히 `layout.js`와 `page.js`에서 **비동기**로 처리하는 방법과, **동기**로 처리하는 방법이 다릅니다.
+
+### 5.1 Asynchronous Layout
+
+비동기 `layout.tsx`(혹은 `layout.js`)에서는 `params`가 **Promise** 형태로 바뀝니다. 따라서 `await params`로 값을 꺼내야 합니다.
+
+```tsx
+// Before
+type Params = { slug: string }
+
+export function generateMetadata({ params }: { params: Params }) {
+  const { slug } = params
+}
+
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Params
+}) {
+  const { slug } = params
+}
+
+// After
+type Params = Promise<{ slug: string }>
+
+export async function generateMetadata({ params }: { params: Params }) {
+  const { slug } = await params
+}
+
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Params
+}) {
+  const { slug } = await params
+}
+```
+
+- `generateMetadata` 함수에서도 `params`가 `Promise`이므로 꼭 `await` 받아야 합니다.
+
+### 5.2 Synchronous Layout
+
+동기 `layout.tsx`(혹은 `layout.js`)에서도 비슷하게 `params`가 `Promise`라는 사실은 동일합니다. 다만 컴포넌트 자체를 `async`로 만들지 않고, **React의 `use()`** 훅을 사용해 `Promise`를 풀어냅니다.
+
+```tsx
+// Before
+type Params = { slug: string }
+
+export default function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Params
+}) {
+  const { slug } = params
+}
+
+// After
+import { use } from 'react'
+
+type Params = Promise<{ slug: string }>
+
+export default function Layout(props: {
+  children: React.ReactNode
+  params: Params
+}) {
+  // use() 훅으로 Promise를 해제
+  const params = use(props.params)
+  const slug = params.slug
+}
+```
+
+- 이 경우 `layout` 함수를 `async`로 선언하지 않습니다.  
+- 대신 **React 19** 이상 버전에서 제공되는 `use()` 훅을 사용해 `Promise`를 동기적으로 풀어냅니다.
+
+### 5.3 Asynchronous Page
+
+비동기 `page.tsx`(혹은 `page.js`)에서 `params`, `searchParams`가 **Promise** 형태로 넘어옵니다. `await`로 풀어서 사용해야 하죠.
+
+```tsx
+// Before
+type Params = { slug: string }
+type SearchParams = { [key: string]: string | string[] | undefined }
+
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const { slug } = params
+  const { query } = searchParams
+}
+
+// After
+type Params = Promise<{ slug: string }>
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export default async function Page(props: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const params = await props.params
+  const searchParams = await props.searchParams
+  const slug = params.slug
+  const query = searchParams.query
+}
+```
+
+### 5.4 Synchronous Page
+
+동기 `page.tsx`(혹은 `page.js`)의 경우도 위의 Synchronous Layout 예시와 동일합니다.  
+`async` 함수를 사용하지 않되, **`use()` 훅**으로 `Promise`를 받아서 동기처럼 사용합니다.
+
+```tsx
+'use client'
+
+// Before
+type Params = { slug: string }
+type SearchParams = { [key: string]: string | string[] | undefined }
+
+export default function Page({
+  params,
+  searchParams,
+}: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const { slug } = params
+  const { query } = searchParams
+}
+
+// After
+import { use } from 'react'
+
+type Params = Promise<{ slug: string }>
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export default function Page(props: {
+  params: Params
+  searchParams: SearchParams
+}) {
+  const params = use(props.params)
+  const searchParams = use(props.searchParams)
+  const slug = params.slug
+  const query = searchParams.query
+}
+```
+
+
+
+## 6. Route Handlers에서의 변경
+
+`app/api/route.js`(또는 `.ts`) 등 **Route Handlers**에서도 `params`는 Promise 형태입니다.
+
+```tsx
+// Before
+export async function GET(request: Request, segmentData: { params: { slug: string } }) {
+  const params = segmentData.params
+  const slug = params.slug
+}
+
+// After
+export async function GET(request: Request, segmentData: { params: Promise<{ slug: string }> }) {
+  const params = await segmentData.params
+  const slug = params.slug
+}
+```
+
+
+
+## 7. 정리 및 마무리
+
+### 7.1 핵심 요약
+
+- **동기 API**였던 `cookies()`, `headers()`, `draftMode()`, `params`, `searchParams`가 **비동기**로 전환되었습니다.  
+- **메이저 변경**이므로, **기존 코드를 `await`(혹은 `use()`)을 사용하도록 수정**해야 합니다.  
+- **Codemod**를 사용하면 대규모 프로젝트의 변경 비용을 크게 줄일 수 있습니다.  
+- **임시 동기** 사용 방식도 있지만, **경고**가 뜨고 다음 버전에서 제거될 예정이므로 **가급적 비동기**로 빨리 전환하세요.
+
+### 7.2 다음에 살펴볼 것
+
+- **React 19** 업그레이드: `useFormState` → `useActionState`로 변경되는 사항 등.  
+- **`fetch` 요청 캐싱 정책**: Next.js 15부터 fetch가 기본으로 캐싱되지 않으므로, 필요한 경우 `cache: 'force-cache'` 옵션 사용.  
+- **Vercel과의 통합 기능**: Speed Insights, `@vercel/functions` 등을 활용해 지리 정보(Geo-IP)나 IP를 가져오는 방법.  
+
+### 7.3 마무리
+
+Next.js 15로 업그레이드하면서 가장 크게 체감되는 부분이 바로 이 **Async Request APIs** 변경입니다. 처음에는 다소 번거로울 수 있지만, 요청 정보가 필요한 부분과 그렇지 않은 부분을 명확히 분리함으로써 **성능 최적화**나 **사전 렌더링**을 유연하게 적용할 수 있게 됩니다.
+
+여러분의 프로젝트를 **최신 Next.js 15**로 마이그레이션할 때, 이 글의 안내가 도움이 되길 바랍니다. 실제 적용을 해보면서 발생하는 궁금증이나 문제점이 있다면, [Next.js 공식 문서](https://nextjs.org/docs)나 공개된 GitHub 이슈 등을 통해 추가 정보를 찾아보시길 권장합니다.
+
+> **Tip**: 실무에서는 수백 개 이상의 페이지와 컴포넌트가 있을 수도 있습니다.
+> 이 경우 **Codemod**를 적극 활용해 변경 범위를 자동화하고, 이후 세부 사항을 수동 점검하는 것이 좋습니다.
+
+---
+
+**참고 자료**
+
+- [Next.js 공식 블로그: Next.js 15 릴리스 노트](https://nextjs.org/blog/next-15)  
+- [Next.js 업그레이드 가이드 (공식 문서)](https://nextjs.org/docs/app/building-your-application/upgrading)  
+- [Codemod 안내](https://nextjs.org/docs/app/building-your-application/upgrading/codemods#150)
+
+이상으로 **Next.js 15에서 비동기 Request APIs** 변경 내용과, 그에 따른 **코드 수정** 방법을 살펴봤습니다.  
+업그레이드가 되셨다면 이제 더 효율적인 서버 렌더링 환경을 즐겨보시길 바랍니다!

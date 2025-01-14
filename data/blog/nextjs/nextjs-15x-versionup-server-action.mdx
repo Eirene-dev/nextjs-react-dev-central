@@ -1,0 +1,289 @@
+---
+title: "Next.js 15에서 강화된 Server Actions 보안 살펴보기"
+summary: Dead Code Elimination, 안전한 Action ID 생성, 클로저 변수 암호화, Origin 검사 등 Next.js 15에서 새롭게 강화된 Server Actions 보안 방식을 자세히 살펴보고 실제 코드 예시를 통해 안전한 서버 로직 설계 방법을 안내합니다.
+tags: ['Nextjs', 'Security', 'ServerActions', 'VersionUp']
+images: ['https://i.ibb.co/gyNdgrb/image.png']
+date: "2025-01-14 10:00"
+---
+
+
+아래 글에서는 **Next.js 15** 버전에서 **Server Actions**에 추가된 주요 보안 개선 사항을 소개하고, 필요한 부분에 **코드 예시**와 **부가 자료**를 덧붙여 좀 더 구체적으로 이해할 수 있도록 정리했습니다.
+
+- **Dead Code Elimination**: 사용되지 않는 Server Actions를 빌드 결과에서 제거  
+- **Secure Action IDs**: 악의적인 추측 공격을 방지하기 위한 난수 기반의 안전한 Action ID 생성  
+- **Encryption of Closed-over Variables**: 액션 내부에서 사용되는 클로저 변수 자동 암호화  
+- **기타 보안 정책**: POST 전용 호출, Origin 검사, CSRF 예방, `allowedOrigins` 설정 등
+
+이 글은 **Server Actions**를 사용할 때 발생할 수 있는 보안 취약점을 최소화하고 **안전하게 Next.js 앱**을 설계하는 데 도움이 될 것입니다.
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+
+---
+
+## 1. 들어가며
+
+**Server Actions**는 Next.js가 제공하는 **서버 로직 호출 기능**입니다. 클라이언트 컴포넌트에서도 네트워크 요청을 직접 작성하지 않고, Server Action을 호출해 **데이터를 변경**하거나 **폼 전송**을 처리할 수 있습니다.
+
+하지만, 이렇게 서버 로직을 쉽고 빠르게 작성할 수 있다는 점은 **보안 취약점**을 야기할 가능성도 있습니다. Next.js 15에서는 이런 **위험 요소**들을 줄이기 위해 여러 **보안 기능**을 추가했습니다.
+
+이 글에서는 이러한 개선 사항과 함께 **실제 코드를 어떻게 작성**해야 하는지 **공식 예시**를 바탕으로 살펴보겠습니다.
+
+
+## 2. Dead Code Elimination
+
+### 2.1 왜 필요한가?
+
+- Server Actions는 **HTTP 엔드포인트**로 노출될 수 있기 때문에,  
+- 사용하지 않는 액션도 빌드 결과에 포함되면 **공격 대상**(attack surface)이 넓어질 수 있습니다.
+
+### 2.2 어떻게 작동하나?
+
+다음 예시를 보겠습니다.
+
+```jsx:app/actions.js {9-12}
+'use server'
+
+// 이 액션은 실제 코드에서 import되어 사용되므로,
+// 빌드 시 secure ID가 생성되어 공개 HTTP 엔드포인트가 됩니다.
+export async function updateUserAction(formData) {
+  // ...
+}
+
+// 아래 액션은 아무 곳에서도 사용되지 않으므로,
+// 빌드 시 자동으로 제거(Dead Code Elimination)됩니다.
+// 즉, 공개 엔드포인트로 노출되지 않습니다.
+export async function deleteUserAction(formData) {
+  // ...
+}
+```
+
+- Next.js 15는 빌드 중에 “**이 액션을 실제로 사용하는지**”를 검사합니다.  
+- 사용하지 않는 액션은 **클라이언트 번들**에 넣지 않아, 불필요한 엔드포인트 생성을 방지합니다.
+
+> **Tip**  
+> 이 과정은 **보안뿐만 아니라 성능 측면**에서도 유리합니다. 번들 크기가 줄어들어 **로딩 속도**가 향상됩니다.
+
+
+## 3. Secure Action IDs
+
+### 3.1 필요성
+
+Server Action을 호출하려면 **Action ID**가 필요합니다. 만약 이 ID가 단순하거나 추측 가능하면, **원치 않는 사용자**가 액션을 무단으로 호출할 수 있습니다.
+
+### 3.2 개선 사항
+
+- Next.js는 **난수 기반**의, **추측이 어려운** Action ID를 생성합니다.  
+- 빌드할 때마다 ID를 **새로 생성**하고, 최대 14일 동안만 유효하게 캐싱합니다.  
+- 빌드 캐시가 무효화되면 ID가 다시 갱신되어, **이전 액션 ID**를 아는 사람이더라도 새 빌드 후에는 접근하기 어렵습니다.
+
+이렇게 해서 **공격자가 임의로 Action ID를 추측**할 가능성이 크게 줄어듭니다.
+
+
+## 4. Encryption of Closed-over Variables
+
+### 4.1 개념 이해
+
+Server Action 내부에서 **클로저(closure)** 로 변수를 참조할 수 있습니다.  
+예를 들어, 컴포넌트에서 정의된 지역 변수를 서버 액션이 “잡고(closed-over)” 있을 수 있습니다.
+
+```tsx:app/page.tsx {5-9}
+export default async function Page() {
+  const publishVersion = await getLatestVersion();
+
+  async function publish() {
+    'use server'
+    // publishVersion 이라는 외부 변수를 참조(클로저)
+    if (publishVersion !== (await getLatestVersion())) {
+      throw new Error('버전이 변경되었습니다!');
+    }
+    // ...
+  }
+
+  return (
+    <form>
+      <button formAction={publish}>Publish</button>
+    </form>
+  );
+}
+```
+
+이런 경우, **publishVersion** 같은 값이 **클라이언트로 전송**되었다가 다시 서버로 **돌아올 때** 노출될 위험이 있습니다.
+
+### 4.2 Next.js 15의 암호화 처리
+
+Next.js는 이 **클로저 변수를 자동으로 암호화**합니다.
+
+1. 빌드 시점에 **비밀 키**를 새로 생성합니다.  
+2. 클라이언트와 서버 간에 변수가 오갈 때, **해당 키로 암호화**/복호화합니다.  
+3. 빌드가 달라지면 키도 달라지므로, **한 빌드에서 발급된 액션**은 다른 빌드에서 재사용할 수 없습니다.
+
+> **권장 사항**  
+> 자동 암호화 기능만 믿기보다는, **민감 데이터**는 되도록 클라이언트로 보내지 않도록 설계해야 합니다.  
+> [React Taint APIs](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#preventing-sensitive-data-from-being-exposed-to-the-client) 등을 사용해, **중요 정보**가 절대 클라이언트에 넘어가지 않도록 예방 장치도 마련하세요.
+
+
+
+## 5. 추가 보안 정책
+
+다음은 Next.js 15에서 제공하는 **추가적인 보안 기능**입니다.
+
+### 5.1 POST 메서드 전용
+
+- Server Actions는 **POST 요청**으로만 호출할 수 있습니다.  
+- GET 기반의 **CSRF** 공격 위험이 대부분 차단됩니다(근래 브라우저의 SameSite 쿠키 정책과 결합).
+
+### 5.2 Origin 검사
+
+- Next.js는 **Origin 헤더**와 **Host 헤더**(또는 X-Forwarded-Host)를 비교합니다.  
+- 둘이 일치하지 않으면 요청을 **중단**해, **다른 도메인**에서 임의로 Server Actions를 호출하는 공격을 막습니다.
+
+### 5.3 `serverActions.allowedOrigins` 설정 (고급)
+
+아래처럼 `next.config.js`에서 허용할 Origin을 지정할 수 있습니다.
+
+```js
+/** @type {import('next').NextConfig} */
+module.exports = {
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['my-proxy.com', '*.my-proxy.com'],
+    },
+  },
+}
+```
+
+다양한 서버 프록시나 **멀티 호스트** 환경에서 동작하는 대규모 애플리케이션이라면, 이 설정을 통해 **안전한 Origin**을 명시할 수 있습니다.
+
+
+## 6. 실전 코드 예시: 안전한 Server Actions
+
+아래 코드는 Next.js 공식 예시를 참고하여 만든 **안전한 Server Action**의 예시입니다.
+
+### 6.1 폼 제출 예시
+
+```tsx:app/invoices/page.tsx
+export default function Page() {
+  // Server Action
+  async function createInvoice(formData: FormData) {
+    'use server'
+
+    // 필요한 데이터만 추출
+    const rawFormData = {
+      customerId: formData.get('customerId'),
+      amount: formData.get('amount'),
+      status: formData.get('status'),
+    }
+
+    // TODO: DB 저장 로직 등 (auth 체크 포함)
+    // 예: if (!isLoggedIn) throw new Error('로그인이 필요합니다.')
+
+    // mutate data
+    // revalidate cache, etc.
+  }
+
+  // Client → Server로 POST 전송
+  return (
+    <form action={createInvoice}>
+      {/* 여러 input 필드 */}
+      <input type="text" name="customerId" />
+      <input type="number" name="amount" />
+      <input type="text" name="status" />
+      <button type="submit">Create Invoice</button>
+    </form>
+  )
+}
+```
+
+- `createInvoice` 함수 위에 `use server` 지시자를 선언해 **Server Action**으로 만듭니다.  
+- 클라이언트와의 통신은 **POST** 방식으로만 이루어지므로, CSRF 위험이 크게 줄어듭니다.
+
+### 6.2 클로저 변수 예시
+
+```tsx:app/page.tsx
+export default async function Page() {
+  const publishVersion = await getLatestVersion()
+
+  async function publish() {
+    'use server'
+
+    // publishVersion 값이 암호화되어 클라이언트에 전달됩니다.
+    if (publishVersion !== await getLatestVersion()) {
+      throw new Error('버전이 변경되었습니다!')
+    }
+
+    // publish 로직
+  }
+
+  return (
+    <form>
+      <button formAction={publish}>Publish</button>
+    </form>
+  )
+}
+```
+
+- `publishVersion` 변수는 **자동 암호화**되어 클라이언트에 전송됩니다.  
+- 빌드마다 새 키가 생성되므로, **재빌드 전후**에 출처가 다른 값으로 악용되기 어렵습니다.
+
+### 6.3 인증·인가(Authorization) 추가
+
+서버 액션은 실제로는 **공개 HTTP 엔드포인트**로 취급해야 합니다. 따라서, 아래처럼 **auth 검증 로직**을 작성하는 것이 중요합니다.
+
+```tsx:app/actions.ts
+'use server'
+
+import { getUserSession } from './lib/auth'
+
+export async function addItem(formData: FormData) {
+  const user = await getUserSession()
+  if (!user) {
+    throw new Error('로그인이 필요합니다.')
+  }
+
+  // user.role 체크 등 권한 로직
+  // ...
+}
+```
+
+- 사용자가 **로그인**된 상태인지, **해당 권한**이 있는지를 서버에서 다시 한 번 확인합니다.  
+- 이 로직을 생략하면, 누군가 액션 ID만 알아도 **임의로 호출**할 수 있다는 점을 잊지 마세요.
+
+
+## 7. 마무리
+
+### 7.1 요약
+
+- **Dead Code Elimination**: 사용되지 않는 Server Actions를 빌드 시 제거 → 공격 표면 감소  
+- **Secure Action IDs**: 난수·정기 갱신으로 **악의적 추측** 위험 감소  
+- **Encryption of Closed-over Variables**: 암호화를 통해 **민감 변수** 노출 최소화  
+- **POST 전용 호출 및 Origin 검사**: **CSRF 공격**과 **도메인 위조**를 예방  
+- **추가 팁**: `serverActions.allowedOrigins` 설정, 인증·인가 로직, React Taint API 등
+
+### 7.2 다음 단계
+
+- **React 19** 사용 시, `useFormStatus`에 **추가 정보**(data, method, action 등) 활용 가능  
+- **Key Rotation**: 실제 운영 환경에서는 **암호화 키**를 주기적으로 교체  
+- **서버 액션 vs API Routes**: 프로젝트 규모나 보안 요구 사항에 따라 선택적 활용
+
+### 7.3 한 마디
+
+Next.js 15는 Server Actions 사용을 더 편리하게 만드는 동시에, **보안 측면**도 상당히 강화했습니다. 하지만 어떤 보안 기능이든 **개발자의 주의와 세심한 설계**가 뒤따라야 합니다.
+
+> **여러분의 프로젝트**에서 Server Actions를 활용하시나요?  
+> 꼭 필요한 인증, 권한 체크, 암호화 키 관리를 점검해보시길 바랍니다.
+
+**Next.js 15 Server Actions**를 더 깊이 이해하면**안전하게** 운영하는 데 도움이 됩니다.  
+실무에서 **보안 & 인증 & 암호화**를 종합적으로 고려해 안정적인 Next.js 애플리케이션을 구축해보시길 바랍니다.
+
+---
+
+## 참고 자료
+
+- [Next.js 15 공식 문서: Server Actions & Mutations](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)  
+- [Next.js 블로그: 보안 향상 사항](https://nextjs.org/blog/security-nextjs-server-components-actions)  
+- [React Server Actions](https://react.dev/reference/rsc/server-actions)  
+- [GitHub Discussions #68155 / #73098](https://github.com/vercel/next.js/discussions)  
+- [CSRF 공격 개념 (MDN)](https://developer.mozilla.org/en-US/docs/Glossary/CSRF)
+
