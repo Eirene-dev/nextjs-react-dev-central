@@ -1,0 +1,259 @@
+---
+title: '2025년, 최적의 React Rich Text Editor는 무엇일까요?'
+summary: 'Slate, Tiptap, Lexical 등 주요 React 기반 에디터의 장단점을 비교해 프로젝트에 가장 적합한 선택 기준을 제시합니다.'
+tags: ['Text-Editor', 'Slate', 'Tiptap', 'Lexical']
+images: ['/static/images/blog/editor/editors-in-2025.jpg']
+date: "2025-05-15 09:00"
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 왜 React 기반 Rich Text Editor 선택이 까다로워졌을까요?
+
+
+최근 React와 Next.js를 사용하는 프론트엔드 팀에서는 블로그나 CMS 구축 시 Rich Text Editor<sup>리치 텍스트 에디터</sup> 선택에 큰 고민을 하고 있습니다. 과거에는 단순히 HTML 편집 기능만 있으면 충분했지만, 이제는 Markdown 지원과 WYSIWYG 편집, 높은 확장성, 빠른 성능 등 다양한 요구사항이 기본이 되었습니다.
+
+## 문제의 근본 원인은 어디에 있을까요?
+
+많은 개발자들이 흔히 겪는 문제는 "단지 인기 있다는 이유만으로" 특정 에디터를 선택했다가 프로젝트가 커질수록 예상치 못한 난관에 부딪히는 것입니다. 왜 이런 상황이 반복될까요? 바로 각 에디터의 강점과 약점을 명확히 이해하지 않고 선택하기 때문입니다.
+
+특히 Next.js 환경에서는 SSR(Server-Side Rendering) 호환성, Markdown 처리 성능, 에디터 확장성 등이 필수적입니다. 그렇다면 2025년 현재 현장에서 가장 널리 쓰이는 React 기반 오픈소스 Rich Text Editor들은 어떤 차이가 있을까요?
+
+## React 기반 Editor, 무엇이 중요할까요?
+
+대표적인 React 기반 Rich Text Editor는 Slate<sup>슬레이트</sup>(+Plate<sup>플레이트</sup>), Tiptap<sup>팁탭</sup>(ProseMirror<sup>프로즈미러</sup> 기반), Lexical<sup>렉시컬</sup>(Meta), Draft.js<sup>드래프트 제이에스</sup>(레거시) 등이 있습니다. 각 에디터의 특징을 간략히 살펴보겠습니다.
+
+<ToggleContent title="ProseMirror 개념과 사용 사례">
+**ProseMirror** 는 웹에서 복잡한 리치 텍스트 에디터를 만들 수 있게 도와주는 오픈소스 JavaScript 프레임워크입니다. 기본적으로는 텍스트 편집기이지만, 문서를 구조화된 형태로 다루기 때문에 Markdown, 협업 편집, 버전 관리 등 다양한 고급 기능을 구현하는 데 적합합니다.
+
+
+**ProseMirror는 어떻게 사용하나요?**
+ProseMirror는 세 가지 핵심 개념을 바탕으로 합니다.
+
+* **스키마(Schema)**
+  문서의 구조와 형태를 정의합니다. 예를 들어, 제목, 리스트, 이미지 등 각각의 콘텐츠가 어떤 구조를 갖는지 설정합니다.
+* **트랜잭션(Transaction)**
+  사용자의 입력을 받아 문서를 업데이트하는 작업을 의미합니다. 텍스트 입력, 붙여넣기, 삭제 같은 모든 동작이 트랜잭션으로 처리됩니다.
+* **플러그인(Plugin)**
+  ProseMirror의 기능을 확장하는 역할을 합니다. 협업 커서, 댓글 기능, 맞춤법 검사 등 다양한 기능을 추가할 수 있습니다.
+
+개발자들은 이 프레임워크를 사용해 원하는 편집 환경을 자유롭게 구현할 수 있습니다. 또한, React, Vue 등 다양한 프레임워크와 쉽게 결합해 사용할 수도 있습니다.
+
+
+**ProseMirror를 누가, 어떻게 사용했나요?**
+많은 기업과 서비스들이 ProseMirror를 기반으로 자신들만의 편집 환경을 만들었습니다.
+
+* **Atlassian(아틀라시안)**
+  Jira, Confluence 등에서 협업 문서 편집 기능에 ProseMirror를 사용합니다. 협업 중에도 안정적이고 빠른 편집 기능을 제공하기 위함입니다.
+* **New York Times(뉴욕타임즈)**
+  콘텐츠 관리 시스템(CMS) 내부의 기사 작성과 편집 환경에 사용하여 빠르고 효율적인 뉴스 콘텐츠 제작을 지원합니다.
+* **Substack(서브스택)**
+  뉴스레터 플랫폼의 글쓰기 및 편집 환경으로 ProseMirror를 활용해 간편한 편집과 Markdown 지원을 제공합니다.
+
+이처럼 ProseMirror는 안정성과 확장성이 뛰어나 많은 기업에서 자신들의 요구에 맞춰 사용하고 있습니다. 특히 협업과 고급 편집 기능이 중요한 서비스에 적합합니다.
+
+</ToggleContent>
+
+
+### Slate & Plate – 유연함의 양날의 검
+
+Slate는 React 친화적이고 매우 유연합니다. JSON 트리 구조로 자유롭게 콘텐츠를 구성할 수 있습니다. Plate 플러그인을 활용하면 테이블, 이미지, Markdown 등을 쉽게 구현할 수 있습니다. 특히 복잡한 블로그 편집기에 잘 맞습니다.
+
+하지만 이런 유연성은 복잡성을 함께 가져옵니다. 간단한 리스트나 테이블을 구현할 때도 꽤 많은 코드가 필요하며, 최적화가 부족하면 성능 문제가 발생할 수 있습니다. 특히 IME 입력 처리와 같은 세부적인 상황에서는 추가 작업이 필요합니다.
+
+
+```jsx
+import React, { useMemo, useState } from 'react';
+import { Slate, Editable, withReact } from 'slate-react';
+import { createEditor } from 'slate';
+
+const initialValue = [
+  {
+    type: 'paragraph',
+    children: [
+      { text: 'Slate 에디터의 기본 예제입니다. ' },
+      { text: '볼드', bold: true },
+      { text: ' 및 ' },
+      { text: '이탤릭', italic: true },
+      { text: ' 텍스트를 지원합니다.' },
+    ],
+  },
+];
+
+function SlateEditor() {
+  const editor = useMemo(() => withReact(createEditor()), []);
+  const [value, setValue] = useState(initialValue);
+
+  return (
+    <Slate editor={editor} value={value} onChange={newValue => setValue(newValue)}>
+      <Editable
+        renderLeaf={({ leaf, attributes, children }) => {
+          if (leaf.bold) children = <strong>{children}</strong>;
+          if (leaf.italic) children = <em>{children}</em>;
+          return <span {...attributes}>{children}</span>;
+        }}
+        placeholder="텍스트를 입력하세요..."
+      />
+    </Slate>
+  );
+}
+
+export default SlateEditor;
+```
+위 코드는 Slate의 기본 텍스트 편집 기능과 간단한 스타일링(볼드, 이탤릭)을 보여줍니다.
+
+> Slate는 매우 유연한 JSON 트리 구조 기반 에디터이며, Plate는 Slate 위에 다양한 플러그인을 제공하는 확장판입니다.
+
+<div class="p-1 bg-gray-100 rounded-lg">
+[Slate examples - CodeSandbox](https://codesandbox.io/examples/package/slate)에 가시면 다양한 예제를 볼 수 있습니다.
+</div>
+
+
+### Tiptap – 균형 잡힌 선택
+
+Tiptap은 Slate와 달리 ProseMirror 기반의 Headless 에디터로, 적절한 기능과 확장성을 균형 있게 제공합니다. Markdown 단축키를 기본으로 지원하고, 실시간 협업 기능도 쉽게 추가할 수 있습니다.
+
+Tiptap의 가장 큰 장점은 바로 활용할 수 있는 다양한 기능입니다. 다만 깊이 있는 커스터마이징이 필요할 경우 ProseMirror의 내부 구조를 이해해야 하는 복잡성이 있습니다.
+
+```jsx
+import React from 'react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+
+function TiptapEditor() {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: '<p>안녕하세요, Tiptap 에디터입니다!</p>',
+  });
+
+  return <EditorContent editor={editor} />;
+}
+
+export default TiptapEditor;
+```
+StarterKit에는 기본적인 텍스트 편집 기능, 마크다운 단축키 등이 포함되어 있습니다.
+
+> Tiptap은 ProseMirror 기반으로, React용 @tiptap/react 패키지를 사용합니다.
+
+<div class="p-1 bg-gray-100 rounded-lg">
+[Tiptap 기본 에디터 코드](https://next.tiptap.dev/docs/ui-components/templates/simple-editor)에 가시면 바로 체험해 볼수 있습니다.
+
+<div className="flex justify-center p-0">
+
+  <Image src="https://i.ibb.co/zHjg4c8q/image.png" width="480" height="320" />
+</div>
+</div>
+
+
+### Lexical – 메타의 차세대 에디터
+
+Lexical은 Meta가 Draft.js를 대체하기 위해 만든 고성능 에디터입니다. 뛰어난 성능과 접근성 처리로 주목받고 있으며, Markdown 플러그인을 통해 직관적으로 Markdown을 사용할 수 있습니다.
+
+하지만 Lexical은 아직 정식 버전(1.0 미만)이 아니어서 API가 자주 바뀌는 위험이 있습니다. 문서화가 부족하고, 고급 기능 구현 시 어려움을 겪을 수 있습니다.
+
+
+```jsx
+import React, { useState } from 'react';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+
+const theme = {
+  paragraph: 'my-paragraph-class',
+  // 원하는 스타일 추가 가능
+};
+
+function onError(error) {
+  console.error(error);
+}
+
+function Editor() {
+  const [editorStateJSON, setEditorStateJSON] = useState(null);
+
+  function onChange(editorState) {
+    editorState.read(() => {
+      const json = editorState.toJSON();
+      setEditorStateJSON(JSON.stringify(json));
+    });
+  }
+
+  const initialConfig = {
+    namespace: 'MyLexicalEditor',
+    theme,
+    onError,
+  };
+
+  return (
+    <LexicalComposer initialConfig={initialConfig}>
+      <RichTextPlugin
+        contentEditable={<ContentEditable className="editor-input" />}
+        placeholder={<div>텍스트를 입력하세요...</div>}
+        ErrorBoundary={LexicalErrorBoundary}
+      />
+      <OnChangePlugin onChange={onChange} />
+      <HistoryPlugin />
+      {/* 필요 시 추가 플러그인 삽입 */}
+      <div>Editor State JSON: {editorStateJSON}</div>
+    </LexicalComposer>
+  );
+}
+
+export default Editor;
+```
+위 코드는 기본적인 리치 텍스트 편집, 상태 변화를 JSON으로 직렬화하는 예제입니다.
+
+> Meta에서 만든 Lexical은 고성능과 접근성에 중점을 둔 최신 에디터입니다.
+
+
+## Draft.js – 이제는 떠날 때
+
+한때 React 편집기의 대표였던 Draft.js는 2022년에 공식적으로 유지보수 모드로 전환되었습니다. Markdown 지원도 제한적이고, 현대적인 요구사항(협업, 복잡한 콘텐츠)을 충족하기 어렵습니다. 신규 프로젝트에서 Draft.js를 선택하는 건 현실적으로 추천하지 않습니다.
+
+## 통찰: 무엇이 더 중요할까요?
+
+Rich Text Editor를 선택할 때 기술적 성능만큼 중요한 것은 프로젝트의 확장 가능성, 유지보수성, 그리고 팀의 적응력입니다. 단순히 인기 있는 도구를 선택하기보다 "우리 팀이 필요한 기능과 앞으로의 확장성"을 고려해 결정하는 것이 바람직합니다.
+
+Slate는 높은 유연성을 필요로 하는 맞춤형 블로그에 적합합니다. Tiptap은 일반적인 블로그 CMS에서 가장 균형 잡힌 선택입니다. Lexical은 성능과 최신 기능을 중시하는 팀에게 추천합니다.
+
+
+
+
+## 최종 제안: Rich Text Editor 선택 가이드
+
+아래는 각 에디터 선택 시 간단한 가이드입니다.
+<div class="p-1 bg-gray-100 rounded-lg">
+* **Slate & Plate:** 완벽한 맞춤화가 필요하고 초반 학습 비용을 감수할 수 있는 경우 추천합니다.
+* **Tiptap:** 빠르게 기능을 추가하면서도 유연성을 유지하고 싶은 대부분의 프로젝트에 적합합니다.
+* **Lexical:** 고성능과 미래 지향적인 선택이 필요할 때 추천합니다.
+* **Draft.js:** 유지보수 목적 외에는 신규 프로젝트에서 권장하지 않습니다.
+</div>
+
+
+
+## **관련 공식 문서 및 참고 링크**
+
+- **Slate & Plate**
+
+  - Slate 공식 사이트 및 예제: [https://www.slatejs.org](https://www.slatejs.org/)
+  - Plate 공식 문서 (Slate 기반 확장 툴킷): https://platejs.org/docs
+
+- **Tiptap**
+
+  - Tiptap React 공식 문서 및 시작 가이드: https://tiptap.dev/docs/editor/getting-started/install/react
+
+- **Lexical**
+
+  - Meta의 Lexical 공식 React 시작 가이드: https://lexical.dev/docs/getting-started/react
+
+- **Draft.js**
+
+  - Draft.js는 공식 유지보수 모드이나, 참고용 공식 문서: [https://draftjs.org](https://draftjs.org/) (직접 검색 필요)
+
+- **추가 참고**
+
+  - 2025년 React용 Rich Text Editor 비교 가이드 (개별 에디터 장단점 포함): https://dev.to/joodi/10-top-rich-text-editors-for-react-developers-in-2025-5a2m
+  - Contentful의 React Rich Text Editor 비교 및 튜토리얼: https://www.contentful.com/blog/react-rich-text-editor/
