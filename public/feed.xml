@@ -7,9 +7,29 @@
       <language>ko-kr</language>
       <managingEditor>paxcode.xyz@gmail.com (Pax Code)</managingEditor>
       <webMaster>paxcode.xyz@gmail.com (Pax Code)</webMaster>
-      <lastBuildDate>Thu, 11 Jul 2024 00:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Fri, 19 Jul 2024 00:00:00 GMT</lastBuildDate>
       <atom:link href="https://reactnext-central.xyz/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://reactnext-central.xyz/blog/ai/architecture-for-vercel-ai-sdk</guid>
+    <title>버셀 AI SDK 아키텍처와 구현 방식: Core + UI와 Core + RSC</title>
+    <link>https://reactnext-central.xyz/blog/ai/architecture-for-vercel-ai-sdk</link>
+    <description>버셀 AI SDK 아키텍처는 클라이언트와 서버 간의 효율적인 데이터 교환과 렌더링을 제공합니다. 이 글에서는 4 Tiers 아키텍처 관점에서 각 방식의 구성 요소와 차이점을 설명합니다.</description>
+    <pubDate>Fri, 19 Jul 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel-AI-SDK</category><category>Architecture</category><category>Server-Action</category><category>Router-Hanlder</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/ai/background-for-vercel-ai-sdk</guid>
+    <title>버셀 AI SDK 사용을 위한 필수 배경 지식: 제공자와 모델, 프롬프트, 스트리밍, 도구와 어시스턴트</title>
+    <link>https://reactnext-central.xyz/blog/ai/background-for-vercel-ai-sdk</link>
+    <description>버셀 AI SDK의 제공자, 모델, 프롬프트, 스트리밍, 도구와 어시스턴트에 대한 필수 배경 지식을 소개합니다. 이 글에서는 각 요소의 정의와 사용 사례를 통해 SDK 활용 방법을 자세히 설명합니다.</description>
+    <pubDate>Wed, 17 Jul 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel-AI-SDK</category><category>Prompt</category><category>Streaming</category><category>Assistant</category>
+  </item>
+
   <item>
     <guid>https://reactnext-central.xyz/blog/ai/vercel-ai-sdk-overview</guid>
     <title>버셀 AI SDK 소개: 사용 이유와 2.x에서 3.2 버전 변경 사항</title>
@@ -58,6 +78,16 @@
     <pubDate>Tue, 24 Oct 2023 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>VSCode</category><category>Productivity</category><category>Tools</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</guid>
+    <title>2025년, 최적의 React Rich Text Editor는 무엇일까요?</title>
+    <link>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</link>
+    <description>Slate, Tiptap, Lexical 등 주요 React 기반 에디터의 장단점을 비교해 프로젝트에 가장 적합한 선택 기준을 제시합니다.</description>
+    <pubDate>Thu, 15 May 2025 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Text-Editor</category><category>Slate</category><category>Tiptap</category><category>Lexical</category>
   </item>
 
   <item>
@@ -251,6 +281,46 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup-code</guid>
+    <title>Next.js 15에서 Async Request APIs 전환하기: 간단한 마이그레이션 가이드</title>
+    <link>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup-code</link>
+    <description>Next.js 15로의 업그레이드에서 바뀐 비동기 Request APIs의 변경점과 Asynchronous 및 Synchronous Page·Layout·Route Handlers 각각에서 어떻게 코드를 수정해야 하는지를 다룹니다.</description>
+    <pubDate>Tue, 14 Jan 2025 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>React</category><category>VersionUp</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup-howto</guid>
+    <title>React와 Next.js 업그레이드 방법: React 19 호환성 확인 및 의존성 충돌 해결 가이드</title>
+    <link>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup-howto</link>
+    <description>React 19 업그레이드 시 발생할 수 있는 의존성 충돌을 해결하고, Next.js 15.1의 새로운 기능과 호환성을 유지하는 방법을 알아봅니다.</description>
+    <pubDate>Mon, 06 Jan 2025 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>React</category><category>VersionUp</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup-server-action</guid>
+    <title>Next.js 15에서 강화된 Server Actions 보안 살펴보기</title>
+    <link>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup-server-action</link>
+    <description>Dead Code Elimination, 안전한 Action ID 생성, 클로저 변수 암호화, Origin 검사 등 Next.js 15에서 새롭게 강화된 Server Actions 보안 방식을 자세히 살펴보고 실제 코드 예시를 통해 안전한 서버 로직 설계 방법을 안내합니다.</description>
+    <pubDate>Tue, 14 Jan 2025 01:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>Security</category><category>ServerActions</category><category>VersionUp</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup</guid>
+    <title>Next.js 14.2 → 15.1: 구조 변경 없는 완성도를 높인 업그레이드</title>
+    <link>https://reactnext-central.xyz/blog/nextjs/nextjs-15x-versionup</link>
+    <description>Next.js가 14.2에서 15.1로 넘어오면서 큰 구조적 변화 없이 디버깅, 에러 처리, 그리고 React 19 지원 등을 한층 더 개선했습니다.</description>
+    <pubDate>Tue, 31 Dec 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>React</category><category>Performance</category><category>VersionUp</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/nextjs/parallel-routes</guid>
     <title>Next.js에서 병렬 라우팅과 모달 구현의 최적화 방법</title>
     <link>https://reactnext-central.xyz/blog/nextjs/parallel-routes</link>
@@ -421,6 +491,116 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</guid>
+    <title>2025년 웹 개발자를 위한, Vercel 스토리지·DB 선택 완벽 가이드</title>
+    <link>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</link>
+    <description>Vercel에서 제공·통합하는 다양한 스토리지·데이터베이스 솔루션을 상황별로 쉽게 선택해, 2025년 기준 서버리스 웹앱을 효율적으로 구축하는 가이드입니다.</description>
+    <pubDate>Thu, 15 May 2025 01:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel</category><category>Storage</category><category>Postgres</category><category>Blob</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</guid>
+    <title>웹 개발에서의 개발자 경험(DX) 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</link>
+    <description>웹 개발에서의 개발자 경험(DX)은 도구, 플랫폼, 라이브러리와의 상호작용에 있어 개발자의 효율성과 만족도를 중심으로 합니다. 좋은 DX는 문서화, 도구 사용성, 성능, 커뮤니티 지원 등 다양한 요소에 의해 향상되며, 이는 결국 개발의 품질과 생태계 성장에 영향을 미칩니다.</description>
+    <pubDate>Thu, 21 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>DX</category><category>Web</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</guid>
+    <title>프론트엔드 웹 개발자 로드맵</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</link>
+    <description>프론트엔드 웹 개발자 로드맵은 웹사이트 및 웹 애플리케이션의 사용자 인터페이스(UI)를 개발하는 데 필요한 핵심 기술과 도구들을 제시합니다. 이 로드맵은 WWW부터 HTML, CSS, JavaScript의 기본적인 학습부터 고급 프레임워크, 테스팅, 배포, SEO에 이르기까지 프론트엔드 개발의 전반적인 학습 경로를 안내합니다.</description>
+    <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Frontend</category><category>Roadmap</category><category>JavaScript</category><category>UX</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/good-website-design</guid>
+    <title>2023년 웹 디자인 트렌드 기반 웹사이트 디자인의 10가지 핵심 원칙</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/good-website-design</link>
+    <description>2023년의 웹 디자인 트렌드를 중심으로, 사이트 사용자 경험을 최고로 만들기 위한 실용적인 조언과 팁을 살펴봅니다.</description>
+    <pubDate>Thu, 05 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Web-Design</category><category>UX</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</guid>
+    <title>웹 개발에서의 사용자 경험(UX) 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</link>
+    <description>웹사이트와 사용자 간의 조화롭고 완벽한 관계를 꿈꾸시나요? 웹 개발 분야에서의 사용자 경험(UX)가 여러분의 웹사이트에 어떠한 놀라운 변화와 혜택을 가져다 줄 수 있는지 함께 알아보시죠!</description>
+    <pubDate>Wed, 20 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>UX</category><category>SEO</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/vercel-neon-postgres</guid>
+    <title>Neon Postgres: 달라진 Vercel 환경에서의 완성도 높은 업그레이드</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/vercel-neon-postgres</link>
+    <description>Vercel Postgres가 Neon Postgres로 전환됨에 따라 서버리스 PostgreSQL 환경이 더 강력하고 안정적으로 개선되었습니다. 기존 Vercel Postgres 사용자도 큰 수정 없이 자동 전환을 통해 이점과 안정성을 누릴 수 있습니다.</description>
+    <pubDate>Tue, 31 Dec 2024 02:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>NeonPostgres</category><category>Vercel</category><category>Serverless</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</guid>
+    <title>웹의 구조와 도서관: 직관적인 웹 주소 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</link>
+    <description>웹 주소의 복잡한 구성 요소를 거대한 도서관의 구조와 비교하며, 이해하기 쉽고 흥미로운 방법으로 웹 탐색의 세계를 직관적으로 탐험해보세요!</description>
+    <pubDate>Sat, 23 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Browser</category><category>Web</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</guid>
+    <title>웹 렌더링 이해하기: 피자 만들기 비유로 살펴보다</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</link>
+    <description>웹페이지가 어떻게 화면에 그려지는지 궁금하다면? 피자 만들기로 이해하는 웹 렌더링의 매력적인 세계에 함께 빠져봅시다!</description>
+    <pubDate>Fri, 22 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Rendering</category><category>Browser</category><category>HTML</category><category>CSS</category><category>JavaScript</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</guid>
+    <title>Next.js에서 반응형 웹 디자인 마스터하기</title>
+    <link>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</link>
+    <description>Next.js 환경을 활용하여 반응형 웹 디자인을 탐구해보세요. 핵심 원칙부터 브레이크포인트 설정, 그리고 웹사이트 성능까지 최적화하는 데 필요한 전략적인 팁까지 상세하게 살펴보며, 모든 장치에서 완벽하게 동작하는 웹 애플리케이션 구축의 비밀을 알아봅니다.</description>
+    <pubDate>Sun, 08 Oct 2023 11:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Responsive-Design</category><category>Tailwind-CSS</category><category>CSS</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</guid>
+    <title>Next.js에서 사용할 수 있는 Tailwind CSS와 다양한 스타일링 옵션 및 권장 사항</title>
+    <link>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</link>
+    <description>Next.js는 다양한 스타일링 옵션을 제공하며 이 중에서도 Tailwind CSS를 특히 권장하고 있습니다. 이 블로그는 Next.js의 스타일링 옵션들과 Tailwind CSS 사용 권장 이유와 다른 스타일링 방법들의 장단점을 비교 분석합니다.</description>
+    <pubDate>Wed, 03 Apr 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>CSS</category><category>Web-Design</category><category>Tailwind</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-design/web-layouts</guid>
+    <title>웹 레이아웃의 여러 가지 유형 알아보기</title>
+    <link>https://reactnext-central.xyz/blog/web-design/web-layouts</link>
+    <description>웹 디자인에서 다양한 레이아웃을 구성하기 위한 여러 가지 기술과 접근 방식을 소개합니다.</description>
+    <pubDate>Fri, 01 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>CSS</category><category>Web-Design</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/react/conditional-rendering</guid>
     <title>리액트에서 조건부 렌더링과 리스트를 활용한 사용자 인터페이스 개선 방법</title>
     <link>https://reactnext-central.xyz/blog/react/conditional-rendering</link>
@@ -491,6 +671,16 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/react/react-19x-versionup</guid>
+    <title>React 18 → 19: 구조적 대변동 없이 완성도를 높인 새로운 도약</title>
+    <link>https://reactnext-central.xyz/blog/react/react-19x-versionup</link>
+    <description>React가 18에서 19로 넘어가며 큰 구조 변화 없이 서버 액션(Server Actions), 자동 메모이제이션, 에러 복구 등을 개선해 개발 생산성과 사용자 경험을 한층 끌어올렸습니다.</description>
+    <pubDate>Tue, 31 Dec 2024 01:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React19</category><category>WebDev</category><category>Performance</category><category>VersionUp</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/react/ref-hook</guid>
     <title>리액트에서의 Ref 활용하기: DOM 접근부터 고급 기술까지</title>
     <link>https://reactnext-central.xyz/blog/react/ref-hook</link>
@@ -508,96 +698,6 @@
     <pubDate>Wed, 20 Mar 2024 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>Hook</category><category>Functional</category><category>React</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</guid>
-    <title>Next.js에서 반응형 웹 디자인 마스터하기</title>
-    <link>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</link>
-    <description>Next.js 환경을 활용하여 반응형 웹 디자인을 탐구해보세요. 핵심 원칙부터 브레이크포인트 설정, 그리고 웹사이트 성능까지 최적화하는 데 필요한 전략적인 팁까지 상세하게 살펴보며, 모든 장치에서 완벽하게 동작하는 웹 애플리케이션 구축의 비밀을 알아봅니다.</description>
-    <pubDate>Sun, 08 Oct 2023 11:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Responsive-Design</category><category>Tailwind-CSS</category><category>CSS</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</guid>
-    <title>Next.js에서 사용할 수 있는 Tailwind CSS와 다양한 스타일링 옵션 및 권장 사항</title>
-    <link>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</link>
-    <description>Next.js는 다양한 스타일링 옵션을 제공하며 이 중에서도 Tailwind CSS를 특히 권장하고 있습니다. 이 블로그는 Next.js의 스타일링 옵션들과 Tailwind CSS 사용 권장 이유와 다른 스타일링 방법들의 장단점을 비교 분석합니다.</description>
-    <pubDate>Wed, 03 Apr 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>CSS</category><category>Web-Design</category><category>Tailwind</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-design/web-layouts</guid>
-    <title>웹 레이아웃의 여러 가지 유형 알아보기</title>
-    <link>https://reactnext-central.xyz/blog/web-design/web-layouts</link>
-    <description>웹 디자인에서 다양한 레이아웃을 구성하기 위한 여러 가지 기술과 접근 방식을 소개합니다.</description>
-    <pubDate>Fri, 01 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>CSS</category><category>Web-Design</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</guid>
-    <title>웹 개발에서의 개발자 경험(DX) 이해하기</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</link>
-    <description>웹 개발에서의 개발자 경험(DX)은 도구, 플랫폼, 라이브러리와의 상호작용에 있어 개발자의 효율성과 만족도를 중심으로 합니다. 좋은 DX는 문서화, 도구 사용성, 성능, 커뮤니티 지원 등 다양한 요소에 의해 향상되며, 이는 결국 개발의 품질과 생태계 성장에 영향을 미칩니다.</description>
-    <pubDate>Thu, 21 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>DX</category><category>Web</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</guid>
-    <title>프론트엔드 웹 개발자 로드맵</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</link>
-    <description>프론트엔드 웹 개발자 로드맵은 웹사이트 및 웹 애플리케이션의 사용자 인터페이스(UI)를 개발하는 데 필요한 핵심 기술과 도구들을 제시합니다. 이 로드맵은 WWW부터 HTML, CSS, JavaScript의 기본적인 학습부터 고급 프레임워크, 테스팅, 배포, SEO에 이르기까지 프론트엔드 개발의 전반적인 학습 경로를 안내합니다.</description>
-    <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Frontend</category><category>Roadmap</category><category>JavaScript</category><category>UX</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/good-website-design</guid>
-    <title>2023년 웹 디자인 트렌드 기반 웹사이트 디자인의 10가지 핵심 원칙</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/good-website-design</link>
-    <description>2023년의 웹 디자인 트렌드를 중심으로, 사이트 사용자 경험을 최고로 만들기 위한 실용적인 조언과 팁을 살펴봅니다.</description>
-    <pubDate>Thu, 05 Oct 2023 09:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Web-Design</category><category>UX</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</guid>
-    <title>웹 개발에서의 사용자 경험(UX) 이해하기</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</link>
-    <description>웹사이트와 사용자 간의 조화롭고 완벽한 관계를 꿈꾸시나요? 웹 개발 분야에서의 사용자 경험(UX)가 여러분의 웹사이트에 어떠한 놀라운 변화와 혜택을 가져다 줄 수 있는지 함께 알아보시죠!</description>
-    <pubDate>Wed, 20 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>UX</category><category>SEO</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</guid>
-    <title>웹의 구조와 도서관: 직관적인 웹 주소 이해하기</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</link>
-    <description>웹 주소의 복잡한 구성 요소를 거대한 도서관의 구조와 비교하며, 이해하기 쉽고 흥미로운 방법으로 웹 탐색의 세계를 직관적으로 탐험해보세요!</description>
-    <pubDate>Sat, 23 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Browser</category><category>Web</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</guid>
-    <title>웹 렌더링 이해하기: 피자 만들기 비유로 살펴보다</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</link>
-    <description>웹페이지가 어떻게 화면에 그려지는지 궁금하다면? 피자 만들기로 이해하는 웹 렌더링의 매력적인 세계에 함께 빠져봅시다!</description>
-    <pubDate>Fri, 22 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Rendering</category><category>Browser</category><category>HTML</category><category>CSS</category><category>JavaScript</category>
   </item>
 
     </channel>
