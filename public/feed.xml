@@ -41,6 +41,16 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</guid>
+    <title>2025년, 최적의 React Rich Text Editor는 무엇일까요?</title>
+    <link>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</link>
+    <description>Slate, Tiptap, Lexical 등 주요 React 기반 에디터의 장단점을 비교해 프로젝트에 가장 적합한 선택 기준을 제시합니다.</description>
+    <pubDate>Thu, 15 May 2025 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Text-Editor</category><category>Slate</category><category>Tiptap</category><category>Lexical</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/dev-env/eslint-with-prettier</guid>
     <title>Next.js에서의 ESLint와 Prettier: 코드 품질과 개발자 생산성 극대화</title>
     <link>https://reactnext-central.xyz/blog/dev-env/eslint-with-prettier</link>
@@ -78,16 +88,6 @@
     <pubDate>Tue, 24 Oct 2023 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>VSCode</category><category>Productivity</category><category>Tools</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</guid>
-    <title>2025년, 최적의 React Rich Text Editor는 무엇일까요?</title>
-    <link>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</link>
-    <description>Slate, Tiptap, Lexical 등 주요 React 기반 에디터의 장단점을 비교해 프로젝트에 가장 적합한 선택 기준을 제시합니다.</description>
-    <pubDate>Thu, 15 May 2025 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Text-Editor</category><category>Slate</category><category>Tiptap</category><category>Lexical</category>
   </item>
 
   <item>
@@ -491,116 +491,6 @@
   </item>
 
   <item>
-    <guid>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</guid>
-    <title>2025년 웹 개발자를 위한, Vercel 스토리지·DB 선택 완벽 가이드</title>
-    <link>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</link>
-    <description>Vercel에서 제공·통합하는 다양한 스토리지·데이터베이스 솔루션을 상황별로 쉽게 선택해, 2025년 기준 서버리스 웹앱을 효율적으로 구축하는 가이드입니다.</description>
-    <pubDate>Thu, 15 May 2025 01:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Vercel</category><category>Storage</category><category>Postgres</category><category>Blob</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</guid>
-    <title>웹 개발에서의 개발자 경험(DX) 이해하기</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</link>
-    <description>웹 개발에서의 개발자 경험(DX)은 도구, 플랫폼, 라이브러리와의 상호작용에 있어 개발자의 효율성과 만족도를 중심으로 합니다. 좋은 DX는 문서화, 도구 사용성, 성능, 커뮤니티 지원 등 다양한 요소에 의해 향상되며, 이는 결국 개발의 품질과 생태계 성장에 영향을 미칩니다.</description>
-    <pubDate>Thu, 21 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>DX</category><category>Web</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</guid>
-    <title>프론트엔드 웹 개발자 로드맵</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</link>
-    <description>프론트엔드 웹 개발자 로드맵은 웹사이트 및 웹 애플리케이션의 사용자 인터페이스(UI)를 개발하는 데 필요한 핵심 기술과 도구들을 제시합니다. 이 로드맵은 WWW부터 HTML, CSS, JavaScript의 기본적인 학습부터 고급 프레임워크, 테스팅, 배포, SEO에 이르기까지 프론트엔드 개발의 전반적인 학습 경로를 안내합니다.</description>
-    <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Frontend</category><category>Roadmap</category><category>JavaScript</category><category>UX</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/good-website-design</guid>
-    <title>2023년 웹 디자인 트렌드 기반 웹사이트 디자인의 10가지 핵심 원칙</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/good-website-design</link>
-    <description>2023년의 웹 디자인 트렌드를 중심으로, 사이트 사용자 경험을 최고로 만들기 위한 실용적인 조언과 팁을 살펴봅니다.</description>
-    <pubDate>Thu, 05 Oct 2023 09:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Web-Design</category><category>UX</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</guid>
-    <title>웹 개발에서의 사용자 경험(UX) 이해하기</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</link>
-    <description>웹사이트와 사용자 간의 조화롭고 완벽한 관계를 꿈꾸시나요? 웹 개발 분야에서의 사용자 경험(UX)가 여러분의 웹사이트에 어떠한 놀라운 변화와 혜택을 가져다 줄 수 있는지 함께 알아보시죠!</description>
-    <pubDate>Wed, 20 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>UX</category><category>SEO</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/vercel-neon-postgres</guid>
-    <title>Neon Postgres: 달라진 Vercel 환경에서의 완성도 높은 업그레이드</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/vercel-neon-postgres</link>
-    <description>Vercel Postgres가 Neon Postgres로 전환됨에 따라 서버리스 PostgreSQL 환경이 더 강력하고 안정적으로 개선되었습니다. 기존 Vercel Postgres 사용자도 큰 수정 없이 자동 전환을 통해 이점과 안정성을 누릴 수 있습니다.</description>
-    <pubDate>Tue, 31 Dec 2024 02:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>NeonPostgres</category><category>Vercel</category><category>Serverless</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</guid>
-    <title>웹의 구조와 도서관: 직관적인 웹 주소 이해하기</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</link>
-    <description>웹 주소의 복잡한 구성 요소를 거대한 도서관의 구조와 비교하며, 이해하기 쉽고 흥미로운 방법으로 웹 탐색의 세계를 직관적으로 탐험해보세요!</description>
-    <pubDate>Sat, 23 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Browser</category><category>Web</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</guid>
-    <title>웹 렌더링 이해하기: 피자 만들기 비유로 살펴보다</title>
-    <link>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</link>
-    <description>웹페이지가 어떻게 화면에 그려지는지 궁금하다면? 피자 만들기로 이해하는 웹 렌더링의 매력적인 세계에 함께 빠져봅시다!</description>
-    <pubDate>Fri, 22 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Rendering</category><category>Browser</category><category>HTML</category><category>CSS</category><category>JavaScript</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</guid>
-    <title>Next.js에서 반응형 웹 디자인 마스터하기</title>
-    <link>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</link>
-    <description>Next.js 환경을 활용하여 반응형 웹 디자인을 탐구해보세요. 핵심 원칙부터 브레이크포인트 설정, 그리고 웹사이트 성능까지 최적화하는 데 필요한 전략적인 팁까지 상세하게 살펴보며, 모든 장치에서 완벽하게 동작하는 웹 애플리케이션 구축의 비밀을 알아봅니다.</description>
-    <pubDate>Sun, 08 Oct 2023 11:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Responsive-Design</category><category>Tailwind-CSS</category><category>CSS</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</guid>
-    <title>Next.js에서 사용할 수 있는 Tailwind CSS와 다양한 스타일링 옵션 및 권장 사항</title>
-    <link>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</link>
-    <description>Next.js는 다양한 스타일링 옵션을 제공하며 이 중에서도 Tailwind CSS를 특히 권장하고 있습니다. 이 블로그는 Next.js의 스타일링 옵션들과 Tailwind CSS 사용 권장 이유와 다른 스타일링 방법들의 장단점을 비교 분석합니다.</description>
-    <pubDate>Wed, 03 Apr 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>CSS</category><category>Web-Design</category><category>Tailwind</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/web-design/web-layouts</guid>
-    <title>웹 레이아웃의 여러 가지 유형 알아보기</title>
-    <link>https://reactnext-central.xyz/blog/web-design/web-layouts</link>
-    <description>웹 디자인에서 다양한 레이아웃을 구성하기 위한 여러 가지 기술과 접근 방식을 소개합니다.</description>
-    <pubDate>Fri, 01 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>CSS</category><category>Web-Design</category>
-  </item>
-
-  <item>
     <guid>https://reactnext-central.xyz/blog/react/conditional-rendering</guid>
     <title>리액트에서 조건부 렌더링과 리스트를 활용한 사용자 인터페이스 개선 방법</title>
     <link>https://reactnext-central.xyz/blog/react/conditional-rendering</link>
@@ -698,6 +588,136 @@
     <pubDate>Wed, 20 Mar 2024 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>Hook</category><category>Functional</category><category>React</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/vercel/gabia-vercel-setup</guid>
+    <title>가비아 도메인 연결부터 검색 엔진 노출까지, Vercel로 쉽게 시작하기</title>
+    <link>https://reactnext-central.xyz/blog/vercel/gabia-vercel-setup</link>
+    <description>가비아에서 구매한 도메인을 Vercel로 배포한 Next.js 사이트와 연결하고, 구글·네이버 검색 노출까지 준비하는 A to Z 과정을 단계별로 안내합니다.</description>
+    <pubDate>Thu, 15 May 2025 02:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Domain</category><category>DNS</category><category>Vercel</category><category>SEO</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</guid>
+    <title>2025년 웹 개발자를 위한, Vercel 스토리지·DB 선택 완벽 가이드</title>
+    <link>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</link>
+    <description>Vercel에서 제공·통합하는 다양한 스토리지·데이터베이스 솔루션을 상황별로 쉽게 선택해, 2025년 기준 서버리스 웹앱을 효율적으로 구축하는 가이드입니다.</description>
+    <pubDate>Thu, 15 May 2025 01:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel</category><category>Storage</category><category>Postgres</category><category>Blob</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-design/korean-menu-ux-tips</guid>
+    <title>웹사이트 메뉴 UX: 한글 메뉴명으로 사용자 만족도를 높이는 비결</title>
+    <link>https://reactnext-central.xyz/blog/web-design/korean-menu-ux-tips</link>
+    <description>한글 웹사이트에서 직관적이고 간결한 메뉴 구성을 통해, 사용자들이 원하는 정보에 빠르게 접근할 수 있는 UX 최적화 전략을 살펴봅니다.</description>
+    <pubDate>Thu, 15 May 2025 04:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>UX</category><category>Naming</category><category>Responsive</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</guid>
+    <title>Next.js에서 반응형 웹 디자인 마스터하기</title>
+    <link>https://reactnext-central.xyz/blog/web-design/responsive-desing-in-nextjs</link>
+    <description>Next.js 환경을 활용하여 반응형 웹 디자인을 탐구해보세요. 핵심 원칙부터 브레이크포인트 설정, 그리고 웹사이트 성능까지 최적화하는 데 필요한 전략적인 팁까지 상세하게 살펴보며, 모든 장치에서 완벽하게 동작하는 웹 애플리케이션 구축의 비밀을 알아봅니다.</description>
+    <pubDate>Sun, 08 Oct 2023 11:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Responsive-Design</category><category>Tailwind-CSS</category><category>CSS</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</guid>
+    <title>Next.js에서 사용할 수 있는 Tailwind CSS와 다양한 스타일링 옵션 및 권장 사항</title>
+    <link>https://reactnext-central.xyz/blog/web-design/styling-in-nextjs</link>
+    <description>Next.js는 다양한 스타일링 옵션을 제공하며 이 중에서도 Tailwind CSS를 특히 권장하고 있습니다. 이 블로그는 Next.js의 스타일링 옵션들과 Tailwind CSS 사용 권장 이유와 다른 스타일링 방법들의 장단점을 비교 분석합니다.</description>
+    <pubDate>Wed, 03 Apr 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>CSS</category><category>Web-Design</category><category>Tailwind</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-design/web-layouts</guid>
+    <title>웹 레이아웃의 여러 가지 유형 알아보기</title>
+    <link>https://reactnext-central.xyz/blog/web-design/web-layouts</link>
+    <description>웹 디자인에서 다양한 레이아웃을 구성하기 위한 여러 가지 기술과 접근 방식을 소개합니다.</description>
+    <pubDate>Fri, 01 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>CSS</category><category>Web-Design</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</guid>
+    <title>웹 개발에서의 개발자 경험(DX) 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/developer-experience-in-web</link>
+    <description>웹 개발에서의 개발자 경험(DX)은 도구, 플랫폼, 라이브러리와의 상호작용에 있어 개발자의 효율성과 만족도를 중심으로 합니다. 좋은 DX는 문서화, 도구 사용성, 성능, 커뮤니티 지원 등 다양한 요소에 의해 향상되며, 이는 결국 개발의 품질과 생태계 성장에 영향을 미칩니다.</description>
+    <pubDate>Thu, 21 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>DX</category><category>Web</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</guid>
+    <title>프론트엔드 웹 개발자 로드맵</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/frontend-web-developer-roadmap</link>
+    <description>프론트엔드 웹 개발자 로드맵은 웹사이트 및 웹 애플리케이션의 사용자 인터페이스(UI)를 개발하는 데 필요한 핵심 기술과 도구들을 제시합니다. 이 로드맵은 WWW부터 HTML, CSS, JavaScript의 기본적인 학습부터 고급 프레임워크, 테스팅, 배포, SEO에 이르기까지 프론트엔드 개발의 전반적인 학습 경로를 안내합니다.</description>
+    <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Frontend</category><category>Roadmap</category><category>JavaScript</category><category>UX</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/good-website-design</guid>
+    <title>2023년 웹 디자인 트렌드 기반 웹사이트 디자인의 10가지 핵심 원칙</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/good-website-design</link>
+    <description>2023년의 웹 디자인 트렌드를 중심으로, 사이트 사용자 경험을 최고로 만들기 위한 실용적인 조언과 팁을 살펴봅니다.</description>
+    <pubDate>Thu, 05 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Web-Design</category><category>UX</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</guid>
+    <title>웹 개발에서의 사용자 경험(UX) 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/user-experience-in-web</link>
+    <description>웹사이트와 사용자 간의 조화롭고 완벽한 관계를 꿈꾸시나요? 웹 개발 분야에서의 사용자 경험(UX)가 여러분의 웹사이트에 어떠한 놀라운 변화와 혜택을 가져다 줄 수 있는지 함께 알아보시죠!</description>
+    <pubDate>Wed, 20 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>UX</category><category>SEO</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/vercel-neon-postgres</guid>
+    <title>Neon Postgres: 달라진 Vercel 환경에서의 완성도 높은 업그레이드</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/vercel-neon-postgres</link>
+    <description>Vercel Postgres가 Neon Postgres로 전환됨에 따라 서버리스 PostgreSQL 환경이 더 강력하고 안정적으로 개선되었습니다. 기존 Vercel Postgres 사용자도 큰 수정 없이 자동 전환을 통해 이점과 안정성을 누릴 수 있습니다.</description>
+    <pubDate>Tue, 31 Dec 2024 02:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>NeonPostgres</category><category>Vercel</category><category>Serverless</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</guid>
+    <title>웹의 구조와 도서관: 직관적인 웹 주소 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/web-address-understanding</link>
+    <description>웹 주소의 복잡한 구성 요소를 거대한 도서관의 구조와 비교하며, 이해하기 쉽고 흥미로운 방법으로 웹 탐색의 세계를 직관적으로 탐험해보세요!</description>
+    <pubDate>Sat, 23 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Browser</category><category>Web</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</guid>
+    <title>웹 렌더링 이해하기: 피자 만들기 비유로 살펴보다</title>
+    <link>https://reactnext-central.xyz/blog/web-dev/web-rendering-understanding</link>
+    <description>웹페이지가 어떻게 화면에 그려지는지 궁금하다면? 피자 만들기로 이해하는 웹 렌더링의 매력적인 세계에 함께 빠져봅시다!</description>
+    <pubDate>Fri, 22 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Rendering</category><category>Browser</category><category>HTML</category><category>CSS</category><category>JavaScript</category>
   </item>
 
     </channel>

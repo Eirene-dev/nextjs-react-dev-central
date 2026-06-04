@@ -4,7 +4,7 @@ import GithubSlugger from 'github-slugger'
 import { escape } from 'pliny/utils/htmlEscaper.js'
 import siteMetadata from '../data/siteMetadata.js'
 import tagData from '../app/tag-data.json' assert { type: 'json' }
-import { allBlogs } from '../.contentlayer/generated/index.mjs'
+import allBlogs from '../.velite/allBlogs.json' assert { type: 'json' }
 
 const generateRssItem = (config, post) => `
   <item>

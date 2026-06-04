@@ -44,7 +44,7 @@ const postFields = {
   stem: s.path(),
 }
 
-const makePostTransform = (type: string) => (data: any, { meta }: any) => {
+const makePostTransform = (type: string) => async (data: any, { meta }: any) => {
   const { rawBody, code, stem, ...rest } = data
   const { path: docPath, slug, slugAsParams } = computePaths(stem)
   const filePath = path.relative(path.join(root, 'data'), meta.path)
@@ -56,7 +56,7 @@ const makePostTransform = (type: string) => (data: any, { meta }: any) => {
     filePath,
     type,
     readingTime: readingTime(rawBody),
-    toc: extractTocHeadings(rawBody),
+    toc: await extractTocHeadings(rawBody),
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
@@ -160,7 +160,8 @@ export default defineConfig({
     // contentlayer 파리티: 상대 링크를 로컬 에셋으로 복사하지 않음(velite 기본 true → ENOENT 방지).
     // gfm 은 velite 내장(기본 on)이라 remarkGfm 을 따로 넣지 않는다.
     copyLinkedFiles: false,
-    remarkPlugins: [remarkCodeTitles, remarkMath, remarkImgToJsx],
+    // 혼재된 unified 버전 간 Plugin 타입 차이로 tsc 가 엄격히 거부 → any[] 캐스팅(런타임 무관).
+    remarkPlugins: [remarkCodeTitles, remarkMath, remarkImgToJsx] as any[],
     rehypePlugins: [
       rehypeSlug,
       rehypeAutolinkHeadings,
@@ -168,6 +169,6 @@ export default defineConfig({
       [rehypeCitation, { path: path.join(root, 'data') }],
       [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
       rehypePresetMinify,
-    ],
+    ] as any[],
   },
 })
