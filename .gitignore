@@ -52,3 +52,5 @@ yarn-error.log*
 
 # config file
 next.config.js
+# velite generated
+.velite
