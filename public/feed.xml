@@ -41,16 +41,6 @@
   </item>
 
   <item>
-    <guid>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</guid>
-    <title>2025년, 최적의 React Rich Text Editor는 무엇일까요?</title>
-    <link>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</link>
-    <description>Slate, Tiptap, Lexical 등 주요 React 기반 에디터의 장단점을 비교해 프로젝트에 가장 적합한 선택 기준을 제시합니다.</description>
-    <pubDate>Thu, 15 May 2025 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Text-Editor</category><category>Slate</category><category>Tiptap</category><category>Lexical</category>
-  </item>
-
-  <item>
     <guid>https://reactnext-central.xyz/blog/dev-env/eslint-with-prettier</guid>
     <title>Next.js에서의 ESLint와 Prettier: 코드 품질과 개발자 생산성 극대화</title>
     <link>https://reactnext-central.xyz/blog/dev-env/eslint-with-prettier</link>
@@ -88,6 +78,16 @@
     <pubDate>Tue, 24 Oct 2023 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>VSCode</category><category>Productivity</category><category>Tools</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</guid>
+    <title>2025년, 최적의 React Rich Text Editor는 무엇일까요?</title>
+    <link>https://reactnext-central.xyz/blog/editor/best-react-rich-text-editor-2025</link>
+    <description>Slate, Tiptap, Lexical 등 주요 React 기반 에디터의 장단점을 비교해 프로젝트에 가장 적합한 선택 기준을 제시합니다.</description>
+    <pubDate>Thu, 15 May 2025 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Text-Editor</category><category>Slate</category><category>Tiptap</category><category>Lexical</category>
   </item>
 
   <item>

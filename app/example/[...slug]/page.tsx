@@ -32,11 +32,12 @@ export const generateStaticParams = async () => {
   return paths
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string[] }
-}): Promise<Metadata | undefined> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string[] }>
+  }
+): Promise<Metadata | undefined> {
+  const params = await props.params;
   let slug = ''
   if (params.slug) {
     slug = decodeURI(params.slug.join('/'))
@@ -90,7 +91,8 @@ export async function generateMetadata({
   }
 }
 
-export default async function Page({ params }: { params: { slug: string[] } }) {
+export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
+  const params = await props.params;
   let slug = ''
   if (params.slug) {
     slug = decodeURI(params.slug.join('/'))

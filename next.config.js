@@ -61,9 +61,6 @@ module.exports = () => {
   return plugins.reduce((acc, next) => next(acc), {
     reactStrictMode: true,
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-    eslint: {
-      dirs: ['app', 'components', 'layouts', 'scripts'],
-    },
     images: {
       remotePatterns: [
         {
@@ -80,9 +77,6 @@ module.exports = () => {
         },
       ],
     },
-    experimental: {
-      appDir: true,
-    },
     // async headers() {
     //   return [
     //     {
@@ -91,13 +85,14 @@ module.exports = () => {
     //     },
     //   ]
     // },
-    webpack: (config, options) => {
-      config.module.rules.push({
-        test: /\.svg$/,
-        use: ['@svgr/webpack'],
-      })
-
-      return config
+    // Next 16: Turbopack 기본. 기존 @svgr/webpack(SVG→React 컴포넌트)을 turbopack 로더로 이전.
+    turbopack: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
     },
   })
 }

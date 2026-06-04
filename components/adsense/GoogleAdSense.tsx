@@ -13,7 +13,7 @@ export function GoogleAdSense({
   publisherId,
   strategy = 'afterInteractive',
   debug = false,
-}: GoogleAdSenseProps): JSX.Element | null {
+}: GoogleAdSenseProps): React.JSX.Element | null {
   const _publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ?? publisherId
 
   if (!_publisherId) {

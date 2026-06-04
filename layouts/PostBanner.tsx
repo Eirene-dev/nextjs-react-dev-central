@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import Image from '@/components/Image'
-import Bleed from 'pliny/ui/Bleed'
+import Bleed from 'pliny/ui/Bleed.js'
 import { CoreContent } from '@/lib/content'
 import type { Blog } from '@/lib/content'
 import Comments from '@/components/Comments'
