@@ -1,0 +1,2465 @@
+{
+  "generatedFrom": "contentlayer",
+  "counts": {
+    "blog": 71,
+    "docs": 187,
+    "example": 15,
+    "levelup": 4,
+    "authors": 2,
+    "staticRoutes": {
+      "blog": 71,
+      "docs": 187,
+      "example": 15,
+      "levelup": 4
+    },
+    "tagKeys": 94,
+    "searchEntries": 277
+  },
+  "draftCounts": {
+    "blog": 0,
+    "docs": 0,
+    "example": 5,
+    "levelup": 0
+  },
+  "collections": {
+    "blog": [
+      {
+        "path": "blog/ai/architecture-for-vercel-ai-sdk",
+        "slug": "ai/architecture-for-vercel-ai-sdk",
+        "draft": false,
+        "tags": [
+          "Architecture",
+          "Router-Hanlder",
+          "Server-Action",
+          "Vercel-AI-SDK"
+        ]
+      },
+      {
+        "path": "blog/ai/background-for-vercel-ai-sdk",
+        "slug": "ai/background-for-vercel-ai-sdk",
+        "draft": false,
+        "tags": [
+          "Assistant",
+          "Prompt",
+          "Streaming",
+          "Vercel-AI-SDK"
+        ]
+      },
+      {
+        "path": "blog/ai/vercel-ai-sdk-overview",
+        "slug": "ai/vercel-ai-sdk-overview",
+        "draft": false,
+        "tags": [
+          "Chatbot",
+          "OpenAI",
+          "Vercel-AI-SDK"
+        ]
+      },
+      {
+        "path": "blog/dev-env/eslint-with-prettier",
+        "slug": "dev-env/eslint-with-prettier",
+        "draft": false,
+        "tags": [
+          "Code-Quality",
+          "ESLint",
+          "Prettier",
+          "Productivity"
+        ]
+      },
+      {
+        "path": "blog/dev-env/hot-code-reloading-and-fast-refresh",
+        "slug": "dev-env/hot-code-reloading-and-fast-refresh",
+        "draft": false,
+        "tags": [
+          "IDE",
+          "Productivity"
+        ]
+      },
+      {
+        "path": "blog/dev-env/selecting-ide-for-nextjs",
+        "slug": "dev-env/selecting-ide-for-nextjs",
+        "draft": false,
+        "tags": [
+          "IDE",
+          "Productivity",
+          "VSCode"
+        ]
+      },
+      {
+        "path": "blog/dev-env/vscode-ide-for-nextjs",
+        "slug": "dev-env/vscode-ide-for-nextjs",
+        "draft": false,
+        "tags": [
+          "Productivity",
+          "Tools",
+          "VSCode"
+        ]
+      },
+      {
+        "path": "blog/editor/best-react-rich-text-editor-2025",
+        "slug": "editor/best-react-rich-text-editor-2025",
+        "draft": false,
+        "tags": [
+          "Lexical",
+          "Slate",
+          "Text-Editor",
+          "Tiptap"
+        ]
+      },
+      {
+        "path": "blog/javascript/10-web-apis",
+        "slug": "javascript/10-web-apis",
+        "draft": false,
+        "tags": [
+          "JavaScript",
+          "Web-APIs"
+        ]
+      },
+      {
+        "path": "blog/javascript/arrow-and-regular-functions-in-javascript",
+        "slug": "javascript/arrow-and-regular-functions-in-javascript",
+        "draft": false,
+        "tags": [
+          "ECMA",
+          "Functional",
+          "JavaScript"
+        ]
+      },
+      {
+        "path": "blog/javascript/garbage-collection-in-javascript",
+        "slug": "javascript/garbage-collection-in-javascript",
+        "draft": false,
+        "tags": [
+          "JavaScript",
+          "Memory-Management",
+          "Performance"
+        ]
+      },
+      {
+        "path": "blog/javascript/tree-shaking",
+        "slug": "javascript/tree-shaking",
+        "draft": false,
+        "tags": [
+          "JavaScript",
+          "Optimization"
+        ]
+      },
+      {
+        "path": "blog/javascript/understanding-ecmacript-modules-in-js",
+        "slug": "javascript/understanding-ecmacript-modules-in-js",
+        "draft": false,
+        "tags": [
+          "ECMA",
+          "JavaScript",
+          "Tools"
+        ]
+      },
+      {
+        "path": "blog/nextjs-overivew/8-things-you-shold-konw-about-nextjs-13",
+        "slug": "nextjs-overivew/8-things-you-shold-konw-about-nextjs-13",
+        "draft": false,
+        "tags": [
+          "App-Router",
+          "Next.js",
+          "Nextjs"
+        ]
+      },
+      {
+        "path": "blog/nextjs-overivew/comparing-nextjs-nuxt-sveltekit",
+        "slug": "nextjs-overivew/comparing-nextjs-nuxt-sveltekit",
+        "draft": false,
+        "tags": [
+          "Comparison",
+          "Nextjs",
+          "Nuxt",
+          "SvelteKit"
+        ]
+      },
+      {
+        "path": "blog/nextjs-overivew/nextjs-challenges",
+        "slug": "nextjs-overivew/nextjs-challenges",
+        "draft": false,
+        "tags": [
+          "Challenges",
+          "Coding-Issues",
+          "Nextjs"
+        ]
+      },
+      {
+        "path": "blog/nextjs-overivew/nextjs-evolution",
+        "slug": "nextjs-overivew/nextjs-evolution",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "Web-History"
+        ]
+      },
+      {
+        "path": "blog/nextjs-overivew/nextjs-success-story",
+        "slug": "nextjs-overivew/nextjs-success-story",
+        "draft": false,
+        "tags": [
+          "Case-Studies",
+          "Nextjs"
+        ]
+      },
+      {
+        "path": "blog/nextjs-overivew/what-is-nextjs",
+        "slug": "nextjs-overivew/what-is-nextjs",
+        "draft": false,
+        "tags": [
+          "Architecture",
+          "Nextjs",
+          "React",
+          "SSR"
+        ]
+      },
+      {
+        "path": "blog/nextjs/code-structure-and-maintenance-strategies-for-nextjs",
+        "slug": "nextjs/code-structure-and-maintenance-strategies-for-nextjs",
+        "draft": false,
+        "tags": [
+          "App-Router",
+          "Architecture",
+          "NEXTJS"
+        ]
+      },
+      {
+        "path": "blog/nextjs/composition-patterns",
+        "slug": "nextjs/composition-patterns",
+        "draft": false,
+        "tags": [
+          "Componenet",
+          "Nextjs",
+          "Performance",
+          "Rendering"
+        ]
+      },
+      {
+        "path": "blog/nextjs/data-caching",
+        "slug": "nextjs/data-caching",
+        "draft": false,
+        "tags": [
+          "Caching",
+          "Data",
+          "Nextjs"
+        ]
+      },
+      {
+        "path": "blog/nextjs/environment-variables-in-nextjs",
+        "slug": "nextjs/environment-variables-in-nextjs",
+        "draft": false,
+        "tags": [
+          "Code-Quality",
+          "Env-Variables",
+          "Secure-Coding"
+        ]
+      },
+      {
+        "path": "blog/nextjs/fetch-data-in-server-and-client",
+        "slug": "nextjs/fetch-data-in-server-and-client",
+        "draft": false,
+        "tags": [
+          "Caching",
+          "Data",
+          "Nextjs"
+        ]
+      },
+      {
+        "path": "blog/nextjs/font-in-next.js",
+        "slug": "nextjs/font-in-next.js",
+        "draft": false,
+        "tags": [
+          "Font",
+          "Nextjs",
+          "Optimization",
+          "Performance"
+        ]
+      },
+      {
+        "path": "blog/nextjs/image-component",
+        "slug": "nextjs/image-component",
+        "draft": false,
+        "tags": [
+          "Image",
+          "Nextjs",
+          "Optimization",
+          "Performance"
+        ]
+      },
+      {
+        "path": "blog/nextjs/intercepting-routes",
+        "slug": "nextjs/intercepting-routes",
+        "draft": false,
+        "tags": [
+          "Modal",
+          "Nextjs",
+          "Routing"
+        ]
+      },
+      {
+        "path": "blog/nextjs/Internationalization",
+        "slug": "nextjs/Internationalization",
+        "draft": false,
+        "tags": [
+          "Languages",
+          "Nextjs",
+          "Routing"
+        ]
+      },
+      {
+        "path": "blog/nextjs/lazy-loading",
+        "slug": "nextjs/lazy-loading",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "Optimization",
+          "Performance"
+        ]
+      },
+      {
+        "path": "blog/nextjs/link-and-navigation",
+        "slug": "nextjs/link-and-navigation",
+        "draft": false,
+        "tags": [
+          "APP-ROUTER",
+          "NEXTJS",
+          "Routing"
+        ]
+      },
+      {
+        "path": "blog/nextjs/mdx",
+        "slug": "nextjs/mdx",
+        "draft": false,
+        "tags": [
+          "JSX",
+          "MDX",
+          "Nextjs"
+        ]
+      },
+      {
+        "path": "blog/nextjs/metadata",
+        "slug": "nextjs/metadata",
+        "draft": false,
+        "tags": [
+          "Metadata",
+          "Nextjs",
+          "SEO"
+        ]
+      },
+      {
+        "path": "blog/nextjs/middleware",
+        "slug": "nextjs/middleware",
+        "draft": false,
+        "tags": [
+          "Middleware",
+          "Nextjs",
+          "Routing"
+        ]
+      },
+      {
+        "path": "blog/nextjs/nextjs-15x-versionup",
+        "slug": "nextjs/nextjs-15x-versionup",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "Performance",
+          "React",
+          "VersionUp"
+        ]
+      },
+      {
+        "path": "blog/nextjs/nextjs-15x-versionup-code",
+        "slug": "nextjs/nextjs-15x-versionup-code",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "React",
+          "VersionUp"
+        ]
+      },
+      {
+        "path": "blog/nextjs/nextjs-15x-versionup-howto",
+        "slug": "nextjs/nextjs-15x-versionup-howto",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "React",
+          "VersionUp"
+        ]
+      },
+      {
+        "path": "blog/nextjs/nextjs-15x-versionup-server-action",
+        "slug": "nextjs/nextjs-15x-versionup-server-action",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "Security",
+          "ServerActions",
+          "VersionUp"
+        ]
+      },
+      {
+        "path": "blog/nextjs/parallel-routes",
+        "slug": "nextjs/parallel-routes",
+        "draft": false,
+        "tags": [
+          "Modal",
+          "Nextjs",
+          "Routing",
+          "UX"
+        ]
+      },
+      {
+        "path": "blog/nextjs/performance-nextjs-script-optimization",
+        "slug": "nextjs/performance-nextjs-script-optimization",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "Optimization",
+          "Performance",
+          "UX"
+        ]
+      },
+      {
+        "path": "blog/nextjs/performance-optimization-using-nextjs",
+        "slug": "nextjs/performance-optimization-using-nextjs",
+        "draft": false,
+        "tags": [
+          "Font",
+          "Image",
+          "Nextjs",
+          "Optimization",
+          "Performance"
+        ]
+      },
+      {
+        "path": "blog/nextjs/project-organization",
+        "slug": "nextjs/project-organization",
+        "draft": false,
+        "tags": [
+          "APP-ROUTER",
+          "ARCHITECTURE",
+          "Productivity"
+        ]
+      },
+      {
+        "path": "blog/nextjs/route-group",
+        "slug": "nextjs/route-group",
+        "draft": false,
+        "tags": [
+          "APP-ROUTER",
+          "MAINTAINABLITY",
+          "NEXTJS",
+          "Routing"
+        ]
+      },
+      {
+        "path": "blog/nextjs/route-handlers",
+        "slug": "nextjs/route-handlers",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "REST-API",
+          "Routing"
+        ]
+      },
+      {
+        "path": "blog/nextjs/routing-loading-error-not-found",
+        "slug": "nextjs/routing-loading-error-not-found",
+        "draft": false,
+        "tags": [
+          "NEXTJS",
+          "ROUTING",
+          "UI",
+          "UX"
+        ]
+      },
+      {
+        "path": "blog/nextjs/server-action",
+        "slug": "nextjs/server-action",
+        "draft": false,
+        "tags": [
+          "Form",
+          "Nextjs",
+          "Server-Action"
+        ]
+      },
+      {
+        "path": "blog/nextjs/server-client-rendering",
+        "slug": "nextjs/server-client-rendering",
+        "draft": false,
+        "tags": [
+          "Componenet",
+          "Nextjs",
+          "React",
+          "Rendering"
+        ]
+      },
+      {
+        "path": "blog/nextjs/server-rendering",
+        "slug": "nextjs/server-rendering",
+        "draft": false,
+        "tags": [
+          "Rendering",
+          "SSR",
+          "Streaming",
+          "Suspense"
+        ]
+      },
+      {
+        "path": "blog/nextjs/understanding-isr-in-nextjs",
+        "slug": "nextjs/understanding-isr-in-nextjs",
+        "draft": false,
+        "tags": [
+          "ISR",
+          "RENDERING",
+          "SSG",
+          "SSR"
+        ]
+      },
+      {
+        "path": "blog/react/conditional-rendering",
+        "slug": "react/conditional-rendering",
+        "draft": false,
+        "tags": [
+          "Productivity",
+          "React",
+          "UI"
+        ]
+      },
+      {
+        "path": "blog/react/functional-component-with-typescript",
+        "slug": "react/functional-component-with-typescript",
+        "draft": false,
+        "tags": [
+          "Functional",
+          "React",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "blog/react/functional-programming",
+        "slug": "react/functional-programming",
+        "draft": false,
+        "tags": [
+          "Functional",
+          "React"
+        ]
+      },
+      {
+        "path": "blog/react/goodbye-create-react-app",
+        "slug": "react/goodbye-create-react-app",
+        "draft": false,
+        "tags": [
+          "Nextjs",
+          "Optimization",
+          "React",
+          "create-next-app"
+        ]
+      },
+      {
+        "path": "blog/react/hook-in-functional-component",
+        "slug": "react/hook-in-functional-component",
+        "draft": false,
+        "tags": [
+          "Functional",
+          "Hook",
+          "React"
+        ]
+      },
+      {
+        "path": "blog/react/interaction-with-ui",
+        "slug": "react/interaction-with-ui",
+        "draft": false,
+        "tags": [
+          "CSR",
+          "Event-Handling",
+          "UI"
+        ]
+      },
+      {
+        "path": "blog/react/memo-callback-hook",
+        "slug": "react/memo-callback-hook",
+        "draft": false,
+        "tags": [
+          "Hook",
+          "Performance",
+          "React"
+        ]
+      },
+      {
+        "path": "blog/react/react-19x-versionup",
+        "slug": "react/react-19x-versionup",
+        "draft": false,
+        "tags": [
+          "Performance",
+          "React19",
+          "VersionUp",
+          "WebDev"
+        ]
+      },
+      {
+        "path": "blog/react/ref-hook",
+        "slug": "react/ref-hook",
+        "draft": false,
+        "tags": [
+          "DOM",
+          "Hook",
+          "React"
+        ]
+      },
+      {
+        "path": "blog/react/state-context-reducer",
+        "slug": "react/state-context-reducer",
+        "draft": false,
+        "tags": [
+          "Functional",
+          "Hook",
+          "React"
+        ]
+      },
+      {
+        "path": "blog/vercel/gabia-vercel-setup",
+        "slug": "vercel/gabia-vercel-setup",
+        "draft": false,
+        "tags": [
+          "DNS",
+          "Domain",
+          "SEO",
+          "Vercel"
+        ]
+      },
+      {
+        "path": "blog/vercel/vercel-storate-guide-2025",
+        "slug": "vercel/vercel-storate-guide-2025",
+        "draft": false,
+        "tags": [
+          "Blob",
+          "Postgres",
+          "Storage",
+          "Vercel"
+        ]
+      },
+      {
+        "path": "blog/web-design/korean-menu-ux-tips",
+        "slug": "web-design/korean-menu-ux-tips",
+        "draft": false,
+        "tags": [
+          "Naming",
+          "Responsive",
+          "UX"
+        ]
+      },
+      {
+        "path": "blog/web-design/responsive-desing-in-nextjs",
+        "slug": "web-design/responsive-desing-in-nextjs",
+        "draft": false,
+        "tags": [
+          "CSS",
+          "Responsive-Design",
+          "Tailwind-CSS"
+        ]
+      },
+      {
+        "path": "blog/web-design/styling-in-nextjs",
+        "slug": "web-design/styling-in-nextjs",
+        "draft": false,
+        "tags": [
+          "CSS",
+          "Tailwind",
+          "Web-Design"
+        ]
+      },
+      {
+        "path": "blog/web-design/web-layouts",
+        "slug": "web-design/web-layouts",
+        "draft": false,
+        "tags": [
+          "CSS",
+          "Web-Design"
+        ]
+      },
+      {
+        "path": "blog/web-dev/developer-experience-in-web",
+        "slug": "web-dev/developer-experience-in-web",
+        "draft": false,
+        "tags": [
+          "DX",
+          "Web"
+        ]
+      },
+      {
+        "path": "blog/web-dev/frontend-web-developer-roadmap",
+        "slug": "web-dev/frontend-web-developer-roadmap",
+        "draft": false,
+        "tags": [
+          "Frontend",
+          "JavaScript",
+          "Roadmap",
+          "UX"
+        ]
+      },
+      {
+        "path": "blog/web-dev/good-website-design",
+        "slug": "web-dev/good-website-design",
+        "draft": false,
+        "tags": [
+          "UX",
+          "Web-Design"
+        ]
+      },
+      {
+        "path": "blog/web-dev/user-experience-in-web",
+        "slug": "web-dev/user-experience-in-web",
+        "draft": false,
+        "tags": [
+          "SEO",
+          "UX"
+        ]
+      },
+      {
+        "path": "blog/web-dev/vercel-neon-postgres",
+        "slug": "web-dev/vercel-neon-postgres",
+        "draft": false,
+        "tags": [
+          "NeonPostgres",
+          "Serverless",
+          "Vercel"
+        ]
+      },
+      {
+        "path": "blog/web-dev/web-address-understanding",
+        "slug": "web-dev/web-address-understanding",
+        "draft": false,
+        "tags": [
+          "Browser",
+          "Web"
+        ]
+      },
+      {
+        "path": "blog/web-dev/web-rendering-understanding",
+        "slug": "web-dev/web-rendering-understanding",
+        "draft": false,
+        "tags": [
+          "Browser",
+          "CSS",
+          "HTML",
+          "JavaScript",
+          "Rendering"
+        ]
+      }
+    ],
+    "docs": [
+      {
+        "path": "docs/getting-started",
+        "slug": "getting-started",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-foundation",
+        "slug": "getting-started/nextjs-foundation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-foundation/about-nextjs",
+        "slug": "getting-started/nextjs-foundation/about-nextjs",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-foundation/app-router",
+        "slug": "getting-started/nextjs-foundation/app-router",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-foundation/installation",
+        "slug": "getting-started/nextjs-foundation/installation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-foundation/project-structure",
+        "slug": "getting-started/nextjs-foundation/project-structure",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app",
+        "slug": "getting-started/nextjs-fullstack-app",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app/auth-and-metadata",
+        "slug": "getting-started/nextjs-fullstack-app/auth-and-metadata",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app/data-management",
+        "slug": "getting-started/nextjs-fullstack-app/data-management",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app/data-mutation",
+        "slug": "getting-started/nextjs-fullstack-app/data-mutation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app/error-handling-accessibility",
+        "slug": "getting-started/nextjs-fullstack-app/error-handling-accessibility",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app/getting-started-and-styling",
+        "slug": "getting-started/nextjs-fullstack-app/getting-started-and-styling",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app/layouts-and-routing",
+        "slug": "getting-started/nextjs-fullstack-app/layouts-and-routing",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/nextjs-fullstack-app/rendering",
+        "slug": "getting-started/nextjs-fullstack-app/rendering",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/react-foundation",
+        "slug": "getting-started/react-foundation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/react-foundation/basics",
+        "slug": "getting-started/react-foundation/basics",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/react-foundation/components",
+        "slug": "getting-started/react-foundation/components",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/react-foundation/with-nextjs",
+        "slug": "getting-started/react-foundation/with-nextjs",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/seo",
+        "slug": "getting-started/seo",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/seo/crawling-and-indexing",
+        "slug": "getting-started/seo/crawling-and-indexing",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/seo/improve",
+        "slug": "getting-started/seo/improve",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/seo/introduction-to-seo",
+        "slug": "getting-started/seo/introduction-to-seo",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/seo/monitor",
+        "slug": "getting-started/seo/monitor",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/seo/rendering-and-ranking",
+        "slug": "getting-started/seo/rendering-and-ranking",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/getting-started/seo/web-performance",
+        "slug": "getting-started/seo/web-performance",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs",
+        "slug": "nextjs",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/authentication",
+        "slug": "nextjs/authentication",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/authentication/authentication",
+        "slug": "nextjs/authentication/authentication",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/authentication/authorization",
+        "slug": "nextjs/authentication/authorization",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/authentication/session-management",
+        "slug": "nextjs/authentication/session-management",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/caching",
+        "slug": "nextjs/caching",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/caching/affecting-api",
+        "slug": "nextjs/caching/affecting-api",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/caching/data-cache",
+        "slug": "nextjs/caching/data-cache",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/caching/full-route-cache",
+        "slug": "nextjs/caching/full-route-cache",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/caching/request-memoization",
+        "slug": "nextjs/caching/request-memoization",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/caching/router-cache",
+        "slug": "nextjs/caching/router-cache",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring",
+        "slug": "nextjs/configuring",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/absolute-imports-and-module-aliases",
+        "slug": "nextjs/configuring/absolute-imports-and-module-aliases",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/content-security-policy",
+        "slug": "nextjs/configuring/content-security-policy",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/draft-mode",
+        "slug": "nextjs/configuring/draft-mode",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/environment-variables",
+        "slug": "nextjs/configuring/environment-variables",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/eslint",
+        "slug": "nextjs/configuring/eslint",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/mdx",
+        "slug": "nextjs/configuring/mdx",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/src-directory",
+        "slug": "nextjs/configuring/src-directory",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/configuring/typescript",
+        "slug": "nextjs/configuring/typescript",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/data-fetching",
+        "slug": "nextjs/data-fetching",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/data-fetching/fetching-caching-and-revalidating",
+        "slug": "nextjs/data-fetching/fetching-caching-and-revalidating",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/data-fetching/forms-and-mutations",
+        "slug": "nextjs/data-fetching/forms-and-mutations",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/data-fetching/patterns",
+        "slug": "nextjs/data-fetching/patterns",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/deploying",
+        "slug": "nextjs/deploying",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/deploying/static-exports",
+        "slug": "nextjs/deploying/static-exports",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing",
+        "slug": "nextjs/optimizing",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/analytics",
+        "slug": "nextjs/optimizing/analytics",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/fonts",
+        "slug": "nextjs/optimizing/fonts",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/images",
+        "slug": "nextjs/optimizing/images",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/instrumentation",
+        "slug": "nextjs/optimizing/instrumentation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/lazy-loading",
+        "slug": "nextjs/optimizing/lazy-loading",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/metadata",
+        "slug": "nextjs/optimizing/metadata",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/open-telemetry",
+        "slug": "nextjs/optimizing/open-telemetry",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/scripts",
+        "slug": "nextjs/optimizing/scripts",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/optimizing/static-assets",
+        "slug": "nextjs/optimizing/static-assets",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/rendering",
+        "slug": "nextjs/rendering",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/rendering/client-components",
+        "slug": "nextjs/rendering/client-components",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/rendering/composition-patterns",
+        "slug": "nextjs/rendering/composition-patterns",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/rendering/edge-and-nodejs-runtimes",
+        "slug": "nextjs/rendering/edge-and-nodejs-runtimes",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/rendering/server-components",
+        "slug": "nextjs/rendering/server-components",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing",
+        "slug": "nextjs/routing",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/colocation",
+        "slug": "nextjs/routing/colocation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/defining-routes",
+        "slug": "nextjs/routing/defining-routes",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/dynamic-routes",
+        "slug": "nextjs/routing/dynamic-routes",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/error-handling",
+        "slug": "nextjs/routing/error-handling",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/intercepting-routes",
+        "slug": "nextjs/routing/intercepting-routes",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/internationalization",
+        "slug": "nextjs/routing/internationalization",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/linking-and-navigating",
+        "slug": "nextjs/routing/linking-and-navigating",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/loading-ui-and-streaming",
+        "slug": "nextjs/routing/loading-ui-and-streaming",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/middleware",
+        "slug": "nextjs/routing/middleware",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/pages-and-layouts",
+        "slug": "nextjs/routing/pages-and-layouts",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/parallel-routes",
+        "slug": "nextjs/routing/parallel-routes",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/route-groups",
+        "slug": "nextjs/routing/route-groups",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/routing/route-handlers",
+        "slug": "nextjs/routing/route-handlers",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/styling",
+        "slug": "nextjs/styling",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/styling/css-in-js",
+        "slug": "nextjs/styling/css-in-js",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/styling/css-modules",
+        "slug": "nextjs/styling/css-modules",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/styling/sass",
+        "slug": "nextjs/styling/sass",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/styling/tailwind-css",
+        "slug": "nextjs/styling/tailwind-css",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/testing",
+        "slug": "nextjs/testing",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/testing/cypress",
+        "slug": "nextjs/testing/cypress",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/testing/jest",
+        "slug": "nextjs/testing/jest",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/testing/playwright",
+        "slug": "nextjs/testing/playwright",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/testing/vitest",
+        "slug": "nextjs/testing/vitest",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/upgrading",
+        "slug": "nextjs/upgrading",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/upgrading/app-router-migration",
+        "slug": "nextjs/upgrading/app-router-migration",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/nextjs/upgrading/codemods",
+        "slug": "nextjs/upgrading/codemods",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react",
+        "slug": "react",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity",
+        "slug": "react/adding-interactivity",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity/queueing-a-series-of-state-updates",
+        "slug": "react/adding-interactivity/queueing-a-series-of-state-updates",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity/render-and-commit",
+        "slug": "react/adding-interactivity/render-and-commit",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity/responding-to-events",
+        "slug": "react/adding-interactivity/responding-to-events",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity/state-a-components-memory",
+        "slug": "react/adding-interactivity/state-a-components-memory",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity/state-as-a-snapshot",
+        "slug": "react/adding-interactivity/state-as-a-snapshot",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity/updating-arrays-in-state",
+        "slug": "react/adding-interactivity/updating-arrays-in-state",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/adding-interactivity/updating-objects-in-state",
+        "slug": "react/adding-interactivity/updating-objects-in-state",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui",
+        "slug": "react/describing-the-ui",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/conditional-rendering",
+        "slug": "react/describing-the-ui/conditional-rendering",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/importing-and-exporting-components",
+        "slug": "react/describing-the-ui/importing-and-exporting-components",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/javascript-in-jsx-with-curly-braces",
+        "slug": "react/describing-the-ui/javascript-in-jsx-with-curly-braces",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/keeping-components-pure",
+        "slug": "react/describing-the-ui/keeping-components-pure",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/passing-props-to-a-component",
+        "slug": "react/describing-the-ui/passing-props-to-a-component",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/rendering-lists",
+        "slug": "react/describing-the-ui/rendering-lists",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/writing-markup-with-jsx",
+        "slug": "react/describing-the-ui/writing-markup-with-jsx",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/describing-the-ui/your-first-component",
+        "slug": "react/describing-the-ui/your-first-component",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches",
+        "slug": "react/escape-hatches",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/lifecycle-of-reactive-effects",
+        "slug": "react/escape-hatches/lifecycle-of-reactive-effects",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/manipulating-the-dom-with-refs",
+        "slug": "react/escape-hatches/manipulating-the-dom-with-refs",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/referencing-values-with-refs",
+        "slug": "react/escape-hatches/referencing-values-with-refs",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/removing-effect-dependencies",
+        "slug": "react/escape-hatches/removing-effect-dependencies",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/reusing-logic-with-custom-hooks",
+        "slug": "react/escape-hatches/reusing-logic-with-custom-hooks",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/separating-events-from-effects",
+        "slug": "react/escape-hatches/separating-events-from-effects",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/synchronizing-with-effects",
+        "slug": "react/escape-hatches/synchronizing-with-effects",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/escape-hatches/you-might-not-need-an-effect",
+        "slug": "react/escape-hatches/you-might-not-need-an-effect",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/installation",
+        "slug": "react/installation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/installation/add-react-to-an-existing-project",
+        "slug": "react/installation/add-react-to-an-existing-project",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/installation/editor-setup",
+        "slug": "react/installation/editor-setup",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/installation/react-developer-tools",
+        "slug": "react/installation/react-developer-tools",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/installation/start-a-new-react-project",
+        "slug": "react/installation/start-a-new-react-project",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/installation/typescript",
+        "slug": "react/installation/typescript",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/learn",
+        "slug": "react/learn",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/learn/overview",
+        "slug": "react/learn/overview",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/learn/quick-start",
+        "slug": "react/learn/quick-start",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/learn/thinking-in-react",
+        "slug": "react/learn/thinking-in-react",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/learn/tic-tac-toe",
+        "slug": "react/learn/tic-tac-toe",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state",
+        "slug": "react/managing-state",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state/choosing-the-state-structure",
+        "slug": "react/managing-state/choosing-the-state-structure",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state/extracting-state-logic-into-a-reducer",
+        "slug": "react/managing-state/extracting-state-logic-into-a-reducer",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state/passing-data-deeply-with-context",
+        "slug": "react/managing-state/passing-data-deeply-with-context",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state/preserving-and-resetting-state",
+        "slug": "react/managing-state/preserving-and-resetting-state",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state/reacting-to-input-with-state",
+        "slug": "react/managing-state/reacting-to-input-with-state",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state/scaling-up-with-reducer-and-context",
+        "slug": "react/managing-state/scaling-up-with-reducer-and-context",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/react/managing-state/sharing-state-between-components",
+        "slug": "react/managing-state/sharing-state-between-components",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css",
+        "slug": "tailwind-css",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts",
+        "slug": "tailwind-css/core-concepts",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts/adding-custom-styles",
+        "slug": "tailwind-css/core-concepts/adding-custom-styles",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts/dark-mode",
+        "slug": "tailwind-css/core-concepts/dark-mode",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts/functions-and-directives",
+        "slug": "tailwind-css/core-concepts/functions-and-directives",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts/hover-focus-and-other-states",
+        "slug": "tailwind-css/core-concepts/hover-focus-and-other-states",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts/responsive-design",
+        "slug": "tailwind-css/core-concepts/responsive-design",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts/reusing-styles",
+        "slug": "tailwind-css/core-concepts/reusing-styles",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/tailwind-css/core-concepts/utility-first",
+        "slug": "tailwind-css/core-concepts/utility-first",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript",
+        "slug": "typescript",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics",
+        "slug": "typescript/basics",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/basics",
+        "slug": "typescript/basics/basics",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/everyday-types",
+        "slug": "typescript/basics/everyday-types",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/get-started",
+        "slug": "typescript/basics/get-started",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/modules",
+        "slug": "typescript/basics/modules",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/more-on-functions",
+        "slug": "typescript/basics/more-on-functions",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/narrowing",
+        "slug": "typescript/basics/narrowing",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/object-types",
+        "slug": "typescript/basics/object-types",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/basics/type-manipulation",
+        "slug": "typescript/basics/type-manipulation",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react",
+        "slug": "typescript/react",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/class-components",
+        "slug": "typescript/react/class-components",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/context",
+        "slug": "typescript/react/context",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/error-boundaries",
+        "slug": "typescript/react/error-boundaries",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/forms-and-events",
+        "slug": "typescript/react/forms-and-events",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/forwardref-and-createref",
+        "slug": "typescript/react/forwardref-and-createref",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/function-components",
+        "slug": "typescript/react/function-components",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/hooks",
+        "slug": "typescript/react/hooks",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/portals",
+        "slug": "typescript/react/portals",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/typing-component-props",
+        "slug": "typescript/react/typing-component-props",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/typescript/react/typing-defaultprops",
+        "slug": "typescript/react/typing-defaultprops",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage",
+        "slug": "vercel-storage",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/blob",
+        "slug": "vercel-storage/blob",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/blob/client-upload",
+        "slug": "vercel-storage/blob/client-upload",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/blob/server-upload",
+        "slug": "vercel-storage/blob/server-upload",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/blob/using-blob-sdk",
+        "slug": "vercel-storage/blob/using-blob-sdk",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/edge-config",
+        "slug": "vercel-storage/edge-config",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/edge-config/edge-config-sdk",
+        "slug": "vercel-storage/edge-config/edge-config-sdk",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/edge-config/quick-start",
+        "slug": "vercel-storage/edge-config/quick-start",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/edge-config/using-edge-config",
+        "slug": "vercel-storage/edge-config/using-edge-config",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/edge-config/vercel-api",
+        "slug": "vercel-storage/edge-config/vercel-api",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/kv",
+        "slug": "vercel-storage/kv",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/kv/quick-start",
+        "slug": "vercel-storage/kv/quick-start",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/kv/rest-api",
+        "slug": "vercel-storage/kv/rest-api",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/kv/sdk-reference",
+        "slug": "vercel-storage/kv/sdk-reference",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/postgres",
+        "slug": "vercel-storage/postgres",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/postgres/quick-start",
+        "slug": "vercel-storage/postgres/quick-start",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/postgres/sdk-reference",
+        "slug": "vercel-storage/postgres/sdk-reference",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "docs/vercel-storage/postgres/using-an-orm",
+        "slug": "vercel-storage/postgres/using-an-orm",
+        "draft": false,
+        "tags": []
+      }
+    ],
+    "example": [
+      {
+        "path": "example/ai-sdk",
+        "slug": "ai-sdk",
+        "draft": true,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/app-playground",
+        "slug": "app-playground",
+        "draft": true,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/boilerplate",
+        "slug": "boilerplate",
+        "draft": false,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/boilerplate/app-source",
+        "slug": "boilerplate/app-source",
+        "draft": false,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/boilerplate/installation",
+        "slug": "boilerplate/installation",
+        "draft": false,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/boilerplate/project-structure",
+        "slug": "boilerplate/project-structure",
+        "draft": false,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/dashboard",
+        "slug": "dashboard",
+        "draft": true,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/ecommerce",
+        "slug": "ecommerce",
+        "draft": true,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/taxonomy",
+        "slug": "taxonomy",
+        "draft": true,
+        "tags": [
+          "App Router",
+          "Tailwind CSS",
+          "TypeScript"
+        ]
+      },
+      {
+        "path": "example/weather-ai-chatbot",
+        "slug": "weather-ai-chatbot",
+        "draft": false,
+        "tags": [
+          "Assistants",
+          "ChatGPT",
+          "OpenAI",
+          "Vercel AI SDK"
+        ]
+      },
+      {
+        "path": "example/weather-ai-chatbot/assistants-client-rendering",
+        "slug": "weather-ai-chatbot/assistants-client-rendering",
+        "draft": false,
+        "tags": [
+          "ChatGPT",
+          "Chatbot",
+          "Vercel AI SDK"
+        ]
+      },
+      {
+        "path": "example/weather-ai-chatbot/assistants-server-rendering",
+        "slug": "weather-ai-chatbot/assistants-server-rendering",
+        "draft": false,
+        "tags": [
+          "ChatGPT",
+          "Chatbot",
+          "Vercel AI SDK"
+        ]
+      },
+      {
+        "path": "example/weather-ai-chatbot/chat-simple",
+        "slug": "weather-ai-chatbot/chat-simple",
+        "draft": false,
+        "tags": [
+          "ChatGPT",
+          "Chatbot",
+          "Vercel AI SDK"
+        ]
+      },
+      {
+        "path": "example/weather-ai-chatbot/client-rendering",
+        "slug": "weather-ai-chatbot/client-rendering",
+        "draft": false,
+        "tags": [
+          "ChatGPT",
+          "Chatbot",
+          "Vercel AI SDK"
+        ]
+      },
+      {
+        "path": "example/weather-ai-chatbot/server-rendering",
+        "slug": "weather-ai-chatbot/server-rendering",
+        "draft": false,
+        "tags": [
+          "ChatGPT",
+          "Chatbot",
+          "Vercel AI SDK"
+        ]
+      }
+    ],
+    "levelup": [
+      {
+        "path": "levelup/book",
+        "slug": "book",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "levelup/book/discussion",
+        "slug": "book/discussion",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "levelup/book/feedback",
+        "slug": "book/feedback",
+        "draft": false,
+        "tags": []
+      },
+      {
+        "path": "levelup/book/neon-postgres",
+        "slug": "book/neon-postgres",
+        "draft": false,
+        "tags": []
+      }
+    ]
+  },
+  "authors": [
+    {
+      "slug": "boilerplate",
+      "path": "authors/boilerplate"
+    },
+    {
+      "slug": "default",
+      "path": "authors/default"
+    }
+  ],
+  "staticParams": {
+    "blog": [
+      "ai/architecture-for-vercel-ai-sdk",
+      "ai/background-for-vercel-ai-sdk",
+      "ai/vercel-ai-sdk-overview",
+      "dev-env/eslint-with-prettier",
+      "dev-env/hot-code-reloading-and-fast-refresh",
+      "dev-env/selecting-ide-for-nextjs",
+      "dev-env/vscode-ide-for-nextjs",
+      "editor/best-react-rich-text-editor-2025",
+      "javascript/10-web-apis",
+      "javascript/arrow-and-regular-functions-in-javascript",
+      "javascript/garbage-collection-in-javascript",
+      "javascript/tree-shaking",
+      "javascript/understanding-ecmacript-modules-in-js",
+      "nextjs-overivew/8-things-you-shold-konw-about-nextjs-13",
+      "nextjs-overivew/comparing-nextjs-nuxt-sveltekit",
+      "nextjs-overivew/nextjs-challenges",
+      "nextjs-overivew/nextjs-evolution",
+      "nextjs-overivew/nextjs-success-story",
+      "nextjs-overivew/what-is-nextjs",
+      "nextjs/Internationalization",
+      "nextjs/code-structure-and-maintenance-strategies-for-nextjs",
+      "nextjs/composition-patterns",
+      "nextjs/data-caching",
+      "nextjs/environment-variables-in-nextjs",
+      "nextjs/fetch-data-in-server-and-client",
+      "nextjs/font-in-next.js",
+      "nextjs/image-component",
+      "nextjs/intercepting-routes",
+      "nextjs/lazy-loading",
+      "nextjs/link-and-navigation",
+      "nextjs/mdx",
+      "nextjs/metadata",
+      "nextjs/middleware",
+      "nextjs/nextjs-15x-versionup",
+      "nextjs/nextjs-15x-versionup-code",
+      "nextjs/nextjs-15x-versionup-howto",
+      "nextjs/nextjs-15x-versionup-server-action",
+      "nextjs/parallel-routes",
+      "nextjs/performance-nextjs-script-optimization",
+      "nextjs/performance-optimization-using-nextjs",
+      "nextjs/project-organization",
+      "nextjs/route-group",
+      "nextjs/route-handlers",
+      "nextjs/routing-loading-error-not-found",
+      "nextjs/server-action",
+      "nextjs/server-client-rendering",
+      "nextjs/server-rendering",
+      "nextjs/understanding-isr-in-nextjs",
+      "react/conditional-rendering",
+      "react/functional-component-with-typescript",
+      "react/functional-programming",
+      "react/goodbye-create-react-app",
+      "react/hook-in-functional-component",
+      "react/interaction-with-ui",
+      "react/memo-callback-hook",
+      "react/react-19x-versionup",
+      "react/ref-hook",
+      "react/state-context-reducer",
+      "vercel/gabia-vercel-setup",
+      "vercel/vercel-storate-guide-2025",
+      "web-design/korean-menu-ux-tips",
+      "web-design/responsive-desing-in-nextjs",
+      "web-design/styling-in-nextjs",
+      "web-design/web-layouts",
+      "web-dev/developer-experience-in-web",
+      "web-dev/frontend-web-developer-roadmap",
+      "web-dev/good-website-design",
+      "web-dev/user-experience-in-web",
+      "web-dev/vercel-neon-postgres",
+      "web-dev/web-address-understanding",
+      "web-dev/web-rendering-understanding"
+    ],
+    "docs": [
+      "getting-started",
+      "getting-started/nextjs-foundation",
+      "getting-started/nextjs-foundation/about-nextjs",
+      "getting-started/nextjs-foundation/app-router",
+      "getting-started/nextjs-foundation/installation",
+      "getting-started/nextjs-foundation/project-structure",
+      "getting-started/nextjs-fullstack-app",
+      "getting-started/nextjs-fullstack-app/auth-and-metadata",
+      "getting-started/nextjs-fullstack-app/data-management",
+      "getting-started/nextjs-fullstack-app/data-mutation",
+      "getting-started/nextjs-fullstack-app/error-handling-accessibility",
+      "getting-started/nextjs-fullstack-app/getting-started-and-styling",
+      "getting-started/nextjs-fullstack-app/layouts-and-routing",
+      "getting-started/nextjs-fullstack-app/rendering",
+      "getting-started/react-foundation",
+      "getting-started/react-foundation/basics",
+      "getting-started/react-foundation/components",
+      "getting-started/react-foundation/with-nextjs",
+      "getting-started/seo",
+      "getting-started/seo/crawling-and-indexing",
+      "getting-started/seo/improve",
+      "getting-started/seo/introduction-to-seo",
+      "getting-started/seo/monitor",
+      "getting-started/seo/rendering-and-ranking",
+      "getting-started/seo/web-performance",
+      "nextjs",
+      "nextjs/authentication",
+      "nextjs/authentication/authentication",
+      "nextjs/authentication/authorization",
+      "nextjs/authentication/session-management",
+      "nextjs/caching",
+      "nextjs/caching/affecting-api",
+      "nextjs/caching/data-cache",
+      "nextjs/caching/full-route-cache",
+      "nextjs/caching/request-memoization",
+      "nextjs/caching/router-cache",
+      "nextjs/configuring",
+      "nextjs/configuring/absolute-imports-and-module-aliases",
+      "nextjs/configuring/content-security-policy",
+      "nextjs/configuring/draft-mode",
+      "nextjs/configuring/environment-variables",
+      "nextjs/configuring/eslint",
+      "nextjs/configuring/mdx",
+      "nextjs/configuring/src-directory",
+      "nextjs/configuring/typescript",
+      "nextjs/data-fetching",
+      "nextjs/data-fetching/fetching-caching-and-revalidating",
+      "nextjs/data-fetching/forms-and-mutations",
+      "nextjs/data-fetching/patterns",
+      "nextjs/deploying",
+      "nextjs/deploying/static-exports",
+      "nextjs/optimizing",
+      "nextjs/optimizing/analytics",
+      "nextjs/optimizing/fonts",
+      "nextjs/optimizing/images",
+      "nextjs/optimizing/instrumentation",
+      "nextjs/optimizing/lazy-loading",
+      "nextjs/optimizing/metadata",
+      "nextjs/optimizing/open-telemetry",
+      "nextjs/optimizing/scripts",
+      "nextjs/optimizing/static-assets",
+      "nextjs/rendering",
+      "nextjs/rendering/client-components",
+      "nextjs/rendering/composition-patterns",
+      "nextjs/rendering/edge-and-nodejs-runtimes",
+      "nextjs/rendering/server-components",
+      "nextjs/routing",
+      "nextjs/routing/colocation",
+      "nextjs/routing/defining-routes",
+      "nextjs/routing/dynamic-routes",
+      "nextjs/routing/error-handling",
+      "nextjs/routing/intercepting-routes",
+      "nextjs/routing/internationalization",
+      "nextjs/routing/linking-and-navigating",
+      "nextjs/routing/loading-ui-and-streaming",
+      "nextjs/routing/middleware",
+      "nextjs/routing/pages-and-layouts",
+      "nextjs/routing/parallel-routes",
+      "nextjs/routing/route-groups",
+      "nextjs/routing/route-handlers",
+      "nextjs/styling",
+      "nextjs/styling/css-in-js",
+      "nextjs/styling/css-modules",
+      "nextjs/styling/sass",
+      "nextjs/styling/tailwind-css",
+      "nextjs/testing",
+      "nextjs/testing/cypress",
+      "nextjs/testing/jest",
+      "nextjs/testing/playwright",
+      "nextjs/testing/vitest",
+      "nextjs/upgrading",
+      "nextjs/upgrading/app-router-migration",
+      "nextjs/upgrading/codemods",
+      "react",
+      "react/adding-interactivity",
+      "react/adding-interactivity/queueing-a-series-of-state-updates",
+      "react/adding-interactivity/render-and-commit",
+      "react/adding-interactivity/responding-to-events",
+      "react/adding-interactivity/state-a-components-memory",
+      "react/adding-interactivity/state-as-a-snapshot",
+      "react/adding-interactivity/updating-arrays-in-state",
+      "react/adding-interactivity/updating-objects-in-state",
+      "react/describing-the-ui",
+      "react/describing-the-ui/conditional-rendering",
+      "react/describing-the-ui/importing-and-exporting-components",
+      "react/describing-the-ui/javascript-in-jsx-with-curly-braces",
+      "react/describing-the-ui/keeping-components-pure",
+      "react/describing-the-ui/passing-props-to-a-component",
+      "react/describing-the-ui/rendering-lists",
+      "react/describing-the-ui/writing-markup-with-jsx",
+      "react/describing-the-ui/your-first-component",
+      "react/escape-hatches",
+      "react/escape-hatches/lifecycle-of-reactive-effects",
+      "react/escape-hatches/manipulating-the-dom-with-refs",
+      "react/escape-hatches/referencing-values-with-refs",
+      "react/escape-hatches/removing-effect-dependencies",
+      "react/escape-hatches/reusing-logic-with-custom-hooks",
+      "react/escape-hatches/separating-events-from-effects",
+      "react/escape-hatches/synchronizing-with-effects",
+      "react/escape-hatches/you-might-not-need-an-effect",
+      "react/installation",
+      "react/installation/add-react-to-an-existing-project",
+      "react/installation/editor-setup",
+      "react/installation/react-developer-tools",
+      "react/installation/start-a-new-react-project",
+      "react/installation/typescript",
+      "react/learn",
+      "react/learn/overview",
+      "react/learn/quick-start",
+      "react/learn/thinking-in-react",
+      "react/learn/tic-tac-toe",
+      "react/managing-state",
+      "react/managing-state/choosing-the-state-structure",
+      "react/managing-state/extracting-state-logic-into-a-reducer",
+      "react/managing-state/passing-data-deeply-with-context",
+      "react/managing-state/preserving-and-resetting-state",
+      "react/managing-state/reacting-to-input-with-state",
+      "react/managing-state/scaling-up-with-reducer-and-context",
+      "react/managing-state/sharing-state-between-components",
+      "tailwind-css",
+      "tailwind-css/core-concepts",
+      "tailwind-css/core-concepts/adding-custom-styles",
+      "tailwind-css/core-concepts/dark-mode",
+      "tailwind-css/core-concepts/functions-and-directives",
+      "tailwind-css/core-concepts/hover-focus-and-other-states",
+      "tailwind-css/core-concepts/responsive-design",
+      "tailwind-css/core-concepts/reusing-styles",
+      "tailwind-css/core-concepts/utility-first",
+      "typescript",
+      "typescript/basics",
+      "typescript/basics/basics",
+      "typescript/basics/everyday-types",
+      "typescript/basics/get-started",
+      "typescript/basics/modules",
+      "typescript/basics/more-on-functions",
+      "typescript/basics/narrowing",
+      "typescript/basics/object-types",
+      "typescript/basics/type-manipulation",
+      "typescript/react",
+      "typescript/react/class-components",
+      "typescript/react/context",
+      "typescript/react/error-boundaries",
+      "typescript/react/forms-and-events",
+      "typescript/react/forwardref-and-createref",
+      "typescript/react/function-components",
+      "typescript/react/hooks",
+      "typescript/react/portals",
+      "typescript/react/typing-component-props",
+      "typescript/react/typing-defaultprops",
+      "vercel-storage",
+      "vercel-storage/blob",
+      "vercel-storage/blob/client-upload",
+      "vercel-storage/blob/server-upload",
+      "vercel-storage/blob/using-blob-sdk",
+      "vercel-storage/edge-config",
+      "vercel-storage/edge-config/edge-config-sdk",
+      "vercel-storage/edge-config/quick-start",
+      "vercel-storage/edge-config/using-edge-config",
+      "vercel-storage/edge-config/vercel-api",
+      "vercel-storage/kv",
+      "vercel-storage/kv/quick-start",
+      "vercel-storage/kv/rest-api",
+      "vercel-storage/kv/sdk-reference",
+      "vercel-storage/postgres",
+      "vercel-storage/postgres/quick-start",
+      "vercel-storage/postgres/sdk-reference",
+      "vercel-storage/postgres/using-an-orm"
+    ],
+    "example": [
+      "ai-sdk",
+      "app-playground",
+      "boilerplate",
+      "boilerplate/app-source",
+      "boilerplate/installation",
+      "boilerplate/project-structure",
+      "dashboard",
+      "ecommerce",
+      "taxonomy",
+      "weather-ai-chatbot",
+      "weather-ai-chatbot/assistants-client-rendering",
+      "weather-ai-chatbot/assistants-server-rendering",
+      "weather-ai-chatbot/chat-simple",
+      "weather-ai-chatbot/client-rendering",
+      "weather-ai-chatbot/server-rendering"
+    ],
+    "levelup": [
+      "book",
+      "book/discussion",
+      "book/feedback",
+      "book/neon-postgres"
+    ]
+  },
+  "tagData": {
+    "vercel-ai-sdk": 3,
+    "architecture": 4,
+    "server-action": 2,
+    "router-hanlder": 1,
+    "prompt": 1,
+    "streaming": 2,
+    "assistant": 1,
+    "chatbot": 1,
+    "openai": 1,
+    "eslint": 1,
+    "prettier": 1,
+    "code-quality": 2,
+    "productivity": 6,
+    "ide": 2,
+    "vscode": 2,
+    "tools": 2,
+    "text-editor": 1,
+    "slate": 1,
+    "tiptap": 1,
+    "lexical": 1,
+    "javascript": 7,
+    "web-apis": 1,
+    "ecma": 2,
+    "functional": 5,
+    "memory-management": 1,
+    "performance": 10,
+    "optimization": 7,
+    "routing": 8,
+    "nextjs": 33,
+    "languages": 1,
+    "app-router": 5,
+    "componenet": 2,
+    "rendering": 5,
+    "data": 2,
+    "caching": 2,
+    "env-variables": 1,
+    "secure-coding": 1,
+    "font": 2,
+    "image": 2,
+    "modal": 2,
+    "mdx": 1,
+    "jsx": 1,
+    "seo": 3,
+    "metadata": 1,
+    "middleware": 1,
+    "react": 13,
+    "versionup": 5,
+    "security": 1,
+    "serveractions": 1,
+    "ux": 7,
+    "maintainablity": 1,
+    "rest-api": 1,
+    "ui": 3,
+    "form": 1,
+    "ssr": 3,
+    "suspense": 1,
+    "isr": 1,
+    "ssg": 1,
+    "nuxt": 1,
+    "sveltekit": 1,
+    "comparison": 1,
+    "coding-issues": 1,
+    "challenges": 1,
+    "web-history": 1,
+    "case-studies": 1,
+    "typescript": 1,
+    "create-next-app": 1,
+    "hook": 4,
+    "event-handling": 1,
+    "csr": 1,
+    "react19": 1,
+    "webdev": 1,
+    "dom": 1,
+    "domain": 1,
+    "dns": 1,
+    "vercel": 3,
+    "storage": 1,
+    "postgres": 1,
+    "blob": 1,
+    "naming": 1,
+    "responsive": 1,
+    "responsive-design": 1,
+    "tailwind-css": 1,
+    "css": 4,
+    "web-design": 3,
+    "tailwind": 1,
+    "dx": 1,
+    "web": 2,
+    "frontend": 1,
+    "roadmap": 1,
+    "neonpostgres": 1,
+    "serverless": 1,
+    "browser": 2,
+    "html": 1
+  },
+  "searchSchema": [
+    "date",
+    "filePath",
+    "images",
+    "path",
+    "readingTime",
+    "slug",
+    "slugAsParams",
+    "structuredData",
+    "summary",
+    "tags",
+    "title",
+    "toc",
+    "type"
+  ]
+}
