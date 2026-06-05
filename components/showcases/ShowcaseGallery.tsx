@@ -2,16 +2,14 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import showcasesData from '@/data/showcasesData'
 
 const CATEGORIES = ['전체', '정보형', '게시판', '커머스', 'AI 통합', '대시보드'] as const
 
-type Showcase = { title: string; category: string; href: string }
-// Phase 3 에서 standalone 데모를 채운다. 지금은 빈/준비 중 상태.
-const SHOWCASES: Showcase[] = []
-
 export default function ShowcaseGallery() {
   const [active, setActive] = useState<string>('전체')
-  const filtered = active === '전체' ? SHOWCASES : SHOWCASES.filter((s) => s.category === active)
+  const filtered =
+    active === '전체' ? showcasesData : showcasesData.filter((s) => s.category === active)
 
   return (
     <div className="py-12">
@@ -40,25 +38,36 @@ export default function ShowcaseGallery() {
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-line bg-surface-2 py-20 text-center">
-          <p className="text-ink-2">쇼케이스를 준비 중입니다.</p>
-          <p className="mt-2 text-sm text-ink-3">
-            Claude Code로 만든 standalone 데모가 곧 공개됩니다.
-          </p>
+          <p className="text-ink-2">이 카테고리는 준비 중입니다.</p>
+          <p className="mt-2 text-sm text-ink-3">곧 더 많은 데모가 추가됩니다.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(255px,1fr))] gap-5">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
           {filtered.map((s) => (
             <a
-              key={s.title}
+              key={s.slug}
               href={s.href}
-              className="overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:-translate-y-1 hover:border-coral-soft hover:shadow-soft"
+              className="group overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:-translate-y-1 hover:border-coral-soft hover:shadow-soft"
             >
+              <div className="aspect-[16/10] overflow-hidden border-b border-line bg-ink/5">
+                {/* 정적 데모 썸네일 (self-contained 데모 스크린샷) */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={s.thumb}
+                  alt={s.title}
+                  loading="lazy"
+                  className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]"
+                />
+              </div>
               <div className="p-5">
                 <span className="text-[11.5px] font-bold uppercase tracking-wide text-coral-2">
                   {s.category}
                 </span>
                 <h3 className="mt-1 text-lg font-bold tracking-tight text-ink">{s.title}</h3>
-                <span className="mt-1 block text-sm font-semibold text-ink-3">데모 보기 →</span>
+                <p className="mt-1 text-sm text-ink-2">{s.blurb}</p>
+                <span className="mt-3 block text-sm font-semibold text-ink-3 group-hover:text-coral-2">
+                  데모 보기 →
+                </span>
               </div>
             </a>
           ))}
