@@ -1,6 +1,12 @@
 import 'css/home.css'
 import Link from '@/components/Link'
 import DemoWidget from '@/components/home/DemoWidget'
+import { allEssays, sortPosts, allCoreContent } from '@/lib/content'
+
+const ym = (d: string | number) => {
+  const dt = new Date(d)
+  return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2, '0')}`
+}
 
 // 새 홈 — homepage-05-final.html 기반. Phase 1 토큰/셸 + 데모 위젯.
 // 프리뷰(쇼케이스/에세이/책)는 이번 단계 정적 카드(05). 레거시 블로그 피드 제거.
@@ -92,14 +98,10 @@ const SHOWCASES = [
   },
 ]
 
-// 05 정적 에세이 프리뷰 (Phase 2 단계). 첫 글만 실제 라우트로 연결.
-const ESSAYS = [
-  { title: '왜 나는 내 기술 블로그를 다시 생각하게 되었는가', date: '2026.06', href: '/essays' },
-  { title: '삼성에서의 16년, 그리고 독립 개발자로', date: '2026.05', href: '/essays' },
-  { title: '판단을 자동화할 수 없는 이유', date: '2026.05', href: '/essays' },
-]
-
 export default function Main() {
+  // 공개된 에세이만 라이브로(최대 3). 없으면 graceful "곧 공개" — placeholder 본문 비노출.
+  const essays = allCoreContent(sortPosts(allEssays.filter((e) => e.draft !== true))).slice(0, 3)
+
   return (
     <div className="home">
       {/* hero */}
@@ -186,12 +188,20 @@ export default function Main() {
           <p>AI가 아닌, 제 생각으로 쓴 글.</p>
         </div>
         <div className="elist">
-          {ESSAYS.map((e) => (
-            <Link href={e.href} key={e.title}>
-              <h3>{e.title}</h3>
-              <span className="d">{e.date}</span>
+          {essays.length === 0 ? (
+            <Link href="/essays" style={{ justifyContent: 'center' }}>
+              <h3 style={{ color: 'hsl(var(--ink-2))', fontWeight: 600 }}>
+                첫 에세이를 준비 중입니다 — 곧 공개
+              </h3>
             </Link>
-          ))}
+          ) : (
+            essays.map((e) => (
+              <Link href={`/essays/${e.slug}`} key={e.slug}>
+                <h3>{e.title}</h3>
+                <span className="d">{ym(e.date)}</span>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 

@@ -22,7 +22,10 @@ export default function EssaysPage() {
       </header>
       <div className="mx-auto flex max-w-[760px] flex-col gap-3.5">
         {essays.length === 0 && (
-          <p className="text-center text-ink-2">아직 공개된 글이 없습니다.</p>
+          <div className="rounded-2xl border border-dashed border-line bg-surface-2 py-20 text-center">
+            <p className="text-ink-2">첫 에세이를 준비 중입니다.</p>
+            <p className="mt-2 text-sm text-ink-3">곧 첫 글을 올립니다 — AI가 아닌, 제 생각으로.</p>
+          </div>
         )}
         {essays.map((e) => (
           <Link
