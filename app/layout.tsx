@@ -1,7 +1,7 @@
 import 'css/tailwind.css'
 import 'pliny/search/algolia.css'
 
-import { Space_Grotesk } from 'next/font/google'
+import { JetBrains_Mono } from 'next/font/google'
 // import { Analytics, AnalyticsConfig } from 'pliny/analytics.js'
 import { SearchProvider, SearchConfig } from 'pliny/search/index.js'
 import Header from '@/components/Header'
@@ -15,10 +15,11 @@ import { Analytics } from '@vercel/analytics/react'
 import { WebVitals } from '@/app/api/analytics/web-vitals'
 import Script from 'next/script'
 
-const space_grotesk = Space_Grotesk({
+// 기술 라벨/코드용 모노. 본문 Pretendard 는 jsdelivr CDN(아래 head <link>)로 로드.
+const jetbrains_mono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-space-grotesk',
+  variable: '--font-jetbrains-mono',
 })
 
 export const metadata: Metadata = {
@@ -65,10 +66,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang={siteMetadata.language}
-      className={`${space_grotesk.variable} scroll-smooth`}
+      className={`${jetbrains_mono.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <head>
+        {/* 본문 폰트: Pretendard (한국어 가독성) — jsdelivr CDN */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
+        />
         <Script
           async
           strategy="lazyOnload"

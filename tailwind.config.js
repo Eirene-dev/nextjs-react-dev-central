@@ -22,7 +22,17 @@ module.exports = {
         14: '3.5rem',
       },
       fontFamily: {
-        sans: ['var(--font-space-grotesk)', ...fontFamily.sans],
+        // 본문: Pretendard(한국어 가독성). 기술 라벨/코드: JetBrains Mono.
+        sans: [
+          'Pretendard',
+          'Pretendard Variable',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Apple SD Gothic Neo',
+          'Noto Sans KR',
+          ...fontFamily.sans,
+        ],
+        mono: ['var(--font-jetbrains-mono)', ...fontFamily.mono],
       },
       colors: {
         primary: colors.pink,
