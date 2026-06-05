@@ -2,6 +2,7 @@ import 'css/prism.css'
 import 'katex/dist/katex.css'
 
 import PageTitle from '@/components/PageTitle'
+import Link from '@/components/Link'
 import { components } from '@/components/MDXComponents'
 import { MDXLayoutRenderer } from '@/components/MDXContent'
 import { sortPosts, coreContent } from '@/lib/content'
@@ -137,6 +138,12 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
         <>
           <main className="relative py-6 lg:gap-10 lg:py-10 xl:grid xl:grid-cols-[1fr_140px]">
             <div className="w-full min-w-0 mx-auto">
+              <Link
+                href="/book"
+                className="mb-4 inline-block text-sm font-semibold text-primary-600 hover:text-primary-500"
+              >
+                ← Book
+              </Link>
               <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

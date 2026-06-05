@@ -2,6 +2,7 @@ import 'css/prism.css'
 import 'katex/dist/katex.css'
 
 import PageTitle from '@/components/PageTitle'
+import ArchiveBanner from '@/components/ArchiveBanner'
 import { components } from '@/components/MDXComponents'
 import { MDXLayoutRenderer } from '@/components/MDXContent'
 import { sortPosts, coreContent } from '@/lib/content'
@@ -141,6 +142,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
               />
+              <ArchiveBanner />
               <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
                 <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
               </Layout>
