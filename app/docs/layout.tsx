@@ -27,7 +27,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
   }
 
   return (
-    <div className="flex-1 md:grid md:grid-cols-[205px_1fr] md:gap-2 lg:grid-cols-[220px_1fr] lg:gap-4">
+    <div className="legacy-theme flex-1 md:grid md:grid-cols-[205px_1fr] md:gap-2 lg:grid-cols-[220px_1fr] lg:gap-4">
       <button
         className="flex items-center p-1 bg-gray-100 md:hidden" // 버튼에 패딩 추가
         onClick={onToggleNav}

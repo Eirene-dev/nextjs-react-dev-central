@@ -127,3 +127,73 @@ input:-webkit-autofill:focus {
     --radius: 0.5rem;
   }
 }
+
+/* === 레거시 룩 격리 (design-decisions §8) ===
+ * 글로벌 토큰은 새 디자인이 기본값. archive 계열(/blog·/docs·/tags·/levelup·/example)
+ * 콘텐츠는 .legacy-theme 스코프로 감싸 토큰을 레거시 값으로 되돌린다(흰 표면·핑크 액센트·그레이 보더).
+ * 글로벌 셸(Header/Footer)은 이 스코프 바깥이라 새 디자인 유지. */
+.legacy-theme {
+  --surface: 0 0% 100%;
+  --surface-2: 0 0% 100%;
+  --ink: 222.2 47.4% 11.2%;
+  --ink-2: 215.4 16.3% 46.9%;
+  --ink-3: 215 20.2% 65.1%;
+  --coral: 330 81% 60%;
+  --coral-2: 333 71% 51%;
+  --link: 330 81% 60%; /* pink-500 — 레거시 액센트 */
+  --line: 214.3 31.8% 91.4%;
+  --line-2: 214.3 31.8% 91.4%;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+
+  --background: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 47.4% 11.2%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --ring: 215 20.2% 65.1%;
+
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.dark .legacy-theme {
+  --surface: 224 71% 4%;
+  --surface-2: 224 71% 4%;
+  --ink: 213 31% 91%;
+  --ink-2: 215.4 16.3% 56.9%;
+  --ink-3: 215 20.2% 65.1%;
+  --coral: 330 86% 70%;
+  --coral-2: 330 81% 60%;
+  --link: 330 86% 70%; /* pink-400 */
+  --line: 216 34% 17%;
+  --line-2: 216 34% 17%;
+
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --muted: 223 47% 11%;
+  --muted-foreground: 215.4 16.3% 56.9%;
+  --popover: 224 71% 4%;
+  --popover-foreground: 215 20.2% 65.1%;
+  --border: 216 34% 17%;
+  --input: 216 34% 17%;
+  --card: 224 71% 4%;
+  --card-foreground: 213 31% 91%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 1.2%;
+  --secondary: 222.2 47.4% 11.2%;
+  --secondary-foreground: 210 40% 98%;
+  --accent: 216 34% 17%;
+  --accent-foreground: 210 40% 98%;
+  --ring: 216 34% 17%;
+}
