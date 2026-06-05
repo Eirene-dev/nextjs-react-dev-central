@@ -50,7 +50,8 @@ export function middleware(request: NextRequest) {
     if (redirects[pathname]) {
         const newUrl = request.nextUrl.clone()
         newUrl.pathname = redirects[pathname]
-        return NextResponse.redirect(newUrl)
+        // 영구 이동(301) — /levelup→/book 및 기존 블로그 URL 정규화 모두 permanent
+        return NextResponse.redirect(newUrl, 301)
     }
 
     return NextResponse.next()
