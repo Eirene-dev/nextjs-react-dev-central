@@ -8,7 +8,7 @@
   "scripts": {
     "start": "velite && next dev",
     "dev": "velite && cross-env INIT_CWD=$PWD next dev",
-    "build": "velite && cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
+    "build": "velite && cross-env INIT_CWD=$PWD next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "velite && cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts"

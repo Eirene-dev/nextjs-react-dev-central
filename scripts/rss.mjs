@@ -1,10 +1,12 @@
-import { writeFileSync, mkdirSync } from 'fs'
+import { writeFileSync, mkdirSync, readFileSync } from 'fs'
 import path from 'path'
 import GithubSlugger from 'github-slugger'
 import { escape } from 'pliny/utils/htmlEscaper.js'
 import siteMetadata from '../data/siteMetadata.js'
-import tagData from '../app/tag-data.json' assert { type: 'json' }
-import allBlogs from '../.velite/allBlogs.json' assert { type: 'json' }
+
+// import attributes(assert/with) 는 Node 버전 간 호환이 갈려(20.9 assert / 22 with) readFileSync 로 읽는다.
+const tagData = JSON.parse(readFileSync(new URL('../app/tag-data.json', import.meta.url), 'utf8'))
+const allBlogs = JSON.parse(readFileSync(new URL('../.velite/allBlogs.json', import.meta.url), 'utf8'))
 
 const generateRssItem = (config, post) => `
   <item>
