@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saedu — 미니 스토어프런트 데모</title>
+  <meta name="description" content="ReactNext Central 쇼케이스 — 미니 커머스 스토어프런트 (mock). standalone 데모." />
+  <style>
+    :root {
+      --bg: #faf7f2; --card: #fff; --ink: #1c1b1a; --ink-2: #6b6862; --line: #ece7df;
+      --acc: #0f7b5a; --acc-2: #0a5e44; --sale: #d6453c; --shadow: 0 18px 44px -24px #1c1b1a3d;
+      --sans: -apple-system, BlinkMacSystemFont, "Pretendard", "Noto Sans KR", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; line-height: 1.5; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+    header { position: sticky; top: 0; z-index: 30; background: #faf7f2e8; backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    .bar { display: flex; align-items: center; gap: 16px; height: 64px; }
+    .logo { font-weight: 800; font-size: 20px; letter-spacing: -.03em; }
+    .logo span { color: var(--acc); }
+    .grow { flex: 1; }
+    .cartbtn { position: relative; display: flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 11px; background: var(--ink); color: #fff; border: 0; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .cartbtn .cnt { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--sale); color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; padding: 0 5px; }
+    .back { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+
+    .hero { padding: 40px 0 14px; }
+    .hero h1 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 800; letter-spacing: -.03em; }
+    .hero p { margin-top: 8px; color: var(--ink-2); }
+
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; padding: 18px 0 22px; }
+    .filters button { padding: 8px 16px; border-radius: 22px; border: 1px solid var(--line); background: var(--card); color: var(--ink-2); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: .15s; }
+    .filters button:hover { border-color: var(--acc); }
+    .filters button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding-bottom: 60px; }
+    .prod { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; transition: .2s; }
+    .prod:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .prod .pic { aspect-ratio: 1; display: grid; place-items: center; font-size: 64px; position: relative; }
+    .prod .badge { position: absolute; top: 12px; left: 12px; background: var(--sale); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 7px; letter-spacing: .03em; }
+    .prod .b { padding: 16px; }
+    .prod .cat { font-size: 11px; font-weight: 700; color: var(--acc); text-transform: uppercase; letter-spacing: .05em; }
+    .prod h3 { font-size: 15.5px; font-weight: 700; margin: 5px 0 2px; }
+    .prod .price { font-weight: 800; font-size: 16px; }
+    .prod .price s { color: var(--ink-2); font-weight: 500; font-size: 13px; margin-right: 6px; }
+    .prod .add { margin-top: 12px; width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--ink); background: var(--card); color: var(--ink); font-weight: 700; font-size: 13.5px; cursor: pointer; transition: .15s; }
+    .prod .add:hover { background: var(--ink); color: #fff; }
+
+    /* cart drawer */
+    .scrim { position: fixed; inset: 0; background: #1c1b1a55; opacity: 0; pointer-events: none; transition: .25s; z-index: 40; }
+    .scrim.on { opacity: 1; pointer-events: auto; }
+    .drawer { position: fixed; top: 0; right: 0; height: 100%; width: 390px; max-width: 90vw; background: var(--bg); z-index: 50; transform: translateX(100%); transition: transform .28s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; box-shadow: -20px 0 60px -20px #1c1b1a55; }
+    .drawer.on { transform: none; }
+    .drawer .dh { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid var(--line); font-weight: 800; font-size: 18px; }
+    .drawer .x { margin-left: auto; background: none; border: 0; font-size: 22px; cursor: pointer; color: var(--ink-2); line-height: 1; }
+    .items { flex: 1; overflow-y: auto; padding: 12px 20px; }
+    .empty { text-align: center; color: var(--ink-2); padding: 60px 0; }
+    .ci { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); align-items: center; }
+    .ci . pic, .ci .cpic { width: 52px; height: 52px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); display: grid; place-items: center; font-size: 26px; flex-shrink: 0; }
+    .ci .info { flex: 1; min-width: 0; }
+    .ci .info h4 { font-size: 14px; font-weight: 700; }
+    .ci .info .p { font-size: 13px; color: var(--ink-2); }
+    .qty { display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--card); }
+    .qty button { width: 28px; height: 28px; border: 0; background: none; font-size: 15px; cursor: pointer; color: var(--ink); }
+    .qty button:hover { background: var(--line); }
+    .qty span { width: 26px; text-align: center; font-size: 13px; font-weight: 700; }
+    .drawer .foot { padding: 20px; border-top: 1px solid var(--line); }
+    .drawer .tot { display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; margin-bottom: 14px; }
+    .checkout { width: 100%; padding: 14px; border-radius: 12px; border: 0; background: var(--acc); color: #fff; font-weight: 700; font-size: 15px; cursor: pointer; transition: .15s; }
+    .checkout:hover { background: var(--acc-2); }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: .25s; z-index: 60; }
+    .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 520px) { .bar .logo { font-size: 17px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="back" href="/showcases">←</a>
+      <div class="logo">새<span>두</span> Store</div>
+      <div class="grow"></div>
+      <button class="cartbtn" id="cartbtn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" /></svg>
+        장바구니 <span class="cnt" id="cnt" style="display:none">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <h1>오늘의 작은 사치</h1>
+      <p>핸드픽 굿즈 — 데모용 mock 카탈로그입니다.</p>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="장바구니">
+    <div class="dh">장바구니 <button class="x" id="closeCart" aria-label="닫기">×</button></div>
+    <div class="items" id="items"></div>
+    <div class="foot">
+      <div class="tot"><span>합계</span><span id="total">₩0</span></div>
+      <button class="checkout" id="checkout">결제하기 (데모)</button>
+    </div>
+  </aside>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var PRODUCTS = [
+      { id: 1, name: "린넨 에코백", cat: "리빙", emoji: "👜", price: 28000, was: 38000, sale: true },
+      { id: 2, name: "드립 커피 세트", cat: "키친", emoji: "☕", price: 42000 },
+      { id: 3, name: "세라믹 머그", cat: "키친", emoji: "🍵", price: 19000 },
+      { id: 4, name: "우드 데스크 트레이", cat: "리빙", emoji: "🪵", price: 34000 },
+      { id: 5, name: "노트 & 펜 세트", cat: "문구", emoji: "📓", price: 16000, was: 22000, sale: true },
+      { id: 6, name: "아로마 캔들", cat: "리빙", emoji: "🕯️", price: 24000 },
+      { id: 7, name: "만년필", cat: "문구", emoji: "🖋️", price: 58000 },
+      { id: 8, name: "텀블러 350ml", cat: "키친", emoji: "🥤", price: 27000 }
+    ];
+    var CATS = ["전체", "리빙", "키친", "문구"];
+    var cart = {}; var activeCat = "전체";
+    var won = function (n) { return "₩" + n.toLocaleString(); };
+
+    var grid = document.getElementById('grid');
+    function renderFilters() {
+      var f = document.getElementById('filters');
+      f.innerHTML = CATS.map(function (c) { return '<button class="' + (c === activeCat ? 'on' : '') + '" data-c="' + c + '">' + c + '</button>'; }).join('');
+    }
+    function renderGrid() {
+      var list = PRODUCTS.filter(function (p) { return activeCat === "전체" || p.cat === activeCat; });
+      grid.innerHTML = list.map(function (p) {
+        return '<div class="prod">' +
+          '<div class="pic" style="background:linear-gradient(135deg,#fff,#f1ece3)">' + (p.sale ? '<span class="badge">SALE</span>' : '') + p.emoji + '</div>' +
+          '<div class="b"><div class="cat">' + p.cat + '</div><h3>' + p.name + '</h3>' +
+          '<div class="price">' + (p.was ? '<s>' + won(p.was) + '</s>' : '') + won(p.price) + '</div>' +
+          '<button class="add" data-id="' + p.id + '">담기</button></div></div>';
+      }).join('');
+    }
+    function count() { return Object.keys(cart).reduce(function (s, k) { return s + cart[k]; }, 0); }
+    function total() { return Object.keys(cart).reduce(function (s, k) { var p = PRODUCTS.find(function (x) { return x.id == k; }); return s + p.price * cart[k]; }, 0); }
+    function renderCart() {
+      var items = document.getElementById('items');
+      var keys = Object.keys(cart);
+      if (!keys.length) { items.innerHTML = '<div class="empty">장바구니가 비어 있어요.<br>마음에 드는 걸 담아보세요 🛍️</div>'; }
+      else {
+        items.innerHTML = keys.map(function (k) {
+          var p = PRODUCTS.find(function (x) { return x.id == k; });
+          return '<div class="ci"><div class="cpic">' + p.emoji + '</div><div class="info"><h4>' + p.name + '</h4><div class="p">' + won(p.price) + '</div></div>' +
+            '<div class="qty"><button data-dec="' + k + '">−</button><span>' + cart[k] + '</span><button data-inc="' + k + '">+</button></div></div>';
+        }).join('');
+      }
+      document.getElementById('total').textContent = won(total());
+      var c = count(); var cnt = document.getElementById('cnt');
+      cnt.textContent = c; cnt.style.display = c ? 'grid' : 'none';
+    }
+    var toastT;
+    function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 1600); }
+
+    document.getElementById('filters').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; activeCat = b.dataset.c; renderFilters(); renderGrid(); });
+    grid.addEventListener('click', function (e) { var b = e.target.closest('.add'); if (!b) return; var id = b.dataset.id; cart[id] = (cart[id] || 0) + 1; renderCart(); toast(PRODUCTS.find(function (x) { return x.id == id; }).name + " 담음"); });
+    document.getElementById('items').addEventListener('click', function (e) {
+      var inc = e.target.closest('[data-inc]'), dec = e.target.closest('[data-dec]');
+      if (inc) { cart[inc.dataset.inc]++; }
+      if (dec) { var k = dec.dataset.dec; cart[k]--; if (cart[k] <= 0) delete cart[k]; }
+      if (inc || dec) renderCart();
+    });
+    function openCart(o) { document.getElementById('drawer').classList.toggle('on', o); document.getElementById('scrim').classList.toggle('on', o); }
+    document.getElementById('cartbtn').addEventListener('click', function () { openCart(true); });
+    document.getElementById('closeCart').addEventListener('click', function () { openCart(false); });
+    document.getElementById('scrim').addEventListener('click', function () { openCart(false); });
+    document.getElementById('checkout').addEventListener('click', function () { if (!count()) { toast("장바구니가 비어 있어요"); return; } toast("결제는 데모예요 — 감사합니다! 🎉"); });
+
+    renderFilters(); renderGrid(); renderCart();
+  </script>
+</body>
+</html>
