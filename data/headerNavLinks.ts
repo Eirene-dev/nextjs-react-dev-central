@@ -1,11 +1,10 @@
+// 개편 내비 (design-decisions §3). Book/Essays/Showcases 목적지는 Phase 2 라우트(그전 404 OK).
 const headerNavLinks = [
-  { href: '/', title: '홈' },
-  { href: '/blog', title: '블로그' },
-  { href: '/tags', title: '태그' },
-  { href: '/docs/getting-started', title: '문서' },
-  { href: '/example', title: '예제' },
-  { href: '/levelup', title: '레벨업' },
-  // { href: '/about', title: 'About' },
+  { href: '/book', title: 'Book' },
+  { href: '/essays', title: 'Essays' },
+  { href: '/showcases', title: 'Showcases' },
+  { href: '/archive', title: 'Archive' },
+  { href: '/about', title: 'About' },
 ]
 
 export default headerNavLinks

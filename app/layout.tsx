@@ -98,18 +98,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1194474024149121"
         crossOrigin="anonymous"
       />
-      <body className="antialiased bg-background text-foreground">
+      <body className="bg-background font-sans text-foreground antialiased">
         <ThemeProviders>
-          {/* <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} /> */}
-          <SectionContainer>
-            <div className="flex flex-col justify-between h-screen font-sans">
-              <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
-                <Header />
-                <main className="mb-auto">{children}</main>
-              </SearchProvider>
+          {/* 글로벌 셸: Header/Footer 는 풀폭(자체 내부 wrap), 본문만 SectionContainer(1180px) */}
+          <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="mb-auto">
+                <SectionContainer>{children}</SectionContainer>
+              </main>
               <Footer />
             </div>
-          </SectionContainer>
+          </SearchProvider>
         </ThemeProviders>
         <Analytics />
         <WebVitals />

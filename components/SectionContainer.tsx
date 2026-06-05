@@ -5,11 +5,6 @@ interface Props {
 }
 
 export default function SectionContainer({ children }: Props) {
-  return (
-    // <section className="max-w-full px-4 mx-0 sm:px-4 xl:max-w-full xl:px-4">{children}</section>
-
-    <section className="max-w-4xl px-2 mx-auto sm:px-4 xl:max-w-6xl xl:px-0">{children}</section>
-
-    // <section className="max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">{children}</section>
-  )
+  // homepage-05-final.html .wrap: max-width 1180px, 좌우 28px(px-7).
+  return <section className="mx-auto max-w-[1180px] px-5 sm:px-7">{children}</section>
 }
