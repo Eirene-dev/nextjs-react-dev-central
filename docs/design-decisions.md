@@ -98,6 +98,23 @@
 
 > 결정이 추가로 바뀌면(예: pliny 벤더링 채택, 15 착지 등) 본 문서에 후속 기록한다.
 
+### 6-2. Phase 0 실행 결과 (2026-06-05 완료, `chore/next16-velite`)
+
+**Next 16.2 + React 19.2 도달, Contentlayer 완전 제거, Velite 전환, `yarn build` 그린, 골든 URL 파리티 통과.** 안전 바닥(단계 1)으로 후퇴 없이 16까지 완주.
+
+실행 중 확정/변경된 세부 결정:
+- **파이프라인 = Velite 0.3.1.** contentlayer 문서 형태(slug/path/toc/readingTime/structuredData/body)를 그대로 재현 → 레이아웃/유틸 변경 최소화. `lib/content.ts`(컬렉션 재export + sortPosts/coreContent 벤더), `components/MDXContent.tsx`(AsyncFunction MDX 렌더러).
+- **pliny = 정식 상향(0.1.7→0.4.1).** React 19 공식 지원 → **벤더링 불필요**(C-2 분기 미사용). 단 exports가 `"./*":"./*"`라 서브패스 import에 `.js` 확장자 명시 필요(bundler 해석).
+- **Turbopack 채택**(Next 16 기본). webpack SVG 로더 → `turbopack.rules`(@svgr/webpack).
+- **middleware matcher 정적화**(Turbopack 정적 분석 강제) — 리다이렉트 39건 보존. `middleware.ts`는 16에서 deprecated(→`proxy`) **경고만**, 동작 정상 → 후속(Phase 5) 정리 대상.
+- **빌드타임 MDX 플러그인 unified-11 상향**(gfm/math/katex/slug/autolink/prism-plus/citation/preset-minify). velite 내장 gfm 사용, `copyLinkedFiles:false`로 상대 링크 에셋복사(ENOENT) 차단.
+- **콘텐츠 소규모 정정**(라우트·렌더 보존 목적): 빈 draft example 스텁 4건에 최소 본문(프로덕션 🚧만 노출, 비가시); prose에 떠돌던 `import React` 3건 제거(원래 비가시).
+- **Node**: engines `>=20.9.0`(Next 16 floor) + `.nvmrc=22`(Vercel/dev). **Yarn 3 표준화**(package-lock 제거, yarn.lock). 로컬 검증은 Node 20.9.
+- **안전망**: `scripts/{extract-golden,extract-golden-velite,compare-golden}.mjs` + `docs/golden/manifest*.json` — contentlayer↔velite의 path/slug/draft/태그/정적라우트/search 스키마 1:1 비교(통과).
+- 참고: pliny 0.4 전이 의존으로 `contentlayer2`가 트리에 들어오나 코드 미사용.
+
+수용 기준 전부 충족: URL 동일 해석 / archive(blog71·docs187) MDX·이미지·코드하이라이트 정상 / 리다이렉트·matcher 보존 / sitemap·feed(71)·search(277) 재생성 / `yarn build` 그린.
+
 ---
 
 ## 7. 저자명 — "Pax Code" 유지
