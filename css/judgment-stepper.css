@@ -1,0 +1,117 @@
+/* JudgmentStepper — 원본 .jc-* 스타일을 사이트 토큰으로 매핑. SVG 지오메트리 transition 유지. */
+.jc {
+  padding: 0.5rem 0;
+}
+.jc-mk {
+  transition:
+    cx 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    cy 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.jc-gap {
+  transition:
+    x1 0.5s,
+    x2 0.5s,
+    y1 0.5s,
+    y2 0.5s;
+}
+.jc-panel {
+  margin-top: 6px;
+  border: 1px solid hsl(var(--line-2));
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  background: hsl(var(--surface-2));
+}
+.jc-t {
+  font-size: 16px;
+  font-weight: 600;
+  color: hsl(var(--ink));
+}
+.jc-s {
+  font-size: 13px;
+  color: hsl(var(--ink-2));
+  margin-top: 2px;
+}
+.jc-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  padding-left: 12px;
+}
+.jc-j {
+  border-left: 3px solid hsl(var(--coral));
+  color: hsl(var(--ink));
+}
+.jc-g {
+  border-left: 3px solid hsl(var(--ink-3));
+  color: hsl(var(--ink-2));
+}
+.jc-tag {
+  flex: none;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 30px;
+}
+.jc-j .jc-tag {
+  color: hsl(var(--coral-2));
+}
+.jc-g .jc-tag {
+  color: hsl(var(--ink-2));
+}
+.jc-ctl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+.jc-dots {
+  display: flex;
+  gap: 7px;
+}
+.jc-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: hsl(var(--line));
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.jc-dot.on {
+  background: hsl(var(--coral));
+  transform: scale(1.2);
+}
+.jc-btn {
+  background: none;
+  border: 1px solid hsl(var(--line));
+  border-radius: 8px;
+  padding: 6px 13px;
+  font-size: 13px;
+  color: hsl(var(--ink-2));
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: border-color 0.15s;
+}
+.jc-btn:not(:disabled):hover {
+  border-color: hsl(var(--coral-soft));
+  color: hsl(var(--ink));
+}
+.jc-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jc-mk,
+  .jc-gap,
+  .jc-dot {
+    transition: none;
+  }
+}
