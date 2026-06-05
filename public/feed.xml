@@ -191,6 +191,106 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/react/conditional-rendering</guid>
+    <title>리액트에서 조건부 렌더링과 리스트를 활용한 사용자 인터페이스 개선 방법</title>
+    <link>https://reactnext-central.xyz/blog/react/conditional-rendering</link>
+    <description>리액트에서 조건부 렌더링과 리스트 렌더링은 동적인 사용자 인터페이스 구축에 필수적입니다. 여기에서는 각 기법의 사용 방법과 실제 예제를 통해 효율적인 UI 디자인을 어떻게 실현할 수 있는지 알아봅니다.</description>
+    <pubDate>Wed, 27 Mar 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React</category><category>Productivity</category><category>UI</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/functional-component-with-typescript</guid>
+    <title>Next.js에서 타입스크립트와 함께하는 함수형 컴포넌트의 모든 것</title>
+    <link>https://reactnext-central.xyz/blog/react/functional-component-with-typescript</link>
+    <description>함수형 컴포넌트는 리액트 개발에서 가독성 높고 간결한 코드 구조를 제공합니다. 이 글에서는 Next.js 환경에서 자바스크립트와 ES6 화살표 함수를 사용한 함수형 컴포넌트의 구조, 타입스크립트를 활용한 속성 정의 방법, 그리고 함수형 컴포넌트의 여러 구성 요소 및 방식에 대해 알아봅니다.</description>
+    <pubDate>Mon, 18 Mar 2024 22:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React</category><category>Functional</category><category>TypeScript</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/functional-programming</guid>
+    <title>React에서의 함수형 프로그래밍: 원칙, 도구, 그리고 장점</title>
+    <link>https://reactnext-central.xyz/blog/react/functional-programming</link>
+    <description>React에서의 함수형 프로그래밍을 탐험해보세요: 코드의 예측 가능성, 유지 관리 용이성 및 효율성을 극대화하는 방법을 알아보는 여정입니다. 이 블로그에서는 함수형 컴포넌트, 훅, 불변성, 그리고 React와 함께 사용할 수 있는 다양한 함수형 프로그래밍 라이브러리들을 소개합니다.</description>
+    <pubDate>Wed, 18 Oct 2023 11:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Functional</category><category>React</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/goodbye-create-react-app</guid>
+    <title>React! create-react-app 작별: Next.js와 현대 React 도구로의 미래를 포옹하다</title>
+    <link>https://reactnext-central.xyz/blog/react/goodbye-create-react-app</link>
+    <description>React 개발 생태계에서 `create-react-app`의 추천 제거와 Next.js 같은 현대적인 도구의 강조에 관한 변화를 다룹니다. Next.js의 특징과 이점, 그리고 React 개발자 커뮤니티의 반응에 대해 소개합니다.</description>
+    <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React</category><category>Nextjs</category><category>create-next-app</category><category>Optimization</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/hook-in-functional-component</guid>
+    <title>리액트 훅(Hook): 클래스 컴포넌트 기능을 함수형 컴포넌트로 전환</title>
+    <link>https://reactnext-central.xyz/blog/react/hook-in-functional-component</link>
+    <description>리액트의 훅은 함수형 컴포넌트의 개발을 혁신적으로 바꾸어 상태 관리와 생명 주기 관리를 간소화하고 코드의 재사용성을 높였습니다. 이 글에서는 훅의 필요성, 기본 구조, 핵심 훅들과 사용자 정의 훅의 구현 방법에 대해 알아봅니다.</description>
+    <pubDate>Tue, 19 Mar 2024 22:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React</category><category>Functional</category><category>Hook</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/interaction-with-ui</guid>
+    <title>리액트와 Next.js에서 사용자 상호작용 및 이벤트 핸들링 이해하기</title>
+    <link>https://reactnext-central.xyz/blog/react/interaction-with-ui</link>
+    <description>웹 개발에서 사용자와의 상호작용은 애플리케이션을 동적이고 생동감 있게 만드는 핵심 요소입니다. 이 글은 Next.js의 서버 사이드 렌더링과 리액트의 클라이언트 사이드 렌더링에서의 사용자 이벤트 처리 방법과 리액트에서 기본 UI 컴포넌트와 이벤트 핸들링을 어떻게 구현하는지에 대해 알아봅니다.</description>
+    <pubDate>Sun, 24 Mar 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>UI</category><category>Event-Handling</category><category>CSR</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/memo-callback-hook</guid>
+    <title>리액트 성능 최적화: useMemo, React.memo, useCallback 활용하기</title>
+    <link>https://reactnext-central.xyz/blog/react/memo-callback-hook</link>
+    <description>웹 성능 저하를 막고 최적화하는 방법에는 여러 가지가 있으며 useMemo, React.memo, useCallback은 그 중 핵심적인 훅과 고차 컴포넌트입니다. 이 글에서는 각각의 사용 시나리오, 차이점 및 사용법을 실제 예제와 함께 살펴봄으로써 렌더링 성능을 향상시키는 방법을 알아봅니다.</description>
+    <pubDate>Tue, 26 Mar 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React</category><category>Performance</category><category>Hook</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/react-19x-versionup</guid>
+    <title>React 18 → 19: 구조적 대변동 없이 완성도를 높인 새로운 도약</title>
+    <link>https://reactnext-central.xyz/blog/react/react-19x-versionup</link>
+    <description>React가 18에서 19로 넘어가며 큰 구조 변화 없이 서버 액션(Server Actions), 자동 메모이제이션, 에러 복구 등을 개선해 개발 생산성과 사용자 경험을 한층 끌어올렸습니다.</description>
+    <pubDate>Tue, 31 Dec 2024 01:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React19</category><category>WebDev</category><category>Performance</category><category>VersionUp</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/ref-hook</guid>
+    <title>리액트에서의 Ref 활용하기: DOM 접근부터 고급 기술까지</title>
+    <link>https://reactnext-central.xyz/blog/react/ref-hook</link>
+    <description>리액트의 Ref는 DOM 요소나 클래스 컴포넌트에 직접 접근할 수 있는 강력한 도구입니다. 이 글에서는 Ref의 생성, 사용, 전달 방법과 다양한 사용 사례를 통해 Ref의 이점과 모범 사례를 살펴보겠습니다.</description>
+    <pubDate>Mon, 25 Mar 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>React</category><category>DOM</category><category>Hook</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/react/state-context-reducer</guid>
+    <title>리액트 상태 관리: useState, useContext, useReducer 활용하기</title>
+    <link>https://reactnext-central.xyz/blog/react/state-context-reducer</link>
+    <description>리액트에서 효율적인 상태 관리는 애플리케이션의 동적인 데이터 흐름을 결정합니다. useState, useContext, useReducer는 리액트 애플리케이션에서 데이터를 관리하고 컴포넌트 간 상태를 공유하는 다양한 방법을 제공하며 각각의 훅이 해결하고자 하는 문제와 사용 시나리오를 알아보겠습니다.</description>
+    <pubDate>Wed, 20 Mar 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Hook</category><category>Functional</category><category>React</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/nextjs/Internationalization</guid>
     <title>다국어 지원을 위한 Next.js 라우팅과 콘텐츠 지역화 전략</title>
     <link>https://reactnext-central.xyz/blog/nextjs/Internationalization</link>
@@ -478,106 +578,6 @@
     <pubDate>Wed, 18 Oct 2023 10:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>ISR</category><category>SSG</category><category>SSR</category><category>RENDERING</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/conditional-rendering</guid>
-    <title>리액트에서 조건부 렌더링과 리스트를 활용한 사용자 인터페이스 개선 방법</title>
-    <link>https://reactnext-central.xyz/blog/react/conditional-rendering</link>
-    <description>리액트에서 조건부 렌더링과 리스트 렌더링은 동적인 사용자 인터페이스 구축에 필수적입니다. 여기에서는 각 기법의 사용 방법과 실제 예제를 통해 효율적인 UI 디자인을 어떻게 실현할 수 있는지 알아봅니다.</description>
-    <pubDate>Wed, 27 Mar 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>React</category><category>Productivity</category><category>UI</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/functional-component-with-typescript</guid>
-    <title>Next.js에서 타입스크립트와 함께하는 함수형 컴포넌트의 모든 것</title>
-    <link>https://reactnext-central.xyz/blog/react/functional-component-with-typescript</link>
-    <description>함수형 컴포넌트는 리액트 개발에서 가독성 높고 간결한 코드 구조를 제공합니다. 이 글에서는 Next.js 환경에서 자바스크립트와 ES6 화살표 함수를 사용한 함수형 컴포넌트의 구조, 타입스크립트를 활용한 속성 정의 방법, 그리고 함수형 컴포넌트의 여러 구성 요소 및 방식에 대해 알아봅니다.</description>
-    <pubDate>Mon, 18 Mar 2024 22:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>React</category><category>Functional</category><category>TypeScript</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/functional-programming</guid>
-    <title>React에서의 함수형 프로그래밍: 원칙, 도구, 그리고 장점</title>
-    <link>https://reactnext-central.xyz/blog/react/functional-programming</link>
-    <description>React에서의 함수형 프로그래밍을 탐험해보세요: 코드의 예측 가능성, 유지 관리 용이성 및 효율성을 극대화하는 방법을 알아보는 여정입니다. 이 블로그에서는 함수형 컴포넌트, 훅, 불변성, 그리고 React와 함께 사용할 수 있는 다양한 함수형 프로그래밍 라이브러리들을 소개합니다.</description>
-    <pubDate>Wed, 18 Oct 2023 11:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Functional</category><category>React</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/goodbye-create-react-app</guid>
-    <title>React! create-react-app 작별: Next.js와 현대 React 도구로의 미래를 포옹하다</title>
-    <link>https://reactnext-central.xyz/blog/react/goodbye-create-react-app</link>
-    <description>React 개발 생태계에서 `create-react-app`의 추천 제거와 Next.js 같은 현대적인 도구의 강조에 관한 변화를 다룹니다. Next.js의 특징과 이점, 그리고 React 개발자 커뮤니티의 반응에 대해 소개합니다.</description>
-    <pubDate>Tue, 12 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>React</category><category>Nextjs</category><category>create-next-app</category><category>Optimization</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/hook-in-functional-component</guid>
-    <title>리액트 훅(Hook): 클래스 컴포넌트 기능을 함수형 컴포넌트로 전환</title>
-    <link>https://reactnext-central.xyz/blog/react/hook-in-functional-component</link>
-    <description>리액트의 훅은 함수형 컴포넌트의 개발을 혁신적으로 바꾸어 상태 관리와 생명 주기 관리를 간소화하고 코드의 재사용성을 높였습니다. 이 글에서는 훅의 필요성, 기본 구조, 핵심 훅들과 사용자 정의 훅의 구현 방법에 대해 알아봅니다.</description>
-    <pubDate>Tue, 19 Mar 2024 22:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>React</category><category>Functional</category><category>Hook</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/interaction-with-ui</guid>
-    <title>리액트와 Next.js에서 사용자 상호작용 및 이벤트 핸들링 이해하기</title>
-    <link>https://reactnext-central.xyz/blog/react/interaction-with-ui</link>
-    <description>웹 개발에서 사용자와의 상호작용은 애플리케이션을 동적이고 생동감 있게 만드는 핵심 요소입니다. 이 글은 Next.js의 서버 사이드 렌더링과 리액트의 클라이언트 사이드 렌더링에서의 사용자 이벤트 처리 방법과 리액트에서 기본 UI 컴포넌트와 이벤트 핸들링을 어떻게 구현하는지에 대해 알아봅니다.</description>
-    <pubDate>Sun, 24 Mar 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>UI</category><category>Event-Handling</category><category>CSR</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/memo-callback-hook</guid>
-    <title>리액트 성능 최적화: useMemo, React.memo, useCallback 활용하기</title>
-    <link>https://reactnext-central.xyz/blog/react/memo-callback-hook</link>
-    <description>웹 성능 저하를 막고 최적화하는 방법에는 여러 가지가 있으며 useMemo, React.memo, useCallback은 그 중 핵심적인 훅과 고차 컴포넌트입니다. 이 글에서는 각각의 사용 시나리오, 차이점 및 사용법을 실제 예제와 함께 살펴봄으로써 렌더링 성능을 향상시키는 방법을 알아봅니다.</description>
-    <pubDate>Tue, 26 Mar 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>React</category><category>Performance</category><category>Hook</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/react-19x-versionup</guid>
-    <title>React 18 → 19: 구조적 대변동 없이 완성도를 높인 새로운 도약</title>
-    <link>https://reactnext-central.xyz/blog/react/react-19x-versionup</link>
-    <description>React가 18에서 19로 넘어가며 큰 구조 변화 없이 서버 액션(Server Actions), 자동 메모이제이션, 에러 복구 등을 개선해 개발 생산성과 사용자 경험을 한층 끌어올렸습니다.</description>
-    <pubDate>Tue, 31 Dec 2024 01:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>React19</category><category>WebDev</category><category>Performance</category><category>VersionUp</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/ref-hook</guid>
-    <title>리액트에서의 Ref 활용하기: DOM 접근부터 고급 기술까지</title>
-    <link>https://reactnext-central.xyz/blog/react/ref-hook</link>
-    <description>리액트의 Ref는 DOM 요소나 클래스 컴포넌트에 직접 접근할 수 있는 강력한 도구입니다. 이 글에서는 Ref의 생성, 사용, 전달 방법과 다양한 사용 사례를 통해 Ref의 이점과 모범 사례를 살펴보겠습니다.</description>
-    <pubDate>Mon, 25 Mar 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>React</category><category>DOM</category><category>Hook</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/react/state-context-reducer</guid>
-    <title>리액트 상태 관리: useState, useContext, useReducer 활용하기</title>
-    <link>https://reactnext-central.xyz/blog/react/state-context-reducer</link>
-    <description>리액트에서 효율적인 상태 관리는 애플리케이션의 동적인 데이터 흐름을 결정합니다. useState, useContext, useReducer는 리액트 애플리케이션에서 데이터를 관리하고 컴포넌트 간 상태를 공유하는 다양한 방법을 제공하며 각각의 훅이 해결하고자 하는 문제와 사용 시나리오를 알아보겠습니다.</description>
-    <pubDate>Wed, 20 Mar 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Hook</category><category>Functional</category><category>React</category>
   </item>
 
   <item>

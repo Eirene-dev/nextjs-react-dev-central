@@ -7,15 +7,17 @@ import allBlogsData from '../.velite/allBlogs.json'
 import allDocsData from '../.velite/allDocs.json'
 import allExamplesData from '../.velite/allExamples.json'
 import allLevelupsData from '../.velite/allLevelups.json'
+import allEssaysData from '../.velite/allEssays.json'
 import allAuthorsData from '../.velite/allAuthors.json'
-import type { Blog, Doc, Example, Levelup, Authors } from '../.velite'
+import type { Blog, Doc, Example, Levelup, Essay, Authors } from '../.velite'
 
-export type { Blog, Doc, Example, Levelup, Authors }
+export type { Blog, Doc, Example, Levelup, Essay, Authors }
 
 export const allBlogs = allBlogsData as unknown as Blog[]
 export const allDocs = allDocsData as unknown as Doc[]
 export const allExamples = allExamplesData as unknown as Example[]
 export const allLevelups = allLevelupsData as unknown as Levelup[]
+export const allEssays = allEssaysData as unknown as Essay[]
 export const allAuthors = allAuthorsData as unknown as Authors[]
 
 // pliny/utils/contentlayer 대체 ----------------------------------------------

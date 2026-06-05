@@ -92,6 +92,12 @@ const allLevelups = defineCollection({
   pattern: 'levelup/**/*.mdx',
   schema: s.object(postFields).transform(makePostTransform('Levelup')),
 })
+// 신규: 개인 에세이 (Phase 2). Blog 와 동일 스키마. search.json 에는 미포함(골든 277 유지).
+const allEssays = defineCollection({
+  name: 'Essay',
+  pattern: 'essays/**/*.mdx',
+  schema: s.object(postFields).transform(makePostTransform('Essay')),
+})
 
 const allAuthors = defineCollection({
   name: 'Authors',
@@ -154,7 +160,7 @@ const buildDerivedFiles = (data: any) => {
 export default defineConfig({
   root: 'data',
   output: { data: '.velite', assets: 'public/static/velite', base: '/static/velite/', clean: false },
-  collections: { allBlogs, allDocs, allExamples, allLevelups, allAuthors },
+  collections: { allBlogs, allDocs, allExamples, allLevelups, allEssays, allAuthors },
   prepare: buildDerivedFiles,
   mdx: {
     // contentlayer 파리티: 상대 링크를 로컬 에셋으로 복사하지 않음(velite 기본 true → ENOENT 방지).
