@@ -5,7 +5,7 @@ import { DocsSidebarNav } from '@/components/sidebar-nav'
 import { useState } from 'react'
 import { Icons } from '@/components/icons'
 
-import Script from 'next/script'
+import LegacyAds from '@/components/LegacyAds'
 
 interface DocsLayoutProps {
   children: React.ReactNode
@@ -27,7 +27,8 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
   }
 
   return (
-    <div className="legacy-theme flex-1 md:grid md:grid-cols-[205px_1fr] md:gap-2 lg:grid-cols-[220px_1fr] lg:gap-4">
+    <div className="legacy-theme">
+      <div className="flex-1 md:grid md:grid-cols-[205px_1fr] md:gap-2 lg:grid-cols-[220px_1fr] lg:gap-4">
       <button
         className="flex items-center p-1 bg-gray-100 md:hidden" // 버튼에 패딩 추가
         onClick={onToggleNav}
@@ -52,6 +53,8 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
         <DocsSidebarNav items={docsConfig.sidebarNav} />
       </aside>
       {children}
+      </div>
+      <LegacyAds />
     </div>
   )
 }

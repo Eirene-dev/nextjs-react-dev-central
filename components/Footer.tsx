@@ -1,7 +1,6 @@
 import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
-import GoogleAdUnit from 'nextjs13_google_adsense'
 
 // 글로벌 셸 푸터 — 새 디자인 토큰. (AdSense 배치 정리는 Phase 5 소관이라 유지)
 export default function Footer() {
@@ -29,16 +28,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <GoogleAdUnit>
-        <ins
-          className="adsbygoogle"
-          style={{ display: 'block', width: '100%' }}
-          data-ad-client="ca-pub-1194474024149121"
-          data-ad-slot="3651755184"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        ></ins>
-      </GoogleAdUnit>
     </footer>
   )
 }

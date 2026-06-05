@@ -13,7 +13,6 @@ import { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/react'
 // import { SpeedInsights } from "@vercel/speed-insights/next"
 import { WebVitals } from '@/app/api/analytics/web-vitals'
-import Script from 'next/script'
 
 // 기술 라벨/코드용 모노. 본문 Pretendard 는 jsdelivr CDN(아래 head <link>)로 로드.
 const jetbrains_mono = JetBrains_Mono({
@@ -76,12 +75,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
         />
-        <Script
-          async
-          strategy="lazyOnload"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1194474024149121"
-          crossOrigin="anonymous"
-        />
       </head>
       <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
       <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
@@ -92,12 +85,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
-      <Script
-        async
-        strategy="lazyOnload"
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1194474024149121"
-        crossOrigin="anonymous"
-      />
       <body className="bg-background font-sans text-foreground antialiased">
         <ThemeProviders>
           {/* 글로벌 셸: Header/Footer 는 풀폭(자체 내부 wrap), 본문만 SectionContainer(1180px) */}
@@ -113,12 +100,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ThemeProviders>
         <Analytics />
         <WebVitals />
-        <Script
-          async
-          strategy="lazyOnload"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1194474024149121"
-          crossOrigin="anonymous"
-        />
       </body>
     </html>
   )

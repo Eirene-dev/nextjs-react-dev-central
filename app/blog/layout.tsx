@@ -1,5 +1,13 @@
 // archive 격리: /blog 콘텐츠를 레거시 룩 스코프(.legacy-theme)로 감싼다.
 // 글로벌 셸(Header/Footer)은 root layout 에 있어 이 스코프 밖 → 새 디자인 유지.
+// AdSense 는 레거시 경계에서만 — LegacyAds 를 여기서 로드(새 영역엔 없음).
+import LegacyAds from '@/components/LegacyAds'
+
 export default function BlogLayout({ children }: { children: React.ReactNode }) {
-  return <div className="legacy-theme">{children}</div>
+  return (
+    <div className="legacy-theme">
+      {children}
+      <LegacyAds />
+    </div>
+  )
 }
