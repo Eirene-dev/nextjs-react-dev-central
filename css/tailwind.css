@@ -32,67 +32,97 @@ input:-webkit-autofill:focus {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
+    /* === 디자인 시스템 토큰 (로고 기반: slate-navy 잉크 + coral 액센트 + warm cream 서피스) === */
+    /* 직접 시맨틱 토큰 (HSL 트리플릿). homepage-05-final.html 기준. */
+    --surface: 39 39% 93%; /* paper #F4EFE6 — 전역 배경 */
+    --surface-2: 45 57% 97%; /* paper-2 #FCFAF4 — 카드/raised */
+    --ink: 214 35% 19%; /* #202F42 — 본문 텍스트 */
+    --ink-2: 213 19% 38%; /* #4E5E72 — 보조/메타 (AA 5.8:1) */
+    --ink-3: 213 13% 60%; /* #8B97A6 — faint, 장식 전용(소형 텍스트 금지) */
+    --coral: 11 62% 53%; /* #D2583D — 액센트(장식/비텍스트) */
+    --coral-2: 12 64% 45%; /* #BC4729 — 강조/버튼bg/라이트 링크(AA) */
+    --coral-soft: 14 77% 75%; /* #F0A48C — 링/일러스트 */
+    --line: 40 12% 86%;
+    --line-2: 38 19% 88%;
+    --link: 12 64% 45%; /* prose/액센트 링크: 라이트=coral-2 (AA 5.8:1) */
+    --shadow: 0 20px 50px -22px rgba(32, 47, 66, 0.32);
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* shadcn 시맨틱 슬롯 → 새 테마 매핑 */
+    --background: 39 39% 93%;
+    --foreground: 214 35% 19%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --muted: 40 24% 90%;
+    --muted-foreground: 213 19% 38%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --popover: 45 57% 97%;
+    --popover-foreground: 214 35% 19%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --border: 40 12% 86%;
+    --input: 40 12% 86%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --card: 45 57% 97%;
+    --card-foreground: 214 35% 19%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --primary: 214 35% 19%; /* ink — 강한 중립 버튼 */
+    --primary-foreground: 45 57% 97%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --secondary: 40 24% 90%;
+    --secondary-foreground: 214 35% 19%;
 
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 40 24% 90%; /* 서브틀 hover bg (coral 은 별도 color 토큰) */
+    --accent-foreground: 214 35% 19%;
 
-    --ring: 215 20.2% 65.1%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 45 57% 97%;
+
+    --ring: 11 62% 53%; /* coral 포커스 링 */
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
+    /* 딥 네이비-차콜 다크 (05에서 파생) */
+    --surface: 214 36% 14%; /* #16212F */
+    --surface-2: 213 33% 17%; /* #1E2B3B */
+    --ink: 213 30% 93%; /* #E7ECF2 */
+    --ink-2: 213 19% 72%; /* #A9B5C4 — 메타 (AA 7.8:1) */
+    --ink-3: 213 12% 49%; /* #6E7C8D — faint, 장식 전용 */
+    --coral: 12 70% 59%; /* #E06A4C — 다크 대비용 약간 밝게 */
+    --coral-2: 11 62% 53%; /* #D2583D */
+    --coral-soft: 14 77% 75%;
+    --line: 214 20% 22%;
+    --line-2: 214 24% 19%;
+    --link: 12 70% 59%; /* 다크 링크 = coral #E06A4C (AA 4.9:1) */
+    --shadow: 0 20px 50px -22px rgba(0, 0, 0, 0.55);
 
-    --muted: 223 47% 11%;
-    --muted-foreground: 215.4 16.3% 56.9%;
+    --background: 214 36% 14%;
+    --foreground: 213 30% 93%;
 
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 213 33% 17%;
+    --muted-foreground: 213 19% 72%;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 215 20.2% 65.1%;
+    --popover: 213 33% 17%;
+    --popover-foreground: 213 30% 93%;
 
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
+    --border: 214 20% 22%;
+    --input: 214 20% 22%;
 
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
+    --card: 213 33% 17%;
+    --card-foreground: 213 30% 93%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 1.2%;
+    --primary: 213 30% 93%; /* light ink — 다크 버튼 */
+    --primary-foreground: 214 36% 14%;
 
-    --secondary: 222.2 47.4% 11.2%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 213 33% 17%;
+    --secondary-foreground: 213 30% 93%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 213 33% 17%;
+    --accent-foreground: 213 30% 93%;
 
-    --ring: 216 34% 17%;
+    --destructive: 0 63% 40%;
+    --destructive-foreground: 213 30% 93%;
+
+    --ring: 12 70% 59%;
 
     --radius: 0.5rem;
   }

@@ -98,7 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1194474024149121"
         crossOrigin="anonymous"
       />
-      <body className="antialiased text-black bg-white dark:bg-gray-950 dark:text-white">
+      <body className="antialiased bg-background text-foreground">
         <ThemeProviders>
           {/* <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} /> */}
           <SectionContainer>
