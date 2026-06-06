@@ -9,6 +9,34 @@ export const metadata = genPageMetadata({
   description: 'AI가 코드를 쓰는 시대에 더 중요해진 것 — 무엇을 왜 선택하는가, 판단과 취향의 기록.',
 })
 
+// 독자 카드(제공 카피만 사용 — 변형·추가 금지). aBefore/key/after 로 핵심어만 coral 강조.
+const READERS = [
+  {
+    type: '주니어',
+    role: '막 시작한 개발자',
+    q: '"AI가 코드를 다 짜는데, 신입인 내가 쌓아야 할 실력은 뭐지?"',
+    aBefore: '코드 생산이 아니라 ',
+    key: '판단',
+    aAfter: '을 처음부터 훈련하는 법 — AI의 출력을 가설로 의심하고 검증하기.',
+  },
+  {
+    type: '중급',
+    role: '구현은 익숙한, 다음을 고민하는 개발자',
+    q: '"구현 능력이 평가절하되는 느낌. 시니어로 가려면 뭘 증명해야 하나?"',
+    aBefore: '구현자에서 ',
+    key: '결정하는 사람',
+    aAfter: '으로 — 성과를 ‘결정의 궤적’으로 남기기.',
+  },
+  {
+    type: '시니어',
+    role: '기준을 세우는 사람',
+    q: '"팀이 AI로 코드를 쏟아낸다. 무엇을 기준으로 리뷰하고 승인하나?"',
+    aBefore: '시니어 = ',
+    key: '기준',
+    aAfter: '. 팀의 판단 품질을 끌어올리는 기준 세우기.',
+  },
+]
+
 export default function JudgmentDevPage() {
   return (
     <div className="mx-auto max-w-[760px] py-12">
@@ -41,7 +69,9 @@ export default function JudgmentDevPage() {
       {/* 3. 인터랙티브 스테퍼 */}
       <Reveal className="mt-16">
         <div className="rounded-2xl border border-line bg-surface-2/40 p-4 sm:p-6">
-          <p className="mb-2 text-sm font-semibold text-ink-3">판단을 훈련한 개발자와 그렇지 않은 개발자</p>
+          <p className="mb-3 text-base font-bold tracking-tight text-ink sm:text-lg">
+            판단을 훈련한 개발자와 그렇지 않은 개발자
+          </p>
           <JudgmentStepper />
         </div>
       </Reveal>
@@ -54,6 +84,31 @@ export default function JudgmentDevPage() {
             변화 앞에서 <strong className="font-semibold text-ink">‘나는 무엇으로 평가받는가’</strong>를
             묻는 개발자를 위한 책입니다 — 막 시작한 주니어부터, 기준을 세워야 하는 시니어까지.
           </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            {READERS.map((r) => (
+              <div key={r.type} className="rounded-2xl border border-line bg-surface-2 p-5">
+                <span className="text-xs font-bold uppercase tracking-wide text-coral-2">
+                  {r.type}
+                </span>
+                <p className="mt-1 text-sm font-semibold text-ink">{r.role}</p>
+                <div className="mt-4">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-ink-3">
+                    지금 이런 고민
+                  </p>
+                  <p className="mt-1.5 font-semibold leading-relaxed text-ink">{r.q}</p>
+                </div>
+                <hr className="my-4 border-line" />
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-ink-3">이 책에서</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-2">
+                    {r.aBefore}
+                    <span className="font-semibold text-coral-2">{r.key}</span>
+                    {r.aAfter}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       </Reveal>
 

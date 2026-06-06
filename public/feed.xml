@@ -7,9 +7,39 @@
       <language>ko-kr</language>
       <managingEditor>paxcode.xyz@gmail.com (Pax Code)</managingEditor>
       <webMaster>paxcode.xyz@gmail.com (Pax Code)</webMaster>
-      <lastBuildDate>Mon, 18 Mar 2024 10:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Fri, 19 Jul 2024 00:00:00 GMT</lastBuildDate>
       <atom:link href="https://reactnext-central.xyz/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://reactnext-central.xyz/blog/ai/architecture-for-vercel-ai-sdk</guid>
+    <title>버셀 AI SDK 아키텍처와 구현 방식: Core + UI와 Core + RSC</title>
+    <link>https://reactnext-central.xyz/blog/ai/architecture-for-vercel-ai-sdk</link>
+    <description>버셀 AI SDK 아키텍처는 클라이언트와 서버 간의 효율적인 데이터 교환과 렌더링을 제공합니다. 이 글에서는 4 Tiers 아키텍처 관점에서 각 방식의 구성 요소와 차이점을 설명합니다.</description>
+    <pubDate>Fri, 19 Jul 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel-AI-SDK</category><category>Architecture</category><category>Server-Action</category><category>Router-Hanlder</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/ai/background-for-vercel-ai-sdk</guid>
+    <title>버셀 AI SDK 사용을 위한 필수 배경 지식: 제공자와 모델, 프롬프트, 스트리밍, 도구와 어시스턴트</title>
+    <link>https://reactnext-central.xyz/blog/ai/background-for-vercel-ai-sdk</link>
+    <description>버셀 AI SDK의 제공자, 모델, 프롬프트, 스트리밍, 도구와 어시스턴트에 대한 필수 배경 지식을 소개합니다. 이 글에서는 각 요소의 정의와 사용 사례를 통해 SDK 활용 방법을 자세히 설명합니다.</description>
+    <pubDate>Wed, 17 Jul 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel-AI-SDK</category><category>Prompt</category><category>Streaming</category><category>Assistant</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/ai/vercel-ai-sdk-overview</guid>
+    <title>버셀 AI SDK 소개: 사용 이유와 2.x에서 3.2 버전 변경 사항</title>
+    <link>https://reactnext-central.xyz/blog/ai/vercel-ai-sdk-overview</link>
+    <description>버셀 AI SDK가 무엇인지 알아보고 웹 개발 시 이 AI SDK를 사용해야 하는 이유를 논의합니다. 또한 2.x에서 3.x로의 버전 변경 사항을 살펴보겠습니다.</description>
+    <pubDate>Thu, 11 Jul 2024 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel-AI-SDK</category><category>Chatbot</category><category>OpenAI</category>
+  </item>
+
   <item>
     <guid>https://reactnext-central.xyz/blog/dev-env/eslint-with-prettier</guid>
     <title>Next.js에서의 ESLint와 Prettier: 코드 품질과 개발자 생산성 극대화</title>
@@ -48,36 +78,6 @@
     <pubDate>Tue, 24 Oct 2023 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>VSCode</category><category>Productivity</category><category>Tools</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/ai/architecture-for-vercel-ai-sdk</guid>
-    <title>버셀 AI SDK 아키텍처와 구현 방식: Core + UI와 Core + RSC</title>
-    <link>https://reactnext-central.xyz/blog/ai/architecture-for-vercel-ai-sdk</link>
-    <description>버셀 AI SDK 아키텍처는 클라이언트와 서버 간의 효율적인 데이터 교환과 렌더링을 제공합니다. 이 글에서는 4 Tiers 아키텍처 관점에서 각 방식의 구성 요소와 차이점을 설명합니다.</description>
-    <pubDate>Fri, 19 Jul 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Vercel-AI-SDK</category><category>Architecture</category><category>Server-Action</category><category>Router-Hanlder</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/ai/background-for-vercel-ai-sdk</guid>
-    <title>버셀 AI SDK 사용을 위한 필수 배경 지식: 제공자와 모델, 프롬프트, 스트리밍, 도구와 어시스턴트</title>
-    <link>https://reactnext-central.xyz/blog/ai/background-for-vercel-ai-sdk</link>
-    <description>버셀 AI SDK의 제공자, 모델, 프롬프트, 스트리밍, 도구와 어시스턴트에 대한 필수 배경 지식을 소개합니다. 이 글에서는 각 요소의 정의와 사용 사례를 통해 SDK 활용 방법을 자세히 설명합니다.</description>
-    <pubDate>Wed, 17 Jul 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Vercel-AI-SDK</category><category>Prompt</category><category>Streaming</category><category>Assistant</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/ai/vercel-ai-sdk-overview</guid>
-    <title>버셀 AI SDK 소개: 사용 이유와 2.x에서 3.2 버전 변경 사항</title>
-    <link>https://reactnext-central.xyz/blog/ai/vercel-ai-sdk-overview</link>
-    <description>버셀 AI SDK가 무엇인지 알아보고 웹 개발 시 이 AI SDK를 사용해야 하는 이유를 논의합니다. 또한 2.x에서 3.x로의 버전 변경 사항을 살펴보겠습니다.</description>
-    <pubDate>Thu, 11 Jul 2024 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Vercel-AI-SDK</category><category>Chatbot</category><category>OpenAI</category>
   </item>
 
   <item>
@@ -128,66 +128,6 @@
     <pubDate>Fri, 01 Sep 2023 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>ECMA</category><category>JavaScript</category><category>Tools</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/8-things-you-shold-konw-about-nextjs-13</guid>
-    <title>Next.js 13에 대해 알아야 할 8가지: 더 강력해진 웹 개발의 미래</title>
-    <link>https://reactnext-central.xyz/blog/nextjs-overivew/8-things-you-shold-konw-about-nextjs-13</link>
-    <description>Next.js 13의 새로운 바람! 최근 업데이트에서는 React 18과의 깊은 통합을 통해 서버와 클라이언트 간 렌더링의 경계를 허문 새로운 모습을 확인할 수 있습니다. 이번 포스팅에서는 Next.js 13의 핵심 변화와 함께 여러분을 미래의 웹 개발 트렌드로 안내해 드리겠습니다. 함께 차세대 웹의 풍경을 만나보아요!</description>
-    <pubDate>Fri, 15 Sep 2023 00:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Nextjs</category><category>Next.js</category><category>App-Router</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/comparing-nextjs-nuxt-sveltekit</guid>
-    <title>Next.js, Nuxt, 그리고 SvelteKit 비교: 올바른 프레임워크 선택하기</title>
-    <link>https://reactnext-central.xyz/blog/nextjs-overivew/comparing-nextjs-nuxt-sveltekit</link>
-    <description>Next.js, Nuxt, 그리고 SvelteKit의 비교를 통해 개발자들은 어떤 프레임워크가 그들의 웹 프로젝트에 가장 적합한지에 대한 통찰을 얻을 수 있습니다. 이 블로그는 각 프레임워크의 강점, 원리, 그리고 선택 프로세스를 다루며 미래 웹 애플리케이션 개발을 위한 정보를 제공합니다.</description>
-    <pubDate>Wed, 18 Oct 2023 09:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Nextjs</category><category>Nuxt</category><category>SvelteKit</category><category>Comparison</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-challenges</guid>
-    <title>Next.js 사용 시 직면할 수 있는 함정, 그리고 이를 극복하는 전략</title>
-    <link>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-challenges</link>
-    <description>Next.js의 실제 사용 시 마주칠 수 있는 여러 단점들과 함께, 실제 프로젝트에서의 구체적인 예시와 그 문제점을 해결하는 방안을 함께 고민해봅니다.</description>
-    <pubDate>Mon, 02 Oct 2023 00:01:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Nextjs</category><category>Coding-Issues</category><category>Challenges</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-evolution</guid>
-    <title>리액트와 Next.js: 웹의 역사와 웹 세계의 슈퍼히어로들</title>
-    <link>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-evolution</link>
-    <description>리액트와 Next.js는 웹 개발 역사의 획기적인 변화를 주도하는 슈퍼히어로들로, 고대의 단순한 구조에서 시작하여 현대의 복잡한 도시 구조를 탐험하고, 미래의 미지의 가능성으로 우리를 안내합니다.</description>
-    <pubDate>Tue, 10 Oct 2023 07:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Nextjs</category><category>Web-History</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-success-story</guid>
-    <title>Next.js의 혁명: 4개 대형 프로젝트에서의 승리!</title>
-    <link>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-success-story</link>
-    <description>Next.js의 놀라운 여정을 함께 탐험해보세요: Adobe, Hashnode, Basement.studio, 그리고 Plex가 어떻게 이 혁신적인 프레임워크로 웹 경험을 혁명적으로 변화시켰는지 알아보는 시간입니다!</description>
-    <pubDate>Tue, 10 Oct 2023 05:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Nextjs</category><category>Case-Studies</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/what-is-nextjs</guid>
-    <title>Next.js 정의와 아키텍처: 리액트 기반 프레임워크의 혁신</title>
-    <link>https://reactnext-central.xyz/blog/nextjs-overivew/what-is-nextjs</link>
-    <description>Next.js는 풀스택 웹 애플리케이션을 구축하기 위한 리액트 프레임워크입니다. 이 글은 최첨단 웹 개발의 핵심으로 떠오르는 Next.js의 본질과 구조적 특성을 밝혀, 현대 웹의 미래를 이끌 혁신적 기술을 철저히 분석합니다.</description>
-    <pubDate>Wed, 11 Oct 2023 09:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Nextjs</category><category>React</category><category>Architecture</category><category>SSR</category>
   </item>
 
   <item>
@@ -288,6 +228,66 @@
     <pubDate>Wed, 20 Mar 2024 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>Hook</category><category>Functional</category><category>React</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/8-things-you-shold-konw-about-nextjs-13</guid>
+    <title>Next.js 13에 대해 알아야 할 8가지: 더 강력해진 웹 개발의 미래</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-overivew/8-things-you-shold-konw-about-nextjs-13</link>
+    <description>Next.js 13의 새로운 바람! 최근 업데이트에서는 React 18과의 깊은 통합을 통해 서버와 클라이언트 간 렌더링의 경계를 허문 새로운 모습을 확인할 수 있습니다. 이번 포스팅에서는 Next.js 13의 핵심 변화와 함께 여러분을 미래의 웹 개발 트렌드로 안내해 드리겠습니다. 함께 차세대 웹의 풍경을 만나보아요!</description>
+    <pubDate>Fri, 15 Sep 2023 00:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>Next.js</category><category>App-Router</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/comparing-nextjs-nuxt-sveltekit</guid>
+    <title>Next.js, Nuxt, 그리고 SvelteKit 비교: 올바른 프레임워크 선택하기</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-overivew/comparing-nextjs-nuxt-sveltekit</link>
+    <description>Next.js, Nuxt, 그리고 SvelteKit의 비교를 통해 개발자들은 어떤 프레임워크가 그들의 웹 프로젝트에 가장 적합한지에 대한 통찰을 얻을 수 있습니다. 이 블로그는 각 프레임워크의 강점, 원리, 그리고 선택 프로세스를 다루며 미래 웹 애플리케이션 개발을 위한 정보를 제공합니다.</description>
+    <pubDate>Wed, 18 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>Nuxt</category><category>SvelteKit</category><category>Comparison</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-challenges</guid>
+    <title>Next.js 사용 시 직면할 수 있는 함정, 그리고 이를 극복하는 전략</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-challenges</link>
+    <description>Next.js의 실제 사용 시 마주칠 수 있는 여러 단점들과 함께, 실제 프로젝트에서의 구체적인 예시와 그 문제점을 해결하는 방안을 함께 고민해봅니다.</description>
+    <pubDate>Mon, 02 Oct 2023 00:01:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>Coding-Issues</category><category>Challenges</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-evolution</guid>
+    <title>리액트와 Next.js: 웹의 역사와 웹 세계의 슈퍼히어로들</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-evolution</link>
+    <description>리액트와 Next.js는 웹 개발 역사의 획기적인 변화를 주도하는 슈퍼히어로들로, 고대의 단순한 구조에서 시작하여 현대의 복잡한 도시 구조를 탐험하고, 미래의 미지의 가능성으로 우리를 안내합니다.</description>
+    <pubDate>Tue, 10 Oct 2023 07:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>Web-History</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-success-story</guid>
+    <title>Next.js의 혁명: 4개 대형 프로젝트에서의 승리!</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-overivew/nextjs-success-story</link>
+    <description>Next.js의 놀라운 여정을 함께 탐험해보세요: Adobe, Hashnode, Basement.studio, 그리고 Plex가 어떻게 이 혁신적인 프레임워크로 웹 경험을 혁명적으로 변화시켰는지 알아보는 시간입니다!</description>
+    <pubDate>Tue, 10 Oct 2023 05:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>Case-Studies</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/nextjs-overivew/what-is-nextjs</guid>
+    <title>Next.js 정의와 아키텍처: 리액트 기반 프레임워크의 혁신</title>
+    <link>https://reactnext-central.xyz/blog/nextjs-overivew/what-is-nextjs</link>
+    <description>Next.js는 풀스택 웹 애플리케이션을 구축하기 위한 리액트 프레임워크입니다. 이 글은 최첨단 웹 개발의 핵심으로 떠오르는 Next.js의 본질과 구조적 특성을 밝혀, 현대 웹의 미래를 이끌 혁신적 기술을 철저히 분석합니다.</description>
+    <pubDate>Wed, 11 Oct 2023 09:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Nextjs</category><category>React</category><category>Architecture</category><category>SSR</category>
   </item>
 
   <item>
@@ -591,6 +591,26 @@
   </item>
 
   <item>
+    <guid>https://reactnext-central.xyz/blog/vercel/gabia-vercel-setup</guid>
+    <title>가비아 도메인 연결부터 검색 엔진 노출까지, Vercel로 쉽게 시작하기</title>
+    <link>https://reactnext-central.xyz/blog/vercel/gabia-vercel-setup</link>
+    <description>가비아에서 구매한 도메인을 Vercel로 배포한 Next.js 사이트와 연결하고, 구글·네이버 검색 노출까지 준비하는 A to Z 과정을 단계별로 안내합니다.</description>
+    <pubDate>Thu, 15 May 2025 02:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Domain</category><category>DNS</category><category>Vercel</category><category>SEO</category>
+  </item>
+
+  <item>
+    <guid>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</guid>
+    <title>2025년 웹 개발자를 위한, Vercel 스토리지·DB 선택 완벽 가이드</title>
+    <link>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</link>
+    <description>Vercel에서 제공·통합하는 다양한 스토리지·데이터베이스 솔루션을 상황별로 쉽게 선택해, 2025년 기준 서버리스 웹앱을 효율적으로 구축하는 가이드입니다.</description>
+    <pubDate>Thu, 15 May 2025 01:00:00 GMT</pubDate>
+    <author>paxcode.xyz@gmail.com (Pax Code)</author>
+    <category>Vercel</category><category>Storage</category><category>Postgres</category><category>Blob</category>
+  </item>
+
+  <item>
     <guid>https://reactnext-central.xyz/blog/web-design/korean-menu-ux-tips</guid>
     <title>웹사이트 메뉴 UX: 한글 메뉴명으로 사용자 만족도를 높이는 비결</title>
     <link>https://reactnext-central.xyz/blog/web-design/korean-menu-ux-tips</link>
@@ -698,26 +718,6 @@
     <pubDate>Fri, 22 Sep 2023 00:00:00 GMT</pubDate>
     <author>paxcode.xyz@gmail.com (Pax Code)</author>
     <category>Rendering</category><category>Browser</category><category>HTML</category><category>CSS</category><category>JavaScript</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/vercel/gabia-vercel-setup</guid>
-    <title>가비아 도메인 연결부터 검색 엔진 노출까지, Vercel로 쉽게 시작하기</title>
-    <link>https://reactnext-central.xyz/blog/vercel/gabia-vercel-setup</link>
-    <description>가비아에서 구매한 도메인을 Vercel로 배포한 Next.js 사이트와 연결하고, 구글·네이버 검색 노출까지 준비하는 A to Z 과정을 단계별로 안내합니다.</description>
-    <pubDate>Thu, 15 May 2025 02:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Domain</category><category>DNS</category><category>Vercel</category><category>SEO</category>
-  </item>
-
-  <item>
-    <guid>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</guid>
-    <title>2025년 웹 개발자를 위한, Vercel 스토리지·DB 선택 완벽 가이드</title>
-    <link>https://reactnext-central.xyz/blog/vercel/vercel-storate-guide-2025</link>
-    <description>Vercel에서 제공·통합하는 다양한 스토리지·데이터베이스 솔루션을 상황별로 쉽게 선택해, 2025년 기준 서버리스 웹앱을 효율적으로 구축하는 가이드입니다.</description>
-    <pubDate>Thu, 15 May 2025 01:00:00 GMT</pubDate>
-    <author>paxcode.xyz@gmail.com (Pax Code)</author>
-    <category>Vercel</category><category>Storage</category><category>Postgres</category><category>Blob</category>
   </item>
 
     </channel>
