@@ -1,7 +1,10 @@
 'use client'
 
+import 'css/board-md.css'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import Markdown from './Markdown'
+import MarkdownEditor from './MarkdownEditor'
 
 // 클라이언트 전용 타입/상수(서버 모듈 import 회피)
 type Post = {
@@ -198,8 +201,8 @@ function Badge({ type }: { type: string }) {
 }
 
 function Body({ text }: { text: string | null }) {
-  // 텍스트로만 렌더(React 기본 이스케이프) + 줄바꿈 보존 → XSS 차단
-  return <p className="whitespace-pre-wrap break-words leading-relaxed text-ink">{text}</p>
+  // 마크다운 렌더(react-markdown + rehype-sanitize, rehype-raw 없음 → 원시 HTML 통과 차단 = XSS 안전)
+  return <Markdown>{text ?? ''}</Markdown>
 }
 
 function Author({ post }: { post: Post }) {
@@ -301,21 +304,22 @@ function PostItem({
                   setOpen(true)
                 }
               }}
-              className="flex gap-2"
+              className="flex flex-col gap-2"
             >
-              <input
+              <MarkdownEditor
                 value={reply}
-                onChange={(e) => setReply(e.target.value)}
-                placeholder="답글 달기…"
-                maxLength={4000}
-                className="flex-1 rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-coral-soft"
+                onChange={setReply}
+                placeholder="답글 달기…(마크다운 지원)"
+                rows={3}
               />
-              <button
-                disabled={busy}
-                className="rounded-lg bg-coral-2 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-              >
-                등록
-              </button>
+              <div className="flex justify-end">
+                <button
+                  disabled={busy || !reply.trim()}
+                  className="rounded-lg bg-coral-2 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                >
+                  등록
+                </button>
+              </div>
             </form>
           )}
         </div>
@@ -348,17 +352,32 @@ function ComposeForm({
       className="mb-8 rounded-2xl border border-line bg-surface-2 p-5"
     >
       <div className="mb-3 flex flex-wrap items-center gap-3">
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="rounded-lg border border-line bg-surface px-3 py-2 text-sm font-semibold text-ink outline-none"
-        >
-          {TYPE_OPTIONS.map((t) => (
-            <option key={t.key} value={t.key}>
-              {t.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            aria-label="글 종류"
+            className="appearance-none rounded-lg border border-line bg-surface py-2 pl-3 pr-9 text-sm font-semibold text-ink outline-none"
+          >
+            {TYPE_OPTIONS.map((t) => (
+              <option key={t.key} value={t.key}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-3"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </div>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -367,13 +386,11 @@ function ComposeForm({
           className="flex-1 rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-coral-soft"
         />
       </div>
-      <textarea
+      <MarkdownEditor
         value={body}
-        onChange={(e) => setBody(e.target.value)}
-        placeholder="내용을 입력하세요…"
-        rows={4}
-        maxLength={4000}
-        className="w-full resize-y rounded-lg border border-line bg-surface px-3 py-2.5 text-sm leading-relaxed text-ink outline-none focus:border-coral-soft"
+        onChange={setBody}
+        placeholder="내용을 입력하세요…(마크다운 지원)"
+        rows={5}
       />
       <div className="mt-3 flex justify-end">
         <button
