@@ -209,6 +209,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@auth/core@npm:0.41.2":
+  version: 0.41.2
+  resolution: "@auth/core@npm:0.41.2"
+  dependencies:
+    "@panva/hkdf": ^1.2.1
+    jose: ^6.0.6
+    oauth4webapi: ^3.3.0
+    preact: 10.24.3
+    preact-render-to-string: 6.5.11
+  peerDependencies:
+    "@simplewebauthn/browser": ^9.0.1
+    "@simplewebauthn/server": ^9.0.2
+    nodemailer: ^7.0.7
+  peerDependenciesMeta:
+    "@simplewebauthn/browser":
+      optional: true
+    "@simplewebauthn/server":
+      optional: true
+    nodemailer:
+      optional: true
+  checksum: 31e54690333e79eff35c82f6883169399b6ffb2d49c8e9fa770850b3576792f42d81c351af737b98748f0e179dab0252d314feaa225eb09ff988aa997b936b56
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/code-frame@npm:7.29.7"
@@ -1671,6 +1695,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@drizzle-team/brocli@npm:^0.10.2":
+  version: 0.10.2
+  resolution: "@drizzle-team/brocli@npm:0.10.2"
+  checksum: b2217afb98c0e7152d890ca8bfc9a05260800749ea4b7103a7a928c7f64f4edcd9c0024bc83c01ed2d717bdc3c074ef85657bb8acd4d7dfbc1d0dc3d8b6284da
+  languageName: node
+  linkType: hard
+
 "@effect-ts/core@npm:^0.60.5":
   version: 0.60.5
   resolution: "@effect-ts/core@npm:0.60.5"
@@ -1742,6 +1773,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild-kit/core-utils@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "@esbuild-kit/core-utils@npm:3.3.2"
+  dependencies:
+    esbuild: ~0.18.20
+    source-map-support: ^0.5.21
+  checksum: 62f3b97457fa4ef39d752bd2ad1c8adac08929b50c411f5259f105cc74896f1fdb3429a540aa423e8eae37f32ef44656ca21ccb9a723cd9955d65a820960ab1f
+  languageName: node
+  linkType: hard
+
+"@esbuild-kit/esm-loader@npm:^2.5.5":
+  version: 2.6.5
+  resolution: "@esbuild-kit/esm-loader@npm:2.6.5"
+  dependencies:
+    "@esbuild-kit/core-utils": ^3.3.2
+    get-tsconfig: ^4.7.0
+  checksum: 88a27203898f14bd69f03244ae2b3bae727e00243d7801292c4da8caba69813b0978fb8245a55b83bc9b907f475ed634f094a1f44cc590c0754993f4a924cc22
+  languageName: node
+  linkType: hard
+
 "@esbuild-plugins/node-resolve@npm:^0.2.2":
   version: 0.2.2
   resolution: "@esbuild-plugins/node-resolve@npm:0.2.2"
@@ -1777,6 +1828,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/android-arm64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/android-arm64@npm:0.18.20"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@esbuild/android-arm64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/android-arm64@npm:0.25.12"
@@ -1794,6 +1852,13 @@ __metadata:
 "@esbuild/android-arm@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/android-arm@npm:0.18.11"
+  conditions: os=android & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@esbuild/android-arm@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/android-arm@npm:0.18.20"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
@@ -1819,6 +1884,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/android-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/android-x64@npm:0.18.20"
+  conditions: os=android & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@esbuild/android-x64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/android-x64@npm:0.25.12"
@@ -1836,6 +1908,13 @@ __metadata:
 "@esbuild/darwin-arm64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/darwin-arm64@npm:0.18.11"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/darwin-arm64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/darwin-arm64@npm:0.18.20"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -1861,6 +1940,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/darwin-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/darwin-x64@npm:0.18.20"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@esbuild/darwin-x64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/darwin-x64@npm:0.25.12"
@@ -1878,6 +1964,13 @@ __metadata:
 "@esbuild/freebsd-arm64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/freebsd-arm64@npm:0.18.11"
+  conditions: os=freebsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/freebsd-arm64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/freebsd-arm64@npm:0.18.20"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
@@ -1903,6 +1996,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/freebsd-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/freebsd-x64@npm:0.18.20"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@esbuild/freebsd-x64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/freebsd-x64@npm:0.25.12"
@@ -1920,6 +2020,13 @@ __metadata:
 "@esbuild/linux-arm64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/linux-arm64@npm:0.18.11"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-arm64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-arm64@npm:0.18.20"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
@@ -1945,6 +2052,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/linux-arm@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-arm@npm:0.18.20"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
 "@esbuild/linux-arm@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/linux-arm@npm:0.25.12"
@@ -1962,6 +2076,13 @@ __metadata:
 "@esbuild/linux-ia32@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/linux-ia32@npm:0.18.11"
+  conditions: os=linux & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-ia32@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-ia32@npm:0.18.20"
   conditions: os=linux & cpu=ia32
   languageName: node
   linkType: hard
@@ -1987,6 +2108,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/linux-loong64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-loong64@npm:0.18.20"
+  conditions: os=linux & cpu=loong64
+  languageName: node
+  linkType: hard
+
 "@esbuild/linux-loong64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/linux-loong64@npm:0.25.12"
@@ -2004,6 +2132,13 @@ __metadata:
 "@esbuild/linux-mips64el@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/linux-mips64el@npm:0.18.11"
+  conditions: os=linux & cpu=mips64el
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-mips64el@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-mips64el@npm:0.18.20"
   conditions: os=linux & cpu=mips64el
   languageName: node
   linkType: hard
@@ -2029,6 +2164,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/linux-ppc64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-ppc64@npm:0.18.20"
+  conditions: os=linux & cpu=ppc64
+  languageName: node
+  linkType: hard
+
 "@esbuild/linux-ppc64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/linux-ppc64@npm:0.25.12"
@@ -2046,6 +2188,13 @@ __metadata:
 "@esbuild/linux-riscv64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/linux-riscv64@npm:0.18.11"
+  conditions: os=linux & cpu=riscv64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-riscv64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-riscv64@npm:0.18.20"
   conditions: os=linux & cpu=riscv64
   languageName: node
   linkType: hard
@@ -2071,6 +2220,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/linux-s390x@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-s390x@npm:0.18.20"
+  conditions: os=linux & cpu=s390x
+  languageName: node
+  linkType: hard
+
 "@esbuild/linux-s390x@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/linux-s390x@npm:0.25.12"
@@ -2088,6 +2244,13 @@ __metadata:
 "@esbuild/linux-x64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/linux-x64@npm:0.18.11"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/linux-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/linux-x64@npm:0.18.20"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
@@ -2127,6 +2290,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/netbsd-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/netbsd-x64@npm:0.18.20"
+  conditions: os=netbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@esbuild/netbsd-x64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/netbsd-x64@npm:0.25.12"
@@ -2158,6 +2328,13 @@ __metadata:
 "@esbuild/openbsd-x64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/openbsd-x64@npm:0.18.11"
+  conditions: os=openbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/openbsd-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/openbsd-x64@npm:0.18.20"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
@@ -2197,6 +2374,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/sunos-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/sunos-x64@npm:0.18.20"
+  conditions: os=sunos & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@esbuild/sunos-x64@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/sunos-x64@npm:0.25.12"
@@ -2214,6 +2398,13 @@ __metadata:
 "@esbuild/win32-arm64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/win32-arm64@npm:0.18.11"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@esbuild/win32-arm64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/win32-arm64@npm:0.18.20"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -2239,6 +2430,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@esbuild/win32-ia32@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/win32-ia32@npm:0.18.20"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
 "@esbuild/win32-ia32@npm:0.25.12":
   version: 0.25.12
   resolution: "@esbuild/win32-ia32@npm:0.25.12"
@@ -2256,6 +2454,13 @@ __metadata:
 "@esbuild/win32-x64@npm:0.18.11":
   version: 0.18.11
   resolution: "@esbuild/win32-x64@npm:0.18.11"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@esbuild/win32-x64@npm:0.18.20":
+  version: 0.18.20
+  resolution: "@esbuild/win32-x64@npm:0.18.20"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3073,6 +3278,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@neondatabase/serverless@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@neondatabase/serverless@npm:1.1.0"
+  checksum: 15fcae150fc5b1c6fb3da86a717c02587d49535b9ed1fe74b2f495c7392196a16c345a8f75e789a7637d2c1b4cda05e9a53a6c754849201888a6033af3cfcd6b
+  languageName: node
+  linkType: hard
+
 "@next/bundle-analyzer@npm:13.4.12":
   version: 13.4.12
   resolution: "@next/bundle-analyzer@npm:13.4.12"
@@ -3444,6 +3656,13 @@ __metadata:
   version: 1.13.0
   resolution: "@opentelemetry/semantic-conventions@npm:1.13.0"
   checksum: 9cccf1d73315fed3920bb2201c0e82f66e58dddfa475314b6613780c2804570d6f657be3894eb8b84a2a543c9b8cd520587f5d6cd4b62bc6731d7299b4c5ee69
+  languageName: node
+  linkType: hard
+
+"@panva/hkdf@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@panva/hkdf@npm:1.2.1"
+  checksum: a4a9d1812f88f02bc163b365524bbaa5239cc4711e5e7be1bda68dabae1c896cf1cd12520949b0925a6910733d1afcb25ab51fd3cf06f0f69aee988fffebf56e
   languageName: node
   linkType: hard
 
@@ -6800,10 +7019,126 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^17.4.2":
+  version: 17.4.2
+  resolution: "dotenv@npm:17.4.2"
+  checksum: 217bf2c4696ca40acc13ad063341e9c77cedfdd75e56e4919f4cf2c6333e4f7b38a4b4067e49d006125502a61060cbe85c7eecb0644e4d99ff014693eb7e62c4
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^8.2.0":
   version: 8.6.0
   resolution: "dotenv@npm:8.6.0"
   checksum: 38e902c80b0666ab59e9310a3d24ed237029a7ce34d976796349765ac96b8d769f6df19090f1f471b77a25ca391971efde8a1ea63bb83111bd8bec8e5cc9b2cd
+  languageName: node
+  linkType: hard
+
+"drizzle-kit@npm:^0.31.10":
+  version: 0.31.10
+  resolution: "drizzle-kit@npm:0.31.10"
+  dependencies:
+    "@drizzle-team/brocli": ^0.10.2
+    "@esbuild-kit/esm-loader": ^2.5.5
+    esbuild: ^0.25.4
+    tsx: ^4.21.0
+  bin:
+    drizzle-kit: bin.cjs
+  checksum: 252560ea1e47bae7f2f814621b29a53abf6f9304be43388bcbee2727c6cced95ed95d09cf22f3267b7510d6839252ed9715cc871e1ad83fe038a53b17f5bda7f
+  languageName: node
+  linkType: hard
+
+"drizzle-orm@npm:^0.45.2":
+  version: 0.45.2
+  resolution: "drizzle-orm@npm:0.45.2"
+  peerDependencies:
+    "@aws-sdk/client-rds-data": ">=3"
+    "@cloudflare/workers-types": ">=4"
+    "@electric-sql/pglite": ">=0.2.0"
+    "@libsql/client": ">=0.10.0"
+    "@libsql/client-wasm": ">=0.10.0"
+    "@neondatabase/serverless": ">=0.10.0"
+    "@op-engineering/op-sqlite": ">=2"
+    "@opentelemetry/api": ^1.4.1
+    "@planetscale/database": ">=1.13"
+    "@prisma/client": "*"
+    "@tidbcloud/serverless": "*"
+    "@types/better-sqlite3": "*"
+    "@types/pg": "*"
+    "@types/sql.js": "*"
+    "@upstash/redis": ">=1.34.7"
+    "@vercel/postgres": ">=0.8.0"
+    "@xata.io/client": "*"
+    better-sqlite3: ">=7"
+    bun-types: "*"
+    expo-sqlite: ">=14.0.0"
+    gel: ">=2"
+    knex: "*"
+    kysely: "*"
+    mysql2: ">=2"
+    pg: ">=8"
+    postgres: ">=3"
+    sql.js: ">=1"
+    sqlite3: ">=5"
+  peerDependenciesMeta:
+    "@aws-sdk/client-rds-data":
+      optional: true
+    "@cloudflare/workers-types":
+      optional: true
+    "@electric-sql/pglite":
+      optional: true
+    "@libsql/client":
+      optional: true
+    "@libsql/client-wasm":
+      optional: true
+    "@neondatabase/serverless":
+      optional: true
+    "@op-engineering/op-sqlite":
+      optional: true
+    "@opentelemetry/api":
+      optional: true
+    "@planetscale/database":
+      optional: true
+    "@prisma/client":
+      optional: true
+    "@tidbcloud/serverless":
+      optional: true
+    "@types/better-sqlite3":
+      optional: true
+    "@types/pg":
+      optional: true
+    "@types/sql.js":
+      optional: true
+    "@upstash/redis":
+      optional: true
+    "@vercel/postgres":
+      optional: true
+    "@xata.io/client":
+      optional: true
+    better-sqlite3:
+      optional: true
+    bun-types:
+      optional: true
+    expo-sqlite:
+      optional: true
+    gel:
+      optional: true
+    knex:
+      optional: true
+    kysely:
+      optional: true
+    mysql2:
+      optional: true
+    pg:
+      optional: true
+    postgres:
+      optional: true
+    prisma:
+      optional: true
+    sql.js:
+      optional: true
+    sqlite3:
+      optional: true
+  checksum: 96f908b92391c28b87f67ac1b75e8c4155b8214dc19bc7d0af303d91a1b1a1493b54048a1438c507e55b184fba03d4042973dd353866b1df35fc53edb0af91ed
   languageName: node
   linkType: hard
 
@@ -7148,7 +7483,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:>=0.17":
+"esbuild@npm:>=0.17, esbuild@npm:~0.28.0":
   version: 0.28.0
   resolution: "esbuild@npm:0.28.0"
   dependencies:
@@ -7237,7 +7572,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.25.12":
+"esbuild@npm:^0.25.12, esbuild@npm:^0.25.4":
   version: 0.25.12
   resolution: "esbuild@npm:0.25.12"
   dependencies:
@@ -7323,6 +7658,83 @@ __metadata:
   bin:
     esbuild: bin/esbuild
   checksum: 3d1dc181338e2c44f4374508e9d0da3e7ae90f65d7f3f5d8076ff401a1726c5c9ecc86cfc825249349f1652e12d5ae13f02bcaa4d9487c88c7a11167f52ba353
+  languageName: node
+  linkType: hard
+
+"esbuild@npm:~0.18.20":
+  version: 0.18.20
+  resolution: "esbuild@npm:0.18.20"
+  dependencies:
+    "@esbuild/android-arm": 0.18.20
+    "@esbuild/android-arm64": 0.18.20
+    "@esbuild/android-x64": 0.18.20
+    "@esbuild/darwin-arm64": 0.18.20
+    "@esbuild/darwin-x64": 0.18.20
+    "@esbuild/freebsd-arm64": 0.18.20
+    "@esbuild/freebsd-x64": 0.18.20
+    "@esbuild/linux-arm": 0.18.20
+    "@esbuild/linux-arm64": 0.18.20
+    "@esbuild/linux-ia32": 0.18.20
+    "@esbuild/linux-loong64": 0.18.20
+    "@esbuild/linux-mips64el": 0.18.20
+    "@esbuild/linux-ppc64": 0.18.20
+    "@esbuild/linux-riscv64": 0.18.20
+    "@esbuild/linux-s390x": 0.18.20
+    "@esbuild/linux-x64": 0.18.20
+    "@esbuild/netbsd-x64": 0.18.20
+    "@esbuild/openbsd-x64": 0.18.20
+    "@esbuild/sunos-x64": 0.18.20
+    "@esbuild/win32-arm64": 0.18.20
+    "@esbuild/win32-ia32": 0.18.20
+    "@esbuild/win32-x64": 0.18.20
+  dependenciesMeta:
+    "@esbuild/android-arm":
+      optional: true
+    "@esbuild/android-arm64":
+      optional: true
+    "@esbuild/android-x64":
+      optional: true
+    "@esbuild/darwin-arm64":
+      optional: true
+    "@esbuild/darwin-x64":
+      optional: true
+    "@esbuild/freebsd-arm64":
+      optional: true
+    "@esbuild/freebsd-x64":
+      optional: true
+    "@esbuild/linux-arm":
+      optional: true
+    "@esbuild/linux-arm64":
+      optional: true
+    "@esbuild/linux-ia32":
+      optional: true
+    "@esbuild/linux-loong64":
+      optional: true
+    "@esbuild/linux-mips64el":
+      optional: true
+    "@esbuild/linux-ppc64":
+      optional: true
+    "@esbuild/linux-riscv64":
+      optional: true
+    "@esbuild/linux-s390x":
+      optional: true
+    "@esbuild/linux-x64":
+      optional: true
+    "@esbuild/netbsd-x64":
+      optional: true
+    "@esbuild/openbsd-x64":
+      optional: true
+    "@esbuild/sunos-x64":
+      optional: true
+    "@esbuild/win32-arm64":
+      optional: true
+    "@esbuild/win32-ia32":
+      optional: true
+    "@esbuild/win32-x64":
+      optional: true
+  bin:
+    esbuild: bin/esbuild
+  checksum: 5d253614e50cdb6ec22095afd0c414f15688e7278a7eb4f3720a6dd1306b0909cf431e7b9437a90d065a31b1c57be60130f63fe3e8d0083b588571f31ee6ec7b
   languageName: node
   linkType: hard
 
@@ -8099,7 +8511,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:~2.3.2":
+"fsevents@npm:~2.3.2, fsevents@npm:~2.3.3":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
@@ -8109,7 +8521,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
+"fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.3#~builtin<compat/fsevents>":
   version: 2.3.3
   resolution: "fsevents@patch:fsevents@npm%3A2.3.3#~builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"
   dependencies:
@@ -8232,7 +8644,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.10.0":
+"get-tsconfig@npm:^4.10.0, get-tsconfig@npm:^4.7.0":
   version: 4.14.0
   resolution: "get-tsconfig@npm:4.14.0"
   dependencies:
@@ -9474,6 +9886,13 @@ __metadata:
   bin:
     jiti: bin/jiti.js
   checksum: 9cd20dabf82e3a4cceecb746a69381da7acda93d34eed0cdb9c9bdff3bce07e4f2f4a016ca89924392c935297d9aedc58ff9f7d3281bc5293319ad244926e0b7
+  languageName: node
+  linkType: hard
+
+"jose@npm:^6.0.6":
+  version: 6.2.3
+  resolution: "jose@npm:6.2.3"
+  checksum: 37d4bbeab2b4e25029c7d97fcc3ff4b57c07a8b2e60fff5ee0d92b07be3157f894d9cefc4412d2bdd6542d4a318f55a615952f2673846ab662d713d00f2ae2fb
   languageName: node
   linkType: hard
 
@@ -11534,6 +11953,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next-auth@npm:beta":
+  version: 5.0.0-beta.31
+  resolution: "next-auth@npm:5.0.0-beta.31"
+  dependencies:
+    "@auth/core": 0.41.2
+  peerDependencies:
+    "@simplewebauthn/browser": ^9.0.1
+    "@simplewebauthn/server": ^9.0.2
+    next: ^14.0.0-0 || ^15.0.0 || ^16.0.0
+    nodemailer: ^7.0.7
+    react: ^18.2.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@simplewebauthn/browser":
+      optional: true
+    "@simplewebauthn/server":
+      optional: true
+    nodemailer:
+      optional: true
+  checksum: 919505adcdcd71406100768c69011d6e6c61bd0a99e8ea90162073afc0163fe4a0ee3c78c08062233999f61df8336a794b0918639fec1f39e04d9a6e8225824f
+  languageName: node
+  linkType: hard
+
 "next-contentlayer2@npm:^0.5.3":
   version: 0.5.8
   resolution: "next-contentlayer2@npm:0.5.8"
@@ -11825,6 +12266,13 @@ __metadata:
   dependencies:
     boolbase: ^1.0.0
   checksum: 5afc3dafcd1573b08877ca8e6148c52abd565f1d06b1eb08caf982e3fa289a82f2cae697ffb55b5021e146d60443f1590a5d6b944844e944714a5b549675bcd3
+  languageName: node
+  linkType: hard
+
+"oauth4webapi@npm:^3.3.0":
+  version: 3.8.6
+  resolution: "oauth4webapi@npm:3.8.6"
+  checksum: 09f9bf3f792e510786ac7a15cda6b541a6ddb7bffdb6637b7680cf2d4e1dc692645f1975bb7af5fcd54992799c16970ebf49153eb45dfed0f3654057b84acc2d
   languageName: node
   linkType: hard
 
@@ -12340,6 +12788,22 @@ __metadata:
     picocolors: ^1.1.1
     source-map-js: ^1.2.1
   checksum: 82e046d5bd0c537e7bcae1b97ec366968cac4ebdbd38773b69a2a4ad437f26641643a48f120317dd167199ac718ff8a0ab7dd102258430e4c919daaef0e57904
+  languageName: node
+  linkType: hard
+
+"preact-render-to-string@npm:6.5.11":
+  version: 6.5.11
+  resolution: "preact-render-to-string@npm:6.5.11"
+  peerDependencies:
+    preact: ">=10"
+  checksum: 6dcf890fa1bfb9dfe52ef1ae18cb39c792756ed306bea1f83ad2d007a6398be689e369b9d8365a7efd6c8a02a262fdadfacb412b2d96738b9be3dfa9bd8d3f23
+  languageName: node
+  linkType: hard
+
+"preact@npm:10.24.3":
+  version: 10.24.3
+  resolution: "preact@npm:10.24.3"
+  checksum: 372f601576f52d6417a750a8732cd83c4fc133b0b136f82ea69f013092266ad0213c160b71ae421a0fc7ab04caacb651c29dbf515e3aec26d82b0a8675e8786e
   languageName: node
   linkType: hard
 
@@ -14354,6 +14818,7 @@ __metadata:
   dependencies:
     "@mdx-js/loader": ^2.3.0
     "@mdx-js/react": ^2.3.0
+    "@neondatabase/serverless": ^1.1.0
     "@next/bundle-analyzer": 13.4.12
     "@radix-ui/react-accordion": ^1.1.2
     "@radix-ui/react-collapsible": ^1.0.3
@@ -14376,6 +14841,9 @@ __metadata:
     class-variance-authority: ^0.7.0
     clsx: ^2.0.0
     cross-env: ^7.0.3
+    dotenv: ^17.4.2
+    drizzle-kit: ^0.31.10
+    drizzle-orm: ^0.45.2
     esbuild: 0.18.11
     eslint: ^8.45.0
     eslint-config-next: ^16.2.7
@@ -14393,6 +14861,7 @@ __metadata:
     mdx-mermaid: ^2.0.0
     mermaid: ^10.4.0
     next: ^16.2.7
+    next-auth: beta
     next-themes: ^0.2.1
     nextjs13_google_adsense: ^1.0.8
     pliny: ^0.4.1
@@ -14418,6 +14887,7 @@ __metadata:
     typescript: ^5.1.3
     unist-util-visit: ^4.1.0
     velite: ^0.3.1
+    zod: ^4.4.3
   languageName: unknown
   linkType: soft
 
@@ -14713,6 +15183,21 @@ __metadata:
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: e4aba30e632b8c8902b47587fd13345e2827fa639e7c3121074d5ee0880723282411a8838f830b55100cbe4517672f84a2472667d355b81e8af165a55dc6203a
+  languageName: node
+  linkType: hard
+
+"tsx@npm:^4.21.0":
+  version: 4.22.4
+  resolution: "tsx@npm:4.22.4"
+  dependencies:
+    esbuild: ~0.28.0
+    fsevents: ~2.3.3
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    tsx: dist/cli.mjs
+  checksum: 21848c642032680c525d322d7e6b82fdf2bebfaa8b2911c413eb98a834fce89295ee315fb42de5597f4c2ba1ea06c4b71c2321ca47ecf1de065604324266c554
   languageName: node
   linkType: hard
 
@@ -15674,7 +16159,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25.0 || ^4.0.0":
+"zod@npm:^3.25.0 || ^4.0.0, zod@npm:^4.4.3":
   version: 4.4.3
   resolution: "zod@npm:4.4.3"
   checksum: bf236fdee7a5a5ec645eef5bfea3aad34e7df912931c2a23bc17e5b59882482751da42392916529da52ff9bc70f584797a5d496f1fb81f2d1a4c90fdd3922d2a

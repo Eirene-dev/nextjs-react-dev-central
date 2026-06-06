@@ -11,11 +11,14 @@
     "build": "velite && cross-env INIT_CWD=$PWD next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "velite && cross-env ANALYZE=true next build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^2.3.0",
+    "@neondatabase/serverless": "^1.1.0",
     "@next/bundle-analyzer": "13.4.12",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-collapsible": "^1.0.3",
@@ -31,6 +34,7 @@
     "chart.js": "^4.4.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "drizzle-orm": "^0.45.2",
     "esbuild": "0.18.11",
     "github-slugger": "^1.4.0",
     "gray-matter": "^4.0.2",
@@ -42,6 +46,7 @@
     "mdx-mermaid": "^2.0.0",
     "mermaid": "^10.4.0",
     "next": "^16.2.7",
+    "next-auth": "beta",
     "next-themes": "^0.2.1",
     "nextjs13_google_adsense": "^1.0.8",
     "pliny": "^0.4.1",
@@ -62,7 +67,8 @@
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "^3.3.3",
     "tailwindcss-animate": "^1.0.7",
-    "unist-util-visit": "^4.1.0"
+    "unist-util-visit": "^4.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
@@ -72,6 +78,8 @@
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
     "cross-env": "^7.0.3",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^8.45.0",
     "eslint-config-next": "^16.2.7",
     "eslint-config-prettier": "^8.8.0",
