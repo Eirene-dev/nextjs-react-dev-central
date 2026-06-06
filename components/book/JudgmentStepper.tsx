@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-// 원본 인터랙티브 스테퍼를 선언형 React로 이식 — 동작 동일, 색은 사이트 토큰.
+// 원본 인터랙티브 스테퍼 — 동작 동일, 색은 사이트 토큰.
 // 산호 곡선(판단)은 상승, 회색(정체)은 정체 → 단계마다 격차가 벌어진다.
 type Pt = [number, number]
 const C: Pt[] = [
@@ -20,8 +20,8 @@ const S = [
   { t: '당신은 무엇으로 기억될 것인가', s: '남는 것은 판단의 궤적', j: '판단의 궤적으로 신뢰를 쌓는다', g: '"바쁘게 쳐내면 인정받는다"' },
   { t: '판단은 훈련된다', s: '결론 · 판단은 기를 수 있다', j: '매일의 결정으로 판단을 단련한다 → 복리', g: '"재능이 없으면 안 된다" — 멈춘다' },
 ]
+const INTERVAL = 4500
 
-// Catmull-Rom 풍 부드러운 곡선 path (원본 sm 동일)
 function sm(p: Pt[]): string {
   if (p.length < 2) return p.length ? `M${p[0][0]} ${p[0][1]}` : ''
   let d = `M${p[0][0]} ${p[0][1]}`
@@ -40,45 +40,81 @@ function sm(p: Pt[]): string {
 const CORAL = 'hsl(var(--coral))'
 const GRAY = 'hsl(var(--ink-3))'
 const LINE = 'hsl(var(--line))'
-const TXT2 = 'hsl(var(--ink-2))'
+const INK = 'hsl(var(--ink))'
+const INK2 = 'hsl(var(--ink-2))'
 
 export default function JudgmentStepper() {
   const [step, setStep] = useState(0)
-  const go = (n: number) => setStep(Math.max(0, Math.min(S.length - 1, n)))
+  const [playing, setPlaying] = useState(false) // 마운트 후 motion 허용 시 true
+  const [reduced, setReduced] = useState(true) // SSR 안전: 확인 전엔 자동재생 안 함
+  const [paused, setPaused] = useState(false) // hover/focus 임시 정지
+
+  useEffect(() => {
+    const m = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReduced(m.matches)
+    setPlaying(!m.matches)
+  }, [])
+
+  // 자동 진행 — reduced-motion·일시정지·탭 비활성 시 멈춤, 마지막 후 처음으로 순환
+  useEffect(() => {
+    if (reduced || !playing || paused) return
+    const id = setInterval(() => {
+      if (document.hidden) return
+      setStep((s) => (s + 1) % S.length)
+    }, INTERVAL)
+    return () => clearInterval(id)
+  }, [reduced, playing, paused])
+
+  // 수동 조작 → 자동재생 중지(토글로만 재개)
+  const goManual = (n: number) => {
+    setPlaying(false)
+    setStep(Math.max(0, Math.min(S.length - 1, n)))
+  }
+  const goDot = (i: number) => {
+    setPlaying(false)
+    setStep(i)
+  }
+
   const [cx, cy] = C[step]
   const gy = G[step][1]
   const s = S[step]
 
   return (
-    <div className="jc">
+    <div
+      className="jc"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
       <svg width="100%" viewBox="0 0 680 280" role="img" aria-label={`판단 vs 정체 — ${step + 1}/${S.length}단계: ${s.t}`}>
-        {/* legend */}
-        <rect x="80" y="15" width="20" height="4" rx="2" fill={CORAL} />
-        <text x="108" y="17" fontSize="12" fill={TXT2} dominantBaseline="central">
+        {/* legend — 강조(굵게·크게) */}
+        <rect x="80" y="13" width="22" height="5" rx="2.5" fill={CORAL} />
+        <text x="110" y="16" fontSize="13.5" fontWeight="700" fill={INK} dominantBaseline="central">
           판단을 훈련하면 — 복리로 성장
         </text>
-        <rect x="80" y="35" width="20" height="4" rx="2" fill={GRAY} />
-        <text x="108" y="37" fontSize="12" fill={TXT2} dominantBaseline="central">
+        <rect x="80" y="34" width="22" height="5" rx="2.5" fill={GRAY} />
+        <text x="110" y="37" fontSize="13.5" fontWeight="500" fill={INK2} dominantBaseline="central">
           훈련하지 않으면 — 정체
         </text>
-        {/* axes */}
-        <text x="80" y="54" fontSize="12" fill={TXT2} textAnchor="middle">
+        {/* axes — 라벨 강조 */}
+        <text x="80" y="55" fontSize="13" fontWeight="700" fill={INK} textAnchor="middle">
           가치
         </text>
-        <line x1="80" y1="60" x2="80" y2="250" stroke={LINE} strokeWidth="0.5" />
-        <line x1="80" y1="250" x2="616" y2="250" stroke={LINE} strokeWidth="0.5" />
-        <text x="606" y="268" fontSize="12" fill={TXT2} textAnchor="end">
+        <line x1="80" y1="62" x2="80" y2="250" stroke={LINE} strokeWidth="0.75" />
+        <line x1="80" y1="250" x2="616" y2="250" stroke={LINE} strokeWidth="0.75" />
+        <text x="606" y="269" fontSize="13" fontWeight="600" fill={INK2} textAnchor="end">
           시간 · 경력 →
         </text>
         {/* curves */}
         <path d={sm(G.slice(step))} fill="none" stroke={GRAY} strokeWidth="2" strokeLinecap="round" opacity="0.3" />
         <path d={sm(C.slice(step))} fill="none" stroke={CORAL} strokeWidth="2.5" strokeLinecap="round" opacity="0.22" />
         <path d={sm(G.slice(0, step + 1))} fill="none" stroke={GRAY} strokeWidth="2.5" strokeLinecap="round" />
-        <path d={sm(C.slice(0, step + 1))} fill="none" stroke={CORAL} strokeWidth="3" strokeLinecap="round" />
+        <path d={sm(C.slice(0, step + 1))} fill="none" stroke={CORAL} strokeWidth="3.2" strokeLinecap="round" />
         {/* gap + markers */}
         <line className="jc-gap" x1={cx} y1={cy} x2={cx} y2={gy} stroke={GRAY} strokeWidth="1" strokeDasharray="3 3" opacity="0.55" />
         <circle className="jc-mk" cx={cx} cy={gy} r="6" fill={GRAY} />
-        <circle className="jc-mk" cx={cx} cy={cy} r="7" fill={CORAL} />
+        <circle className="jc-mk" cx={cx} cy={cy} r="7.5" fill={CORAL} />
       </svg>
 
       <div className="jc-panel">
@@ -93,9 +129,30 @@ export default function JudgmentStepper() {
           <span>{s.g}</span>
         </div>
         <div className="jc-ctl">
-          <button className="jc-btn" onClick={() => go(step - 1)} disabled={step === 0}>
-            이전
-          </button>
+          <div className="jc-left">
+            {!reduced && (
+              <button
+                className="jc-btn jc-toggle"
+                onClick={() => setPlaying((p) => !p)}
+                aria-label={playing ? '자동재생 일시정지' : '자동재생'}
+                aria-pressed={playing}
+              >
+                {playing ? (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </svg>
+                ) : (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 4l13 8-13 8z" />
+                  </svg>
+                )}
+              </button>
+            )}
+            <button className="jc-btn" onClick={() => goManual(step - 1)} disabled={step === 0}>
+              이전
+            </button>
+          </div>
           <div className="jc-dots">
             {S.map((_, i) => (
               <button
@@ -103,11 +160,11 @@ export default function JudgmentStepper() {
                 className={`jc-dot${i === step ? ' on' : ''}`}
                 aria-label={`${i + 1}단계`}
                 aria-current={i === step}
-                onClick={() => go(i)}
+                onClick={() => goDot(i)}
               />
             ))}
           </div>
-          <button className="jc-btn" onClick={() => go(step + 1)} disabled={step === S.length - 1}>
+          <button className="jc-btn" onClick={() => goManual(step + 1)} disabled={step === S.length - 1}>
             다음
           </button>
         </div>
