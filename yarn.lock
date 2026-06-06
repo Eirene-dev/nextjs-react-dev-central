@@ -9085,6 +9085,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hast-util-sanitize@npm:^5.0.0":
+  version: 5.0.2
+  resolution: "hast-util-sanitize@npm:5.0.2"
+  dependencies:
+    "@types/hast": ^3.0.0
+    "@ungap/structured-clone": ^1.0.0
+    unist-util-position: ^5.0.0
+  checksum: 2ab506b847e0ef799dafabae764893bd6ee43dfdf10e65154436c3ded5210abcc637d8e630354f2efd0aa771cd9de78624e2ed9a82c7054029f2b9e18ca7bb70
+  languageName: node
+  linkType: hard
+
 "hast-util-select@npm:^6.0.0":
   version: 6.0.4
   resolution: "hast-util-select@npm:6.0.4"
@@ -13084,6 +13095,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-markdown@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "react-markdown@npm:10.1.0"
+  dependencies:
+    "@types/hast": ^3.0.0
+    "@types/mdast": ^4.0.0
+    devlop: ^1.0.0
+    hast-util-to-jsx-runtime: ^2.0.0
+    html-url-attributes: ^3.0.0
+    mdast-util-to-hast: ^13.0.0
+    remark-parse: ^11.0.0
+    remark-rehype: ^11.0.0
+    unified: ^11.0.0
+    unist-util-visit: ^5.0.0
+    vfile: ^6.0.0
+  peerDependencies:
+    "@types/react": ">=18"
+    react: ">=18"
+  checksum: fa7ef860e32a18206c5b301de8672be609b108f46f0f091e9779d50ff8145bd63d0f6e82ffb18fc1b7aee2264cbdac1100205596ff10d2c3d2de6627abb3868f
+  languageName: node
+  linkType: hard
+
 "react-virtual@npm:^2.8.2":
   version: 2.10.4
   resolution: "react-virtual@npm:2.10.4"
@@ -13657,6 +13690,16 @@ __metadata:
     hast-util-is-css-style: ^3.0.0
     unist-util-visit: ^5.0.0
   checksum: a7d2580e9d7cf62b4417318c87299d34fd6c933034e71273e8b193554ce195312d9fe08ba260447d517447abe86a44f2a95e7fdd21bfc369ced2c8d3deaeb63c
+  languageName: node
+  linkType: hard
+
+"rehype-sanitize@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "rehype-sanitize@npm:6.0.0"
+  dependencies:
+    "@types/hast": ^3.0.0
+    hast-util-sanitize: ^5.0.0
+  checksum: 8f1b44323a6012fbfa83ee6bc48163b846398952c60e5ddbd3d2275cb46cec4fb8d98a919ffce1b3322af469c6dcef9a0127bcf0a1d96203a5c193d07cd26742
   languageName: node
   linkType: hard
 
@@ -14871,12 +14914,14 @@ __metadata:
     react: ^19.2.7
     react-chartjs-2: ^5.2.0
     react-dom: ^19.2.7
+    react-markdown: ^10.1.0
     reading-time: 1.5.0
     rehype-autolink-headings: ^7.1.0
     rehype-citation: ^2.3.2
     rehype-katex: ^7.0.1
     rehype-preset-minify: ^7.0.1
     rehype-prism-plus: ^2.0.2
+    rehype-sanitize: ^6.0.0
     rehype-slug: ^6.0.0
     remark: ^14.0.2
     remark-gfm: ^4.0.1
