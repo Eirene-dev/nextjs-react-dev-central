@@ -133,6 +133,7 @@ export default function JudgmentStepper() {
             {!reduced && (
               <button
                 className="jc-btn jc-toggle"
+                style={{ padding: '6px 8px' }}
                 onClick={() => setPlaying((p) => !p)}
                 aria-label={playing ? '자동재생 일시정지' : '자동재생'}
                 aria-pressed={playing}
