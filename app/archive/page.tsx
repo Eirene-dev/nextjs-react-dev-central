@@ -1,5 +1,6 @@
 import { allBlogs, allDocs, sortPosts, allCoreContent } from '@/lib/content'
 import Link from '@/components/Link'
+import projectsData from '@/data/projectsData'
 import { genPageMetadata } from 'app/seo'
 
 export const metadata = genPageMetadata({
@@ -74,6 +75,30 @@ export default function ArchivePage() {
               className="rounded-full border border-line bg-surface-2 px-4 py-2 text-sm font-semibold text-ink-2 transition-colors hover:border-coral-soft hover:text-coral-2"
             >
               {cat}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 단계별 예제 (별도 섹션) */}
+      <section className="mx-auto mt-14 max-w-[820px]">
+        <div className="mb-4 flex items-baseline justify-between">
+          <h2 className="text-xl font-extrabold tracking-tight text-ink">
+            단계별 예제 <span className="text-ink-3">({projectsData.length})</span>
+          </h2>
+          <Link href="/example" className="text-sm font-semibold text-coral-2 hover:text-coral">
+            예제 전체 보기 →
+          </Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {projectsData.map((p) => (
+            <Link
+              key={p.title}
+              href={p.href}
+              className="rounded-2xl border border-line bg-surface-2 p-5 transition hover:-translate-y-0.5 hover:border-coral-soft hover:shadow-soft"
+            >
+              <h3 className="font-bold tracking-tight text-ink">{p.title}</h3>
+              <p className="mt-2 line-clamp-3 text-sm text-ink-2">{p.description}</p>
             </Link>
           ))}
         </div>
