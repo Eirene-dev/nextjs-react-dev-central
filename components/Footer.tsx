@@ -14,6 +14,13 @@ export default function Footer() {
             </Link>
             <span>{` • `}</span>
             <span>{`© ${new Date().getFullYear()}`}</span>
+            <span>{` • `}</span>
+            <Link
+              href="/archive"
+              className="font-medium underline underline-offset-4 transition-colors hover:text-ink"
+            >
+              아카이브
+            </Link>
           </div>
           <div className="flex items-center gap-3 text-sm text-ink-2">
             <Link
