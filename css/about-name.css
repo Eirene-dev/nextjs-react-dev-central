@@ -2,7 +2,7 @@
  * 이 family 는 이름 h1 에서만 사용되므로 브라우저가 /about 에서만 lazy 로드한다. */
 @font-face {
   font-family: 'Pretendard Variable';
-  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+  src: url('/fonts/PretendardVariable.woff2') format('woff2');
   font-weight: 45 920;
   font-style: normal;
   font-display: swap;

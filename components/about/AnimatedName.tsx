@@ -20,7 +20,6 @@ export default function AnimatedName({ name, className }: { name: string; classN
     const m = window.matchMedia('(prefers-reduced-motion: reduce)')
     const spans = Array.from(el.querySelectorAll<HTMLElement>('span[data-ch]'))
     let raf = 0
-    let cancelled = false
 
     const tick = (t: number) => {
       for (let i = 0; i < spans.length; i++) {
@@ -31,28 +30,20 @@ export default function AnimatedName({ name, className }: { name: string; classN
     }
     const stop = () => {
       cancelAnimationFrame(raf)
-      // 정적 폴백(클래스의 extrabold 800)으로 복귀
+      raf = 0
       spans.forEach((s) => s.style.removeProperty('font-variation-settings'))
     }
     const start = () => {
-      // 가변 wght 축이 실제 로드된 경우에만 구동 — 실패 시 정적 폴백 유지
-      document.fonts
-        .load("800 1em 'Pretendard Variable'")
-        .then((loaded) => {
-          if (cancelled || m.matches || loaded.length === 0) return
-          cancelAnimationFrame(raf)
-          raf = requestAnimationFrame(tick)
-        })
-        .catch(() => {})
+      if (m.matches || raf) return
+      raf = requestAnimationFrame(tick)
     }
     const onMotionChange = () => (m.matches ? stop() : start())
 
     m.addEventListener('change', onMotionChange)
-    if (!m.matches) start()
-    // 시작 후엔 끊김 없이 계속 구동 — rAF 는 탭 비활성 시 브라우저가 자동 정지/재개.
-    // (IntersectionObserver 미사용: 폰트 스왑 등 레이아웃 변동 시 재발화로 한 프레임에 동결되는 원인 제거)
+    // 폰트 로드 게이트 제거: rAF 즉시 시작. 가변 폰트 스왑 전에는 font-variation-settings가
+    // 폴백 폰트에 무효과(깜빡임 없음), woff2 스왑되면 파동이 자연히 적용. reduced-motion은 start()에서 존중.
+    start()
     return () => {
-      cancelled = true
       m.removeEventListener('change', onMotionChange)
       cancelAnimationFrame(raf)
     }
