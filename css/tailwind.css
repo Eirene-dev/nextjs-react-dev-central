@@ -130,8 +130,9 @@ input:-webkit-autofill:focus {
 
 /* === 레거시 룩 격리 (design-decisions §8) ===
  * 글로벌 토큰은 새 디자인이 기본값. archive 계열(/blog·/docs·/tags·/levelup·/example)
- * 콘텐츠는 .legacy-theme 스코프로 감싸 토큰을 레거시 값으로 되돌린다(흰 표면·핑크 액센트·그레이 보더).
- * 글로벌 셸(Header/Footer)은 이 스코프 바깥이라 새 디자인 유지. */
+ * 콘텐츠는 .legacy-theme 스코프로 감싸 토큰을 레거시 값으로 되돌린다(흰 카드·핑크 액센트·그레이 보더).
+ * 단, 페이지 배경(--background)은 오버라이드하지 않고 사이트 표면(라이트 크림/다크 네이비)을
+ * 상속해 헤더/셸과 한 표면으로 보이게 한다. 글로벌 셸(Header/Footer)은 이 스코프 바깥. */
 .legacy-theme {
   --surface: 0 0% 100%;
   --surface-2: 0 0% 100%;
@@ -145,7 +146,6 @@ input:-webkit-autofill:focus {
   --line-2: 214.3 31.8% 91.4%;
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
 
-  --background: 0 0% 100%;
   --foreground: 222.2 47.4% 11.2%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
@@ -179,7 +179,6 @@ input:-webkit-autofill:focus {
   --line: 216 34% 17%;
   --line-2: 216 34% 17%;
 
-  --background: 224 71% 4%;
   --foreground: 213 31% 91%;
   --muted: 223 47% 11%;
   --muted-foreground: 215.4 16.3% 56.9%;
