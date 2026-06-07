@@ -7,9 +7,9 @@ import { useEffect, useRef } from 'react'
 // 가변 폰트 미로드·reduced-motion 이면 정적 extrabold(800) 폴백.
 // wght 범위 400–800: 최대가 기존 제목 굵기(extrabold)와 일치해 절제되게.
 const BASE = 600
-const AMP = 200
-const STEP = 0.5 // 글자당 위상차(rad)
-const PERIOD = 5000 // ms — 느린 물결
+const AMP = 300 // 진폭 ↑ — wght 300~900 스윙(기존 400~800), 폰트 축 45~920 내
+const STEP = 0.6 // 글자당 위상차(rad) — 물결이 글자 사이로 더 또렷이 흐르게
+const PERIOD = 3000 // ms — 더 빠른 물결(기존 5000)
 
 export default function AnimatedName({ name, className }: { name: string; className?: string }) {
   const ref = useRef<HTMLHeadingElement>(null)
