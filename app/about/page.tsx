@@ -1,7 +1,6 @@
 import { allAuthors, type Authors } from '@/lib/content'
 import { MDXLayoutRenderer } from '@/components/MDXContent'
 import { components } from '@/components/MDXComponents'
-import projectsData from '@/data/projectsData'
 import { genPageMetadata } from 'app/seo'
 import Image from 'next/image'
 
@@ -31,24 +30,6 @@ export default async function AboutPage() {
       <div className="prose mx-auto max-w-[680px] dark:prose-invert">
         <MDXLayoutRenderer code={author.body.code} components={components} />
       </div>
-
-      <section className="mx-auto mt-16 max-w-[820px]">
-        <h2 className="mb-6 text-2xl font-extrabold tracking-tight text-ink">
-          Things I&apos;ve built
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {projectsData.map((p) => (
-            <a
-              key={p.title}
-              href={p.href}
-              className="rounded-2xl border border-line bg-surface-2 p-5 transition hover:-translate-y-0.5 hover:border-coral-soft hover:shadow-soft"
-            >
-              <h3 className="font-bold tracking-tight text-ink">{p.title}</h3>
-              <p className="mt-2 line-clamp-3 text-sm text-ink-2">{p.description}</p>
-            </a>
-          ))}
-        </div>
-      </section>
     </div>
   )
 }
