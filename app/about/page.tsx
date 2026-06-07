@@ -1,6 +1,5 @@
 import { allAuthors, type Authors } from '@/lib/content'
-import { MDXLayoutRenderer } from '@/components/MDXContent'
-import { components } from '@/components/MDXComponents'
+import AboutBio from '@/components/about/AboutBio'
 import { genPageMetadata } from 'app/seo'
 import Image from 'next/image'
 
@@ -27,9 +26,7 @@ export default async function AboutPage() {
         </div>
       </header>
 
-      <div className="prose mx-auto max-w-[680px] dark:prose-invert">
-        <MDXLayoutRenderer code={author.body.code} components={components} />
-      </div>
+      <AboutBio />
     </div>
   )
 }
