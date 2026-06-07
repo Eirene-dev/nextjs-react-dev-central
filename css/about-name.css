@@ -1,0 +1,9 @@
+/* /about 이름 deco 전용 — Pretendard Variable 셀프호스트(가변 wght 축 45~920, CDN/CSP 비의존).
+ * 이 family 는 이름 h1 에서만 사용되므로 브라우저가 /about 에서만 lazy 로드한다. */
+@font-face {
+  font-family: 'Pretendard Variable';
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}

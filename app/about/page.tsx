@@ -1,3 +1,4 @@
+import 'css/about-name.css'
 import { allAuthors, type Authors } from '@/lib/content'
 import AboutBio from '@/components/about/AboutBio'
 import AnimatedName from '@/components/about/AnimatedName'
