@@ -1,5 +1,6 @@
 import { allAuthors, type Authors } from '@/lib/content'
 import AboutBio from '@/components/about/AboutBio'
+import AnimatedName from '@/components/about/AnimatedName'
 import { genPageMetadata } from 'app/seo'
 import Image from 'next/image'
 
@@ -21,7 +22,10 @@ export default async function AboutPage() {
           />
         )}
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-ink">{author.name}</h1>
+          <AnimatedName
+            name={author.name}
+            className="text-4xl font-extrabold tracking-tight text-ink"
+          />
           {author.occupation && <p className="mt-2 text-ink-2">{author.occupation}</p>}
         </div>
       </header>
