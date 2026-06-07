@@ -12,7 +12,7 @@ import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/react'
 // import { SpeedInsights } from "@vercel/speed-insights/next"
-import { WebVitals } from '@/app/api/analytics/web-vitals'
+import { PageView } from '@/app/api/analytics/page-view'
 
 // 기술 라벨/코드용 모노. 본문 Pretendard 는 jsdelivr CDN(아래 head <link>)로 로드.
 const jetbrains_mono = JetBrains_Mono({
@@ -99,7 +99,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </SearchProvider>
         </ThemeProviders>
         <Analytics />
-        <WebVitals />
+        <PageView />
       </body>
     </html>
   )
