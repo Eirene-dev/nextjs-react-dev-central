@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '교정할 본문이 없거나 너무 깁니다.' }, { status: 400 })
   }
   try {
-    const result = await proofread(parsed.data.body)
+    const result = await proofread(parsed.data.text, parsed.data.provider)
     return NextResponse.json(result)
   } catch {
     // API 오류·파싱 실패 — 키/모델 미노출, 친절한 메시지만

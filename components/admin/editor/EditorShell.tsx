@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import TipTapEditor from './TipTapEditor'
 import { useDrafts, type SaveStatus } from './useDrafts'
 import PrinciplesPanel from './PrinciplesPanel'
 import ProofreadPanel from './ProofreadPanel'
+import { AI_PROVIDERS, DEFAULT_PROVIDER, type AiProvider } from '@/lib/ai/types'
 
 // 에세이 에디터 — 레이아웃 v2: 에디터 우선, 패널은 온디맨드.
 // 기본: 에디터가 메인 전체 폭(가운데 읽기 컬럼). 원칙=좌측 슬라이드 오버레이(겹침),
@@ -22,11 +23,13 @@ function AnalysisBody({
   tab,
   onTab,
   body,
+  provider,
   onApply,
 }: {
   tab: AnalysisTab
   onTab: (t: AnalysisTab) => void
   body: string
+  provider: AiProvider
   onApply: (corrected: string) => void
 }) {
   return (
@@ -53,7 +56,7 @@ function AnalysisBody({
         ))}
       </div>
       {tab === 'proof' ? (
-        <ProofreadPanel body={body} onApply={onApply} />
+        <ProofreadPanel body={body} provider={provider} onApply={onApply} />
       ) : (
         <p className="mt-4 text-sm leading-relaxed text-ink-3">분석 결과가 여기 표시됩니다.</p>
       )}
@@ -105,6 +108,24 @@ export default function EditorShell() {
   const [principlesOpen, setPrinciplesOpen] = useState(false)
   const [analysis, setAnalysis] = useState<AnalysisTab | null>(null) // null = 닫힘
   const [draftMenu, setDraftMenu] = useState(false)
+  // AI 제공자 — 전역 1개 선택이 모든 AI 호출에 적용, localStorage 기억(기본 Anthropic)
+  const [provider, setProvider] = useState<AiProvider>(DEFAULT_PROVIDER)
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem('essay:aiProvider')
+      if (v === 'openai' || v === 'anthropic') setProvider(v)
+    } catch {
+      /* noop */
+    }
+  }, [])
+  const chooseProvider = (p: AiProvider) => {
+    setProvider(p)
+    try {
+      localStorage.setItem('essay:aiProvider', p)
+    } catch {
+      /* noop */
+    }
+  }
   // 제목·본문(마크다운) + 자동저장/드래프트 목록 — DB 영속화(4단계)
   const { draftId, title, setTitle, body, setBody, drafts, status, savedAt, loadDraft, newDraft, deleteDraft } =
     useDrafts()
@@ -182,7 +203,30 @@ export default function EditorShell() {
           </div>
           <SaveIndicator status={status} savedAt={savedAt} />
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {/* AI 제공자 선택 — 컴팩트 세그먼트, localStorage 기억. 모든 AI 호출에 적용. */}
+          <div
+            className="flex items-center rounded-lg border border-line p-0.5"
+            role="group"
+            aria-label="AI 제공자"
+          >
+            <span className="px-1.5 text-[11px] font-semibold text-ink-3">AI</span>
+            {AI_PROVIDERS.map((p) => (
+              <button
+                key={p.value}
+                type="button"
+                aria-pressed={provider === p.value}
+                onClick={() => chooseProvider(p.value)}
+                className={`rounded-md px-2 py-1 text-xs font-semibold transition-colors ${
+                  provider === p.value
+                    ? 'bg-coral/10 text-coral-2'
+                    : 'text-ink-3 hover:text-ink-2'
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
           <ActionButton active={analysis === 'proof'} onClick={() => openAnalysis('proof')}>
             교정
           </ActionButton>
@@ -230,7 +274,7 @@ export default function EditorShell() {
                   ✕
                 </button>
               </div>
-              <AnalysisBody tab={analysis} onTab={setAnalysis} body={body} onApply={setBody} />
+              <AnalysisBody tab={analysis} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} />
             </div>
           </aside>
         )}
@@ -296,7 +340,7 @@ export default function EditorShell() {
               ✕
             </button>
           </div>
-          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} body={body} onApply={setBody} />
+          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} />
         </div>
       </div>
     </div>

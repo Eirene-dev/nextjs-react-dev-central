@@ -2,15 +2,18 @@
 
 import { useState } from 'react'
 import type { ProofChange, ProofResult } from '@/lib/essay-proofread'
+import type { AiProvider } from '@/lib/ai/types'
 
-// 교정 탭 — 현재 본문을 /api/essay-proofread 로 보내 changes 렌더 + 전체 적용.
+// 교정 탭 — 현재 본문 + 선택 provider 를 /api/essay-proofread 로 보내 changes 렌더 + 전체 적용.
 // 개별 accept/reject 는 v1.1(이번 제외). basePath 주입 가능(테스트용).
 export default function ProofreadPanel({
   body,
+  provider,
   onApply,
   basePath = '/api/essay-proofread',
 }: {
   body: string
+  provider: AiProvider
   onApply: (corrected: string) => void
   basePath?: string
 }) {
@@ -31,7 +34,7 @@ export default function ProofreadPanel({
       const r = await fetch(basePath, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ body }),
+        body: JSON.stringify({ text: body, provider }),
       })
       const data = await r.json()
       if (!r.ok) {

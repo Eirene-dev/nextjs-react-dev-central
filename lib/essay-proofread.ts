@@ -1,14 +1,13 @@
 import 'server-only'
-import Anthropic from '@anthropic-ai/sdk'
 import { z } from 'zod'
+import { aiComplete, providerSchema } from '@/lib/ai/complete'
 
-// 교정 BYOAI — 서버에서 Claude 호출(키 서버 전용). 입력=마크다운, 출력=교정 JSON.
-// 모델은 ANTHROPIC_MODEL env, 없으면 교정 품질용 Sonnet 기본값.
-const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6'
+// 교정 BYOAI — 공용 AI 추상화(OpenAI/Anthropic) 사용. 입력=마크다운, 출력=교정 JSON.
 const MAX_BODY = 100_000
 
 export const proofreadSchema = z.object({
-  body: z.string().min(1).max(MAX_BODY),
+  text: z.string().min(1).max(MAX_BODY),
+  provider: providerSchema,
 })
 
 export type ProofChange = { before: string; after: string; reason: string }
@@ -48,20 +47,10 @@ export function parseProofResult(text: string): ProofResult {
   return resultSchema.parse(extractJson(text))
 }
 
-export async function proofread(body: string): Promise<ProofResult> {
-  const client = new Anthropic() // ANTHROPIC_API_KEY (서버 전용)
-  // 긴 본문 대비 스트리밍으로 최종 메시지 수집(HTTP 타임아웃 회피). 샘플링 파라미터는
-  // 모델별 호환(Opus 4.x 는 temperature 미지원)을 위해 생략 — 결정성은 프롬프트로 유도.
-  const stream = client.messages.stream({
-    model: MODEL,
-    max_tokens: 32000,
-    system: SYSTEM,
-    messages: [{ role: 'user', content: body }],
-  })
-  const msg = await stream.finalMessage()
-  const text = msg.content
-    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-    .map((b) => b.text)
-    .join('')
-  return parseProofResult(text)
+export async function proofread(
+  text: string,
+  provider: z.infer<typeof providerSchema>
+): Promise<ProofResult> {
+  const out = await aiComplete({ provider, system: SYSTEM, user: text, jsonMode: true })
+  return parseProofResult(out)
 }
