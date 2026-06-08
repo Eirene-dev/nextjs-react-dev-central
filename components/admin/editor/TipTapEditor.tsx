@@ -59,8 +59,8 @@ function Toolbar({ editor }: { editor: Editor }) {
   }
 
   return (
-    // 긴 글에서도 서식 버튼 접근 유지 — 전역 헤더(70px) 아래에 sticky 고정. bg-surface 로 본문 비침 방지.
-    <div className="sticky top-[70px] z-20 flex flex-wrap items-center gap-1 overflow-x-auto rounded-t-2xl border-b border-line bg-surface px-5 py-3">
+    // 툴바 — 스크롤 영역 밖 상단 고정(본문만 내부 스크롤). bg-surface 로 본문 비침 방지.
+    <div className="z-20 flex shrink-0 flex-wrap items-center gap-1 overflow-x-auto rounded-t-2xl border-b border-line bg-surface px-5 py-3">
       <ToolbarButton label="굵게" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
         <b>B</b>
       </ToolbarButton>
@@ -112,10 +112,8 @@ export default function TipTapEditor({
     content: value,
     editorProps: {
       attributes: {
-        // 가용 뷰포트 높이를 채우는 바닥값(min-height) — 콘텐츠가 길어지면 그만큼 늘어나고
-        // 넘으면 페이지가 자연 스크롤. 모바일 100dvh(브라우저 UI 바 대응).
-        class:
-          'prose max-w-none dark:prose-invert min-h-[calc(100dvh-260px)] focus:outline-none leading-[1.9]',
+        // 본문 영역(스크롤 컨테이너) 안에서 최소 전체 높이 확보 — 빈 에디터도 클릭 영역 채움.
+        class: 'prose max-w-none dark:prose-invert min-h-full focus:outline-none leading-[1.9]',
         'aria-label': '에세이 본문',
       },
     },
@@ -135,15 +133,15 @@ export default function TipTapEditor({
 
   if (!editor) {
     return (
-      <div className="mt-3 min-h-[calc(100dvh-200px)] rounded-2xl border border-line bg-surface" aria-hidden />
+      <div className="mt-3 min-h-0 flex-1 rounded-2xl border border-line bg-surface" aria-hidden />
     )
   }
 
   return (
-    // 툴바 sticky 가 동작하도록 래퍼에 overflow 클리핑을 두지 않음(rounded 는 toolbar/본문이 각자 처리)
-    <div className="mt-3 min-w-0 rounded-2xl border border-line bg-surface">
+    // 세로 플렉스: [툴바 고정][본문 flex-1 내부 스크롤]. 부모(컬럼)의 남는 높이를 채움.
+    <div className="mt-3 flex min-h-0 min-w-0 flex-1 flex-col rounded-2xl border border-line bg-surface">
       <Toolbar editor={editor} />
-      <EditorContent editor={editor} className="min-w-0 px-5 py-5" />
+      <EditorContent editor={editor} className="min-h-0 min-w-0 flex-1 overflow-y-auto px-5 py-5" />
     </div>
   )
 }

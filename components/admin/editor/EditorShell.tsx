@@ -162,9 +162,9 @@ export default function EditorShell() {
   }
 
   return (
-    <div className="relative min-w-0">
+    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
       {/* 상단 액션 바 — 좌:[원칙]·[드래프트]·저장상태 / 우:[교정][구조] */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           <ActionButton active={principlesOpen} onClick={() => setPrinciplesOpen((v) => !v)}>
             원칙
@@ -261,33 +261,33 @@ export default function EditorShell() {
         </div>
       </div>
 
-      {/* 본문 그리드 — 분석 열림 시에만 우측 트랙 추가(데스크톱). 트랙 minmax(0,…)로 에디터가 줄어듦. */}
+      {/* 본문 그리드 — 남는 높이를 채움(flex-1 min-h-0). 분석 열림 시 우측 트랙 추가(데스크톱). */}
       <div
-        className={`mt-4 grid min-w-0 gap-4 ${
+        className={`mt-4 grid min-h-0 min-w-0 flex-1 gap-4 ${
           analysis
             ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)]'
             : 'lg:grid-cols-[minmax(0,1fr)]'
         }`}
       >
-        {/* 에디터(주 영역) — 가운데 읽기 컬럼(max-w) + 좌우 여백 */}
-        <main className="min-w-0">
-          <div className="mx-auto w-full min-w-0 max-w-[820px]">
+        {/* 에디터(주 영역) — 가운데 읽기 컬럼(max-w) + 좌우 여백, 세로로 영역 채움 */}
+        <main className="flex min-h-0 min-w-0 flex-col">
+          <div className="mx-auto flex min-h-0 w-full min-w-0 max-w-[820px] flex-1 flex-col">
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="제목"
               aria-label="제목"
-              className="block w-full min-w-0 rounded-xl border border-line bg-surface px-4 py-3 text-lg font-bold tracking-tight text-ink outline-none placeholder:font-normal placeholder:text-ink-3 focus:border-coral-soft"
+              className="block w-full min-w-0 shrink-0 rounded-xl border border-line bg-surface px-4 py-3 text-lg font-bold tracking-tight text-ink outline-none placeholder:font-normal placeholder:text-ink-3 focus:border-coral-soft"
             />
-            {/* 본문 마크다운은 컴포넌트 상태 보관(영속화는 4단계) */}
+            {/* 본문 마크다운은 컴포넌트 상태 보관(영속화는 4단계). 본문 영역만 내부 스크롤. */}
             <TipTapEditor value={body} onChange={setBody} />
           </div>
         </main>
 
-        {/* 분석 — 데스크톱 나란히(sticky, 세로로 길게, 내부 스크롤) */}
+        {/* 분석 — 데스크톱 나란히(영역 채움 + 내부 스크롤) */}
         {analysis && (
-          <aside className="hidden min-w-0 lg:block">
-            <div className="sticky top-[86px] max-h-[calc(100dvh-104px)] min-w-0 overflow-y-auto rounded-2xl border border-line bg-surface-2 p-4">
+          <aside className="hidden min-h-0 min-w-0 lg:block">
+            <div className="flex h-full min-h-0 min-w-0 flex-col overflow-y-auto rounded-2xl border border-line bg-surface-2 p-4">
               <div className="flex items-center justify-between">
                 <PanelTitle>분석</PanelTitle>
                 <button

@@ -27,8 +27,9 @@ export default async function EditorPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1280px] py-8">
-      <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-ink">에세이 에디터</h1>
+    // 뷰포트 높이(헤더 70px 제외) 안에 에디터를 가둠 — 페이지가 아니라 본문 영역이 내부 스크롤.
+    <div className="mx-auto flex h-[calc(100dvh-70px)] max-w-[1280px] flex-col px-5 py-4 sm:px-7 sm:py-6">
+      <h1 className="mb-4 shrink-0 text-2xl font-extrabold tracking-tight text-ink">에세이 에디터</h1>
       <EditorShell />
     </div>
   )
