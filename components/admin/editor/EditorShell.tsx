@@ -5,6 +5,7 @@ import TipTapEditor from './TipTapEditor'
 import { useDrafts, type SaveStatus } from './useDrafts'
 import PrinciplesPanel from './PrinciplesPanel'
 import ProofreadPanel from './ProofreadPanel'
+import StructurePanel from './StructurePanel'
 import { AI_PROVIDERS, DEFAULT_PROVIDER, type AiProvider } from '@/lib/ai/types'
 
 // 에세이 에디터 — 레이아웃 v2: 에디터 우선, 패널은 온디맨드.
@@ -58,7 +59,7 @@ function AnalysisBody({
       {tab === 'proof' ? (
         <ProofreadPanel body={body} provider={provider} onApply={onApply} />
       ) : (
-        <p className="mt-4 text-sm leading-relaxed text-ink-3">분석 결과가 여기 표시됩니다.</p>
+        <StructurePanel body={body} provider={provider} />
       )}
     </>
   )
