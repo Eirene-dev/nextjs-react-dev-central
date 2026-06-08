@@ -7,6 +7,8 @@ import PrinciplesPanel from './PrinciplesPanel'
 import ProofreadPanel from './ProofreadPanel'
 import StructurePanel from './StructurePanel'
 import { AI_PROVIDERS, DEFAULT_PROVIDER, type AiProvider } from '@/lib/ai/types'
+import type { ProofResult } from '@/lib/essay-proofread'
+import type { StructureResult } from '@/lib/essay-structure'
 
 // 에세이 에디터 — 레이아웃 v2: 에디터 우선, 패널은 온디맨드.
 // 기본: 에디터가 메인 전체 폭(가운데 읽기 컬럼). 원칙=좌측 슬라이드 오버레이(겹침),
@@ -19,19 +21,27 @@ function PanelTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-[12px] font-bold uppercase tracking-wide text-ink-3">{children}</h2>
 }
 
-// 분석 패널 — 교정 탭은 실제 동작(ProofreadPanel), 구조 탭은 플레이스홀더(7~8단계).
+// 분석 패널 — 교정/구조 결과는 상위(EditorShell)에서 controlled → 탭 전환에도 유지.
 function AnalysisBody({
   tab,
   onTab,
   body,
   provider,
   onApply,
+  proofResult,
+  onProofResult,
+  structResult,
+  onStructResult,
 }: {
   tab: AnalysisTab
   onTab: (t: AnalysisTab) => void
   body: string
   provider: AiProvider
   onApply: (corrected: string) => void
+  proofResult: ProofResult | null
+  onProofResult: (r: ProofResult | null) => void
+  structResult: StructureResult | null
+  onStructResult: (r: StructureResult | null) => void
 }) {
   return (
     <>
@@ -57,9 +67,20 @@ function AnalysisBody({
         ))}
       </div>
       {tab === 'proof' ? (
-        <ProofreadPanel body={body} provider={provider} onApply={onApply} />
+        <ProofreadPanel
+          body={body}
+          provider={provider}
+          onApply={onApply}
+          result={proofResult}
+          onResult={onProofResult}
+        />
       ) : (
-        <StructurePanel body={body} provider={provider} />
+        <StructurePanel
+          body={body}
+          provider={provider}
+          result={structResult}
+          onResult={onStructResult}
+        />
       )}
     </>
   )
@@ -109,6 +130,9 @@ export default function EditorShell() {
   const [principlesOpen, setPrinciplesOpen] = useState(false)
   const [analysis, setAnalysis] = useState<AnalysisTab | null>(null) // null = 닫힘
   const [draftMenu, setDraftMenu] = useState(false)
+  // 분석 결과를 상위로 — 탭(교정↔구조) 전환에도 유지, '초기화'로만 비움
+  const [proofResult, setProofResult] = useState<ProofResult | null>(null)
+  const [structResult, setStructResult] = useState<StructureResult | null>(null)
   // AI 제공자 — 전역 1개 선택이 모든 AI 호출에 적용, localStorage 기억(기본 Anthropic)
   const [provider, setProvider] = useState<AiProvider>(DEFAULT_PROVIDER)
   useEffect(() => {
@@ -275,7 +299,7 @@ export default function EditorShell() {
                   ✕
                 </button>
               </div>
-              <AnalysisBody tab={analysis} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} />
+              <AnalysisBody tab={analysis} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} proofResult={proofResult} onProofResult={setProofResult} structResult={structResult} onStructResult={setStructResult} />
             </div>
           </aside>
         )}
@@ -341,7 +365,7 @@ export default function EditorShell() {
               ✕
             </button>
           </div>
-          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} />
+          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} proofResult={proofResult} onProofResult={setProofResult} structResult={structResult} onStructResult={setStructResult} />
         </div>
       </div>
     </div>

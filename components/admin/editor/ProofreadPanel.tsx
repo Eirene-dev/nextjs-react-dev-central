@@ -5,31 +5,35 @@ import type { ProofChange, ProofResult } from '@/lib/essay-proofread'
 import type { AiProvider } from '@/lib/ai/types'
 
 // 교정 탭 — 현재 본문 + 선택 provider 를 /api/essay-proofread 로 보내 changes 렌더 + 전체 적용.
+// 결과(result)는 상위(EditorShell)에서 controlled — 탭 전환에도 유지, '초기화'로만 비움.
 // 개별 accept/reject 는 v1.1(이번 제외). basePath 주입 가능(테스트용).
 export default function ProofreadPanel({
   body,
   provider,
   onApply,
+  result,
+  onResult,
   basePath = '/api/essay-proofread',
 }: {
   body: string
   provider: AiProvider
   onApply: (corrected: string) => void
+  result: ProofResult | null
+  onResult: (r: ProofResult | null) => void
   basePath?: string
 }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<ProofResult | null>(null)
 
   const run = async () => {
     if (!body.trim()) {
       setError('교정할 본문이 없습니다.')
-      setResult(null)
+      onResult(null)
       return
     }
     setLoading(true)
     setError(null)
-    setResult(null)
+    onResult(null)
     try {
       const r = await fetch(basePath, {
         method: 'POST',
@@ -41,7 +45,7 @@ export default function ProofreadPanel({
         setError(data?.error || '교정에 실패했습니다.')
         return
       }
-      setResult(data as ProofResult)
+      onResult(data as ProofResult)
     } catch {
       setError('교정 요청 중 오류가 발생했습니다.')
     } finally {
@@ -65,13 +69,22 @@ export default function ProofreadPanel({
           {loading ? '교정 중…' : '교정 실행'}
         </button>
         {result && (
-          <button
-            type="button"
-            onClick={apply}
-            className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink-2 hover:border-coral-soft hover:text-ink"
-          >
-            전체 적용
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={apply}
+              className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink-2 hover:border-coral-soft hover:text-ink"
+            >
+              전체 적용
+            </button>
+            <button
+              type="button"
+              onClick={() => onResult(null)}
+              className="rounded-lg px-2 py-1.5 text-sm font-medium text-ink-3 hover:text-ink-2"
+            >
+              초기화
+            </button>
+          </>
         )}
       </div>
 
