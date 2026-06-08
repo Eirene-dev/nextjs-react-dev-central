@@ -26,7 +26,13 @@ const ArrowRight = () => (
   </svg>
 )
 
+// 카드 순서 = 상단 메뉴와 동일(에세이 → 쇼케이스 → 저서)
 const FEATURES = [
+  {
+    title: '개인적인 글',
+    desc: '제 생각으로 쓴 판단·취향·실패의 기록.',
+    icon: <path d="M4 4h16v16H4zM8 9h8M8 13h5" />,
+  },
   {
     title: '최신 웹 데모',
     desc: '정보형·게시판·커머스 등 다양한 웹 데모를 카테고리별로.',
@@ -36,11 +42,6 @@ const FEATURES = [
         <path d="M3 9h18M9 21V9" />
       </>
     ),
-  },
-  {
-    title: '개인적인 글',
-    desc: '제 생각으로 쓴 판단·취향·실패의 기록.',
-    icon: <path d="M4 4h16v16H4zM8 9h8M8 13h5" />,
   },
   {
     title: '출간한 책',
@@ -155,31 +156,7 @@ export default function Main() {
         </div>
       </section>
 
-      {/* showcases preview */}
-      <section className="sec" id="showcases">
-        <div className="s-head">
-          <Pill>Showcases</Pill>
-          <h2>최신 웹 데모</h2>
-          <p>무엇을 왜 만들지는 제가 정합니다 — 최신 웹을 빠르게 실험한 데모들. 카테고리로 둘러보세요.</p>
-        </div>
-        <div className="grid4">
-          {SHOWCASES.map((s) => (
-            <Link className="uc" href="/showcases" key={s.title}>
-              <div className="pic">
-                <svg viewBox="0 0 100 100" fill="none" stroke="hsl(var(--coral-soft))" strokeWidth="1.6">
-                  {s.svg}
-                </svg>
-              </div>
-              <div className="b">
-                <span className="cat">{s.cat}</span>
-                <h3>{s.title}</h3>
-                <span className="go">데모 보기 →</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
+      {/* 섹션 순서 = 상단 메뉴와 동일(에세이 → 쇼케이스 → 저서) */}
       {/* essays preview */}
       <section className="sec">
         <div className="s-head">
@@ -202,6 +179,31 @@ export default function Main() {
               </Link>
             ))
           )}
+        </div>
+      </section>
+
+      {/* showcases preview */}
+      <section className="sec" id="showcases">
+        <div className="s-head">
+          <Pill>Showcases</Pill>
+          <h2>최신 웹 데모</h2>
+          <p>무엇을 왜 만들지는 제가 정합니다 — 최신 웹을 빠르게 실험한 데모들. 카테고리로 둘러보세요.</p>
+        </div>
+        <div className="grid4">
+          {SHOWCASES.map((s) => (
+            <Link className="uc" href="/showcases" key={s.title}>
+              <div className="pic">
+                <svg viewBox="0 0 100 100" fill="none" stroke="hsl(var(--coral-soft))" strokeWidth="1.6">
+                  {s.svg}
+                </svg>
+              </div>
+              <div className="b">
+                <span className="cat">{s.cat}</span>
+                <h3>{s.title}</h3>
+                <span className="go">데모 보기 →</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
