@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Preview from './Preview'
 
 // 에세이 에디터 v1 — 2단계: 레이아웃 셸(3분할 + 모바일). 기능 없음, 구조·플레이스홀더만.
 // 데스크톱: [원칙(접이식) | 에디터 | 분석]. 모바일: 에디터 주(전체 폭) + 하단 탭 → 드로어.
@@ -76,9 +77,12 @@ function AnalysisBody({
 
 export default function EditorShell() {
   const [leftOpen, setLeftOpen] = useState(true) // 데스크톱 원칙 패널 접기/펴기
-  const [tab, setTab] = useState<Tab>('write') // 작성/미리보기(미리보기는 3단계)
+  const [tab, setTab] = useState<Tab>('write') // 작성/미리보기
   const [analysisTab, setAnalysisTab] = useState<AnalysisTab>('proof')
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null) // 모바일 드로어
+  // 제목·본문(마크다운 소스) — 상태 보관만, 영속화(DB)는 4단계
+  const [title, setTitle] = useState('')
+  const [body, setBody] = useState('')
 
   return (
     <div className="min-w-0">
@@ -149,14 +153,26 @@ export default function EditorShell() {
               </div>
             </div>
             {tab === 'write' ? (
-              <textarea
-                placeholder="에세이를 쓰세요 — 저장·렌더는 다음 단계에서."
-                aria-label="에세이 본문"
-                className="mt-3 block min-h-[420px] w-full min-w-0 resize-y rounded-xl border border-line bg-surface px-4 py-3 font-mono text-sm leading-relaxed text-ink outline-none focus:border-coral-soft"
-              />
+              <>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="제목"
+                  aria-label="제목"
+                  className="mt-3 block w-full min-w-0 rounded-xl border border-line bg-surface px-4 py-3 text-lg font-bold tracking-tight text-ink outline-none placeholder:font-normal placeholder:text-ink-3 focus:border-coral-soft"
+                />
+                {/* 산문 작성 표면 — 비례 폰트(Pretendard)·넉넉한 줄간격. 포맷 툴바 없음(헤딩·볼드 부추기지 않음). */}
+                <textarea
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  placeholder="에세이를 쓰세요 — 마크다운 문법 그대로. (저장은 다음 단계)"
+                  aria-label="에세이 본문(마크다운)"
+                  className="mt-3 block min-h-[420px] w-full min-w-0 resize-y rounded-xl border border-line bg-surface px-5 py-4 text-[15.5px] leading-[1.9] text-ink outline-none focus:border-coral-soft"
+                />
+              </>
             ) : (
-              <div className="mt-3 flex min-h-[420px] items-center justify-center rounded-xl border border-dashed border-line text-sm text-ink-3">
-                미리보기는 다음 단계에서 제공됩니다.
+              <div className="mt-3 min-h-[420px] min-w-0 rounded-xl border border-line bg-surface px-5 py-4">
+                <Preview title={title} body={body} />
               </div>
             )}
           </div>
