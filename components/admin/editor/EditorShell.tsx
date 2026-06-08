@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import TipTapEditor from './TipTapEditor'
+import { useDrafts, type SaveStatus } from './useDrafts'
 
 // 에세이 에디터 — 레이아웃 v2: 에디터 우선, 패널은 온디맨드.
 // 기본: 에디터가 메인 전체 폭(가운데 읽기 컬럼). 원칙=좌측 슬라이드 오버레이(겹침),
@@ -85,22 +86,102 @@ function ActionButton({
   )
 }
 
+function pad(n: number) {
+  return String(n).padStart(2, '0')
+}
+function SaveIndicator({ status, savedAt }: { status: SaveStatus; savedAt: Date | null }) {
+  let text = ''
+  if (status === 'saving') text = '저장 중…'
+  else if (status === 'saved' && savedAt) text = `저장됨 ${pad(savedAt.getHours())}:${pad(savedAt.getMinutes())}`
+  else if (status === 'error') text = '저장 실패'
+  return (
+    <span className={`text-xs ${status === 'error' ? 'font-semibold text-coral-2' : 'text-ink-3'}`}>
+      {text}
+    </span>
+  )
+}
+
 export default function EditorShell() {
   const [principlesOpen, setPrinciplesOpen] = useState(false)
   const [analysis, setAnalysis] = useState<AnalysisTab | null>(null) // null = 닫힘
-  // 제목·본문(마크다운 소스) — 상태 보관만, 영속화(DB)는 4단계
-  const [title, setTitle] = useState('')
-  const [body, setBody] = useState('')
+  const [draftMenu, setDraftMenu] = useState(false)
+  // 제목·본문(마크다운) + 자동저장/드래프트 목록 — DB 영속화(4단계)
+  const { draftId, title, setTitle, body, setBody, drafts, status, savedAt, loadDraft, newDraft, deleteDraft } =
+    useDrafts()
 
   const openAnalysis = (t: AnalysisTab) => setAnalysis((cur) => (cur === t ? null : t))
+  const fmtTime = (s: string) => {
+    const d = new Date(s)
+    return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+  }
 
   return (
     <div className="relative min-w-0">
-      {/* 상단 액션 바 — 좌:[원칙] 토글 / 우:[교정][구조] */}
-      <div className="flex items-center justify-between gap-2">
-        <ActionButton active={principlesOpen} onClick={() => setPrinciplesOpen((v) => !v)}>
-          원칙
-        </ActionButton>
+      {/* 상단 액션 바 — 좌:[원칙]·[드래프트]·저장상태 / 우:[교정][구조] */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <ActionButton active={principlesOpen} onClick={() => setPrinciplesOpen((v) => !v)}>
+            원칙
+          </ActionButton>
+          {/* 드래프트 목록/전환 — 가벼운 드롭다운 */}
+          <div className="relative">
+            <ActionButton active={draftMenu} onClick={() => setDraftMenu((v) => !v)}>
+              드래프트 ▾
+            </ActionButton>
+            {draftMenu && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setDraftMenu(false)} aria-hidden />
+                <div className="absolute left-0 top-full z-50 mt-1 max-h-[60vh] w-[280px] overflow-y-auto rounded-xl border border-line bg-surface-2 p-1.5 shadow-soft">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      newDraft()
+                      setDraftMenu(false)
+                    }}
+                    className="block w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-coral-2 hover:bg-ink/5"
+                  >
+                    + 새 글
+                  </button>
+                  {drafts.length > 0 && <div className="my-1 border-t border-line" />}
+                  {drafts.map((d) => (
+                    <div
+                      key={d.id}
+                      className={`flex items-center gap-1 rounded-lg ${d.id === draftId ? 'bg-coral/10' : 'hover:bg-ink/5'}`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          loadDraft(d.id)
+                          setDraftMenu(false)
+                        }}
+                        className="min-w-0 flex-1 px-3 py-2 text-left"
+                      >
+                        <span className="block truncate text-sm text-ink">
+                          {d.title.trim() || '(제목 없음)'}
+                        </span>
+                        <span className="block text-[11px] text-ink-3">{fmtTime(d.updatedAt)}</span>
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="드래프트 삭제"
+                        onClick={() => {
+                          if (window.confirm('이 드래프트를 삭제할까요?')) deleteDraft(d.id)
+                        }}
+                        className="mr-1 shrink-0 rounded-md px-2 py-1 text-ink-3 hover:bg-ink/10 hover:text-coral-2"
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  ))}
+                  {drafts.length === 0 && (
+                    <p className="px-3 py-2 text-xs text-ink-3">저장된 드래프트가 없습니다.</p>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          <SaveIndicator status={status} savedAt={savedAt} />
+        </div>
         <div className="flex gap-1.5">
           <ActionButton active={analysis === 'proof'} onClick={() => openAnalysis('proof')}>
             교정
