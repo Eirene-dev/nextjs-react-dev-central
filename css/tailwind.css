@@ -126,6 +126,14 @@ input:-webkit-autofill:focus {
 
     --radius: 0.5rem;
   }
+
+  /* 한글 어절(띄어쓰기) 단위 줄바꿈 — 글자 중간 끊김 방지(keep-all).
+   * overflow-wrap 은 긴 영문/URL 만 쪼개는 안전망(일반 한글 어절엔 무영향) — 가로 오버플로 방지.
+   * 두 속성 모두 상속되어 body 한 번으로 사이트 전역(레거시 포함) 전파. */
+  body {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
 }
 
 /* === 레거시 룩 격리 (design-decisions §8) ===
