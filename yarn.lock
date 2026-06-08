@@ -12909,6 +12909,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openai@npm:^6.42.0":
+  version: 6.42.0
+  resolution: "openai@npm:6.42.0"
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.25 || ^4.0
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  checksum: 5f8b13b3c2ab35d1aa826a242821464b8838f71036fa41d1cf1be2e7f9e41d5e6742bc6fc79b9d4c82093def629e16d090dc019b6e88037e225f84aa7dbf029f
+  languageName: node
+  linkType: hard
+
 "opener@npm:^1.5.2":
   version: 1.5.2
   resolution: "opener@npm:1.5.2"
@@ -15593,6 +15608,7 @@ __metadata:
     next-auth: beta
     next-themes: ^0.2.1
     nextjs13_google_adsense: ^1.0.8
+    openai: ^6.42.0
     pliny: ^0.4.1
     postcss: ^8.4.24
     prettier: ^3.0.0

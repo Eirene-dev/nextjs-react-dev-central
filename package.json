@@ -55,6 +55,7 @@
     "next-auth": "beta",
     "next-themes": "^0.2.1",
     "nextjs13_google_adsense": "^1.0.8",
+    "openai": "^6.42.0",
     "pliny": "^0.4.1",
     "postcss": "^8.4.24",
     "react": "^19.2.7",
