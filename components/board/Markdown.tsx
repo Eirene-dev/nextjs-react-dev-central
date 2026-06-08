@@ -4,13 +4,15 @@ import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 
 // 방어적 sanitize 허용목록 — defaultSchema(script·iframe·style·이벤트핸들러 차단) 기반.
 // 링크 프로토콜은 http/https/mailto 만(javascript:·data: 차단). rehype-raw 미사용(원시 HTML 통과 안 함).
-const schema = {
+// 에디터 프리뷰(components/admin/editor)와 공유 — 단일 소스.
+export const sanitizeSchema = {
   ...defaultSchema,
   protocols: {
     ...defaultSchema.protocols,
     href: ['http', 'https', 'mailto'],
   },
 }
+const schema = sanitizeSchema
 
 export default function Markdown({ children }: { children: string }) {
   return (
