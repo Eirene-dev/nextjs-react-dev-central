@@ -59,7 +59,8 @@ function Toolbar({ editor }: { editor: Editor }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-line pb-3">
+    // 긴 글에서도 서식 버튼 접근 유지 — 전역 헤더(70px) 아래에 sticky 고정. bg-surface 로 본문 비침 방지.
+    <div className="sticky top-[70px] z-20 flex flex-wrap items-center gap-1 overflow-x-auto rounded-t-2xl border-b border-line bg-surface px-5 py-3">
       <ToolbarButton label="굵게" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
         <b>B</b>
       </ToolbarButton>
@@ -111,8 +112,10 @@ export default function TipTapEditor({
     content: value,
     editorProps: {
       attributes: {
+        // 가용 뷰포트 높이를 채우는 바닥값(min-height) — 콘텐츠가 길어지면 그만큼 늘어나고
+        // 넘으면 페이지가 자연 스크롤. 모바일 100dvh(브라우저 UI 바 대응).
         class:
-          'prose max-w-none dark:prose-invert min-h-[420px] focus:outline-none leading-[1.9]',
+          'prose max-w-none dark:prose-invert min-h-[calc(100dvh-260px)] focus:outline-none leading-[1.9]',
         'aria-label': '에세이 본문',
       },
     },
@@ -131,13 +134,16 @@ export default function TipTapEditor({
   }, [value, editor])
 
   if (!editor) {
-    return <div className="min-h-[470px] rounded-xl border border-line bg-surface" aria-hidden />
+    return (
+      <div className="mt-3 min-h-[calc(100dvh-200px)] rounded-2xl border border-line bg-surface" aria-hidden />
+    )
   }
 
   return (
-    <div className="mt-3 min-w-0 rounded-xl border border-line bg-surface px-5 py-4">
+    // 툴바 sticky 가 동작하도록 래퍼에 overflow 클리핑을 두지 않음(rounded 는 toolbar/본문이 각자 처리)
+    <div className="mt-3 min-w-0 rounded-2xl border border-line bg-surface">
       <Toolbar editor={editor} />
-      <EditorContent editor={editor} className="mt-3 min-w-0" />
+      <EditorContent editor={editor} className="min-w-0 px-5 py-5" />
     </div>
   )
 }
