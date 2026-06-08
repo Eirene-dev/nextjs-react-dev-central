@@ -63,13 +63,8 @@ export default function StructureViz({ result }: { result: StructureResult }) {
   const { thesis, argument_flow, counterargument, conclusion } = result
   const flow = [...argument_flow].sort((a, b) => a.order - b.order)
   const score = Math.max(0, Math.min(1, conclusion.clarity_score || 0))
-  const scoreTone: Tone = score >= 0.7 ? 'good' : score >= 0.4 ? 'partial' : 'weak'
-  const barColor =
-    scoreTone === 'good'
-      ? 'bg-emerald-500'
-      : scoreTone === 'partial'
-        ? 'bg-amber-500'
-        : 'bg-rose-500'
+  // 점수 구간별 색: <50% rose · 50–79% amber · ≥80% green
+  const barColor = score >= 0.8 ? 'bg-emerald-500' : score >= 0.5 ? 'bg-amber-500' : 'bg-rose-500'
 
   return (
     <div className="mt-4 min-w-0 space-y-5">
