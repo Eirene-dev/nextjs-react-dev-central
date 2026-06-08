@@ -4,6 +4,7 @@ import { useState } from 'react'
 import TipTapEditor from './TipTapEditor'
 import { useDrafts, type SaveStatus } from './useDrafts'
 import PrinciplesPanel from './PrinciplesPanel'
+import ProofreadPanel from './ProofreadPanel'
 
 // 에세이 에디터 — 레이아웃 v2: 에디터 우선, 패널은 온디맨드.
 // 기본: 에디터가 메인 전체 폭(가운데 읽기 컬럼). 원칙=좌측 슬라이드 오버레이(겹침),
@@ -16,8 +17,18 @@ function PanelTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-[12px] font-bold uppercase tracking-wide text-ink-3">{children}</h2>
 }
 
-// 분석 패널 내용(탭 UI만). 실제 교정·구조 분석은 6~8단계.
-function AnalysisBody({ tab, onTab }: { tab: AnalysisTab; onTab: (t: AnalysisTab) => void }) {
+// 분석 패널 — 교정 탭은 실제 동작(ProofreadPanel), 구조 탭은 플레이스홀더(7~8단계).
+function AnalysisBody({
+  tab,
+  onTab,
+  body,
+  onApply,
+}: {
+  tab: AnalysisTab
+  onTab: (t: AnalysisTab) => void
+  body: string
+  onApply: (corrected: string) => void
+}) {
   return (
     <>
       <div className="mt-3 flex gap-1 rounded-lg bg-ink/5 p-1" role="tablist" aria-label="분석 탭">
@@ -41,7 +52,11 @@ function AnalysisBody({ tab, onTab }: { tab: AnalysisTab; onTab: (t: AnalysisTab
           </button>
         ))}
       </div>
-      <p className="mt-4 text-sm leading-relaxed text-ink-3">분석 결과가 여기 표시됩니다.</p>
+      {tab === 'proof' ? (
+        <ProofreadPanel body={body} onApply={onApply} />
+      ) : (
+        <p className="mt-4 text-sm leading-relaxed text-ink-3">분석 결과가 여기 표시됩니다.</p>
+      )}
     </>
   )
 }
@@ -215,7 +230,7 @@ export default function EditorShell() {
                   ✕
                 </button>
               </div>
-              <AnalysisBody tab={analysis} onTab={setAnalysis} />
+              <AnalysisBody tab={analysis} onTab={setAnalysis} body={body} onApply={setBody} />
             </div>
           </aside>
         )}
@@ -281,7 +296,7 @@ export default function EditorShell() {
               ✕
             </button>
           </div>
-          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} />
+          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} body={body} onApply={setBody} />
         </div>
       </div>
     </div>
