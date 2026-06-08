@@ -8,6 +8,13 @@
       "when": 1780710185151,
       "tag": "0000_motionless_doctor_octopus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780900128978,
+      "tag": "0001_free_rocket_racer",
+      "breakpoints": true
     }
   ]
 }

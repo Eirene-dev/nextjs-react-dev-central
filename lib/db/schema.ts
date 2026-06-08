@@ -24,3 +24,21 @@ export const boardPosts = pgTable(
 
 export type BoardPost = typeof boardPosts.$inferSelect
 export type NewBoardPost = typeof boardPosts.$inferInsert
+
+// 에세이 드래프트 — 관리자 본인 글 자동저장(저장 포맷=마크다운). board_posts 와 독립.
+export const essayDrafts = pgTable(
+  'essay_drafts',
+  {
+    id: serial('id').primaryKey(),
+    authorId: text('author_id').notNull(), // GitHub 숫자 id (세션)
+    title: text('title').notNull().default(''),
+    body: text('body').notNull().default(''), // 마크다운
+    status: text('status').notNull().default('draft'), // 향후 'draft' | 'published'
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index('essay_author_updated_idx').on(t.authorId, t.updatedAt)]
+)
+
+export type EssayDraft = typeof essayDrafts.$inferSelect
+export type NewEssayDraft = typeof essayDrafts.$inferInsert
