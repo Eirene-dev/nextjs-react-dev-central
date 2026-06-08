@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import TipTapEditor from './TipTapEditor'
 import { useDrafts, type SaveStatus } from './useDrafts'
+import PrinciplesPanel from './PrinciplesPanel'
 
 // 에세이 에디터 — 레이아웃 v2: 에디터 우선, 패널은 온디맨드.
 // 기본: 에디터가 메인 전체 폭(가운데 읽기 컬럼). 원칙=좌측 슬라이드 오버레이(겹침),
@@ -13,22 +14,6 @@ type AnalysisTab = 'proof' | 'structure'
 
 function PanelTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-[12px] font-bold uppercase tracking-wide text-ink-3">{children}</h2>
-}
-
-// 원칙 패널 내용(더미). 실제 시드·추가/수정은 5단계.
-function PrinciplesBody() {
-  return (
-    <div className="mt-3 space-y-4">
-      {['작성 원칙', '피할 것', '철학 프레임'].map((h) => (
-        <section key={h}>
-          <h3 className="text-sm font-bold text-ink">{h}</h3>
-          <p className="mt-1 text-[13px] leading-relaxed text-ink-2">
-            준비 중 — 원칙 시드는 5단계에서 채워집니다.
-          </p>
-        </section>
-      ))}
-    </div>
-  )
 }
 
 // 분석 패널 내용(탭 UI만). 실제 교정·구조 분석은 6~8단계.
@@ -263,7 +248,7 @@ export default function EditorShell() {
               ✕
             </button>
           </div>
-          <PrinciplesBody />
+          <PrinciplesPanel />
         </div>
       </div>
 
