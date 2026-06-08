@@ -15,6 +15,13 @@
       "when": 1780900128978,
       "tag": "0001_free_rocket_racer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780901994387,
+      "tag": "0002_new_paibok",
+      "breakpoints": true
     }
   ]
 }

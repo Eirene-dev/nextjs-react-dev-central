@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, timestamp, index } from 'drizzle-orm/pg-core'
+import { pgTable, serial, text, integer, timestamp, index, jsonb } from 'drizzle-orm/pg-core'
 
 // 다용도 게시판 — 테이블 1개. page_key 로 향후 에세이 등 다른 페이지에서도 재사용.
 export const boardPosts = pgTable(
@@ -42,3 +42,12 @@ export const essayDrafts = pgTable(
 
 export type EssayDraft = typeof essayDrafts.$inferSelect
 export type NewEssayDraft = typeof essayDrafts.$inferInsert
+
+// 에세이 작성 원칙 — 관리자별 1행(author_id PK), data = { sections: [{key,label,items[]}] }.
+export const essayPrinciples = pgTable('essay_principles', {
+  authorId: text('author_id').primaryKey(), // GitHub 숫자 id (세션)
+  data: jsonb('data').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export type EssayPrinciples = typeof essayPrinciples.$inferSelect
