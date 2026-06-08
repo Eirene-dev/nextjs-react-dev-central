@@ -114,16 +114,28 @@ function ActionButton({
 function pad(n: number) {
   return String(n).padStart(2, '0')
 }
-function SaveIndicator({ status, savedAt }: { status: SaveStatus; savedAt: Date | null }) {
+function SaveIndicator({
+  status,
+  savedAt,
+  dirty,
+}: {
+  status: SaveStatus
+  savedAt: Date | null
+  dirty: boolean
+}) {
   let text = ''
+  let tone = 'text-ink-3'
   if (status === 'saving') text = '저장 중…'
-  else if (status === 'saved' && savedAt) text = `저장됨 ${pad(savedAt.getHours())}:${pad(savedAt.getMinutes())}`
-  else if (status === 'error') text = '저장 실패'
-  return (
-    <span className={`text-xs ${status === 'error' ? 'font-semibold text-coral-2' : 'text-ink-3'}`}>
-      {text}
-    </span>
-  )
+  else if (status === 'error') {
+    text = '저장 실패'
+    tone = 'font-semibold text-coral-2'
+  } else if (dirty) {
+    text = '● 저장되지 않은 변경 있음'
+    tone = 'text-amber-600 dark:text-amber-400'
+  } else if (savedAt) {
+    text = `저장됨 ${pad(savedAt.getHours())}:${pad(savedAt.getMinutes())}`
+  }
+  return <span className={`text-xs ${tone}`}>{text}</span>
 }
 
 export default function EditorShell() {
@@ -151,9 +163,24 @@ export default function EditorShell() {
       /* noop */
     }
   }
-  // 제목·본문(마크다운) + 자동저장/드래프트 목록 — DB 영속화(4단계)
-  const { draftId, title, setTitle, body, setBody, drafts, status, savedAt, loadDraft, newDraft, deleteDraft } =
-    useDrafts()
+  // 제목·본문(마크다운) + 수동/자동 저장 + 드래프트 목록 — DB 영속화
+  const {
+    draftId,
+    title,
+    setTitle,
+    body,
+    setBody,
+    drafts,
+    status,
+    savedAt,
+    dirty,
+    autosave,
+    toggleAutosave,
+    saveNow,
+    loadDraft,
+    newDraft,
+    deleteDraft,
+  } = useDrafts()
 
   const openAnalysis = (t: AnalysisTab) => setAnalysis((cur) => (cur === t ? null : t))
   const fmtTime = (s: string) => {
@@ -226,7 +253,30 @@ export default function EditorShell() {
               </>
             )}
           </div>
-          <SaveIndicator status={status} savedAt={savedAt} />
+          {/* 수동 저장 — dirty 일 때만 활성. 누르면 즉시 저장(없으면 생성/있으면 PATCH). */}
+          <button
+            type="button"
+            onClick={() => saveNow()}
+            disabled={!dirty || status === 'saving'}
+            className="rounded-lg border border-line px-3 py-1.5 text-sm font-semibold text-ink-2 transition-colors hover:border-coral-soft hover:text-ink disabled:cursor-default disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink-2"
+          >
+            저장
+          </button>
+          {/* 자동 저장 토글 — 5분 주기(dirty 시만). localStorage 기억, 기본 ON. */}
+          <button
+            type="button"
+            onClick={() => toggleAutosave(!autosave)}
+            aria-pressed={autosave}
+            title="자동 저장 (5분 주기)"
+            className={`rounded-lg border px-2.5 py-1.5 text-[12px] font-semibold transition-colors ${
+              autosave
+                ? 'border-coral-soft bg-coral/10 text-coral-2'
+                : 'border-line text-ink-3 hover:text-ink-2'
+            }`}
+          >
+            자동저장 {autosave ? 'ON' : 'OFF'}
+          </button>
+          <SaveIndicator status={status} savedAt={savedAt} dirty={dirty} />
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {/* AI 제공자 선택 — 컴팩트 세그먼트, localStorage 기억. 모든 AI 호출에 적용. */}

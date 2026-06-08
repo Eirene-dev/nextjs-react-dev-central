@@ -2,14 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-// 에세이 드래프트 자동저장 훅 — 저장 포맷=마크다운.
-// 빈 글은 생성하지 않음(내용이 생긴 뒤 첫 POST). 이후 PATCH. 디바운스 1.5s.
-// 마지막 연 드래프트 id 를 localStorage 에 보관 → 새로고침 시 DB 에서 로드(유지 증거).
+// 에세이 드래프트 저장 훅 — 저장 포맷=마크다운. 저장 비용 절감 개편:
+//  - 키 입력마다 디바운스 저장(제거). 대신 수동 '저장' + 선택적 자동저장(5분 주기, dirty 일 때만).
+//  - dirty 추적 + beforeunload 경고(dirty 일 때만). 초안 전환/생성 시 dirty 면 먼저 저장.
+//  - 빈 글은 생성 안 함. 마지막 연 드래프트 id 를 localStorage 보관 → 새로고침 복원.
 
 export type DraftListItem = { id: number; title: string; updatedAt: string }
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 const LS_KEY = 'essay:lastDraftId'
-const DEBOUNCE = 1500
+const AUTOSAVE_LS_KEY = 'essay-editor-autosave'
+const AUTOSAVE_INTERVAL_MS = 5 * 60 * 1000 // 5분 주기 점검(상수 — 쉽게 수정)
 
 export function useDrafts(basePath = '/api/essay-drafts') {
   const [draftId, setDraftId] = useState<number | null>(null)
@@ -18,12 +20,19 @@ export function useDrafts(basePath = '/api/essay-drafts') {
   const [drafts, setDrafts] = useState<DraftListItem[]>([])
   const [status, setStatus] = useState<SaveStatus>('idle')
   const [savedAt, setSavedAt] = useState<Date | null>(null)
+  const [dirty, setDirty] = useState(false)
+  const [autosave, setAutosave] = useState(true) // 기본 ON
 
-  const skipSave = useRef(true) // 첫 마운트/프로그램 로드 직후 자동저장 억제
+  const skipDirty = useRef(true) // 첫 마운트/프로그램 로드 직후 dirty 억제
   const saving = useRef(false)
-  const dirty = useRef(false)
   const draftIdRef = useRef<number | null>(null)
   draftIdRef.current = draftId
+  const dirtyRef = useRef(false)
+  dirtyRef.current = dirty
+  const titleRef = useRef(title)
+  titleRef.current = title
+  const bodyRef = useRef(body)
+  bodyRef.current = body
 
   const refreshList = useCallback(async () => {
     try {
@@ -32,65 +41,15 @@ export function useDrafts(basePath = '/api/essay-drafts') {
     } catch {
       /* 목록 갱신 실패는 무시 */
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const loadInto = useCallback((id: number, t: string, b: string, updatedAt: string) => {
-    skipSave.current = true
-    setDraftId(id)
-    setTitle(t)
-    setBody(b)
-    setSavedAt(new Date(updatedAt))
-    setStatus('saved')
-    try {
-      localStorage.setItem(LS_KEY, String(id))
-    } catch {
-      /* noop */
-    }
-  }, [])
-
-  const loadDraft = useCallback(
-    async (id: number) => {
-      try {
-        const r = await fetch(`${basePath}/${id}`)
-        if (!r.ok) {
-          if (r.status === 404) {
-            try {
-              localStorage.removeItem(LS_KEY)
-            } catch {
-              /* noop */
-            }
-          }
-          return
-        }
-        const d = await r.json()
-        loadInto(d.id, d.title ?? '', d.body ?? '', d.updatedAt)
-      } catch {
-        /* noop */
-      }
-    },
-    [loadInto]
-  )
-
-  const newDraft = useCallback(() => {
-    skipSave.current = true
-    setDraftId(null)
-    setTitle('')
-    setBody('')
-    setStatus('idle')
-    setSavedAt(null)
-    try {
-      localStorage.removeItem(LS_KEY)
-    } catch {
-      /* noop */
-    }
-  }, [])
-
-  // 실제 저장(POST 생성 → PATCH). 동시 저장 방지: 진행 중이면 dirty 표시 후 종료.
-  const save = useCallback(async () => {
-    if (saving.current) {
-      dirty.current = true
-      return
-    }
+  // 실제 저장(POST 생성 → PATCH). refs 로 최신값을 읽어 안정적 콜백 유지(타이머/핸들러 재사용).
+  const saveNow = useCallback(async () => {
+    if (saving.current) return
+    const t = titleRef.current
+    const bd = bodyRef.current
+    if (!t.trim() && !bd.trim()) return // 빈 글은 생성 안 함
     saving.current = true
     setStatus('saving')
     try {
@@ -109,30 +68,83 @@ export function useDrafts(basePath = '/api/essay-drafts') {
       const r2 = await fetch(`${basePath}/${id}`, {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ title, body }),
+        body: JSON.stringify({ title: t, body: bd }),
       })
       if (!r2.ok) throw new Error('patch failed')
       const { updatedAt } = await r2.json()
       setSavedAt(new Date(updatedAt))
       setStatus('saved')
+      setDirty(false)
       refreshList()
     } catch {
       setStatus('error')
     } finally {
       saving.current = false
-      if (dirty.current) {
-        dirty.current = false
-        save()
-      }
     }
-  }, [title, body, refreshList])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshList])
+
+  const loadInto = useCallback((id: number, t: string, b: string, updatedAt: string) => {
+    skipDirty.current = true
+    setDraftId(id)
+    setTitle(t)
+    setBody(b)
+    setSavedAt(new Date(updatedAt))
+    setStatus('saved')
+    setDirty(false)
+    try {
+      localStorage.setItem(LS_KEY, String(id))
+    } catch {
+      /* noop */
+    }
+  }, [])
+
+  const loadDraft = useCallback(
+    async (id: number) => {
+      if (dirtyRef.current) await saveNow() // 전환 전 손실 방지
+      try {
+        const r = await fetch(`${basePath}/${id}`)
+        if (!r.ok) {
+          if (r.status === 404) {
+            try {
+              localStorage.removeItem(LS_KEY)
+            } catch {
+              /* noop */
+            }
+          }
+          return
+        }
+        const d = await r.json()
+        loadInto(d.id, d.title ?? '', d.body ?? '', d.updatedAt)
+      } catch {
+        /* noop */
+      }
+    },
+    [loadInto, saveNow]
+  )
+
+  const newDraft = useCallback(async () => {
+    if (dirtyRef.current) await saveNow() // 새 초안 전 현재 저장
+    skipDirty.current = true
+    setDraftId(null)
+    setTitle('')
+    setBody('')
+    setStatus('idle')
+    setSavedAt(null)
+    setDirty(false)
+    try {
+      localStorage.removeItem(LS_KEY)
+    } catch {
+      /* noop */
+    }
+  }, [saveNow])
 
   const deleteDraft = useCallback(
     async (id: number) => {
       try {
         const r = await fetch(`${basePath}/${id}`, { method: 'DELETE' })
         if (!r.ok) return
-        if (id === draftIdRef.current) newDraft()
+        if (id === draftIdRef.current) await newDraft()
         refreshList()
       } catch {
         /* noop */
@@ -141,8 +153,23 @@ export function useDrafts(basePath = '/api/essay-drafts') {
     [newDraft, refreshList]
   )
 
-  // 마운트: 목록 로드 + 마지막 연 드래프트 복원(새로고침 후 유지)
+  const toggleAutosave = useCallback((on: boolean) => {
+    setAutosave(on)
+    try {
+      localStorage.setItem(AUTOSAVE_LS_KEY, on ? '1' : '0')
+    } catch {
+      /* noop */
+    }
+  }, [])
+
+  // 마운트: 자동저장 설정 복원 + 목록 로드 + 마지막 연 드래프트 복원
   useEffect(() => {
+    try {
+      const v = localStorage.getItem(AUTOSAVE_LS_KEY)
+      if (v === '0') setAutosave(false)
+    } catch {
+      /* noop */
+    }
     refreshList()
     let last: string | null = null
     try {
@@ -154,17 +181,34 @@ export function useDrafts(basePath = '/api/essay-drafts') {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // 디바운스 자동저장 — 빈 글은 생성하지 않음
+  // dirty 추적 — 프로그램 로드/생성 직후는 1회 무시, 그 외 본문/제목 변경은 dirty
   useEffect(() => {
-    if (skipSave.current) {
-      skipSave.current = false
+    if (skipDirty.current) {
+      skipDirty.current = false
       return
     }
-    if (!title.trim() && !body.trim()) return
-    const t = setTimeout(() => save(), DEBOUNCE)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setDirty(true)
   }, [title, body])
+
+  // 자동저장 — ON 일 때만 5분 주기 점검, dirty 면 1회 저장(디바운스 아님). OFF 면 미동작.
+  useEffect(() => {
+    if (!autosave) return
+    const id = setInterval(() => {
+      if (dirtyRef.current) saveNow()
+    }, AUTOSAVE_INTERVAL_MS)
+    return () => clearInterval(id)
+  }, [autosave, saveNow])
+
+  // 데이터 보호 — dirty 일 때만 이탈 경고(쓰기 비용 0)
+  useEffect(() => {
+    if (!dirty) return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [dirty])
 
   return {
     draftId,
@@ -175,6 +219,10 @@ export function useDrafts(basePath = '/api/essay-drafts') {
     drafts,
     status,
     savedAt,
+    dirty,
+    autosave,
+    toggleAutosave,
+    saveNow,
     loadDraft,
     newDraft,
     deleteDraft,
