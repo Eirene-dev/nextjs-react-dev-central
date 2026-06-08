@@ -28,8 +28,8 @@ const ArrowRight = () => (
 
 const FEATURES = [
   {
-    title: '직접 만든 데모',
-    desc: '정보형·게시판·커머스·AI 통합 등 다양한 웹·AI 데모를 카테고리별로.',
+    title: '최신 웹 데모',
+    desc: '정보형·게시판·커머스 등 다양한 웹 데모를 카테고리별로.',
     icon: (
       <>
         <rect x="3" y="3" width="18" height="18" rx="3" />
@@ -39,7 +39,7 @@ const FEATURES = [
   },
   {
     title: '개인적인 글',
-    desc: 'AI가 아닌 제 생각으로 쓴 판단·취향·실패의 기록.',
+    desc: '제 생각으로 쓴 판단·취향·실패의 기록.',
     icon: <path d="M4 4h16v16H4zM8 9h8M8 13h5" />,
   },
   {
@@ -108,14 +108,14 @@ export default function Main() {
       <section className="hero">
         <div className="hero-grid">
           <div className="h-copy">
-            <Pill>New · 인터랙티브 AI 데모</Pill>
+            <Pill>New · 인터랙티브 데모</Pill>
             <h1 className="h1">
               AI가 코드를 쓰는 시대,
               <br />
               <span className="g">판단과 취향</span>을 기록합니다.
             </h1>
             <p className="lead">
-              튜토리얼이 아니라, 무엇을 왜 골랐는지. 직접 만든 웹·AI 데모와, AI가 아닌 제 생각으로 쓴 글들.
+              튜토리얼이 아니라, 무엇을 왜 골랐는지. 직접 기획한 웹 데모와, 제 생각으로 쓴 글들.
             </p>
             <div className="cta">
               <Link className="btn btn-p" href="/showcases">
@@ -131,7 +131,7 @@ export default function Main() {
                 <i />
                 <i />
               </span>
-              <span>직접 만든 5+ 데모 · 핀테크·AI 실전 경험</span>
+              <span>5+ 웹 데모 · 핀테크 실전 경험</span>
             </div>
           </div>
           <DemoWidget />
@@ -159,8 +159,8 @@ export default function Main() {
       <section className="sec" id="showcases">
         <div className="s-head">
           <Pill>Showcases</Pill>
-          <h2>직접 만든 웹·AI 데모</h2>
-          <p>Claude Code로 만든 standalone 데모들 — 카테고리로 둘러보세요.</p>
+          <h2>최신 웹 데모</h2>
+          <p>무엇을 왜 만들지는 제가 정합니다 — 최신 웹을 빠르게 실험한 데모들. 카테고리로 둘러보세요.</p>
         </div>
         <div className="grid4">
           {SHOWCASES.map((s) => (
