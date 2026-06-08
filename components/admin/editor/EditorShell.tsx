@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import Preview from './Preview'
+import TipTapEditor from './TipTapEditor'
 
 // 에세이 에디터 v1 — 2단계: 레이아웃 셸(3분할 + 모바일). 기능 없음, 구조·플레이스홀더만.
 // 데스크톱: [원칙(접이식) | 에디터 | 분석]. 모바일: 에디터 주(전체 폭) + 하단 탭 → 드로어.
 // 오버플로 방지: 모든 grid 트랙 minmax(0,…), 입력 요소 min-w-0 (한 칼럼도 min-content 로 못 벌리게).
 
-type Tab = 'write' | 'preview'
 type AnalysisTab = 'proof' | 'structure'
 type MobilePanel = null | 'principles' | 'analysis'
 
@@ -77,7 +76,6 @@ function AnalysisBody({
 
 export default function EditorShell() {
   const [leftOpen, setLeftOpen] = useState(true) // 데스크톱 원칙 패널 접기/펴기
-  const [tab, setTab] = useState<Tab>('write') // 작성/미리보기
   const [analysisTab, setAnalysisTab] = useState<AnalysisTab>('proof')
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null) // 모바일 드로어
   // 제목·본문(마크다운 소스) — 상태 보관만, 영속화(DB)는 4단계
@@ -125,56 +123,19 @@ export default function EditorShell() {
           )}
         </aside>
 
-        {/* 중 — 에디터(주 영역). 저장·마크다운 렌더 없음(3단계) */}
+        {/* 중 — 에디터(주 영역). WYSIWYG(TipTap), 저장 포맷=마크다운. 작성/미리보기 토글 없음. */}
         <main className="min-w-0">
           <div className="min-w-0 rounded-2xl border border-line bg-surface-2 p-4">
-            <div className="flex items-center justify-between gap-2">
-              <PanelTitle>에디터</PanelTitle>
-              <div className="flex gap-1 rounded-lg bg-ink/5 p-1" role="tablist" aria-label="작성/미리보기">
-                {(
-                  [
-                    ['write', '작성'],
-                    ['preview', '미리보기'],
-                  ] as const
-                ).map(([k, label]) => (
-                  <button
-                    key={k}
-                    type="button"
-                    role="tab"
-                    aria-selected={tab === k}
-                    onClick={() => setTab(k)}
-                    className={`rounded-md px-3 py-1 text-sm font-semibold transition-colors ${
-                      tab === k ? 'bg-surface-2 text-ink shadow-soft' : 'text-ink-3 hover:text-ink-2'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {tab === 'write' ? (
-              <>
-                <input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="제목"
-                  aria-label="제목"
-                  className="mt-3 block w-full min-w-0 rounded-xl border border-line bg-surface px-4 py-3 text-lg font-bold tracking-tight text-ink outline-none placeholder:font-normal placeholder:text-ink-3 focus:border-coral-soft"
-                />
-                {/* 산문 작성 표면 — 비례 폰트(Pretendard)·넉넉한 줄간격. 포맷 툴바 없음(헤딩·볼드 부추기지 않음). */}
-                <textarea
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  placeholder="에세이를 쓰세요 — 마크다운 문법 그대로. (저장은 다음 단계)"
-                  aria-label="에세이 본문(마크다운)"
-                  className="mt-3 block min-h-[420px] w-full min-w-0 resize-y rounded-xl border border-line bg-surface px-5 py-4 text-[15.5px] leading-[1.9] text-ink outline-none focus:border-coral-soft"
-                />
-              </>
-            ) : (
-              <div className="mt-3 min-h-[420px] min-w-0 rounded-xl border border-line bg-surface px-5 py-4">
-                <Preview title={title} body={body} />
-              </div>
-            )}
+            <PanelTitle>에디터</PanelTitle>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목"
+              aria-label="제목"
+              className="mt-3 block w-full min-w-0 rounded-xl border border-line bg-surface px-4 py-3 text-lg font-bold tracking-tight text-ink outline-none placeholder:font-normal placeholder:text-ink-3 focus:border-coral-soft"
+            />
+            {/* 본문 마크다운은 컴포넌트 상태 보관(영속화는 4단계) */}
+            <TipTapEditor value={body} onChange={setBody} />
           </div>
         </main>
 
