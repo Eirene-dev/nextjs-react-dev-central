@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { isAdmin } from '@/lib/auth-helpers'
+import EditorShell from '@/components/admin/editor/EditorShell'
 
 // 에세이 에디터 v1 — 1단계: 비공개 라우트 + 관리자 게이트(에디터·저장은 다음 단계).
 // 인증은 보드와 동일하게 기존 auth()/isAdmin 재사용.
@@ -26,9 +27,9 @@ export default async function EditorPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[760px] py-12">
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink">에세이 에디터</h1>
-      <p className="mt-4 text-ink-2">준비 중 — 에디터·저장 기능은 다음 단계에서 붙습니다.</p>
+    <div className="mx-auto max-w-[1280px] py-8">
+      <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-ink">에세이 에디터</h1>
+      <EditorShell />
     </div>
   )
 }
