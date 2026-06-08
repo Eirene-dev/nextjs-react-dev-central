@@ -13,7 +13,9 @@
 }
 .home .hero-grid {
   display: grid;
-  grid-template-columns: 1.02fr 0.98fr;
+  /* minmax(0, …): fr 트랙이 자식 min-content 아래로도 줄어들게 — 못 줄어드는 자식(인풋 등)이
+     트랙을 컨테이너 밖(우측)으로 벌려 CTA·카드가 짤리던 문제 방지 */
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
   gap: 48px;
   align-items: center;
   position: relative;
@@ -239,6 +241,7 @@
 }
 .home .inbar input {
   flex: 1;
+  min-width: 0; /* 인풋 내재 폭(size 속성) 무시하고 카드 폭에 맞게 축소 — 좁은 화면/폰트 확대에서 우측 짤림 방지 */
   border: 1px solid hsl(var(--line));
   border-radius: 11px;
   padding: 10px 14px;
@@ -524,7 +527,7 @@
 
 @media (max-width: 880px) {
   .home .hero-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 42px;
   }
   .home .demo {
