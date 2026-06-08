@@ -6,6 +6,7 @@ import { useDrafts, type SaveStatus } from './useDrafts'
 import PrinciplesPanel from './PrinciplesPanel'
 import ProofreadPanel from './ProofreadPanel'
 import StructurePanel from './StructurePanel'
+import ByoaiPanel, { type ByoaiPreset } from './ByoaiPanel'
 import { AI_PROVIDERS, DEFAULT_PROVIDER, type AiProvider } from '@/lib/ai/types'
 import type { ProofResult } from '@/lib/essay-proofread'
 import type { StructureResult } from '@/lib/essay-structure'
@@ -15,7 +16,7 @@ import type { StructureResult } from '@/lib/essay-structure'
 // 분석=우측 슬라이드 패널(데스크톱 나란히 / 모바일 전체화면 오버레이).
 // 오버플로 방지: 그리드 트랙 minmax(0,…)·min-w-0, 오버레이는 overflow-hidden 래퍼로 클리핑.
 
-type AnalysisTab = 'proof' | 'structure'
+type AnalysisTab = 'proof' | 'structure' | 'byoai'
 
 function PanelTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-[12px] font-bold uppercase tracking-wide text-ink-3">{children}</h2>
@@ -32,6 +33,10 @@ function AnalysisBody({
   onProofResult,
   structResult,
   onStructResult,
+  byoaiPreset,
+  onByoaiPreset,
+  byoaiDrafts,
+  onByoaiDraft,
 }: {
   tab: AnalysisTab
   onTab: (t: AnalysisTab) => void
@@ -42,6 +47,10 @@ function AnalysisBody({
   onProofResult: (r: ProofResult | null) => void
   structResult: StructureResult | null
   onStructResult: (r: StructureResult | null) => void
+  byoaiPreset: ByoaiPreset
+  onByoaiPreset: (p: ByoaiPreset) => void
+  byoaiDrafts: Partial<Record<ByoaiPreset, string>>
+  onByoaiDraft: (p: ByoaiPreset, text: string) => void
 }) {
   return (
     <>
@@ -50,6 +59,7 @@ function AnalysisBody({
           [
             ['proof', '교정'],
             ['structure', '구조'],
+            ['byoai', 'BYOAI'],
           ] as const
         ).map(([k, label]) => (
           <button
@@ -74,12 +84,20 @@ function AnalysisBody({
           result={proofResult}
           onResult={onProofResult}
         />
-      ) : (
+      ) : tab === 'structure' ? (
         <StructurePanel
           body={body}
           provider={provider}
           result={structResult}
           onResult={onStructResult}
+        />
+      ) : (
+        <ByoaiPanel
+          body={body}
+          preset={byoaiPreset}
+          onPreset={onByoaiPreset}
+          drafts={byoaiDrafts}
+          onDraft={onByoaiDraft}
         />
       )}
     </>
@@ -145,6 +163,11 @@ export default function EditorShell() {
   // 분석 결과를 상위로 — 탭(교정↔구조) 전환에도 유지, '초기화'로만 비움
   const [proofResult, setProofResult] = useState<ProofResult | null>(null)
   const [structResult, setStructResult] = useState<StructureResult | null>(null)
+  // BYOAI(외부 AI 내보내기) — 선택 프리셋 + 프리셋별 편집 프롬프트(세션 보존, 탭 전환에도)
+  const [byoaiPreset, setByoaiPreset] = useState<ByoaiPreset>('proofread')
+  const [byoaiDrafts, setByoaiDrafts] = useState<Partial<Record<ByoaiPreset, string>>>({})
+  const onByoaiDraft = (p: ByoaiPreset, text: string) =>
+    setByoaiDrafts((cur) => ({ ...cur, [p]: text }))
   // AI 제공자 — 전역 1개 선택이 모든 AI 호출에 적용, localStorage 기억(기본 Anthropic)
   const [provider, setProvider] = useState<AiProvider>(DEFAULT_PROVIDER)
   useEffect(() => {
@@ -308,6 +331,9 @@ export default function EditorShell() {
           <ActionButton active={analysis === 'structure'} onClick={() => openAnalysis('structure')}>
             구조
           </ActionButton>
+          <ActionButton active={analysis === 'byoai'} onClick={() => openAnalysis('byoai')}>
+            BYOAI
+          </ActionButton>
         </div>
       </div>
 
@@ -349,7 +375,7 @@ export default function EditorShell() {
                   ✕
                 </button>
               </div>
-              <AnalysisBody tab={analysis} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} proofResult={proofResult} onProofResult={setProofResult} structResult={structResult} onStructResult={setStructResult} />
+              <AnalysisBody tab={analysis} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} proofResult={proofResult} onProofResult={setProofResult} structResult={structResult} onStructResult={setStructResult} byoaiPreset={byoaiPreset} onByoaiPreset={setByoaiPreset} byoaiDrafts={byoaiDrafts} onByoaiDraft={onByoaiDraft} />
             </div>
           </aside>
         )}
@@ -415,7 +441,7 @@ export default function EditorShell() {
               ✕
             </button>
           </div>
-          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} proofResult={proofResult} onProofResult={setProofResult} structResult={structResult} onStructResult={setStructResult} />
+          <AnalysisBody tab={analysis ?? 'proof'} onTab={setAnalysis} body={body} provider={provider} onApply={setBody} proofResult={proofResult} onProofResult={setProofResult} structResult={structResult} onStructResult={setStructResult} byoaiPreset={byoaiPreset} onByoaiPreset={setByoaiPreset} byoaiDrafts={byoaiDrafts} onByoaiDraft={onByoaiDraft} />
         </div>
       </div>
     </div>
