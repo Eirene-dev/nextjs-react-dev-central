@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { isAdmin } from '@/lib/auth-helpers'
 import EditorShell from '@/components/admin/editor/EditorShell'
+import AdminUserMenu from '@/components/admin/AdminUserMenu'
 
 // 에세이 에디터 v1 — 1단계: 비공개 라우트 + 관리자 게이트(에디터·저장은 다음 단계).
 // 인증은 보드와 동일하게 기존 auth()/isAdmin 재사용.
@@ -36,7 +37,10 @@ export default async function EditorPage(props: {
   return (
     // 뷰포트 높이(헤더 70px 제외) 안에 에디터를 가둠 — 페이지가 아니라 본문 영역이 내부 스크롤.
     <div className="mx-auto flex h-[calc(100dvh-70px)] max-w-[1280px] flex-col px-5 py-4 sm:px-7 sm:py-6">
-      <h1 className="mb-4 shrink-0 text-2xl font-extrabold tracking-tight text-ink">에세이 에디터</h1>
+      <div className="mb-4 flex shrink-0 items-center justify-between gap-3">
+        <h1 className="text-2xl font-extrabold tracking-tight text-ink">에세이 에디터</h1>
+        <AdminUserMenu name={session.user.name} image={session.user.image} />
+      </div>
       <EditorShell initialId={initialId} />
     </div>
   )
