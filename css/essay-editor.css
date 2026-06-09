@@ -1,0 +1,26 @@
+/* 에디터 각주 마커 — 코랄 위첨자. 번호는 CSS 카운터로 문서 순서 자동(삽입·삭제·재정렬 시 즉시 재번호). */
+.essay-editor-body {
+  counter-reset: essay-fn;
+}
+.essay-editor-fnref {
+  counter-increment: essay-fn;
+  cursor: pointer;
+  color: hsl(var(--coral));
+  font-weight: 700;
+  font-size: 0.78em;
+  vertical-align: super;
+  line-height: 0;
+  padding: 0 0.1em;
+  user-select: none;
+  border-radius: 3px;
+}
+.essay-editor-fnref::before {
+  content: counter(essay-fn);
+}
+.essay-editor-fnref:hover {
+  background: hsl(var(--coral) / 0.12);
+}
+.essay-editor-fnref:focus-visible {
+  outline: 2px solid hsl(var(--coral-soft));
+  outline-offset: 1px;
+}
