@@ -4,7 +4,17 @@ import { notFound } from 'next/navigation'
 import Link from '@/components/Link'
 import { getPublishedEssayBySlug } from '@/lib/essay-drafts'
 import EssayBody from '@/components/essays/EssayBody'
+import ReadingControls from '@/components/essays/ReadingControls'
 import siteMetadata from '@/data/siteMetadata'
+
+// 저장된 읽기 글씨체·크기를 페인트 전에 :root 변수로 선반영(FOUC 최소화). 컨트롤과 매핑 일치.
+const READING_FOUC = `(function(){try{var d=document.documentElement;
+var F={'gowun-batang':"'Gowun Batang', serif",'nanum-myeongjo':"'Nanum Myeongjo', serif",'pretendard':"Pretendard, sans-serif",'gowun-dodum':"'Gowun Dodum', sans-serif"};
+var H={'nanum-myeongjo':'https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&display=swap','gowun-dodum':'https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap'};
+var S=[15.5,17.5,19.5,21.5,24];
+var f=localStorage.getItem('essay:readingFont'); if(f&&F[f]){d.style.setProperty('--reading-font',F[f]); if(H[f]){var l=document.createElement('link');l.rel='stylesheet';l.href=H[f];document.head.appendChild(l);}}
+var s=parseInt(localStorage.getItem('essay:readingSize'),10); if(!isNaN(s)&&S[s]!=null)d.style.setProperty('--reading-fs',S[s]+'px');
+}catch(e){}})()`
 
 // 공개 읽기 — 발행된 글만(없거나 비공개 → 404). 색인 대상(noindex 아님).
 // 읽기 컨트롤·각주는 4·5단계.
@@ -83,9 +93,13 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Link href="/essays" className="text-sm font-semibold text-coral-2 hover:text-coral">
-        ← 에세이
-      </Link>
+      <script dangerouslySetInnerHTML={{ __html: READING_FOUC }} />
+      <div className="flex items-center justify-between gap-3">
+        <Link href="/essays" className="text-sm font-semibold text-coral-2 hover:text-coral">
+          ← 에세이
+        </Link>
+        <ReadingControls />
+      </div>
 
       <article className="essay-prose mt-8 min-w-0">
         <h1 className="text-3xl sm:text-[2.4rem]">{essay.title || '(제목 없음)'}</h1>

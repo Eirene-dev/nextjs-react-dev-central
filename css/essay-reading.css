@@ -2,9 +2,17 @@
  * 고운바탕(세리프) 본문, 넉넉한 행간(한글 1.9), keep-all, 드롭캡(coral), 끝 장식. */
 
 .essay-prose {
-  font-family: 'Gowun Batang', 'Nanum Myeongjo', 'Apple SD Gothic Neo', Georgia, serif;
+  /* 읽기 컨트롤: --reading-font/--reading-fs (없으면 기본 고운바탕/17.5px). 행간은 unitless 1.9 → 크기와 비례 */
+  font-family: var(
+    --reading-font,
+    'Gowun Batang',
+    'Nanum Myeongjo',
+    'Apple SD Gothic Neo',
+    Georgia,
+    serif
+  );
   color: hsl(var(--ink));
-  font-size: 17.5px;
+  font-size: var(--reading-fs, 17.5px);
   line-height: 1.9;
   word-break: keep-all;
   overflow-wrap: break-word;
