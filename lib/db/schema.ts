@@ -48,6 +48,7 @@ export const essayDrafts = pgTable(
     excerpt: text('excerpt'), // 발췌(목록/메타), nullable
     publishedAt: timestamp('published_at', { withTimezone: true }), // 최초 발행 시각, nullable
     viewCount: integer('view_count').notNull().default(0), // 익명 읽은 개수(발행 글)
+    reactionCount: integer('reaction_count').notNull().default(0), // 익명 👍 개수(발행 글)
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
@@ -73,6 +74,22 @@ export const essayViewLog = pgTable(
 
 export type EssayViewLog = typeof essayViewLog.$inferSelect
 export type NewEssayViewLog = typeof essayViewLog.$inferInsert
+
+// 에세이 반응(👍) — 익명 토글. (essay_id, reactor_id) UNIQUE 로 중복 제거 + 토글.
+// reactor_id = 클라이언트 localStorage 토큰(crypto.randomUUID). 로그인 불필요.
+export const essayReactions = pgTable(
+  'essay_reactions',
+  {
+    id: serial('id').primaryKey(),
+    essayId: integer('essay_id'), // 발행 글 id
+    reactorId: text('reactor_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  },
+  (t) => [unique('essay_reactions_unique').on(t.essayId, t.reactorId)]
+)
+
+export type EssayReaction = typeof essayReactions.$inferSelect
+export type NewEssayReaction = typeof essayReactions.$inferInsert
 
 // 에세이 작성 원칙 — 관리자별 1행(author_id PK), data = { sections: [{key,label,items[]}] }.
 export const essayPrinciples = pgTable('essay_principles', {
