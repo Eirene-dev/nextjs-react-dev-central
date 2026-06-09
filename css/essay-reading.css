@@ -126,3 +126,71 @@
   color: hsl(var(--coral-soft));
   font-size: 1.3rem;
 }
+
+/* ── 각주(remark-gfm) — 책 미감 ──────────────────────────────────── */
+/* 점프 스무스 + 고정 헤더에 가리지 않게 오프셋(에세이 페이지 한정) */
+html:has(.essay-prose) {
+  scroll-behavior: smooth;
+}
+
+/* 본문 마커 — 작은 코랄 위첨자 번호 */
+.essay-body sup {
+  line-height: 0;
+}
+.essay-body sup a[data-footnote-ref] {
+  color: hsl(var(--coral));
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.92em;
+  padding: 0 0.12em;
+  scroll-margin-top: 5rem;
+}
+.essay-body sup a[data-footnote-ref]:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* 「주」 섹션 — 차분·작은 글꼴, 구분선, 읽기 글꼴/크기 변수 상속 */
+.essay-body [data-footnotes] {
+  margin-top: 3.5rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid hsl(var(--line));
+  font-size: 0.86em;
+  color: hsl(var(--ink-2));
+}
+.essay-fn-title {
+  font-family: inherit; /* 읽기 글꼴 따름 */
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: hsl(var(--ink));
+  margin: 0 0 0.9rem;
+}
+.essay-body [data-footnotes] ol {
+  margin: 0;
+  padding-left: 1.5em;
+}
+.essay-body [data-footnotes] li {
+  list-style: decimal;
+  margin: 0.55em 0;
+  line-height: 1.7;
+  scroll-margin-top: 5rem;
+}
+.essay-body [data-footnotes] li::marker {
+  color: hsl(var(--coral-soft));
+}
+.essay-body [data-footnotes] p {
+  margin: 0.2em 0;
+}
+/* 각주 속 URL 은 코랄 링크(.essay-body a 규칙 상속) */
+
+/* 되돌아가기(↩) */
+.essay-body a[data-footnote-backref] {
+  color: hsl(var(--coral));
+  text-decoration: none;
+  margin-left: 0.35em;
+  font-size: 1.1em;
+}
+.essay-body a[data-footnote-backref]:hover {
+  opacity: 0.65;
+}
