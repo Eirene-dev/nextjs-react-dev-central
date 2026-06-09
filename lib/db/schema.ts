@@ -33,7 +33,10 @@ export const essayDrafts = pgTable(
     authorId: text('author_id').notNull(), // GitHub 숫자 id (세션)
     title: text('title').notNull().default(''),
     body: text('body').notNull().default(''), // 마크다운
-    status: text('status').notNull().default('draft'), // 향후 'draft' | 'published'
+    status: text('status').notNull().default('draft'), // 'draft' | 'published'
+    slug: text('slug').unique(), // 발행 시 부여(전역 유일), nullable
+    excerpt: text('excerpt'), // 발췌(목록/메타), nullable
+    publishedAt: timestamp('published_at', { withTimezone: true }), // 최초 발행 시각, nullable
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
