@@ -22,7 +22,7 @@ export default async function EditorPage(props: {
 
   // 비로그인 → GitHub 로그인(Auth.js 빌트인 signin, 콜백 /admin/editor)
   if (!session?.user) {
-    redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent('/admin/editor')}`)
+    redirect(`/login?callbackUrl=${encodeURIComponent('/admin/editor')}`)
   }
   // 로그인했지만 비관리자 → 홈으로
   if (!isAdmin(session)) {
