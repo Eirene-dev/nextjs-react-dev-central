@@ -1,9 +1,9 @@
 import 'css/home.css'
 import Link from '@/components/Link'
 import DemoWidget from '@/components/home/DemoWidget'
-import { allEssays, sortPosts, allCoreContent } from '@/lib/content'
+import { listPublishedEssays } from '@/lib/essay-drafts'
 
-const ym = (d: string | number) => {
+const ym = (d: string | number | Date) => {
   const dt = new Date(d)
   return `${dt.getFullYear()}.${String(dt.getMonth() + 1).padStart(2, '0')}`
 }
@@ -99,9 +99,9 @@ const SHOWCASES = [
   },
 ]
 
-export default function Main() {
-  // 공개된 에세이만 라이브로(최대 3). 없으면 graceful "곧 공개" — placeholder 본문 비노출.
-  const essays = allCoreContent(sortPosts(allEssays.filter((e) => e.draft !== true))).slice(0, 3)
+export default async function Main() {
+  // 발행된 에세이만 라이브로(최대 3). 없으면 graceful "곧 공개".
+  const essays = (await listPublishedEssays()).slice(0, 3)
 
   return (
     <div className="home">
@@ -173,9 +173,9 @@ export default function Main() {
             </Link>
           ) : (
             essays.map((e) => (
-              <Link href={`/essays/${e.slug}`} key={e.slug}>
+              <Link href={`/essays/${e.slug}`} key={e.id}>
                 <h3>{e.title}</h3>
-                <span className="d">{ym(e.date)}</span>
+                {e.publishedAt && <span className="d">{ym(e.publishedAt)}</span>}
               </Link>
             ))
           )}
