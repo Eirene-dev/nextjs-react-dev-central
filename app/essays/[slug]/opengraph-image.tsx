@@ -24,6 +24,9 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
   const { slug } = await props.params
   const essay = await getPublishedEssayBySlug(decodeSlug(slug))
   const title = essay?.title || '에세이'
+  // 설명(메타) — 카드에 맞게 길면 말줄임. 전체 OTF 로드라 한글 글자 빠짐 없음.
+  const excerptRaw = (essay?.excerpt || '').trim()
+  const excerpt = excerptRaw.length > 120 ? excerptRaw.slice(0, 120).trimEnd() + '…' : excerptRaw
 
   let fontData: ArrayBuffer | null = null
   try {
@@ -63,22 +66,37 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
           </div>
         </div>
 
-        {/* 제목 */}
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+        {/* 제목 + 설명 */}
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: 28 }}>
           <div
             style={{
-              fontSize: 72,
+              fontSize: 68,
               lineHeight: 1.2,
               color: ink,
               letterSpacing: '-0.02em',
               display: '-webkit-box',
               WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 3,
+              WebkitLineClamp: 2,
               overflow: 'hidden',
             }}
           >
             {title}
           </div>
+          {excerpt && (
+            <div
+              style={{
+                fontSize: 30,
+                lineHeight: 1.5,
+                color: ink2,
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 3,
+                overflow: 'hidden',
+              }}
+            >
+              {excerpt}
+            </div>
+          )}
         </div>
 
         {/* 하단 코랄 악센트 + 저자/사이트 */}
