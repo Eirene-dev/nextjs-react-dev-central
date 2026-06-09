@@ -88,9 +88,19 @@ export async function getPublishedEssayBySlug(slug: string) {
   return row ?? null
 }
 
+// 목록 — 초안+발행 전체(author 스코프), 수정일 내림차순.
+// 관리 페이지(/admin/essays)가 상태 배지·날짜·보기 링크에 쓰는 필드까지 포함.
+// (에디터 드롭다운은 id/title/updatedAt 만 사용 — 나머지 필드는 무시되어 무해.)
 export async function listDrafts(authorId: string) {
   return db
-    .select({ id: essayDrafts.id, title: essayDrafts.title, updatedAt: essayDrafts.updatedAt })
+    .select({
+      id: essayDrafts.id,
+      title: essayDrafts.title,
+      status: essayDrafts.status,
+      slug: essayDrafts.slug,
+      updatedAt: essayDrafts.updatedAt,
+      publishedAt: essayDrafts.publishedAt,
+    })
     .from(essayDrafts)
     .where(eq(essayDrafts.authorId, authorId))
     .orderBy(desc(essayDrafts.updatedAt))
