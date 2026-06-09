@@ -39,6 +39,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (id) session.user.id = id
         if (t.avatar) session.user.image = t.avatar
         if (t.provider) session.user.provider = t.provider
+        // 관리자 파생값 — lib/auth-helpers.isAdmin 과 동일 기준(매 세션 조회 시 파생, 재로그인 불필요).
+        const adminId = process.env.ADMIN_GITHUB_ID
+        session.user.isAdmin = !!adminId && session.user.id === adminId
       }
       return session
     },
