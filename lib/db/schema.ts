@@ -1,4 +1,14 @@
-import { pgTable, serial, text, integer, timestamp, index, jsonb } from 'drizzle-orm/pg-core'
+import {
+  pgTable,
+  serial,
+  text,
+  integer,
+  timestamp,
+  index,
+  jsonb,
+  date,
+  unique,
+} from 'drizzle-orm/pg-core'
 
 // 다용도 게시판 — 테이블 1개. page_key 로 향후 에세이 등 다른 페이지에서도 재사용.
 export const boardPosts = pgTable(
@@ -37,6 +47,7 @@ export const essayDrafts = pgTable(
     slug: text('slug').unique(), // 발행 시 부여(전역 유일), nullable
     excerpt: text('excerpt'), // 발췌(목록/메타), nullable
     publishedAt: timestamp('published_at', { withTimezone: true }), // 최초 발행 시각, nullable
+    viewCount: integer('view_count').notNull().default(0), // 익명 읽은 개수(발행 글)
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
@@ -45,6 +56,23 @@ export const essayDrafts = pgTable(
 
 export type EssayDraft = typeof essayDrafts.$inferSelect
 export type NewEssayDraft = typeof essayDrafts.$inferInsert
+
+// 에세이 조회 로그 — 익명 dedupe 용. (essay_id, ip_hash, day) UNIQUE 로 하루 1회만 카운트.
+// ip_hash = sha256(ip + AUTH_SECRET 솔트). 원본 IP 는 저장하지 않음.
+export const essayViewLog = pgTable(
+  'essay_view_log',
+  {
+    id: serial('id').primaryKey(),
+    essayId: integer('essay_id'), // 발행 글 id
+    ipHash: text('ip_hash'),
+    day: date('day').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  },
+  (t) => [unique('essay_view_log_unique').on(t.essayId, t.ipHash, t.day)]
+)
+
+export type EssayViewLog = typeof essayViewLog.$inferSelect
+export type NewEssayViewLog = typeof essayViewLog.$inferInsert
 
 // 에세이 작성 원칙 — 관리자별 1행(author_id PK), data = { sections: [{key,label,items[]}] }.
 export const essayPrinciples = pgTable('essay_principles', {
