@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
@@ -9,6 +10,7 @@ import { logout } from '@/app/auth-actions'
 
 const MobileNav = () => {
   const { data: session, status } = useSession()
+  const pathname = usePathname()
   const [navShow, setNavShow] = useState(false)
   // 포털 마운트 가드(SSR엔 오버레이 미출력 — 기본 닫힘이라 하이드레이션 안전)
   const [mounted, setMounted] = useState(false)
@@ -95,8 +97,8 @@ const MobileNav = () => {
                   </div>
                 ))}
 
-                {/* 로그인 상태에서만 계정 영역(로그아웃). 로그아웃 상태엔 아무것도 표시 안 함. */}
-                {status === 'authenticated' && session?.user && (
+                {/* 계정 영역 — 로그인 시 (관리자면)글 관리·에디터 + 로그아웃, 로그아웃 시 로그인 진입. */}
+                {status === 'authenticated' && session?.user ? (
                   <div className="mt-4 border-t border-line px-12 pt-6">
                     <div className="flex items-center gap-3">
                       {session.user.image ? (
@@ -118,6 +120,26 @@ const MobileNav = () => {
                         {session.user.name || '사용자'} 님
                       </span>
                     </div>
+
+                    {session.user.isAdmin === true && (
+                      <div className="mt-4 flex flex-col gap-3">
+                        <Link
+                          href="/admin/essays"
+                          onClick={onToggleNav}
+                          className="text-base font-semibold text-ink-2 hover:text-coral-2"
+                        >
+                          글 관리
+                        </Link>
+                        <Link
+                          href="/admin/editor"
+                          onClick={onToggleNav}
+                          className="text-base font-semibold text-ink-2 hover:text-coral-2"
+                        >
+                          에디터
+                        </Link>
+                      </div>
+                    )}
+
                     <form action={logout.bind(null, '/')} className="mt-4">
                       <button
                         type="submit"
@@ -128,7 +150,22 @@ const MobileNav = () => {
                       </button>
                     </form>
                   </div>
-                )}
+                ) : status === 'unauthenticated' ? (
+                  <div className="mt-4 border-t border-line px-12 pt-6">
+                    <Link
+                      href={`/login?callbackUrl=${encodeURIComponent(pathname || '/')}`}
+                      onClick={onToggleNav}
+                      className="inline-flex items-center gap-2 rounded-lg border border-line px-4 py-2 text-base font-semibold text-ink-2 transition-colors hover:border-coral-soft hover:text-ink"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                      </svg>
+                      로그인
+                    </Link>
+                  </div>
+                ) : null}
               </nav>
             </div>
           </div>,

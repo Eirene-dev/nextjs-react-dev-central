@@ -1,14 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import Link from './Link'
 import { logout } from '@/app/auth-actions'
 
-// 전역 헤더 계정 메뉴(데스크톱) — 로그인 시 아바타+이름, 클릭 시 드롭다운에 로그아웃.
-// 로그아웃 상태에선 아무것도 렌더하지 않음(전역 로그인 CTA 없음 — 로그인은 contextual).
-// 세션은 클라이언트(useSession)에서 읽어 정적 페이지를 보존.
+// 전역 헤더 계정 영역(데스크톱) — 세션 인식.
+//  - 로그아웃: "로그인" 진입(→ /login?callbackUrl=현재경로).
+//  - 로그인: 아바타+이름, 드롭다운에 (관리자면) 글 관리·에디터 + 로그아웃.
+// 세션은 클라이언트(useSession)에서 읽어 정적 페이지를 보존(루트에 서버 auth() 미도입).
 
-// 아바타 — 이미지 없으면 이름 이니셜로 fallback.
 function Avatar({ image, name }: { image?: string | null; name?: string | null }) {
   if (image) {
     // eslint-disable-next-line @next/next/no-img-element
@@ -27,6 +29,7 @@ function Avatar({ image, name }: { image?: string | null; name?: string | null }
 
 export default function UserMenu() {
   const { data: session, status } = useSession()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -47,8 +50,32 @@ export default function UserMenu() {
     }
   }, [open])
 
-  if (status !== 'authenticated' || !session?.user) return null
+  // 로딩 중엔 깜빡임 방지로 미표시
+  if (status === 'loading') return null
+
+  // 로그아웃 상태 → 로그인 진입(절제된 아이콘 + "로그인")
+  if (status !== 'authenticated' || !session?.user) {
+    const callbackUrl = pathname || '/'
+    return (
+      <Link
+        href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+        aria-label="로그인"
+        className="hidden items-center gap-1.5 rounded-full border border-line py-1.5 pl-2.5 pr-3 text-[13.5px] font-semibold text-ink-2 transition-colors hover:border-coral-soft hover:text-ink sm:flex"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+        로그인
+      </Link>
+    )
+  }
+
   const name = session.user.name
+  const isAdmin = session.user.isAdmin === true
+  const itemCls =
+    'block w-full rounded-lg px-2.5 py-2 text-left text-[13.5px] font-semibold text-ink-2 transition-colors hover:bg-ink/5 hover:text-coral-2'
 
   return (
     <div ref={ref} className="relative hidden sm:block">
@@ -75,12 +102,21 @@ export default function UserMenu() {
           <p className="truncate px-2.5 py-1.5 text-[12px] text-ink-3" title={name ?? undefined}>
             {name || '사용자'} 님
           </p>
+
+          {isAdmin && (
+            <>
+              <Link href="/admin/essays" role="menuitem" className={itemCls} onClick={() => setOpen(false)}>
+                글 관리
+              </Link>
+              <Link href="/admin/editor" role="menuitem" className={itemCls} onClick={() => setOpen(false)}>
+                에디터
+              </Link>
+              <div className="my-1 border-t border-line" />
+            </>
+          )}
+
           <form action={logout.bind(null, '/')}>
-            <button
-              type="submit"
-              role="menuitem"
-              className="w-full rounded-lg px-2.5 py-2 text-left text-[13.5px] font-semibold text-ink-2 transition-colors hover:bg-ink/5 hover:text-coral-2"
-            >
+            <button type="submit" role="menuitem" className={itemCls}>
               로그아웃
             </button>
           </form>
