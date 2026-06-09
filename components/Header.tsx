@@ -4,6 +4,7 @@ import Link from './Link'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import SearchButton from './SearchButton'
+import UserMenu from './UserMenu'
 import Image from 'next/image'
 
 // 글로벌 셸 헤더 — homepage-05-final.html 크롬(sticky 반투명 + backdrop-blur + 하단 라인).
@@ -40,6 +41,7 @@ const Header = () => {
         <div className="ml-auto flex items-center gap-2 sm:ml-3">
           <SearchButton />
           <ThemeSwitch />
+          <UserMenu />
           <MobileNav />
         </div>
       </div>

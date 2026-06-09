@@ -9,6 +9,7 @@ import SectionContainer from '@/components/SectionContainer'
 import Footer from '@/components/Footer'
 import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
+import SessionProviders from '@/components/SessionProviders'
 import { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/react'
 // import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -88,15 +89,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-background font-sans text-foreground antialiased">
         <ThemeProviders>
           {/* 글로벌 셸: Header/Footer 는 풀폭(자체 내부 wrap), 본문만 SectionContainer(1180px) */}
-          <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="mb-auto">
-                <SectionContainer>{children}</SectionContainer>
-              </main>
-              <Footer />
-            </div>
-          </SearchProvider>
+          <SessionProviders>
+            <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
+              <div className="flex min-h-screen flex-col">
+                <Header />
+                <main className="mb-auto">
+                  <SectionContainer>{children}</SectionContainer>
+                </main>
+                <Footer />
+              </div>
+            </SearchProvider>
+          </SessionProviders>
         </ThemeProviders>
         <Analytics />
         <PageView />
