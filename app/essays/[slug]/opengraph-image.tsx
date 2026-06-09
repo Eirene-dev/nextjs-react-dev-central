@@ -84,7 +84,7 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
         {/* 하단 코랄 악센트 + 저자/사이트 */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ width: 96, height: 6, borderRadius: 3, background: coral }} />
-          <div style={{ fontSize: 26, color: ink2 }}>주민호 · reactnext-central.xyz</div>
+          <div style={{ fontSize: 26, color: ink2 }}>Pax Code · reactnext-central.xyz</div>
         </div>
       </div>
     ),

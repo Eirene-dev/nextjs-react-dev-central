@@ -10,7 +10,7 @@ import siteMetadata from '@/data/siteMetadata'
 // 읽기 컨트롤·각주는 4·5단계.
 export const dynamic = 'force-dynamic'
 
-const AUTHOR = '주민호'
+const AUTHOR = 'Pax Code'
 const essayUrl = (slug: string) => `${siteMetadata.siteUrl}/essays/${slug}`
 
 const fmtDate = (d: Date | string) => {
