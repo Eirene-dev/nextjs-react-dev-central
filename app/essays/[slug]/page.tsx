@@ -6,6 +6,7 @@ import { getPublishedEssayBySlug } from '@/lib/essay-drafts'
 import EssayBody from '@/components/essays/EssayBody'
 import ReadingControls from '@/components/essays/ReadingControls'
 import FootnotePopover from '@/components/essays/FootnotePopover'
+import ViewCounter from '@/components/essays/ViewCounter'
 import siteMetadata from '@/data/siteMetadata'
 
 // 저장된 읽기 글씨체·크기를 페인트 전에 :root 변수로 선반영(FOUC 최소화). 컨트롤과 매핑 일치.
@@ -104,9 +105,11 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
 
       <article className="essay-prose mt-8 min-w-0">
         <h1 className="text-3xl sm:text-[2.4rem]">{essay.title || '(제목 없음)'}</h1>
-        {essay.publishedAt && (
-          <div className="essay-meta mt-3">{fmtDate(essay.publishedAt)}</div>
-        )}
+        <div className="essay-meta mt-3 flex flex-wrap items-center gap-x-2">
+          {essay.publishedAt && <span>{fmtDate(essay.publishedAt)}</span>}
+          {essay.publishedAt && <span aria-hidden>·</span>}
+          <ViewCounter slug={decoded} initialCount={essay.viewCount ?? 0} />
+        </div>
         <hr className="essay-rule" />
         <div className="essay-body min-w-0">
           <EssayBody>{essay.body}</EssayBody>
