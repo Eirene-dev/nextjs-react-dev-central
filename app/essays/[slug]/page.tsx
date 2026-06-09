@@ -8,6 +8,7 @@ import ReadingControls from '@/components/essays/ReadingControls'
 import FootnotePopover from '@/components/essays/FootnotePopover'
 import ViewCounter from '@/components/essays/ViewCounter'
 import EssayReaction from '@/components/essays/EssayReaction'
+import EssayComments from '@/components/essays/EssayComments'
 import siteMetadata from '@/data/siteMetadata'
 
 // 저장된 읽기 글씨체·크기를 페인트 전에 :root 변수로 선반영(FOUC 최소화). 컨트롤과 매핑 일치.
@@ -123,8 +124,11 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
       {/* 본문 각주 마커 탭 → 미리보기 팝오버(클라이언트 보조). 「주」 섹션은 위에 그대로 유지. */}
       <FootnotePopover />
 
-      {/* 하단 반응(👍) — 본문·각주·끝장식 아래 절제된 영역(추후 댓글이 이 아래). */}
+      {/* 하단 반응(👍) — 본문·각주·끝장식 아래 절제된 영역. */}
       <EssayReaction slug={decoded} initialCount={essay.reactionCount ?? 0} />
+
+      {/* 댓글(평면) — 반응 아래. 런타임 GET 로드(SSG 보존), 사이트 UI 폰트. */}
+      <EssayComments slug={decoded} />
 
       {/* 읽기 글꼴: 고운바탕(한글 unicode-range 청크로 브라우저가 필요분만 로드). 이 페이지에서만. */}
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
