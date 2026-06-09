@@ -91,6 +91,27 @@ export const essayReactions = pgTable(
 export type EssayReaction = typeof essayReactions.$inferSelect
 export type NewEssayReaction = typeof essayReactions.$inferInsert
 
+// 에세이 댓글 — 발행 글당 평면(top-level) 댓글. 작성=로그인 필요, 목록=공개.
+// parent_id 는 다음 단계(대댓글)용으로 컬럼만 미리 둠(이번엔 항상 NULL). 작성자 정보는 세션 스냅샷(비정규화).
+export const essayComments = pgTable(
+  'essay_comments',
+  {
+    id: serial('id').primaryKey(),
+    essayId: integer('essay_id').notNull(), // 발행 글 id
+    parentId: integer('parent_id'), // 자기참조(대댓글, 다음 단계) — top-level 은 NULL
+    authorId: text('author_id').notNull(), // session.user.id
+    authorProvider: text('author_provider').notNull(), // 'github' | 'google'
+    authorName: text('author_name').notNull(),
+    authorImage: text('author_image'),
+    body: text('body').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index('essay_comments_essay_created_idx').on(t.essayId, t.createdAt)]
+)
+
+export type EssayComment = typeof essayComments.$inferSelect
+export type NewEssayComment = typeof essayComments.$inferInsert
+
 // 에세이 작성 원칙 — 관리자별 1행(author_id PK), data = { sections: [{key,label,items[]}] }.
 export const essayPrinciples = pgTable('essay_principles', {
   authorId: text('author_id').primaryKey(), // GitHub 숫자 id (세션)

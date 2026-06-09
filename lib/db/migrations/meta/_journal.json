@@ -43,6 +43,13 @@
       "when": 1781005509653,
       "tag": "0005_spooky_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1781010463162,
+      "tag": "0006_regular_mandrill",
+      "breakpoints": true
     }
   ]
 }
