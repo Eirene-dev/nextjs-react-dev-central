@@ -81,6 +81,7 @@ export async function getPublishedEssayBySlug(slug: string) {
       excerpt: essayDrafts.excerpt,
       publishedAt: essayDrafts.publishedAt,
       updatedAt: essayDrafts.updatedAt,
+      viewCount: essayDrafts.viewCount, // 읽은 개수(초기 표시)
     })
     .from(essayDrafts)
     .where(and(eq(essayDrafts.slug, slug), eq(essayDrafts.status, 'published')))
