@@ -33,7 +33,8 @@ export function slugify(s: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-// excerpt 자동 생성 — 마크다운 제거 후 앞 ~80자.
+// excerpt 자동 생성 — 마크다운 제거 후 앞 ~150~160자(가능하면 문장 경계에서 자름).
+// 목록 발췌 겸 SEO 메타 설명으로 쓰임.
 export function autoExcerpt(md: string): string {
   const text = (md || '')
     .replace(/```[\s\S]*?```/g, ' ') // 코드블록
@@ -44,7 +45,13 @@ export function autoExcerpt(md: string): string {
     .replace(/[*_~`#>]/g, '') // 마크다운 기호
     .replace(/\s+/g, ' ')
     .trim()
-  return text.slice(0, 80)
+  if (text.length <= 160) return text
+  const head = text.slice(0, 160)
+  // 100자 이후 첫 문장부호(.!?。)에서 자름 — 없으면 마지막 공백, 그것도 없으면 160자 하드컷.
+  const sentence = head.search(/[.!?。][^.!?。]*$/)
+  if (sentence >= 100) return head.slice(0, sentence + 1).trim()
+  const lastSpace = head.lastIndexOf(' ')
+  return (lastSpace >= 100 ? head.slice(0, lastSpace) : head).trim()
 }
 
 export async function listDrafts(authorId: string) {
