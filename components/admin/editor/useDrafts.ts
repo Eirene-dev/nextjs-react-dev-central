@@ -13,7 +13,8 @@ const LS_KEY = 'essay:lastDraftId'
 const AUTOSAVE_LS_KEY = 'essay-editor-autosave'
 const AUTOSAVE_INTERVAL_MS = 5 * 60 * 1000 // 5분 주기 점검(상수 — 쉽게 수정)
 
-export function useDrafts(basePath = '/api/essay-drafts') {
+// initialId: 관리 목록 "편집"(/admin/editor?id=N)에서 열 글. 있으면 localStorage 마지막 글보다 우선.
+export function useDrafts(basePath = '/api/essay-drafts', initialId?: number) {
   const [draftId, setDraftId] = useState<number | null>(null)
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
@@ -171,6 +172,11 @@ export function useDrafts(basePath = '/api/essay-drafts') {
       /* noop */
     }
     refreshList()
+    // URL 의 ?id=N(initialId)이 있으면 그 글을 우선 로드(없는/본인 아님 → loadDraft 가 안전 처리).
+    if (initialId && initialId > 0) {
+      loadDraft(initialId)
+      return
+    }
     let last: string | null = null
     try {
       last = localStorage.getItem(LS_KEY)

@@ -14,7 +14,9 @@ export const metadata: Metadata = {
 // 세션 의존 → 매 요청 렌더
 export const dynamic = 'force-dynamic'
 
-export default async function EditorPage() {
+export default async function EditorPage(props: {
+  searchParams: Promise<{ id?: string }>
+}) {
   const session = await auth()
 
   // 비로그인 → GitHub 로그인(Auth.js 빌트인 signin, 콜백 /admin/editor)
@@ -26,11 +28,16 @@ export default async function EditorPage() {
     redirect('/')
   }
 
+  // 관리 목록 "편집"에서 ?id=N 으로 특정 글 열기. 숫자 아니면 무시(기존 동작=마지막 글 복원).
+  const { id } = await props.searchParams
+  const n = Number(id)
+  const initialId = Number.isInteger(n) && n > 0 ? n : undefined
+
   return (
     // 뷰포트 높이(헤더 70px 제외) 안에 에디터를 가둠 — 페이지가 아니라 본문 영역이 내부 스크롤.
     <div className="mx-auto flex h-[calc(100dvh-70px)] max-w-[1280px] flex-col px-5 py-4 sm:px-7 sm:py-6">
       <h1 className="mb-4 shrink-0 text-2xl font-extrabold tracking-tight text-ink">에세이 에디터</h1>
-      <EditorShell />
+      <EditorShell initialId={initialId} />
     </div>
   )
 }

@@ -157,7 +157,7 @@ function SaveIndicator({
   return <span className={`text-xs ${tone}`}>{text}</span>
 }
 
-export default function EditorShell() {
+export default function EditorShell({ initialId }: { initialId?: number }) {
   const [principlesOpen, setPrinciplesOpen] = useState(false)
   const [analysis, setAnalysis] = useState<AnalysisTab | null>(null) // null = 닫힘
   const [draftMenu, setDraftMenu] = useState(false)
@@ -204,7 +204,7 @@ export default function EditorShell() {
     loadDraft,
     newDraft,
     deleteDraft,
-  } = useDrafts()
+  } = useDrafts('/api/essay-drafts', initialId)
 
   const openAnalysis = (t: AnalysisTab) => setAnalysis((cur) => (cur === t ? null : t))
   const fmtTime = (s: string) => {
