@@ -69,6 +69,24 @@ export async function listPublishedEssays() {
     .orderBy(desc(essayDrafts.publishedAt))
 }
 
+// 공개 단건 — 발행된 글만(slug + status='published'). 없으면 null → 라우트에서 notFound.
+export async function getPublishedEssayBySlug(slug: string) {
+  const [row] = await db
+    .select({
+      id: essayDrafts.id,
+      slug: essayDrafts.slug,
+      title: essayDrafts.title,
+      body: essayDrafts.body,
+      excerpt: essayDrafts.excerpt,
+      publishedAt: essayDrafts.publishedAt,
+      updatedAt: essayDrafts.updatedAt,
+    })
+    .from(essayDrafts)
+    .where(and(eq(essayDrafts.slug, slug), eq(essayDrafts.status, 'published')))
+    .limit(1)
+  return row ?? null
+}
+
 export async function listDrafts(authorId: string) {
   return db
     .select({ id: essayDrafts.id, title: essayDrafts.title, updatedAt: essayDrafts.updatedAt })

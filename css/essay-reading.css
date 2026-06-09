@@ -1,0 +1,120 @@
+/* 에세이 읽기 — 책/노트 미감. 따뜻한 지면(전역 surface 토큰: 라이트 크림/다크 네이비),
+ * 고운바탕(세리프) 본문, 넉넉한 행간(한글 1.9), keep-all, 드롭캡(coral), 끝 장식. */
+
+.essay-prose {
+  font-family: 'Gowun Batang', 'Nanum Myeongjo', 'Apple SD Gothic Neo', Georgia, serif;
+  color: hsl(var(--ink));
+  font-size: 17.5px;
+  line-height: 1.9;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-align: left;
+}
+.essay-prose h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.essay-meta {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  color: hsl(var(--ink-3));
+}
+.essay-rule {
+  border: none;
+  border-top: 1px solid hsl(var(--line));
+  margin: 1.6rem 0 2rem;
+}
+
+/* 첫 단락 드롭캡 — coral */
+.essay-body > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.4em;
+  line-height: 0.78;
+  padding: 0.04em 0.09em 0 0;
+  color: hsl(var(--coral));
+  font-weight: 700;
+}
+
+.essay-body p {
+  margin: 1.15em 0;
+}
+.essay-body h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 1.9em 0 0.6em;
+}
+.essay-body h3 {
+  font-size: 1.25em;
+  font-weight: 700;
+  margin: 1.6em 0 0.5em;
+}
+.essay-body blockquote {
+  border-left: 3px solid hsl(var(--coral-soft));
+  padding-left: 1.1em;
+  margin: 1.5em 0;
+  color: hsl(var(--ink-2));
+  font-style: italic;
+}
+.essay-body ul,
+.essay-body ol {
+  margin: 1.1em 0;
+  padding-left: 1.5em;
+}
+.essay-body ul li {
+  list-style: disc;
+  margin: 0.4em 0;
+}
+.essay-body ol li {
+  list-style: decimal;
+  margin: 0.4em 0;
+}
+.essay-body a {
+  color: hsl(var(--link));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.essay-body strong {
+  font-weight: 700;
+}
+.essay-body em {
+  font-style: italic;
+}
+.essay-body code {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.86em;
+  background: hsl(var(--ink) / 0.06);
+  padding: 0.1em 0.36em;
+  border-radius: 4px;
+}
+.essay-body pre {
+  background: hsl(var(--surface-2));
+  border: 1px solid hsl(var(--line));
+  border-radius: 12px;
+  padding: 1em 1.1em;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+.essay-body pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.85em;
+}
+.essay-body hr {
+  border: none;
+  border-top: 1px solid hsl(var(--line));
+  margin: 2em 0;
+}
+.essay-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 1.5em 0;
+}
+.essay-end {
+  margin-top: 3rem;
+  text-align: center;
+  color: hsl(var(--coral-soft));
+  font-size: 1.3rem;
+}
