@@ -54,6 +54,21 @@ export function autoExcerpt(md: string): string {
   return (lastSpace >= 100 ? head.slice(0, lastSpace) : head).trim()
 }
 
+// 공개 목록 — 발행된 글만, 공개 필드만. 인증 없음(공개)이되 status='published' 로 한정.
+export async function listPublishedEssays() {
+  return db
+    .select({
+      id: essayDrafts.id,
+      slug: essayDrafts.slug,
+      title: essayDrafts.title,
+      excerpt: essayDrafts.excerpt,
+      publishedAt: essayDrafts.publishedAt,
+    })
+    .from(essayDrafts)
+    .where(eq(essayDrafts.status, 'published'))
+    .orderBy(desc(essayDrafts.publishedAt))
+}
+
 export async function listDrafts(authorId: string) {
   return db
     .select({ id: essayDrafts.id, title: essayDrafts.title, updatedAt: essayDrafts.updatedAt })
