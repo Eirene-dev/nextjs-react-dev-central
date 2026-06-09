@@ -63,6 +63,7 @@ export async function listPublishedEssays() {
       title: essayDrafts.title,
       excerpt: essayDrafts.excerpt,
       publishedAt: essayDrafts.publishedAt,
+      updatedAt: essayDrafts.updatedAt,
     })
     .from(essayDrafts)
     .where(eq(essayDrafts.status, 'published'))

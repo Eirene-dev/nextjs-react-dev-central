@@ -1,9 +1,19 @@
 import { MetadataRoute } from 'next'
 import { allBlogs, allDocs, allExamples, allLevelups } from '@/lib/content'
+import { listPublishedEssays } from '@/lib/essay-drafts'
 import siteMetadata from '@/data/siteMetadata'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// DB(발행 에세이) 의존 → 동적. 초안/비공개는 listPublishedEssays 가 제외.
+export const dynamic = 'force-dynamic'
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = siteMetadata.siteUrl
+
+  const essays = await listPublishedEssays()
+  const essayRoutes = essays.map((e) => ({
+    url: `${siteUrl}/essays/${e.slug}`,
+    lastModified: e.updatedAt || e.publishedAt || undefined,
+  }))
   const blogRoutes = allBlogs.map((post) => ({
     url: `${siteUrl}/${post.path}`,
     lastModified: post.lastmod || post.date,
@@ -29,5 +39,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date().toISOString().split('T')[0],
   }))
 
-  return [...routes, ...blogRoutes, ...docsRoutes, ...exampleRoutes, ...levelupRoutes]
+  return [...routes, ...essayRoutes, ...blogRoutes, ...docsRoutes, ...exampleRoutes, ...levelupRoutes]
 }
