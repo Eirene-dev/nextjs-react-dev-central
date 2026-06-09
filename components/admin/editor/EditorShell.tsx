@@ -301,7 +301,7 @@ export default function EditorShell() {
             자동저장 {autosave ? 'ON' : 'OFF'}
           </button>
           <SaveIndicator status={status} savedAt={savedAt} dirty={dirty} />
-          <PublishPopover draftId={draftId} saveNow={saveNow} />
+          <PublishPopover draftId={draftId} body={body} provider={provider} saveNow={saveNow} />
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {/* AI 제공자 선택 — 컴팩트 세그먼트, localStorage 기억. 모든 AI 호출에 적용. */}

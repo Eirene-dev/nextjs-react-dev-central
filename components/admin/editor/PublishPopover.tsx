@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import type { AiProvider } from '@/lib/ai/types'
 
-// 발행 팝오버 — 초안↔발행 전환, slug/excerpt 편집, published_at 표시.
+// 발행 팝오버 — 초안↔발행 전환, slug/excerpt 편집(+ AI 메타 설명 생성), published_at 표시.
 // 발행 전 saveNow()로 본문을 DB에 반영(서버가 저장된 제목/본문에서 slug·excerpt 생성).
 type Meta = {
   status: string
@@ -13,9 +14,13 @@ type Meta = {
 
 export default function PublishPopover({
   draftId,
+  body,
+  provider,
   saveNow,
 }: {
   draftId: number | null
+  body: string
+  provider: AiProvider
   saveNow: () => Promise<void>
 }) {
   const [open, setOpen] = useState(false)
@@ -23,7 +28,34 @@ export default function PublishPopover({
   const [slug, setSlug] = useState('')
   const [excerpt, setExcerpt] = useState('')
   const [busy, setBusy] = useState(false)
+  const [seoBusy, setSeoBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const genSeo = async () => {
+    if (!body.trim()) {
+      setError('본문이 없습니다.')
+      return
+    }
+    setSeoBusy(true)
+    setError(null)
+    try {
+      const r = await fetch('/api/essay-seo-description', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ text: body, provider }),
+      })
+      const d = await r.json()
+      if (!r.ok) {
+        setError(d?.error || '메타 설명 생성 실패')
+        return
+      }
+      setExcerpt(d.description ?? '')
+    } catch {
+      setError('메타 설명 생성 중 오류가 발생했습니다.')
+    } finally {
+      setSeoBusy(false)
+    }
+  }
 
   const published = meta?.status === 'published'
 
@@ -133,12 +165,22 @@ export default function PublishPopover({
                 </label>
 
                 <label className="block">
-                  <span className="text-[11px] font-semibold text-ink-3">발췌(excerpt)</span>
+                  <span className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-ink-3">발췌 · 메타 설명</span>
+                    <button
+                      type="button"
+                      onClick={genSeo}
+                      disabled={seoBusy}
+                      className="text-[11px] font-semibold text-coral-2 hover:text-coral disabled:opacity-50"
+                    >
+                      {seoBusy ? '생성 중…' : 'AI로 생성'}
+                    </button>
+                  </span>
                   <textarea
                     value={excerpt}
                     onChange={(e) => setExcerpt(e.target.value)}
-                    placeholder="본문 앞부분에서 자동 생성"
-                    rows={2}
+                    placeholder="본문 앞부분에서 자동 생성 · 'AI로 생성'으로 메타 설명 작성"
+                    rows={3}
                     className="mt-1 block w-full min-w-0 resize-y rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink outline-none focus:border-coral-soft"
                   />
                 </label>
