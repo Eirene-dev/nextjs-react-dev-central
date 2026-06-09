@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useSession } from 'next-auth/react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
+import { logout } from '@/app/auth-actions'
 
 const MobileNav = () => {
+  const { data: session, status } = useSession()
   const [navShow, setNavShow] = useState(false)
   // 포털 마운트 가드(SSR엔 오버레이 미출력 — 기본 닫힘이라 하이드레이션 안전)
   const [mounted, setMounted] = useState(false)
@@ -91,6 +94,41 @@ const MobileNav = () => {
                     </Link>
                   </div>
                 ))}
+
+                {/* 로그인 상태에서만 계정 영역(로그아웃). 로그아웃 상태엔 아무것도 표시 안 함. */}
+                {status === 'authenticated' && session?.user && (
+                  <div className="mt-4 border-t border-line px-12 pt-6">
+                    <div className="flex items-center gap-3">
+                      {session.user.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={session.user.image}
+                          alt=""
+                          className="h-9 w-9 rounded-full object-cover"
+                        />
+                      ) : (
+                        <span
+                          aria-hidden
+                          className="flex h-9 w-9 items-center justify-center rounded-full bg-coral/15 text-sm font-bold text-coral-2"
+                        >
+                          {(session.user.name || 'U').trim().charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                      <span className="truncate text-base font-semibold text-ink-2">
+                        {session.user.name || '사용자'} 님
+                      </span>
+                    </div>
+                    <form action={logout.bind(null, '/')} className="mt-4">
+                      <button
+                        type="submit"
+                        onClick={onToggleNav}
+                        className="rounded-lg border border-line px-4 py-2 text-base font-semibold text-ink-2 transition-colors hover:border-coral-soft hover:text-coral-2"
+                      >
+                        로그아웃
+                      </button>
+                    </form>
+                  </div>
+                )}
               </nav>
             </div>
           </div>,
