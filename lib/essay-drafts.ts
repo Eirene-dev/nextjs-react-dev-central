@@ -6,12 +6,46 @@ import { essayDrafts } from '@/lib/db/schema'
 // 에세이 드래프트 데이터 계층 — 모든 쿼리는 authorId 로 스코프(본인 글만).
 const MAX_TITLE = 200
 const MAX_BODY = 100_000
+const MAX_SLUG = 200
+const MAX_EXCERPT = 500
 
 export const updateSchema = z.object({
   title: z.string().max(MAX_TITLE).optional(),
   body: z.string().max(MAX_BODY).optional(),
 })
 export type UpdateInput = z.infer<typeof updateSchema>
+
+export const publishSchema = z.object({
+  action: z.enum(['publish', 'unpublish']),
+  slug: z.string().max(MAX_SLUG).optional(),
+  excerpt: z.string().max(MAX_EXCERPT).optional(),
+})
+export type PublishInput = z.infer<typeof publishSchema>
+
+// slug 생성 — 한글 허용, 영문 소문자, 공백→하이픈, 위험 문자 제거, 연속 하이픈 정리.
+export function slugify(s: string): string {
+  return (s || '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9가-힣-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+// excerpt 자동 생성 — 마크다운 제거 후 앞 ~80자.
+export function autoExcerpt(md: string): string {
+  const text = (md || '')
+    .replace(/```[\s\S]*?```/g, ' ') // 코드블록
+    .replace(/`[^`]*`/g, ' ') // 인라인 코드
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // 이미지
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // 링크 → 텍스트
+    .replace(/^[#>\s]+/gm, '') // 줄머리 # > 공백
+    .replace(/[*_~`#>]/g, '') // 마크다운 기호
+    .replace(/\s+/g, ' ')
+    .trim()
+  return text.slice(0, 80)
+}
 
 export async function listDrafts(authorId: string) {
   return db
@@ -28,10 +62,70 @@ export async function createDraft(authorId: string) {
 
 export async function getDraft(authorId: string, id: number) {
   const [row] = await db
-    .select({ id: essayDrafts.id, title: essayDrafts.title, body: essayDrafts.body, updatedAt: essayDrafts.updatedAt })
+    .select({
+      id: essayDrafts.id,
+      title: essayDrafts.title,
+      body: essayDrafts.body,
+      status: essayDrafts.status,
+      slug: essayDrafts.slug,
+      excerpt: essayDrafts.excerpt,
+      publishedAt: essayDrafts.publishedAt,
+      updatedAt: essayDrafts.updatedAt,
+    })
     .from(essayDrafts)
     .where(and(eq(essayDrafts.id, id), eq(essayDrafts.authorId, authorId)))
     .limit(1)
+  return row ?? null
+}
+
+// slug 유일성 — 전역 unique. 자기 자신 제외, 중복이면 base-2, base-3… 부여.
+async function uniqueSlug(base: string, selfId: number): Promise<string> {
+  const root = base || `essay-${selfId}`
+  for (let n = 1; ; n++) {
+    const cand = n === 1 ? root : `${root}-${n}`
+    const [hit] = await db
+      .select({ id: essayDrafts.id })
+      .from(essayDrafts)
+      .where(eq(essayDrafts.slug, cand))
+      .limit(1)
+    if (!hit || hit.id === selfId) return cand
+  }
+}
+
+// 발행 — status='published', published_at 없으면 now(있으면 유지), slug/excerpt 없으면 생성, slug 유일성 강제.
+export async function publishDraft(authorId: string, id: number, input: PublishInput) {
+  const cur = await getDraft(authorId, id)
+  if (!cur) return null
+  const base = slugify(input.slug?.trim() || cur.slug || cur.title) || `essay-${id}`
+  const slug = await uniqueSlug(base, id)
+  const excerpt =
+    (input.excerpt?.trim() ? input.excerpt.trim() : null) ?? cur.excerpt ?? autoExcerpt(cur.body)
+  const publishedAt = cur.publishedAt ?? new Date()
+  const [row] = await db
+    .update(essayDrafts)
+    .set({ status: 'published', slug, excerpt, publishedAt, updatedAt: new Date() })
+    .where(and(eq(essayDrafts.id, id), eq(essayDrafts.authorId, authorId)))
+    .returning({
+      status: essayDrafts.status,
+      slug: essayDrafts.slug,
+      excerpt: essayDrafts.excerpt,
+      publishedAt: essayDrafts.publishedAt,
+    })
+  return row ?? null
+}
+
+// 비공개 전환 — status='draft' (slug·published_at·excerpt 유지).
+export async function unpublishDraft(authorId: string, id: number) {
+  const [row] = await db
+    .update(essayDrafts)
+    .set({ status: 'draft', updatedAt: new Date() })
+    .where(and(eq(essayDrafts.id, id), eq(essayDrafts.authorId, authorId)))
+    .returning({
+      status: essayDrafts.status,
+      slug: essayDrafts.slug,
+      excerpt: essayDrafts.excerpt,
+      publishedAt: essayDrafts.publishedAt,
+    })
   return row ?? null
 }
 
