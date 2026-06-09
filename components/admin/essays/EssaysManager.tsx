@@ -1,7 +1,10 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from '@/components/Link'
+
+// 페이지당 글 수. TODO(대량): 글이 많아지면 서버 limit/offset 페이지네이션으로 전환.
+const PAGE_SIZE = 20
 
 // 글 관리 목록 — 검색(제목)·상태 필터·행 액션(편집/보기/발행·비공개/삭제).
 // 조회·액션은 기존 게이트 API 재사용: GET /api/essay-drafts(목록 갱신),
@@ -44,6 +47,7 @@ export default function EssaysManager({ initial }: { initial: AdminEssay[] }) {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
   const [busy, setBusy] = useState<number | null>(null)
+  const [page, setPage] = useState(1)
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -53,6 +57,18 @@ export default function EssaysManager({ initial }: { initial: AdminEssay[] }) {
       return true
     })
   }, [list, query, filter])
+
+  // 페이지네이션 — 필터된 결과를 20개/페이지로. 검색·필터 변경 시 1페이지로 리셋.
+  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE))
+  useEffect(() => {
+    setPage(1)
+  }, [query, filter])
+  // 목록 축소(삭제 등)로 현재 페이지가 비면 마지막 유효 페이지로 클램프.
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
+  const start = (page - 1) * PAGE_SIZE
+  const paged = visible.slice(start, start + PAGE_SIZE)
 
   const refresh = async () => {
     try {
@@ -159,7 +175,7 @@ export default function EssaysManager({ initial }: { initial: AdminEssay[] }) {
                 </tr>
               </thead>
               <tbody>
-                {visible.map((e) => (
+                {paged.map((e) => (
                   <tr key={e.id} className="border-b border-line last:border-0">
                     <td className="px-4 py-3">
                       <span className="font-semibold text-ink">{e.title || '(제목 없음)'}</span>
@@ -180,7 +196,7 @@ export default function EssaysManager({ initial }: { initial: AdminEssay[] }) {
 
           {/* 모바일: 카드 */}
           <ul className="mt-4 space-y-2.5 sm:hidden">
-            {visible.map((e) => (
+            {paged.map((e) => (
               <li key={e.id} className="rounded-xl border border-line bg-surface p-3.5">
                 <div className="flex items-start justify-between gap-2">
                   <span className="min-w-0 break-words font-semibold text-ink">
@@ -198,8 +214,71 @@ export default function EssaysManager({ initial }: { initial: AdminEssay[] }) {
               </li>
             ))}
           </ul>
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            total={visible.length}
+            from={start + 1}
+            to={Math.min(start + PAGE_SIZE, visible.length)}
+            onPage={setPage}
+          />
         </>
       )}
+    </div>
+  )
+}
+
+// 페이지네이션 — 이전/다음 + 번호. 1페이지뿐이면 표시 안 함. 데스크톱·모바일 동일.
+function Pagination({
+  page,
+  totalPages,
+  total,
+  from,
+  to,
+  onPage,
+}: {
+  page: number
+  totalPages: number
+  total: number
+  from: number
+  to: number
+  onPage: (p: number) => void
+}) {
+  if (totalPages <= 1) return null
+  const nav =
+    'rounded-md border border-line px-2.5 py-1 text-[13px] font-semibold text-ink-2 transition-colors hover:border-coral-soft hover:text-ink disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink-2'
+  return (
+    <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+      <p className="text-[12px] text-ink-3">
+        총 {total}개 중 {from}–{to}
+      </p>
+      <div className="flex flex-wrap items-center gap-1">
+        <button type="button" onClick={() => onPage(page - 1)} disabled={page === 1} className={nav}>
+          이전
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onPage(n)}
+            aria-current={n === page ? 'page' : undefined}
+            className={`min-w-8 rounded-md px-2 py-1 text-[13px] font-semibold transition-colors ${
+              n === page ? 'bg-coral/12 text-coral-2' : 'text-ink-2 hover:text-ink'
+            }`}
+          >
+            {n}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => onPage(page + 1)}
+          disabled={page === totalPages}
+          className={nav}
+        >
+          다음
+        </button>
+      </div>
     </div>
   )
 }
