@@ -4,6 +4,8 @@ import { allAuthors, type Authors } from '@/lib/content'
 import AboutBio from '@/components/about/AboutBio'
 import AnimatedName from '@/components/about/AnimatedName'
 import AboutColonnade from '@/components/about/AboutColonnade'
+import AboutColonnadeCaption from '@/components/about/AboutColonnadeCaption'
+import { AboutLangProvider } from '@/components/about/AboutLang'
 import { genPageMetadata } from 'app/seo'
 import Image from 'next/image'
 
@@ -45,12 +47,16 @@ export default async function AboutPage() {
         </p>
       </header>
 
-      <AboutBio />
+      {/* 언어 토글(한/영) 공유 — bio·칩·회랑 캡션이 같은 상태에 연동 */}
+      <AboutLangProvider>
+        <AboutBio />
 
-      {/* 하단 회랑 일러스트 — 본문보다 넓게, 스크롤 진입 시 작도 시작 */}
-      <div className="mx-auto mt-20 max-w-[760px] px-5">
-        <AboutColonnade />
-      </div>
+        {/* 하단 회랑 일러스트 — 본문보다 넓게, 스크롤 진입 시 작도 시작. 아래에 캡션+해석. */}
+        <div className="mx-auto mt-20 max-w-[760px] px-5">
+          <AboutColonnade />
+          <AboutColonnadeCaption />
+        </div>
+      </AboutLangProvider>
 
       {/* 본문 책 글꼴: 고운바탕(세리프). 진입 시 로드(display=swap). */}
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

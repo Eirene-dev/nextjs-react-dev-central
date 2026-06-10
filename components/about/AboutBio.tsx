@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import Link from '@/components/Link'
+import { useAboutLang } from './AboutLang'
 
 // bio 한/영 토글 — 카피는 저자 확정 문구만 사용(변형 금지). 기본 언어: 한국어.
 // 책 타이포(.about-prose, 고운바탕 세리프·드롭캡) + 자격 칩 + 푸터 링크.
@@ -19,7 +19,7 @@ const CHIPS = {
 }
 
 export default function AboutBio() {
-  const [lang, setLang] = useState<'ko' | 'en'>('ko')
+  const { lang, setLang } = useAboutLang()
 
   const btn = (active: boolean) =>
     `px-1 text-sm transition-colors ${

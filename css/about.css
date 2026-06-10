@@ -78,6 +78,16 @@
   color: hsl(var(--coral));
 }
 
+/* ── 회랑 캡션·해석(절제) ──────────────────────────────────── */
+.about-cap-note {
+  font-family: 'Gowun Batang', 'Apple SD Gothic Neo', Georgia, serif;
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: hsl(var(--ink-2)); /* 본문(--ink)보다 한 톤 옅게 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 /* ── 회랑 일러스트(테마 색 변수) ───────────────────────────── */
 .about-colonnade {
   --col-line: #2e3d4d;
