@@ -1,10 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import Link from '@/components/Link'
 import { cn } from '@/lib/utils'
 import showcasesData, { type Tier } from '@/data/showcasesData'
 import ExperimentCard from './ExperimentCard'
 import BuiltCard from './BuiltCard'
+import AnatomyCard from '@/components/anatomy/AnatomyCard'
+
+// 해부 카드 데이터(빌드 타임 anatomy 컬렉션에서 서버 페이지가 전달 — 클라이언트엔 평문 prop).
+export type AnatomyCardData = {
+  slug: string
+  exhibit: number
+  category: string
+  title: string
+  question: string
+}
 
 // 3개 틀로 둘러본다 — 카테고리(도메인)는 카드의 보조 태그로 강등.
 type TierFilter = 'all' | Tier
@@ -22,9 +33,19 @@ const EMPTY: Record<Tier, { title: string; sub?: string }> = {
   experiment: { title: '아직 준비 중입니다.', sub: '곧 더 많은 실험이 추가됩니다.' },
 }
 
-export default function ShowcaseGallery() {
+export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCardData[] }) {
   const [active, setActive] = useState<TierFilter>('all')
-  const filtered = active === 'all' ? showcasesData : showcasesData.filter((s) => s.tier === active)
+
+  // built/experiment 데이터(showcasesData) + anatomy(컬렉션) 를 틀 기준으로 합친다.
+  const dataItems =
+    active === 'all'
+      ? showcasesData
+      : active === 'anatomy'
+        ? []
+        : showcasesData.filter((s) => s.tier === active)
+  const anatomyItems = active === 'all' || active === 'anatomy' ? anatomy : []
+  const empty = dataItems.length + anatomyItems.length === 0
+  const showCrossLink = active === 'experiment' && anatomy.some((a) => a.slug === 'demo-isolation')
 
   return (
     <div className="py-12">
@@ -59,7 +80,7 @@ export default function ShowcaseGallery() {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {empty ? (
         <div className="rounded-2xl border border-dashed border-line bg-surface-2 py-20 text-center">
           <p className="text-ink-2">{EMPTY[active as Tier].title}</p>
           {EMPTY[active as Tier].sub && (
@@ -68,14 +89,37 @@ export default function ShowcaseGallery() {
         </div>
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
-          {filtered.map((s) =>
+          {dataItems.map((s) =>
             s.tier === 'experiment' ? (
               <ExperimentCard key={s.slug} s={s} />
             ) : (
               <BuiltCard key={s.slug} s={s} />
             )
           )}
+          {anatomyItems.map((a) => (
+            <AnatomyCard
+              key={a.slug}
+              slug={a.slug}
+              exhibit={a.exhibit}
+              category={a.category}
+              title={a.title}
+              question={a.question}
+            />
+          ))}
         </div>
+      )}
+
+      {/* 실험 → 해부 크로스링크(1줄) */}
+      {showCrossLink && (
+        <p className="mt-8 text-center text-sm text-ink-3">
+          이 데모들의 격리 결정 →{' '}
+          <Link
+            href="/showcases/anatomy/demo-isolation"
+            className="font-semibold text-coral-2 underline underline-offset-[3px] hover:text-coral"
+          >
+            해부 01
+          </Link>
+        </p>
       )}
     </div>
   )
