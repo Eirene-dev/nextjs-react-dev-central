@@ -1,0 +1,191 @@
+/* 해부(Anatomy) 전시 — 목업(docs/anatomy-exhibit-mockup.html)의 타이포·장식·투표 동선을
+ * 사이트 토큰(코랄/크림·네이비, 고운바탕/Pretendard/JetBrains Mono)으로 옮긴 chrome.
+ * 레이아웃·간격은 JSX(Tailwind)에서, 여기서는 세리프 본문·드롭캡·링도트·분포 바·todo 칩 등
+ * 라우 CSS 가 필요한 조각만. reading 변수(--reading-*)는 쓰지 않는다. */
+
+.anatomy-mono {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* ── eyebrow 링 도트 ───────────────────────────────────────── */
+.anatomy-ringdot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  border: 1.5px solid hsl(var(--coral));
+  position: relative;
+  flex: none;
+}
+.anatomy-ringdot::after {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border-radius: 999px;
+  background: hsl(var(--coral));
+}
+
+/* ── 섹션 라벨(코랄 짧은 선 + mono) ────────────────────────── */
+.anatomy-seclabel {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: hsl(var(--coral-2));
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.anatomy-seclabel::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  background: hsl(var(--coral-2));
+  flex: none;
+}
+
+/* ── 세리프 본문(질문·근거·결정) ──────────────────────────── */
+.anatomy-serif {
+  font-family: 'Gowun Batang', 'Apple SD Gothic Neo', Georgia, serif;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.anatomy-question {
+  font-family: 'Gowun Batang', 'Apple SD Gothic Neo', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.92;
+  color: hsl(var(--ink));
+  word-break: keep-all;
+}
+.anatomy-h1 {
+  font-family: 'Gowun Batang', 'Apple SD Gothic Neo', Georgia, serif;
+  font-weight: 700;
+  line-height: 1.48;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+}
+.anatomy-decision {
+  font-family: 'Gowun Batang', 'Apple SD Gothic Neo', Georgia, serif;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.6;
+  word-break: keep-all;
+  color: hsl(var(--ink));
+}
+.anatomy-decision .dl {
+  color: hsl(var(--coral-2));
+}
+.anatomy-decision .dsub {
+  font-weight: 400;
+  font-size: 16px;
+  color: hsl(var(--ink-2));
+}
+
+/* 근거 본문(고운바탕) + 첫 문단 드롭캡(코랄) */
+.anatomy-body p {
+  font-family: 'Gowun Batang', 'Apple SD Gothic Neo', Georgia, serif;
+  font-size: 16.5px;
+  line-height: 1.95;
+  color: hsl(var(--ink));
+  word-break: keep-all;
+  margin-bottom: 19px;
+}
+.anatomy-body p:first-of-type::first-letter {
+  font-family: 'Gowun Batang', serif;
+  font-weight: 700;
+  color: hsl(var(--coral-2));
+  font-size: 46px;
+  float: left;
+  line-height: 0.92;
+  padding: 5px 9px 0 0;
+}
+
+/* ── 결과 + todo 칩 ────────────────────────────────────────── */
+.anatomy-resline {
+  font-size: 15px;
+  line-height: 1.85;
+  word-break: keep-all;
+  color: hsl(var(--ink-2));
+}
+.anatomy-todo {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  color: hsl(var(--ink-2));
+  border: 1px dashed hsl(var(--line));
+  border-radius: 999px;
+  padding: 2.5px 9px;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  display: inline-block;
+}
+
+/* ── 선택지 ────────────────────────────────────────────────── */
+.anatomy-letter {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: hsl(var(--ink-2));
+  width: 26px;
+  height: 26px;
+  border: 1px solid hsl(var(--line));
+  border-radius: 999px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+.anatomy-opt.picked .anatomy-letter,
+.anatomy-opt.is-author .anatomy-letter {
+  border-color: hsl(var(--coral-2));
+  color: hsl(var(--coral-2));
+}
+.anatomy-author-tag {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  color: hsl(var(--coral-2));
+  border: 1px solid hsl(var(--coral-2));
+  border-radius: 999px;
+  padding: 2.5px 9px;
+  letter-spacing: 0.05em;
+}
+
+/* 분포 바 — width 애니메이션(공개 후) */
+.anatomy-bar {
+  height: 5px;
+  border-radius: 99px;
+  background: hsl(var(--line) / 0.55);
+  overflow: hidden;
+}
+.anatomy-bar > i {
+  display: block;
+  height: 100%;
+  width: var(--w, 0%);
+  background: hsl(var(--coral));
+  border-radius: 99px;
+  transition: width 0.9s cubic-bezier(0.22, 0.8, 0.3, 1);
+}
+
+/* 진입 페이드 */
+.anatomy-reveal {
+  animation: anatomy-fadeup 0.6s ease both;
+}
+@keyframes anatomy-fadeup {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anatomy-bar > i {
+    transition: none;
+  }
+  .anatomy-reveal {
+    animation: none;
+  }
+}

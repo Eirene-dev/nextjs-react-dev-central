@@ -99,6 +99,48 @@ const allEssays = defineCollection({
   schema: s.object(postFields).transform(makePostTransform('Essay')),
 })
 
+// 신규: 해부(Anatomy) 전시 (배치 2). 결정 기록 — 질문/선택지/결정/근거(본문)/결과/AI분업.
+// search.json·tag-data 에는 미포함(골든 277·태그 키 유지). 본문(body)=근거.
+const anatomyFields = {
+  title: s.string(),
+  exhibit: s.number(),
+  category: s.string(),
+  question: s.string(),
+  options: s.array(s.object({ key: s.string(), title: s.string(), tradeoff: s.string() })),
+  decision: s.object({ key: s.string(), label: s.string(), sub: s.string().optional() }),
+  result: s.string(),
+  aiLedger: s.object({ claude: s.string(), me: s.string() }),
+  date: s.isodate().optional(), // 게시 시점에 기입 — 미설정이면 표시 생략
+  rawBody: s.raw(),
+  code: s.mdx(),
+  stem: s.path(),
+}
+const allAnatomy = defineCollection({
+  name: 'Anatomy',
+  pattern: 'anatomy/**/*.mdx',
+  schema: s.object(anatomyFields).transform(async (data: any, { meta }: any) => {
+    const { rawBody, code, stem, ...rest } = data
+    const { path: docPath, slug, slugAsParams } = computePaths(stem)
+    // 빌드 타임 무결성: decision.key 는 반드시 options[].key 중 하나여야 한다.
+    const keys = rest.options.map((o: any) => o.key)
+    if (!keys.includes(rest.decision.key)) {
+      throw new Error(
+        `[anatomy] ${slug}: decision.key "${rest.decision.key}" 가 options keys [${keys.join(', ')}] 에 없습니다.`
+      )
+    }
+    return {
+      ...rest,
+      path: docPath,
+      slug,
+      slugAsParams,
+      filePath: path.relative(path.join(root, 'data'), meta.path),
+      type: 'Anatomy',
+      readingTime: readingTime(rawBody),
+      body: { code, raw: rawBody },
+    }
+  }),
+})
+
 const allAuthors = defineCollection({
   name: 'Authors',
   pattern: 'authors/**/*.mdx',
@@ -160,7 +202,7 @@ const buildDerivedFiles = (data: any) => {
 export default defineConfig({
   root: 'data',
   output: { data: '.velite', assets: 'public/static/velite', base: '/static/velite/', clean: false },
-  collections: { allBlogs, allDocs, allExamples, allLevelups, allEssays, allAuthors },
+  collections: { allBlogs, allDocs, allExamples, allLevelups, allEssays, allAnatomy, allAuthors },
   prepare: buildDerivedFiles,
   mdx: {
     // contentlayer 파리티: 상대 링크를 로컬 에셋으로 복사하지 않음(velite 기본 true → ENOENT 방지).
