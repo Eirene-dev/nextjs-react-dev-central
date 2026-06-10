@@ -83,6 +83,9 @@ export default async function AdminDashboardPage() {
         <Link href="/admin/essays" className={quick}>
           글 관리
         </Link>
+        <Link href="/admin/anatomy" className={quick}>
+          해부 작성
+        </Link>
       </div>
 
       {/* 한눈에 보기 — KPI */}
