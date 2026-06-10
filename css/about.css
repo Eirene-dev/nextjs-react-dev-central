@@ -1,0 +1,260 @@
+/* /about 리디자인 — 에세이 읽기 페이지와 결을 맞춘 책 타이포(고운바탕 세리프·드롭캡) +
+ * 자격 칩 + 푸터 링크 + 하단 회랑 일러스트(테마 인지 + 스크롤 진입 게이팅 + reduced-motion).
+ * reading 변수(--reading-*)는 쓰지 않는다 — about 전용 chrome. */
+
+/* ── 본문(책 타이포) ───────────────────────────────────────── */
+.about-prose {
+  font-family: 'Gowun Batang', 'Apple SD Gothic Neo', Georgia, serif;
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: hsl(var(--ink));
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+@media (min-width: 640px) {
+  .about-prose {
+    font-size: 17.5px;
+  }
+}
+.about-prose p {
+  margin: 1.15em 0;
+}
+.about-prose a {
+  color: hsl(var(--coral));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+}
+.about-prose a:hover {
+  opacity: 0.8;
+}
+/* 첫 문단 드롭캡 — 고운바탕 bold, 코랄 */
+.about-prose > p:first-of-type::first-letter {
+  float: left;
+  font-family: 'Gowun Batang', serif;
+  font-weight: 700;
+  font-size: 3.3em;
+  line-height: 0.78;
+  padding: 0.02em 0.1em 0 0;
+  color: hsl(var(--coral));
+}
+
+/* ── 자격 칩 ───────────────────────────────────────────────── */
+.about-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  border: 0.5px solid hsl(var(--line));
+  border-radius: 999px;
+  padding: 0.3em 0.75em;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--ink-2));
+  white-space: nowrap;
+}
+.about-chip-dot::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e06a4c;
+  display: inline-block;
+}
+
+/* ── 푸터 링크 행 ──────────────────────────────────────────── */
+.about-foot {
+  border-top: 0.5px solid hsl(var(--line));
+}
+.about-foot a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--ink-2));
+  transition: color 0.15s;
+}
+.about-foot a:hover {
+  color: hsl(var(--coral));
+}
+
+/* ── 회랑 일러스트(테마 색 변수) ───────────────────────────── */
+.about-colonnade {
+  --col-line: #2e3d4d;
+  --col-portal: #fdfbf6;
+  --col-coral: #e06a4c;
+}
+.dark .about-colonnade {
+  --col-line: #e4dccb; /* 딥네이비 위 크림 계열 선(불투명도는 path 별 유지) */
+  --col-portal: #4e4b46; /* 배경보다 살짝 밝은 따뜻한 빛 */
+  --col-coral: #e06a4c; /* 동일 */
+}
+.about-colonnade svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 선/면 색을 테마 변수로(인라인 style=stroke 인 코랄 십자 g0 는 그대로 코랄 유지) */
+.about-colonnade .ln,
+.about-colonnade .fd {
+  stroke: var(--col-line);
+}
+.about-colonnade .pb {
+  fill: var(--col-portal);
+}
+.about-colonnade .gl {
+  stroke: var(--col-coral);
+}
+
+/* 초기(hidden) 상태 — .play 전에는 그려지지 않음 */
+.about-colonnade .ln {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.about-colonnade .fd {
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.about-colonnade .pw {
+  opacity: 0;
+}
+.about-colonnade .gl {
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.about-colonnade .gl1 {
+  stroke-width: 1.6;
+  stroke-dasharray: 5 95;
+}
+.about-colonnade .gl2 {
+  stroke-width: 1.3;
+  stroke-dasharray: 4 96;
+}
+
+/* 스크롤 진입(.play) 시에만 애니메이션 시작 — 타이밍은 승인 SVG 그대로 */
+.about-colonnade.play .ln {
+  animation-name: col-dr;
+  animation-timing-function: cubic-bezier(0.45, 0.05, 0.35, 1);
+  animation-fill-mode: forwards;
+}
+.about-colonnade.play .fd {
+  animation: col-fi 0.9s ease 0.15s forwards;
+}
+.about-colonnade.play .g0 {
+  animation-duration: 0.7s;
+  animation-delay: 0.15s;
+}
+.about-colonnade.play .g1 {
+  animation-duration: 1.2s;
+  animation-delay: 0.6s;
+}
+.about-colonnade.play .g2 {
+  animation-duration: 1s;
+  animation-delay: 1.15s;
+}
+.about-colonnade.play .g3 {
+  animation-duration: 0.95s;
+  animation-delay: 1.55s;
+}
+.about-colonnade.play .g4 {
+  animation-duration: 0.9s;
+  animation-delay: 1.9s;
+}
+.about-colonnade.play .g5 {
+  animation-duration: 0.85s;
+  animation-delay: 2.2s;
+}
+.about-colonnade.play .g6 {
+  animation-duration: 1.1s;
+  animation-delay: 2.05s;
+}
+.about-colonnade.play .g7 {
+  animation-duration: 1.3s;
+  animation-delay: 2.5s;
+}
+.about-colonnade.play .pw {
+  animation: col-fp 0.9s ease 3.1s forwards;
+}
+.about-colonnade.play .pb {
+  animation: col-br 7s ease-in-out 4s infinite alternate;
+}
+.about-colonnade.play .gl1 {
+  animation: col-gf1 0.6s ease 4s forwards, col-gm 16s linear 4s infinite;
+}
+.about-colonnade.play .gl2 {
+  animation: col-gf2 0.6s ease 5.5s forwards, col-gm 28s linear 5.5s infinite;
+}
+
+/* 뷰포트 완전 이탈 시 무한 루프만 일시정지(배터리 절약) — 그리기 애니메이션엔 영향 없음 */
+.about-colonnade.idle .pb,
+.about-colonnade.idle .gl1,
+.about-colonnade.idle .gl2 {
+  animation-play-state: paused;
+}
+
+@keyframes col-dr {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes col-fi {
+  to {
+    opacity: var(--o, 1);
+  }
+}
+@keyframes col-fp {
+  to {
+    opacity: 0.8;
+  }
+}
+@keyframes col-br {
+  from {
+    opacity: 0.78;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes col-gm {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+@keyframes col-gf1 {
+  to {
+    opacity: 0.8;
+  }
+}
+@keyframes col-gf2 {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* reduced-motion: 애니메이션 끄고 완성된 정적 그림 즉시 표시(.play 무관), 글라이더 숨김 */
+@media (prefers-reduced-motion: reduce) {
+  .about-colonnade .ln {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .about-colonnade .fd {
+    animation: none;
+    opacity: var(--o, 1);
+  }
+  .about-colonnade .gl1,
+  .about-colonnade .gl2 {
+    display: none;
+  }
+  .about-colonnade .pw {
+    animation: none;
+    opacity: 0.8;
+  }
+  .about-colonnade .pb {
+    animation: none;
+  }
+}
