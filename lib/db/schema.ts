@@ -121,3 +121,24 @@ export const essayPrinciples = pgTable('essay_principles', {
 })
 
 export type EssayPrinciples = typeof essayPrinciples.$inferSelect
+
+// 해부(Anatomy) 전시 투표 — 익명 1회 투표(변경 불가). (slug, voter_token) UNIQUE 로 중복 차단.
+// voter_token = 클라이언트 localStorage 토큰(crypto.randomUUID). slug = Velite anatomy 컬렉션 slug.
+// option = 해당 전시의 options[].key 화이트리스트(서버 검증). 로그인 불필요.
+export const anatomyVotes = pgTable(
+  'anatomy_vote',
+  {
+    id: serial('id').primaryKey(),
+    slug: text('slug').notNull(),
+    option: text('option').notNull(),
+    voterToken: text('voter_token').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [
+    unique('anatomy_vote_unique').on(t.slug, t.voterToken),
+    index('anatomy_vote_slug_idx').on(t.slug),
+  ]
+)
+
+export type AnatomyVote = typeof anatomyVotes.$inferSelect
+export type NewAnatomyVote = typeof anatomyVotes.$inferInsert

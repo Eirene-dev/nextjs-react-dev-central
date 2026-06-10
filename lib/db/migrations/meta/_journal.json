@@ -57,6 +57,13 @@
       "when": 1781044886445,
       "tag": "0007_brave_power_man",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1781102739621,
+      "tag": "0008_free_mantis",
+      "breakpoints": true
     }
   ]
 }
