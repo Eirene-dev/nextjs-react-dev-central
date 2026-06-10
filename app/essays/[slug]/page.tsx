@@ -2,13 +2,14 @@ import 'css/essay-reading.css'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from '@/components/Link'
-import { getPublishedEssayBySlug } from '@/lib/essay-drafts'
+import { getPublishedEssayBySlug, getAdjacentEssays } from '@/lib/essay-drafts'
 import EssayBody from '@/components/essays/EssayBody'
 import ReadingControls from '@/components/essays/ReadingControls'
 import FootnotePopover from '@/components/essays/FootnotePopover'
 import ViewCounter from '@/components/essays/ViewCounter'
 import EssayReaction from '@/components/essays/EssayReaction'
 import EssayComments from '@/components/essays/EssayComments'
+import EssayPrevNext from '@/components/essays/EssayPrevNext'
 import siteMetadata from '@/data/siteMetadata'
 
 // 저장된 읽기 글씨체·크기를 페인트 전에 :root 변수로 선반영(FOUC 최소화). 컨트롤과 매핑 일치.
@@ -76,6 +77,9 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
   const essay = await getPublishedEssayBySlug(decoded)
   if (!essay) notFound() // 비공개·없는 slug
 
+  // 발행일 기준 인접 발행 글(이전/다음 글 내비게이션)
+  const { prev, next } = await getAdjacentEssays(essay.publishedAt, essay.id)
+
   const url = essayUrl(decoded)
   // JSON-LD(BlogPosting) — published 글만. image 는 동적 OG(커밋 2 파일 컨벤션 URL).
   const jsonLd = {
@@ -123,6 +127,9 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
 
       {/* 본문 각주 마커 탭 → 미리보기 팝오버(클라이언트 보조). 「주」 섹션은 위에 그대로 유지. */}
       <FootnotePopover />
+
+      {/* 이전/다음 글 — ❦ 아래, 반응(👍) 위. 서버 렌더 링크. */}
+      <EssayPrevNext prev={prev} next={next} />
 
       {/* 하단 반응(👍) — 본문·각주·끝장식 아래 절제된 영역. */}
       <EssayReaction slug={decoded} initialCount={essay.reactionCount ?? 0} />
