@@ -105,6 +105,7 @@ export const essayComments = pgTable(
     authorImage: text('author_image'),
     body: text('body').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }), // 소프트 삭제 묘비(답글 있는 top-level)
   },
   (t) => [index('essay_comments_essay_created_idx').on(t.essayId, t.createdAt)]
 )

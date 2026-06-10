@@ -50,6 +50,13 @@
       "when": 1781010463162,
       "tag": "0006_regular_mandrill",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1781044886445,
+      "tag": "0007_brave_power_man",
+      "breakpoints": true
     }
   ]
 }
