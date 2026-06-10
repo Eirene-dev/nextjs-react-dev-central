@@ -2,75 +2,79 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import showcasesData from '@/data/showcasesData'
+import showcasesData, { type Tier } from '@/data/showcasesData'
+import ExperimentCard from './ExperimentCard'
+import BuiltCard from './BuiltCard'
 
-const CATEGORIES = ['전체', '정보형', '게시판', '커머스', 'AI 통합', '대시보드'] as const
+// 3개 틀로 둘러본다 — 카테고리(도메인)는 카드의 보조 태그로 강등.
+type TierFilter = 'all' | Tier
+const TIERS: { key: TierFilter; label: string; desc: string }[] = [
+  { key: 'all', label: '전체', desc: '' },
+  { key: 'built', label: '실물', desc: '직접 만들어 운영 중인 것' },
+  { key: 'anatomy', label: '해부', desc: '만들며 내린 결정의 기록' },
+  { key: 'experiment', label: '실험', desc: '웹과 AI를 재해석하는 실험' },
+]
+
+// 틀별 빈 상태 카피(저자 확정).
+const EMPTY: Record<Tier, { title: string; sub?: string }> = {
+  built: { title: '직접 만들어 운영 중인 제품들 — 하나씩 채워집니다.' },
+  anatomy: { title: '이 사이트를 만들며 부딪힌 결정의 기록 — 준비 중.' },
+  experiment: { title: '아직 준비 중입니다.', sub: '곧 더 많은 실험이 추가됩니다.' },
+}
 
 export default function ShowcaseGallery() {
-  const [active, setActive] = useState<string>('전체')
-  const filtered =
-    active === '전체' ? showcasesData : showcasesData.filter((s) => s.category === active)
+  const [active, setActive] = useState<TierFilter>('all')
+  const filtered = active === 'all' ? showcasesData : showcasesData.filter((s) => s.tier === active)
 
   return (
     <div className="py-12">
       <header className="mb-8 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight text-ink">Showcases</h1>
-        <p className="mt-3 text-ink-2">직접 만든 웹·AI 데모 — 카테고리로 둘러보세요.</p>
+        <p className="mt-3 text-ink-2">세 가지 틀로 둘러보세요.</p>
+        {/* 3틀 한 줄 소개(저자 확정 카피) */}
+        <div className="mx-auto mt-4 flex max-w-2xl flex-col items-center justify-center gap-1.5 text-sm text-ink-3 sm:flex-row sm:gap-5">
+          {TIERS.filter((t) => t.desc).map((t) => (
+            <span key={t.key}>
+              <span className="font-semibold text-ink-2">{t.label}</span> · {t.desc}
+            </span>
+          ))}
+        </div>
       </header>
 
       <div className="mb-10 flex flex-wrap justify-center gap-2">
-        {CATEGORIES.map((c) => (
+        {TIERS.map((t) => (
           <button
-            key={c}
-            onClick={() => setActive(c)}
-            aria-pressed={active === c}
+            key={t.key}
+            onClick={() => setActive(t.key)}
+            aria-pressed={active === t.key}
             className={cn(
               'rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
-              active === c
+              active === t.key
                 ? 'border-coral-2 bg-coral-2 text-white'
                 : 'border-line bg-surface-2 text-ink-2 hover:border-coral-soft hover:text-coral-2'
             )}
           >
-            {c}
+            {t.label}
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-line bg-surface-2 py-20 text-center">
-          <p className="text-ink-2">이 카테고리는 준비 중입니다.</p>
-          <p className="mt-2 text-sm text-ink-3">곧 더 많은 데모가 추가됩니다.</p>
+          <p className="text-ink-2">{EMPTY[active as Tier].title}</p>
+          {EMPTY[active as Tier].sub && (
+            <p className="mt-2 text-sm text-ink-3">{EMPTY[active as Tier].sub}</p>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
-          {filtered.map((s) => (
-            <a
-              key={s.slug}
-              href={s.href}
-              className="group overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:-translate-y-1 hover:border-coral-soft hover:shadow-soft"
-            >
-              <div className="aspect-[16/10] overflow-hidden border-b border-line bg-ink/5">
-                {/* 정적 데모 썸네일 (self-contained 데모 스크린샷) */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={s.thumb}
-                  alt={s.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]"
-                />
-              </div>
-              <div className="p-5">
-                <span className="text-[11.5px] font-bold uppercase tracking-wide text-coral-2">
-                  {s.category}
-                </span>
-                <h3 className="mt-1 text-lg font-bold tracking-tight text-ink">{s.title}</h3>
-                <p className="mt-1 text-sm text-ink-2">{s.blurb}</p>
-                <span className="mt-3 block text-sm font-semibold text-ink-3 group-hover:text-coral-2">
-                  데모 보기 →
-                </span>
-              </div>
-            </a>
-          ))}
+          {filtered.map((s) =>
+            s.tier === 'experiment' ? (
+              <ExperimentCard key={s.slug} s={s} />
+            ) : (
+              <BuiltCard key={s.slug} s={s} />
+            )
+          )}
         </div>
       )}
     </div>
