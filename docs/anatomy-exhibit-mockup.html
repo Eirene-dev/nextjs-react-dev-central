@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>해부 — ReactNext Central (목업)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{
+  --paper:#FBF8F1; --card:#FFFEFA;
+  --ink:#2E3D4D; --ink-2:#46586C; --muted:#6F7F91;
+  --coral:#E06A4C; --coral-deep:#BC4729; --coral-soft:rgba(224,106,76,.10);
+  --line:rgba(46,61,77,.16); --line-soft:rgba(46,61,77,.085);
+  --serif:'Gowun Batang','Nanum Myeongjo',serif;
+  --sans:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+html[data-theme="dark"]{
+  --paper:#172231; --card:#1D2A3C;
+  --ink:#F1E8D9; --ink-2:#DCE2E9; --muted:#94A3B5;
+  --coral:#E8795C; --coral-deep:#F0926F; --coral-soft:rgba(232,121,92,.14);
+  --line:rgba(241,232,217,.17); --line-soft:rgba(241,232,217,.075);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans); background:var(--paper); color:var(--ink);
+  line-height:1.7; -webkit-font-smoothing:antialiased;
+  transition:background .35s ease, color .35s ease;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--coral);outline-offset:2px;border-radius:4px}
+.wrap{max-width:728px;margin:0 auto;padding:0 22px}
+
+/* ───────── header ───────── */
+.site-header{border-bottom:1px solid var(--line-soft)}
+.site-header .inner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15.5px;letter-spacing:-.01em}
+.brand svg{display:block}
+nav{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+nav a{font-size:13.5px;color:var(--muted);transition:color .2s}
+nav a:hover{color:var(--ink)}
+nav a.on{color:var(--coral);font-weight:600}
+.theme-btn{
+  width:32px;height:32px;border:1px solid var(--line);border-radius:999px;
+  display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);
+  transition:border-color .2s,color .2s;
+}
+.theme-btn:hover{border-color:var(--coral);color:var(--coral)}
+
+/* ───────── crumbs + corner intro ───────── */
+.crumbs{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:30px 0 6px;letter-spacing:.04em}
+.crumbs b{color:var(--coral);font-weight:500;margin:0 7px}
+.corner-intro{
+  font-family:var(--serif);font-size:15px;color:var(--muted);line-height:1.85;
+  word-break:keep-all;max-width:560px;margin-bottom:44px;
+}
+
+/* ───────── exhibit ───────── */
+.exhibit{display:none}
+.exhibit.active{display:block;animation:fadeUp .45s ease both}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--coral);
+  display:flex;align-items:center;gap:9px;text-transform:uppercase;margin-bottom:14px;
+}
+.ringdot{width:9px;height:9px;border-radius:999px;border:1.5px solid var(--coral);position:relative;flex:none}
+.ringdot::after{content:"";position:absolute;inset:2.5px;border-radius:999px;background:var(--coral)}
+.eyebrow .cat{
+  margin-left:auto;letter-spacing:.06em;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:10.5px;
+}
+h1{
+  font-family:var(--serif);font-weight:700;font-size:29px;line-height:1.48;
+  letter-spacing:-.01em;word-break:keep-all;margin-bottom:10px;
+}
+.meta{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.03em;margin-bottom:40px}
+
+.sec-label{
+  font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--coral);
+  display:flex;align-items:center;gap:9px;margin:36px 0 14px;
+}
+.sec-label::before{content:"";width:18px;height:1px;background:var(--coral);flex:none}
+.question{font-family:var(--serif);font-size:17px;line-height:1.92;word-break:keep-all;color:var(--ink)}
+
+/* ───────── options ───────── */
+.options{display:flex;flex-direction:column;gap:11px;margin-top:18px}
+.opt{
+  text-align:left;border:1px solid var(--line);background:var(--card);border-radius:13px;
+  padding:15px 17px 15px;width:100%;
+  transition:transform .18s ease,border-color .2s,box-shadow .2s,opacity .25s,background .25s;
+}
+.options:not(.voted) .opt:hover{transform:translateY(-2px);border-color:var(--coral)}
+.opt .head{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.letter{
+  font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--muted);
+  width:26px;height:26px;border:1px solid var(--line);border-radius:999px;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.otitle{font-weight:700;font-size:15.5px;letter-spacing:-.01em}
+.pct{display:none;margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.author-tag{
+  display:none;font-family:var(--mono);font-size:10.5px;color:var(--coral);
+  border:1px solid var(--coral);border-radius:999px;padding:2.5px 9px;letter-spacing:.05em;
+}
+.opt p{font-size:14px;color:var(--muted);line-height:1.7;word-break:keep-all;margin-top:8px}
+.bar{display:none;height:5px;border-radius:99px;background:var(--line-soft);margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--coral);border-radius:99px;transition:width .9s cubic-bezier(.22,.8,.3,1)}
+.options.voted .opt{cursor:default}
+.options.voted .pct,.options.voted .bar{display:block}
+.options.voted .pct{display:inline}
+.opt.picked{border-color:var(--coral);box-shadow:0 0 0 1px var(--coral);background:var(--coral-soft)}
+.opt.picked .letter{border-color:var(--coral);color:var(--coral)}
+.opt.dim{opacity:.66}
+.opt.is-author .author-tag{display:inline-block}
+.opt.is-author{border-color:var(--coral)}
+
+.gate{font-size:13px;color:var(--muted);margin-top:14px}
+.gate a{color:var(--coral);text-decoration:underline;text-underline-offset:3px}
+.participants{display:none;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:14px;letter-spacing:.03em}
+.participants .mockchip{
+  border:1px dashed var(--line);border-radius:999px;padding:2px 8px;margin-left:6px;font-size:10px;
+}
+.revealed .gate{display:none}
+.revealed .participants{display:block}
+
+/* ───────── reveal ───────── */
+.orn{display:none;text-align:center;color:var(--coral);font-size:19px;margin:40px 0 4px;font-family:var(--serif)}
+.reveal{display:none}
+.revealed .orn{display:block}
+.revealed .reveal{display:block;animation:fadeUp .6s ease both}
+.decision{font-family:var(--serif);font-weight:700;font-size:21px;line-height:1.6;word-break:keep-all}
+.decision .dl{color:var(--coral)}
+.decision .dsub{font-weight:400;font-size:16px;color:var(--ink-2)}
+.body-serif p{
+  font-family:var(--serif);font-size:16.5px;line-height:1.95;color:var(--ink);
+  word-break:keep-all;margin-bottom:19px;
+}
+.body-serif p:first-of-type::first-letter{
+  font-family:var(--serif);font-weight:700;color:var(--coral);
+  font-size:46px;float:left;line-height:.92;padding:5px 9px 0 0;
+}
+.resline{font-size:15px;line-height:1.85;word-break:keep-all;color:var(--ink-2)}
+.todo{
+  font-family:var(--mono);font-size:10.5px;color:var(--muted);
+  border:1px dashed var(--line);border-radius:999px;padding:2.5px 9px;margin-left:7px;
+  white-space:nowrap;letter-spacing:.04em;
+}
+.ledger{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--card)}
+.row{display:flex;gap:15px;padding:14px 17px;border-top:1px solid var(--line-soft)}
+.row:first-child{border-top:none}
+.row b{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.05em;color:var(--muted);width:96px;flex:none;padding-top:3px}
+.row.me b{color:var(--coral)}
+.row span{font-size:14.5px;line-height:1.75;word-break:keep-all;color:var(--ink-2)}
+
+/* ───────── others / footer ───────── */
+.others{margin-top:54px;border-top:1px solid var(--line);padding-top:26px}
+.others h4{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:500;margin-bottom:14px}
+.other-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ocard{
+  text-align:left;border:1px solid var(--line);background:var(--card);border-radius:13px;padding:15px 16px;
+  transition:transform .18s ease,border-color .2s;
+}
+.ocard:hover{transform:translateY(-2px);border-color:var(--coral)}
+.ocard .oe{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--coral)}
+.ocard h5{font-family:var(--serif);font-size:15.5px;font-weight:700;line-height:1.55;word-break:keep-all;margin:7px 0 5px}
+.ocard p{font-size:12.5px;color:var(--muted);line-height:1.6;word-break:keep-all}
+.back{display:inline-block;margin-top:26px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.back:hover{color:var(--coral)}
+
+footer{margin-top:74px;border-top:1px solid var(--line-soft)}
+footer .inner{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:22px 0 30px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+@media (max-width:560px){
+  h1{font-size:24px}
+  .other-cards{grid-template-columns:1fr}
+  .eyebrow .cat{display:none}
+  nav{gap:13px}
+  nav a{font-size:12.5px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap inner">
+    <a class="brand" href="#" aria-label="ReactNext Central 홈">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="none" stroke="var(--coral)" stroke-opacity=".38" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="9" fill="none" stroke="var(--coral)" stroke-width="1.6"/>
+        <circle cx="16" cy="16" r="3.1" fill="var(--coral)"/>
+      </svg>
+      ReactNext Central
+    </a>
+    <nav>
+      <a href="#">Book</a>
+      <a href="#">Essays</a>
+      <a href="#" class="on">Showcases</a>
+      <a href="#">Archive</a>
+      <a href="#">About</a>
+      <button class="theme-btn" id="themeBtn" aria-label="라이트/다크 전환" title="라이트/다크 전환">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="crumbs">Showcases <b>/</b> 해부</p>
+  <p class="corner-intro">이 사이트를 만들며 실제로 부딪힌 결정들을 전시합니다. 저자의 답을 보기 전에, 먼저 당신이라면 어떻게 했을지 골라 보세요.</p>
+
+  <!-- ════════ 전시 01 ════════ -->
+  <article class="exhibit active" id="ex1">
+    <p class="eyebrow"><span class="ringdot"></span>해부 · EXHIBIT 01 <span class="cat">아키텍처</span></p>
+    <h1>ReactNext라는 사이트에서, 데모를 React로 만들지 않았다</h1>
+    <p class="meta">읽기 5분 · 선택하면 저자의 판단이 공개됩니다</p>
+
+    <div class="sec-label">질문</div>
+    <p class="question">쇼케이스 메뉴를 만들었다. 메인과 전혀 다른 디자인의 데모들 — 다크 테마 AI 챗, 에메랄드 톤 쇼핑몰 — 을 한 사이트에 들여야 한다. 메인은 막 전 라우트 검증을 끝낸 상태다. 당신이라면 어떻게 격리하겠는가?</p>
+
+    <div class="sec-label">선택지</div>
+    <div class="options" id="opts1">
+      <button class="opt" data-opt="A" onclick="vote(1,'A',this)">
+        <span class="head"><span class="letter">A</span><span class="otitle">route group + CSS Modules</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>데모도 정식 Next 라우트가 된다. 대신 검증 끝난 기존 라우트 전부를 그룹 폴더로 옮기는 리스트럭처가 따라온다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="opt" data-opt="B" onclick="vote(1,'B',this)">
+        <span class="head"><span class="letter">B</span><span class="otitle">route group + 루트 레이아웃 완전 분리</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>격리가 가장 순수한 Next 방식. 리스트럭처는 A보다 더 크다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="opt" data-opt="C" onclick="vote(1,'C',this)">
+        <span class="head"><span class="letter">C</span><span class="otitle">정적 단일 파일</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>데모마다 public/ 아래 자기완결 HTML 하나. 리스트럭처 0, 공유 CSS 0. 대신 React 사이트에서 데모만 React가 아니다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+    </div>
+    <p class="gate">어느 쪽이든 고르면 저자의 결정과 근거가 열립니다 · <a href="#" onclick="skip(1,event)">건너뛰고 보기</a></p>
+    <p class="participants" id="ppl1"></p>
+
+    <div class="orn">❦</div>
+    <div class="reveal">
+      <div class="sec-label">내 결정</div>
+      <p class="decision"><span class="dl">C.</span> 정적 단일 파일</p>
+
+      <div class="sec-label">근거</div>
+      <div class="body-serif">
+        <p>작업 지시서에는 A라고 적혀 있었다. 내가 승인한 문서였다. 그런데 구현 전에 코드베이스를 분석시켜 보니 두 가지가 걸렸다. 하나는 기술적인 문제다. App Router에서 route group을 나눠도 글로벌 CSS가 클라이언트 내비게이션 때 완전히 분리되지 않는 경우가 있었다. 격리하자고 고른 구조에 구멍이 있는 셈이다. 다른 하나는 더 단순했다. 그 시점의 메인 사이트는 커밋을 차곡차곡 쌓아 전 라우트 검증을 막 통과한 상태였다. 데모 몇 개를 들이자고 멀쩡한 본체를 폴더째 옮기는 건, 새 가구를 놓겠다고 벽을 허무는 일이다.</p>
+        <p>C로 기울었을 때 마음에 걸린 건 하나였다. 이 사이트 이름이 ReactNext Central이다. 그런 사이트가 데모를 React도 Next도 아닌 HTML 파일로 서빙한다? 정체성의 논리로는 B가 맞았다. 그런데 방문자는 라우팅 방식을 보러 오지 않는다. 데모가 돌아가는지, 그 데모 때문에 멀쩡하던 사이트가 깨지지 않는지를 본다. 간판과 무사고 중에서 무사고를 골랐다. 덤도 있었다. 공유하는 게 없으면 침범할 방법도 없으니, 격리가 강할수록 데모는 과감해질 수 있다.</p>
+      </div>
+
+      <div class="sec-label">결과</div>
+      <p class="resline">데모 세 개가 각각 단일 파일로 올라갔고, 컷오버에서 회귀 0건. 구 블로그의 핑크 테마와 새 코랄 테마가 한 도메인에서 서로를 모른 채 산다. <span class="todo">운영 수치 추기 예정</span></p>
+
+      <div class="sec-label">AI 분업</div>
+      <div class="ledger">
+        <div class="row"><b>Claude Code</b><span>글로벌 CSS 누수 케이스를 찾아내고 선택지 셋을 깔았다.</span></div>
+        <div class="row me"><b>나</b><span>내가 승인했던 지시서를 스스로 뒤집고 C를 골랐다. 문서를 뒤집는 것도 판단이다.</span></div>
+      </div>
+    </div>
+
+    <div class="others">
+      <h4>다른 전시</h4>
+      <div class="other-cards">
+        <button class="ocard" onclick="switchEx(2)">
+          <span class="oe">전시 02 · 데이터 설계</span>
+          <h5>답글이 달린 댓글을 지우면, 답글은 누구의 것인가</h5>
+          <p>부모 글이 사라질 때, 남의 답글의 운명</p>
+        </button>
+        <button class="ocard" onclick="switchEx(3)">
+          <span class="oe">전시 03 · 운영·수익</span>
+          <h5>들어오던 광고 수익을 새 페이지에서 뺐다</h5>
+          <p>돈과 정체성에 경계선을 긋는 법</p>
+        </button>
+      </div>
+      <a class="back" href="#">← 쇼케이스 갤러리로</a>
+    </div>
+  </article>
+
+  <!-- ════════ 전시 02 ════════ -->
+  <article class="exhibit" id="ex2">
+    <p class="eyebrow"><span class="ringdot"></span>해부 · EXHIBIT 02 <span class="cat">데이터 설계</span></p>
+    <h1>답글이 달린 댓글을 지우면, 답글은 누구의 것인가</h1>
+    <p class="meta">읽기 4분 · 선택하면 저자의 판단이 공개됩니다</p>
+
+    <div class="sec-label">질문</div>
+    <p class="question">에세이에 댓글과 답글을 붙였다. 어느 날 누군가 답글이 달린 자기 댓글을 지운다. 화면에는 무엇이 남아야 하는가?</p>
+
+    <div class="sec-label">선택지</div>
+    <div class="options" id="opts2">
+      <button class="opt" data-opt="A" onclick="vote(2,'A',this)">
+        <span class="head"><span class="letter">A</span><span class="otitle">연쇄 삭제</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>부모와 답글을 통째로 지운다. 화면은 깔끔하지만, 답글 작성자들의 글이 본인 동의 없이 사라진다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="opt" data-opt="B" onclick="vote(2,'B',this)">
+        <span class="head"><span class="letter">B</span><span class="otitle">부모만 삭제</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>답글은 남는다. 대신 무엇에 대한 답인지 알 수 없는 고아 글이 된다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="opt" data-opt="C" onclick="vote(2,'C',this)">
+        <span class="head"><span class="letter">C</span><span class="otitle">묘비</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>부모 자리에 "삭제된 글입니다"를 세우고 답글은 그대로 둔다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+    </div>
+    <p class="gate">어느 쪽이든 고르면 저자의 결정과 근거가 열립니다 · <a href="#" onclick="skip(2,event)">건너뛰고 보기</a></p>
+    <p class="participants" id="ppl2"></p>
+
+    <div class="orn">❦</div>
+    <div class="reveal">
+      <div class="sec-label">내 결정</div>
+      <p class="decision"><span class="dl">C.</span> 묘비 <span class="dsub">— 단, 답글이 없는 댓글은 흔적 없이 지운다</span></p>
+
+      <div class="sec-label">근거</div>
+      <div class="body-serif">
+        <p>기준은 하나였다. 삭제권은 자기 글에만 미친다. 답글은 내 댓글 아래 달렸어도 내 글이 아니다. 누군가 시간을 들여 쓴 글이 부모 작성자의 손가락 하나로 증발하는 건, 사이트가 답글 작성자에게 한 암묵적 약속 — 당신의 글은 당신 것이다 — 을 깨는 일이다. 그래서 답글이 있으면 묘비, 없으면 완전 삭제로 갈랐다. 지킬 글이 없는 자리에 묘비를 세울 이유는 없으니까.</p>
+        <p>데이터베이스 관점으로는 soft delete라는 한 줄짜리 흔한 패턴이다. 흔하다는 게 함정이다. '다들 그렇게 하니까'로 넘어가면 왜 그렇게 하는지를 영영 모른다. 댓글 삭제 버튼 하나에도 글의 소유권에 대한 입장이 들어간다. 나는 그 입장을 코드보다 먼저 정해 두고 싶었다.</p>
+      </div>
+
+      <div class="sec-label">결과</div>
+      <p class="resline">묘비 발생 건수, 삭제 패턴 등 <span class="todo">운영 추기 예정</span></p>
+
+      <div class="sec-label">AI 분업</div>
+      <div class="ledger">
+        <div class="row"><b>Claude Code</b><span>스키마와 soft/hard 분기 구현, 마이그레이션 파일을 썼다.</span></div>
+        <div class="row me"><b>나</b><span>"답글 없으면 완전 삭제"라는 분기와 묘비 문구는 내 결정이다. 그리고 마이그레이션 실행은 언제나 내 손으로 한다 — 라이브 DB에 닿는 일은 AI에게 넘기지 않는다.</span></div>
+      </div>
+    </div>
+
+    <div class="others">
+      <h4>다른 전시</h4>
+      <div class="other-cards">
+        <button class="ocard" onclick="switchEx(1)">
+          <span class="oe">전시 01 · 아키텍처</span>
+          <h5>ReactNext라는 사이트에서, 데모를 React로 만들지 않았다</h5>
+          <p>검증 끝난 본체와 격리의 트레이드오프</p>
+        </button>
+        <button class="ocard" onclick="switchEx(3)">
+          <span class="oe">전시 03 · 운영·수익</span>
+          <h5>들어오던 광고 수익을 새 페이지에서 뺐다</h5>
+          <p>돈과 정체성에 경계선을 긋는 법</p>
+        </button>
+      </div>
+      <a class="back" href="#">← 쇼케이스 갤러리로</a>
+    </div>
+  </article>
+
+  <!-- ════════ 전시 03 ════════ -->
+  <article class="exhibit" id="ex3">
+    <p class="eyebrow"><span class="ringdot"></span>해부 · EXHIBIT 03 <span class="cat">운영·수익</span></p>
+    <h1>들어오던 광고 수익을 새 페이지에서 뺐다</h1>
+    <p class="meta">읽기 4분 · 선택하면 저자의 판단이 공개됩니다</p>
+
+    <div class="sec-label">질문</div>
+    <p class="question">3년 운영한 블로그에 AdSense가 붙어 있고, 크진 않아도 매달 돈이 들어온다. 사이트를 '저자의 생각'을 읽는 곳으로 개편한다. 광고는 어떻게 하겠는가?</p>
+
+    <div class="sec-label">선택지</div>
+    <div class="options" id="opts3">
+      <button class="opt" data-opt="A" onclick="vote(3,'A',this)">
+        <span class="head"><span class="letter">A</span><span class="otitle">전체 유지</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>트래픽이 느는 만큼 수익도 는다. 새 에세이 옆에도 광고가 선다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="opt" data-opt="B" onclick="vote(3,'B',this)">
+        <span class="head"><span class="letter">B</span><span class="otitle">경계선</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>옛 글(아카이브)에는 남기고, 홈·에세이·쇼케이스 같은 새 영역에서는 뺀다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="opt" data-opt="C" onclick="vote(3,'C',this)">
+        <span class="head"><span class="letter">C</span><span class="otitle">전체 제거</span><span class="author-tag">저자의 선택</span><span class="pct"></span></span>
+        <p>가장 깨끗하다. 대신 옛 글들이 벌던 수익까지 0이 된다.</p>
+        <span class="bar"><i></i></span>
+      </button>
+    </div>
+    <p class="gate">어느 쪽이든 고르면 저자의 결정과 근거가 열립니다 · <a href="#" onclick="skip(3,event)">건너뛰고 보기</a></p>
+    <p class="participants" id="ppl3"></p>
+
+    <div class="orn">❦</div>
+    <div class="reveal">
+      <div class="sec-label">내 결정</div>
+      <p class="decision"><span class="dl">B.</span> 경계선</p>
+
+      <div class="sec-label">근거</div>
+      <div class="body-serif">
+        <p>에세이는 내 생각을 읽으러 오는 자리다. 판단을 이야기하는 글 옆에서 알고리즘이 고른 광고가 깜박이는 그림을 견딜 수 없었다. 글의 내용과 글이 놓인 자리가 서로 다른 말을 하면, 독자는 자리를 믿는다. 반대로 아카이브의 옛 글들은 검색으로 들어와 답만 얻고 나가는 글이고, 처음부터 광고와 함께 살아왔다. 그 수익까지 끊는 건 결벽이지 판단이 아니라고 봤다. 그래서 돈과 정체성을 영역으로 갈랐다. 푸터에 'Built with judgment, not autopilot'이라 적어 놓고 그 옆에 광고를 붙일 수는 없었다.</p>
+        <p>고백할 게 하나 있다. 컷오버 직후 광고가 새 페이지 전체에 새어 나왔다. 광고 스크립트가 전역 레이아웃에 남아 있었던 것이다. 결정은 문서에 적혀 있었는데 코드가 그 결정을 모르고 있었다. 발견하자마자 경계를 코드로 박았다. 결정하는 일과 결정을 지키게 만드는 일은 다른 일이라는 걸, 광고 몇 개가 가르쳐 줬다.</p>
+      </div>
+
+      <div class="sec-label">결과</div>
+      <p class="resline">광고는 레거시 라우트에서만 노출. <span class="todo">수익 변화 추기 예정</span></p>
+
+      <div class="sec-label">AI 분업</div>
+      <div class="ledger">
+        <div class="row"><b>Claude Code</b><span>전역 누수의 원인 추적과 경계 한정 구현.</span></div>
+        <div class="row me"><b>나</b><span>광고를 어디까지 허용할지의 선, 그리고 옛 글의 수익을 굳이 버리지 않기로 한 것은 나다.</span></div>
+      </div>
+    </div>
+
+    <div class="others">
+      <h4>다른 전시</h4>
+      <div class="other-cards">
+        <button class="ocard" onclick="switchEx(1)">
+          <span class="oe">전시 01 · 아키텍처</span>
+          <h5>ReactNext라는 사이트에서, 데모를 React로 만들지 않았다</h5>
+          <p>검증 끝난 본체와 격리의 트레이드오프</p>
+        </button>
+        <button class="ocard" onclick="switchEx(2)">
+          <span class="oe">전시 02 · 데이터 설계</span>
+          <h5>답글이 달린 댓글을 지우면, 답글은 누구의 것인가</h5>
+          <p>부모 글이 사라질 때, 남의 답글의 운명</p>
+        </button>
+      </div>
+      <a class="back" href="#">← 쇼케이스 갤러리로</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap inner">
+    <span>© 2026 Pax Code</span>
+    <span>Built with judgment, not autopilot.</span>
+  </div>
+</footer>
+
+<script>
+// ── 목업 데이터 (예시 수치) ──
+const DATA = {
+  1:{author:'C', counts:{A:38, B:27, C:61}},
+  2:{author:'C', counts:{A:17, B:8,  C:73}},
+  3:{author:'B', counts:{A:9,  B:42, C:33}},
+};
+const voted = {1:null, 2:null, 3:null};
+
+function vote(ex, opt, el){
+  if(voted[ex]) return;
+  voted[ex] = opt;
+  DATA[ex].counts[opt]++;
+  el.classList.add('picked');
+  renderBars(ex);
+  reveal(ex, true);
+}
+function skip(ex, e){
+  e.preventDefault();
+  if(voted[ex]) return;
+  voted[ex] = 'skip';
+  renderBars(ex);
+  reveal(ex, false);
+}
+function renderBars(ex){
+  const box = document.getElementById('opts'+ex);
+  const c = DATA[ex].counts;
+  const total = c.A + c.B + c.C;
+  box.classList.add('voted');
+  box.querySelectorAll('.opt').forEach(btn=>{
+    const o = btn.dataset.opt;
+    const pct = Math.round(c[o]/total*100);
+    btn.querySelector('.pct').textContent = pct + '%';
+    requestAnimationFrame(()=>{ btn.querySelector('.bar i').style.width = pct + '%'; });
+    if(voted[ex] !== 'skip' && o !== voted[ex] && o !== DATA[ex].author) btn.classList.add('dim');
+  });
+  document.getElementById('ppl'+ex).innerHTML =
+    '독자 ' + total + '명의 선택과 비교해 보세요 <span class="mockchip">예시 수치</span>';
+}
+function reveal(ex, didVote){
+  const art = document.getElementById('ex'+ex);
+  art.classList.add('revealed');
+  art.querySelector('.opt[data-opt="'+DATA[ex].author+'"]').classList.add('is-author');
+}
+function switchEx(n){
+  document.querySelectorAll('.exhibit').forEach(a=>a.classList.remove('active'));
+  document.getElementById('ex'+n).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  const h = document.documentElement;
+  h.dataset.theme = h.dataset.theme === 'light' ? 'dark' : 'light';
+});
+</script>
+</body>
+</html>
