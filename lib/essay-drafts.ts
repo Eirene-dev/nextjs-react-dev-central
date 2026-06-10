@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { and, eq, desc } from 'drizzle-orm'
+import { and, eq, desc, asc, lt, gt, or } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { essayDrafts } from '@/lib/db/schema'
 
@@ -88,6 +88,51 @@ export async function getPublishedEssayBySlug(slug: string) {
     .where(and(eq(essayDrafts.slug, slug), eq(essayDrafts.status, 'published')))
     .limit(1)
   return row ?? null
+}
+
+export type AdjacentEssay = { title: string; slug: string | null }
+
+// 인접 발행 글(발행일 기준) — prev=더 전에 발행, next=더 나중에 발행. 동일 published_at 은 id 로 타이브레이크.
+// 읽기 페이지의 '이전/다음 글' 내비게이션용(목록으로 돌아가지 않고 글 사이 이동).
+export async function getAdjacentEssays(
+  currentPublishedAt: Date | string | null,
+  currentId: number
+): Promise<{ prev: AdjacentEssay | null; next: AdjacentEssay | null }> {
+  if (!currentPublishedAt) return { prev: null, next: null }
+  const cur = new Date(currentPublishedAt)
+  const cols = { title: essayDrafts.title, slug: essayDrafts.slug }
+
+  const [prev] = await db
+    .select(cols)
+    .from(essayDrafts)
+    .where(
+      and(
+        eq(essayDrafts.status, 'published'),
+        or(
+          lt(essayDrafts.publishedAt, cur),
+          and(eq(essayDrafts.publishedAt, cur), lt(essayDrafts.id, currentId))
+        )
+      )
+    )
+    .orderBy(desc(essayDrafts.publishedAt), desc(essayDrafts.id))
+    .limit(1)
+
+  const [next] = await db
+    .select(cols)
+    .from(essayDrafts)
+    .where(
+      and(
+        eq(essayDrafts.status, 'published'),
+        or(
+          gt(essayDrafts.publishedAt, cur),
+          and(eq(essayDrafts.publishedAt, cur), gt(essayDrafts.id, currentId))
+        )
+      )
+    )
+    .orderBy(asc(essayDrafts.publishedAt), asc(essayDrafts.id))
+    .limit(1)
+
+  return { prev: prev ?? null, next: next ?? null }
 }
 
 // 목록 — 초안+발행 전체(author 스코프), 수정일 내림차순.
