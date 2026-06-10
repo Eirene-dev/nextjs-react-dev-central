@@ -124,6 +124,13 @@ const MobileNav = () => {
                     {session.user.isAdmin === true && (
                       <div className="mt-4 flex flex-col gap-3">
                         <Link
+                          href="/admin"
+                          onClick={onToggleNav}
+                          className="text-base font-semibold text-ink-2 hover:text-coral-2"
+                        >
+                          대시보드
+                        </Link>
+                        <Link
                           href="/admin/essays"
                           onClick={onToggleNav}
                           className="text-base font-semibold text-ink-2 hover:text-coral-2"

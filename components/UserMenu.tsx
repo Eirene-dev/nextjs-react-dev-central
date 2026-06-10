@@ -8,7 +8,7 @@ import { logout } from '@/app/auth-actions'
 
 // 전역 헤더 계정 영역(데스크톱) — 세션 인식.
 //  - 로그아웃: "로그인" 진입(→ /login?callbackUrl=현재경로).
-//  - 로그인: 아바타+이름, 드롭다운에 (관리자면) 글 관리·에디터 + 로그아웃.
+//  - 로그인: 아바타+이름, 드롭다운에 (관리자면) 대시보드·글 관리·에디터 + 로그아웃.
 // 세션은 클라이언트(useSession)에서 읽어 정적 페이지를 보존(루트에 서버 auth() 미도입).
 
 function Avatar({ image, name }: { image?: string | null; name?: string | null }) {
@@ -105,6 +105,9 @@ export default function UserMenu() {
 
           {isAdmin && (
             <>
+              <Link href="/admin" role="menuitem" className={itemCls} onClick={() => setOpen(false)}>
+                대시보드
+              </Link>
               <Link href="/admin/essays" role="menuitem" className={itemCls} onClick={() => setOpen(false)}>
                 글 관리
               </Link>
