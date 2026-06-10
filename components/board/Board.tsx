@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import Markdown from './Markdown'
 import MarkdownEditor from './MarkdownEditor'
+import { loginWith } from '@/app/auth-actions'
 
 // 클라이언트 전용 타입/상수(서버 모듈 import 회피)
 type Post = {
@@ -42,13 +43,13 @@ export default function Board({
   initial,
   session,
   isAdmin,
-  loginAction,
+  callbackUrl,
   logoutAction,
 }: {
   initial: { posts: Post[]; nextCursor: number | null }
   session: Session
   isAdmin: boolean
-  loginAction: () => Promise<void>
+  callbackUrl: string
   logoutAction: () => Promise<void>
 }) {
   const [posts, setPosts] = useState<Post[]>(initial.posts)
@@ -137,13 +138,28 @@ export default function Board({
       {session ? (
         <ComposeForm onSubmit={submit} busy={busy} />
       ) : (
-        <form action={loginAction} className="mb-8 rounded-2xl border border-line bg-surface-2 p-5 text-center">
+        <div className="mb-8 rounded-2xl border border-line bg-surface-2 p-5 text-center">
           <p className="text-ink-2">글을 남기려면 로그인해 주세요.</p>
-          <button className="mt-3 inline-flex items-center gap-2 rounded-lg bg-ink px-4 py-2.5 text-sm font-bold text-surface-2 transition hover:bg-coral-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.1.68-.22.68-.49l-.01-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05a9.4 9.4 0 015 0c1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9l-.01 2.82c0 .27.18.6.69.49A10.02 10.02 0 0022 12.26C22 6.58 17.52 2 12 2z" /></svg>
-            GitHub으로 로그인하고 작성
-          </button>
-        </form>
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            <form action={loginWith.bind(null, 'github', callbackUrl)}>
+              <button className="inline-flex items-center gap-2 rounded-lg bg-ink px-4 py-2.5 text-sm font-bold text-surface-2 transition hover:bg-coral-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.1.68-.22.68-.49l-.01-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05a9.4 9.4 0 015 0c1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9l-.01 2.82c0 .27.18.6.69.49A10.02 10.02 0 0022 12.26C22 6.58 17.52 2 12 2z" /></svg>
+                GitHub로 계속하기
+              </button>
+            </form>
+            <form action={loginWith.bind(null, 'google', callbackUrl)}>
+              <button className="inline-flex items-center gap-2 rounded-lg border border-line bg-surface px-4 py-2.5 text-sm font-bold text-ink transition hover:border-coral-soft">
+                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.24 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0012 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 010-4.22V7.05H2.18a11 11 0 000 9.9l3.66-2.84z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
+                </svg>
+                Google로 계속하기
+              </button>
+            </form>
+          </div>
+        </div>
       )}
 
       {error && <p className="mb-4 text-sm font-semibold text-coral-2">{error}</p>}

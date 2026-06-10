@@ -1,4 +1,4 @@
-import { auth, signIn, signOut } from '@/auth'
+import { auth, signOut } from '@/auth'
 import { isAdmin } from '@/lib/auth-helpers'
 import { listPosts } from '@/lib/board'
 import Board from '@/components/board/Board'
@@ -14,15 +14,12 @@ export const metadata = genPageMetadata({
 export const dynamic = 'force-dynamic'
 
 const PAGE_KEY = 'book:judgment-dev'
+const BOARD_PATH = '/book/judgment-dev/board'
 
 export default async function BoardPage() {
   const session = await auth()
   const initial = await listPosts(PAGE_KEY, {})
 
-  async function loginAction() {
-    'use server'
-    await signIn('github')
-  }
   async function logoutAction() {
     'use server'
     await signOut()
@@ -45,7 +42,7 @@ export default async function BoardPage() {
         initial={initial}
         session={clientSession}
         isAdmin={isAdmin(session)}
-        loginAction={loginAction}
+        callbackUrl={BOARD_PATH}
         logoutAction={logoutAction}
       />
     </div>
