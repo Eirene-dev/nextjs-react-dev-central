@@ -109,6 +109,38 @@ const showcasesData: Showcase[] = [
     thumb: '/static/showcases/folio.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/folio',
   },
+
+  // ── 실험(experiment) — 선진 업체 스타일 연구 3종(가상 브랜드, 디자인 문법만 연구) ──
+  {
+    slug: 'aura-one',
+    tier: 'experiment',
+    title: 'Aura One',
+    blurb: '애플 제품 페이지 문법을 연구한 가상 무선 이어버드 — 스크롤이 곧 프레젠테이션(sticky 리빌·거대 타이포).',
+    category: '스타일 연구',
+    href: '/showcases/aura-one/index.html',
+    thumb: '/static/showcases/aura-one.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/aura-one',
+  },
+  {
+    slug: 'vanta-ev',
+    tier: 'experiment',
+    title: 'Vanta',
+    blurb: '테슬라 홈 문법을 연구한 가상 전기차 — 풀스크린 scroll-snap + 색·휠 컨피규레이터(가격 즉시 반영).',
+    category: '스타일 연구',
+    href: '/showcases/vanta-ev/index.html',
+    thumb: '/static/showcases/vanta-ev.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/vanta-ev',
+  },
+  {
+    slug: 'ledgr',
+    tier: 'experiment',
+    title: 'Ledgr',
+    blurb: '스트라이프 랜딩 문법을 연구한 가상 결제 도구 — 그라디언트 메시·코드와 마케팅의 공존·문서형 푸터.',
+    category: '스타일 연구',
+    href: '/showcases/ledgr/index.html',
+    thumb: '/static/showcases/ledgr.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/ledgr',
+  },
 ]
 
 export default showcasesData

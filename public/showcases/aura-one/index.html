@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aura One — 스크롤이 곧 프레젠테이션 (스타일 연구)</title>
+<meta name="description" content="애플 제품 페이지의 디자인 문법(거대 타이포·sticky 스크롤 리빌·여백)을 연구한 가상 무선 이어버드 데모. 가상 브랜드, 실제 자산 미사용." />
+<style>
+  :root {
+    --bg: #fbfbfd; --ink: #1d1d1f; --ink-2: #6e6e73; --line: #e3e3e6;
+    --graphite: #3a3a3e; --accent: #5b6b7a;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 22px; }
+
+  .study { background: var(--ink); color: #fff; text-align: center; font-size: 12.5px; padding: 8px 16px; letter-spacing: -.01em; }
+  .study b { color: #7fd0ff; font-weight: 600; }
+
+  /* 히어로 — 거대 타이포 + 여백 */
+  .hero { text-align: center; padding: 90px 22px 40px; }
+  .hero .eyebrow { color: var(--accent); font-size: 19px; font-weight: 600; }
+  .hero h1 { font-size: clamp(56px, 13vw, 128px); font-weight: 700; letter-spacing: -.03em; line-height: .98; margin: 6px 0 14px; background: linear-gradient(180deg, #2a2a2e, #6b7785); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--ink-2); font-size: clamp(18px, 2.6vw, 24px); max-width: 24em; margin: 0 auto; }
+  .hero .links { margin-top: 22px; display: flex; gap: 22px; justify-content: center; font-size: 17px; }
+  .hero .links a { color: #2b7de0; text-decoration: none; }
+  .hero .links a:hover { text-decoration: underline; }
+
+  /* sticky 스크롤 리빌: 스크롤에 따라 제품 SVG 회전·분해 (CSS scroll-driven, JS 0) */
+  .reveal { position: relative; height: 360vh; }
+  @supports not (animation-timeline: view()) { .reveal { height: auto; } }
+  .reveal .stage { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; overflow: hidden; }
+  .bud { width: min(60vw, 420px); }
+  .bud .stem, .bud .body, .bud .tip { transition: transform .1s linear; }
+
+  @supports (animation-timeline: view()) {
+    .reveal .stage svg { animation: spin linear both; animation-timeline: view(); animation-range: cover; }
+    .bud .left { animation: split-l linear both; animation-timeline: view(); animation-range: cover 25% cover 60%; }
+    .bud .right { animation: split-r linear both; animation-timeline: view(); animation-range: cover 25% cover 60%; }
+    .reveal .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 62% cover 85%; }
+  }
+  @keyframes spin { from { transform: rotate(-12deg); } to { transform: rotate(8deg); } }
+  @keyframes split-l { 0%,100% { transform: none; } 50% { transform: translateX(-60px) rotate(-10deg); } }
+  @keyframes split-r { 0%,100% { transform: none; } 50% { transform: translateX(60px) rotate(10deg); } }
+  @keyframes capfade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  .reveal .cap { position: absolute; bottom: 12%; left: 0; right: 0; text-align: center; font-size: clamp(22px, 4vw, 40px); font-weight: 700; letter-spacing: -.02em; }
+
+  /* 기능 카피 — 한 문장씩 낙하 */
+  .feat { padding: 60px 0; }
+  .feat .line { font-size: clamp(28px, 6vw, 56px); font-weight: 700; letter-spacing: -.02em; line-height: 1.12; max-width: 16em; margin: 0 auto 40px; text-align: center; color: var(--graphite); }
+  .feat .line span { color: var(--accent); }
+  @supports (animation-timeline: view()) {
+    .feat .line { animation: drop linear both; animation-timeline: view(); animation-range: entry 8% cover 36%; }
+  }
+  @keyframes drop { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
+
+  /* 스펙 그리드 */
+  .specs { padding: 60px 0; border-top: 1px solid var(--line); }
+  .specs h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); text-align: center; margin-bottom: 28px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  .grid .cell { text-align: center; }
+  .grid .v { font-size: clamp(30px, 5vw, 46px); font-weight: 700; letter-spacing: -.02em; }
+  .grid .k { color: var(--ink-2); font-size: 14px; margin-top: 4px; }
+
+  /* 가격 CTA */
+  .cta { text-align: center; padding: 80px 22px 100px; }
+  .cta .price { font-size: 28px; font-weight: 700; }
+  .cta .sub { color: var(--ink-2); margin: 6px 0 22px; }
+  .cta .btn { display: inline-block; background: #2b7de0; color: #fff; border-radius: 980px; padding: 12px 26px; font-size: 17px; font-weight: 500; text-decoration: none; }
+</style>
+</head>
+<body>
+  <p class="study">애플 제품 페이지의 <b>디자인 문법</b>(거대 타이포·sticky 스크롤 리빌·여백)을 연구한 <b>가상 브랜드</b> 데모 — 실제 로고·제품·카피 미사용</p>
+
+  <section class="hero">
+    <p class="eyebrow">Aura One</p>
+    <h1>들리지 않는 경계.</h1>
+    <p>주변음과 음악 사이, 그 경계가 사라집니다.</p>
+    <div class="links"><a href="#buy">구매하기 ›</a><a href="#specs">자세히 ›</a></div>
+  </section>
+
+  <section class="reveal">
+    <div class="stage">
+      <svg class="bud" viewBox="0 0 400 260" fill="none" aria-label="Aura One 이어버드 일러스트">
+        <g class="left">
+          <path class="body" d="M120 60c30-16 64-8 70 22 5 26-12 52-40 60-26 8-52-6-58-30-6-26 8-44 28-52z" fill="#3a3a3e"/>
+          <rect class="stem" x="150" y="118" width="16" height="78" rx="8" fill="#48484c"/>
+          <circle class="tip" cx="158" cy="92" r="10" fill="#7a8696"/>
+        </g>
+        <g class="right">
+          <path class="body" d="M280 60c-30-16-64-8-70 22-5 26 12 52 40 60 26 8 52-6 58-30 6-26-8-44-28-52z" fill="#46464a"/>
+          <rect class="stem" x="234" y="118" width="16" height="78" rx="8" fill="#54545a"/>
+          <circle class="tip" cx="242" cy="92" r="10" fill="#7a8696"/>
+        </g>
+      </svg>
+      <div class="cap">분해할수록, 단순해진다.</div>
+    </div>
+  </section>
+
+  <section class="feat wrap">
+    <p class="line">한 번의 탭으로 <span>주변음</span>이 들어옵니다.</p>
+    <p class="line">머리를 돌리면, 소리도 <span>따라옵니다</span>.</p>
+    <p class="line">하루를 버티는 <span>배터리</span>, 그리고 케이스에 세 번 더.</p>
+  </section>
+
+  <section class="specs wrap" id="specs">
+    <h2>핵심 스펙</h2>
+    <div class="grid">
+      <div class="cell"><div class="v">6h</div><div class="k">연속 재생</div></div>
+      <div class="cell"><div class="v">30h</div><div class="k">케이스 포함</div></div>
+      <div class="cell"><div class="v">−42dB</div><div class="k">노이즈 캔슬링</div></div>
+      <div class="cell"><div class="v">IP57</div><div class="k">방수·방진</div></div>
+    </div>
+  </section>
+
+  <section class="cta" id="buy">
+    <div class="price">₩ 269,000</div>
+    <div class="sub">또는 12개월 무이자 월 ₩ 22,416</div>
+    <a class="btn" href="#">구매하기</a>
+  </section>
+</body>
+</html>

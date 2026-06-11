@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vanta — 구매 흐름이 곧 홈페이지 (스타일 연구)</title>
+<meta name="description" content="테슬라 홈의 디자인 문법(풀스크린 scroll-snap·하단 고정 스펙·인라인 컨피규레이터)을 연구한 가상 전기차 데모. 가상 브랜드, 실제 자산 미사용." />
+<style>
+  :root {
+    --bg: #0c0c0e; --panel: #16161a; --ink: #f2f2f4; --ink-2: #a0a0a8; --line: #2a2a30;
+    --accent: #3b82f6;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .study { position: fixed; top: 0; left: 0; right: 0; z-index: 30; background: rgba(12,12,14,.82); backdrop-filter: blur(8px); color: var(--ink-2); font-size: 12px; text-align: center; padding: 7px 16px; }
+  .study b { color: #7fd0ff; }
+
+  .snap { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  section.scene { height: 100vh; scroll-snap-align: start; position: relative; display: grid; place-items: center; text-align: center; padding: 40px 22px; }
+  .s1 { background: radial-gradient(120% 80% at 50% 10%, #1b2740, #0c0c0e 70%); }
+  .s2 { background: radial-gradient(120% 80% at 50% 90%, #2a1b40, #0c0c0e 70%); }
+  .s3 { background: radial-gradient(120% 80% at 50% 50%, #16161a, #0c0c0e 80%); }
+  .scene h1 { font-size: clamp(40px, 9vw, 92px); font-weight: 700; letter-spacing: -.03em; line-height: 1; }
+  .scene .sub { color: var(--ink-2); font-size: clamp(15px, 2.4vw, 19px); margin-top: 12px; }
+  .car-wrap { width: min(78vw, 560px); margin: 26px auto 0; }
+
+  /* 하단 고정 스펙 오버레이 */
+  .scene .specbar { position: absolute; bottom: 9vh; left: 0; right: 0; display: flex; gap: clamp(20px, 6vw, 64px); justify-content: center; }
+  .specbar .c .v { font-size: clamp(22px, 4vw, 34px); font-weight: 700; }
+  .specbar .c .k { font-size: 12px; color: var(--ink-2); letter-spacing: .03em; }
+  .scroll-cue { position: absolute; bottom: 3vh; left: 0; right: 0; font-size: 12px; color: var(--ink-2); letter-spacing: .2em; }
+
+  /* 컨피규레이터 */
+  .config { background: var(--panel); }
+  .config .inner { width: 100%; max-width: 920px; display: grid; gap: 28px; }
+  .config h2 { font-size: clamp(26px, 5vw, 40px); font-weight: 700; letter-spacing: -.02em; }
+  .opt-group { text-align: left; }
+  .opt-group .label { font-size: 13px; color: var(--ink-2); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+  .swatches { display: flex; gap: 12px; flex-wrap: wrap; }
+  .swatch { width: 42px; height: 42px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; outline: none; box-shadow: 0 0 0 1px var(--line); }
+  .swatch[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .wheels { display: flex; gap: 12px; }
+  .wheel-btn { background: #1f1f25; border: 1px solid var(--line); color: var(--ink); border-radius: 12px; padding: 12px 18px; cursor: pointer; font: inherit; }
+  .wheel-btn[aria-pressed="true"] { border-color: var(--accent); color: #fff; }
+  .total { display: flex; align-items: baseline; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 18px; }
+  .total .price { font-size: clamp(28px, 6vw, 44px); font-weight: 700; }
+  .total .btn { background: var(--accent); color: #fff; border: none; border-radius: 999px; padding: 13px 28px; font: inherit; font-weight: 600; cursor: pointer; }
+  @media (max-width: 560px) { .scene .specbar { gap: 18px; } }
+</style>
+</head>
+<body>
+  <p class="study">테슬라 홈의 <b>디자인 문법</b>(풀스크린 scroll-snap·하단 고정 스펙·인라인 컨피규레이터)을 연구한 <b>가상 브랜드</b> 데모 — 실제 로고·차종·카피 미사용</p>
+
+  <div class="snap">
+    <section class="scene s1">
+      <div>
+        <h1>Vanta</h1>
+        <p class="sub">전기로 다시 그린 주행.</p>
+        <div class="car-wrap">
+          <svg viewBox="0 0 560 200" aria-label="Vanta 세단 실루엣">
+            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="#2f3a55"/>
+            <circle cx="160" cy="152" r="26" fill="#15151a"/><circle cx="160" cy="152" r="11" fill="#444"/>
+            <circle cx="430" cy="152" r="26" fill="#15151a"/><circle cx="430" cy="152" r="11" fill="#444"/>
+          </svg>
+        </div>
+      </div>
+      <div class="specbar">
+        <div class="c"><div class="v">3.1초</div><div class="k">0→100km/h</div></div>
+        <div class="c"><div class="v">628km</div><div class="k">1회 충전 주행</div></div>
+        <div class="c"><div class="v">250km/h</div><div class="k">최고 속도</div></div>
+      </div>
+      <div class="scroll-cue">스크롤 ↓</div>
+    </section>
+
+    <section class="scene s2">
+      <div>
+        <h1>멈출 때를 안다.</h1>
+        <p class="sub">8개의 카메라가 360°를 본다. 끼어드는 차도, 갑자기 멈춘 차도.</p>
+      </div>
+      <div class="specbar">
+        <div class="c"><div class="v">8</div><div class="k">서라운드 카메라</div></div>
+        <div class="c"><div class="v">5★</div><div class="k">가상 안전 등급</div></div>
+        <div class="c"><div class="v">OTA</div><div class="k">무선 업데이트</div></div>
+      </div>
+      <div class="scroll-cue">스크롤 ↓</div>
+    </section>
+
+    <section class="scene config s3">
+      <div class="inner">
+        <h2>당신의 Vanta를 구성하세요</h2>
+        <div class="car-wrap" style="margin:0;">
+          <svg viewBox="0 0 560 200" aria-label="구성 중인 차량">
+            <path id="body" d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="#2f3a55"/>
+            <g id="wheels">
+              <circle class="hub" cx="160" cy="152" r="26" fill="#15151a"/><circle class="rim" cx="160" cy="152" r="11" fill="#444"/>
+              <circle class="hub" cx="430" cy="152" r="26" fill="#15151a"/><circle class="rim" cx="430" cy="152" r="11" fill="#444"/>
+            </g>
+          </svg>
+        </div>
+        <div class="opt-group">
+          <div class="label">색상 — <span id="color-name">미드나잇 블루</span></div>
+          <div class="swatches" id="colors">
+            <button class="swatch" data-name="미드나잇 블루" data-fill="#2f3a55" data-delta="0" style="background:#2f3a55" aria-pressed="true" aria-label="미드나잇 블루"></button>
+            <button class="swatch" data-name="펄 화이트" data-fill="#e8e8ec" data-delta="600000" style="background:#e8e8ec" aria-pressed="false" aria-label="펄 화이트"></button>
+            <button class="swatch" data-name="카본 그레이" data-fill="#3a3a40" data-delta="600000" style="background:#3a3a40" aria-pressed="false" aria-label="카본 그레이"></button>
+            <button class="swatch" data-name="에버 그린" data-fill="#2e5040" data-delta="900000" style="background:#2e5040" aria-pressed="false" aria-label="에버 그린"></button>
+          </div>
+        </div>
+        <div class="opt-group">
+          <div class="label">휠</div>
+          <div class="wheels" id="wheelopts">
+            <button class="wheel-btn" data-rim="#444" data-delta="0" aria-pressed="true">19" 에어로 (기본)</button>
+            <button class="wheel-btn" data-rim="#9aa0aa" data-delta="2400000" aria-pressed="false">21" 퍼포먼스 (+₩2,400,000)</button>
+          </div>
+        </div>
+        <div class="total">
+          <div><div style="font-size:12px;color:var(--ink-2)">예상 가격</div><div class="price" id="price">₩ 64,900,000</div></div>
+          <button class="btn">주문하기</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // 컨피규레이터 — 색·휠 선택 → 차 SVG·가격 즉시 반영(필요한 만큼의 JS).
+    var BASE = 64900000;
+    var state = { color: 0, wheel: 0 };
+    var colorDeltas = [], wheelDeltas = [];
+    var fmt = function (n) { return '₩ ' + n.toLocaleString('ko-KR'); };
+    function render() {
+      document.getElementById('price').textContent = fmt(BASE + colorDeltas[state.color] + wheelDeltas[state.wheel]);
+    }
+    document.querySelectorAll('#colors .swatch').forEach(function (b, i) {
+      colorDeltas[i] = +b.dataset.delta;
+      b.addEventListener('click', function () {
+        state.color = i;
+        document.getElementById('body').setAttribute('fill', b.dataset.fill);
+        document.getElementById('color-name').textContent = b.dataset.name;
+        document.querySelectorAll('#colors .swatch').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        render();
+      });
+    });
+    document.querySelectorAll('#wheelopts .wheel-btn').forEach(function (b, i) {
+      wheelDeltas[i] = +b.dataset.delta;
+      b.addEventListener('click', function () {
+        state.wheel = i;
+        document.querySelectorAll('#wheels .rim').forEach(function (r) { r.setAttribute('fill', b.dataset.rim); });
+        document.querySelectorAll('#wheelopts .wheel-btn').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        render();
+      });
+    });
+    render();
+  </script>
+</body>
+</html>
