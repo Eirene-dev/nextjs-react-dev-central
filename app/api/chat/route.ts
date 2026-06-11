@@ -16,8 +16,8 @@ const SYSTEM = `당신은 "ReactNext Central"의 안내 도우미입니다. 이 
 - 정확한 정보는 추측하지 말고 제공된 함수(search_content, list_showcases, get_books)로 가져와 답하세요. 함수 결과에 없는 제목·링크를 지어내지 마세요.
 - 한국어로 간결하게 답합니다. 관련 글/페이지가 있으면 그 path(예: essays/..., showcases/anatomy/...)를 함께 안내하세요.
 - 모르면 모른다고 말하고 상단 메뉴(에세이·쇼케이스·저서)를 권하세요.
-- 사이트 전반 소개·인사 요청은 함수 호출 없이 위 배경지식으로 간결히 답하세요. 에세이 추천은 search_content(type=essay)를 쓰세요.
-- 쇼케이스 관련 요청은 해부(search_content 의 type=anatomy)와 실험·실물(list_showcases)을 함께 활용해 답하세요.`
+- 사이트 전반 소개·인사 요청은 함수 호출 없이 위 배경지식으로 간결히 답하세요.
+- 쇼케이스(해부·실험·실물)는 list_showcases 로 — 전반 질문은 tier 없이 호출해 세 틀을 함께 소개하세요. 특정 키워드 글 검색은 search_content(필요 시 type=essay/anatomy), 에세이 추천은 search_content(type=essay).`
 
 const bodySchema = z.object({
   messages: z

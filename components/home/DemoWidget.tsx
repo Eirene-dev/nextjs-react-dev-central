@@ -7,7 +7,13 @@ import { Halo } from '@/components/Motif'
 
 // 홈 챗 위젯 — /api/chat(OpenAI Responses + function calling)에 연결. canned 제거, 멀티턴 유지.
 // reply 의 가벼운 마크다운은 안전 토크나이저로 렌더(dangerouslySetInnerHTML 없음). links 는 하단 칩.
-const CHIPS = ['이 사이트 소개해줘', '쇼케이스 보여줘', '에세이 추천해줘']
+const CHIPS = [
+  '이 사이트 소개해줘',
+  '쇼케이스 보여줘',
+  '에세이 추천해줘',
+  '어떤 결정들을 기록했어?',
+  '책 소개해줘',
+]
 const GREETING = '안녕하세요 👋 이 사이트가 궁금하신가요? 아래 버튼을 눌러보세요.'
 const ERR = '지금은 답변을 드릴 수 없어요. 잠시 후 다시 시도해 주세요.'
 const MAX_TURNS = 12

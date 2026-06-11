@@ -1,5 +1,6 @@
 import 'server-only'
 import { buildSearchRecords } from '@/lib/search-records'
+import { allAnatomy } from '@/lib/content'
 import showcasesData from '@/data/showcasesData'
 import booksData from '@/data/booksData'
 
@@ -36,14 +37,15 @@ export const tools = [
     type: 'function' as const,
     name: 'list_showcases',
     strict: true,
-    description: '쇼케이스 — 실험(experiment) 데모와 실물(built) 제품 목록. 해부는 search_content 사용.',
+    description:
+      '쇼케이스 세 틀(해부=만들며 내린 결정 기록, 실험=인터랙티브 데모, 실물=운영 제품) 목록. 쇼케이스 전반을 물으면 tier 없이(null) 호출해 세 틀을 모두 소개하라.',
     parameters: {
       type: 'object',
       properties: {
         tier: {
           type: ['string', 'null'],
-          enum: ['experiment', 'built', null],
-          description: 'null 이면 전체',
+          enum: ['anatomy', 'experiment', 'built', null],
+          description: 'null 이면 세 틀 전체',
         },
       },
       required: ['tier'],
@@ -81,17 +83,42 @@ export const toolFns: Record<string, ToolFn> = {
   },
 
   list_showcases(args) {
-    const tier = args?.tier === 'experiment' || args?.tier === 'built' ? args.tier : undefined
-    const items = showcasesData.filter((s) => !tier || s.tier === tier)
-    return {
-      results: items.map((s) => ({
-        title: s.title,
-        blurb: s.blurb,
-        category: s.category,
-        tier: s.tier,
-        path: linkPath(s.tier === 'experiment' ? s.href : s.url),
-      })),
+    const tier =
+      args?.tier === 'anatomy' || args?.tier === 'experiment' || args?.tier === 'built'
+        ? args.tier
+        : null // null = 세 틀 전체
+    const results: Record<string, unknown>[] = []
+
+    // 해부(velite, exhibit 내림차순 상위 5) — decision 라벨(+sub), question 앞부분. rationale 미반환.
+    if (!tier || tier === 'anatomy') {
+      const anat = [...allAnatomy]
+        .sort((a, b) => b.exhibit - a.exhibit)
+        .slice(0, 5)
+        .map((a) => ({
+          tier: 'anatomy',
+          title: a.title,
+          decision: a.decision.label + (a.decision.sub ? ` — ${a.decision.sub}` : ''),
+          summary: a.question.length > 100 ? a.question.slice(0, 100) + '…' : a.question,
+          path: `showcases/anatomy/${a.slug}`,
+        }))
+      results.push(...anat)
     }
+
+    // 실험/실물(showcasesData)
+    if (tier !== 'anatomy') {
+      const sc = showcasesData
+        .filter((s) => !tier || s.tier === tier)
+        .map((s) => ({
+          tier: s.tier,
+          title: s.title,
+          blurb: s.blurb,
+          category: s.category,
+          path: linkPath(s.tier === 'experiment' ? s.href : s.url),
+        }))
+      results.push(...sc)
+    }
+
+    return { results }
   },
 
   get_books() {
