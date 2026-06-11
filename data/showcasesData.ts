@@ -173,6 +173,36 @@ const showcasesData: Showcase[] = [
     thumb: '/static/showcases/formig.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/formig',
   },
+  {
+    slug: 'docent',
+    tier: 'experiment',
+    title: 'Docent',
+    blurb: '답에 근거를 붙인다 — 제품 문서 Q&A, 근거 문단 하이라이트. 없으면 솔직하게 “없습니다”. 샘플 모드 기본, 키 BYOA.',
+    category: 'AI×웹',
+    href: '/showcases/docent/index.html',
+    thumb: '/static/showcases/docent.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/docent',
+  },
+  {
+    slug: 'relay',
+    tier: 'experiment',
+    title: 'Relay',
+    blurb: '승인받고 움직이는 에이전트 — 목표를 단계로 쪼개 [실행]을 눌러야 진행. 6스텝·루프 가드, 결제 직전까지. 샘플 모드 기본, 키 BYOA.',
+    category: 'AI×웹',
+    href: '/showcases/relay/index.html',
+    thumb: '/static/showcases/relay.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/relay',
+  },
+  {
+    slug: 'sema',
+    tier: 'experiment',
+    title: 'Sema',
+    blurb: '키워드 말고 의미로 찾는다 — 임베딩+코사인 유사도 검색 팔레트(⌘K). 단어가 안 겹쳐도 매칭. 샘플 모드 기본, 키 BYOA.',
+    category: 'AI×웹',
+    href: '/showcases/sema/index.html',
+    thumb: '/static/showcases/sema.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/sema',
+  },
 ]
 
 export default showcasesData
