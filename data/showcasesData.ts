@@ -18,6 +18,7 @@ export interface ExperimentShowcase extends ShowcaseBase {
   tier: 'experiment'
   href: string
   thumb: string
+  source?: string // 공개 소스 링크(GitHub). 있으면 카드에 "소스 보기" 노출. 기존 mock 3종은 없음.
 }
 
 // 실물 — 운영 중인 제품. 외부 링크(새 탭) + 스크린샷 + 핵심 판단 3줄.
@@ -75,6 +76,38 @@ const showcasesData: Showcase[] = [
     category: '정보형',
     href: '/showcases/landing/index.html',
     thumb: '/static/showcases/landing.png',
+  },
+
+  // ── 실험(experiment) — 최신 웹 플랫폼 데모 3종(바닐라, 소스 공개) ──
+  {
+    slug: 'drift',
+    tier: 'experiment',
+    title: 'Drift',
+    blurb: 'Claude Code와 페어로 제작 — JS 0줄 스크롤 내러티브. CSS Scroll-driven Animations(animation-timeline)만으로.',
+    category: '웹 플랫폼',
+    href: '/showcases/drift/index.html',
+    thumb: '/static/showcases/drift.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/drift',
+  },
+  {
+    slug: 'slate',
+    tier: 'experiment',
+    title: 'Slate',
+    blurb: 'Claude Code와 페어로 제작 — JS 없는 UI 레이어. Popover API + CSS Anchor Positioning + @starting-style.',
+    category: '웹 플랫폼',
+    href: '/showcases/slate/index.html',
+    thumb: '/static/showcases/slate.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/slate',
+  },
+  {
+    slug: 'folio',
+    tier: 'experiment',
+    title: 'Folio',
+    blurb: 'Claude Code와 페어로 제작 — 페이지 간 모핑 갤러리. Cross-document View Transitions(@view-transition).',
+    category: '웹 플랫폼',
+    href: '/showcases/folio/index.html',
+    thumb: '/static/showcases/folio.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/folio',
   },
 ]
 

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slate — JS 없는 UI 레이어 (Popover API + CSS Anchor Positioning)</title>
+<meta name="description" content="툴팁·드롭다운·중첩 메뉴·컨텍스트 메뉴·다이얼로그를 Popover API와 CSS Anchor Positioning, @starting-style 만으로. 컴포넌트별 JS 줄 수 표기." />
+<style>
+  :root {
+    --bg: #0f1115; --surface: #181b22; --surface-2: #20242d; --line: #2c313c;
+    --ink: #e9ecf2; --ink-2: #a8b0bd; --ink-3: #6b7382; --brand: #6ea8fe; --brand-2: #3b82f6;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; padding-bottom: 80px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 22px; }
+
+  header { padding: 64px 0 36px; text-align: center; }
+  header h1 { font-size: clamp(30px, 6vw, 46px); letter-spacing: -.02em; }
+  header h1 b { color: var(--brand); font-weight: 800; }
+  header p { color: var(--ink-2); margin-top: 12px; font-size: 16px; max-width: 34em; margin-inline: auto; word-break: keep-all; }
+
+  .fallback { display: none; background: #5b2330; color: #ffd9df; border-radius: 12px; padding: 12px 16px; font-size: 13.5px; margin: 0 0 24px; }
+  @supports not (anchor-name: --x) { .fallback.anchor { display: block; } }
+  @supports not selector(:popover-open) { .fallback.popover { display: block; } }
+
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .card h3 { font-size: 16px; }
+  .card .desc { color: var(--ink-3); font-size: 13px; }
+  .card .demo-row { margin-top: auto; }
+  .js0 { font-family: var(--mono); font-size: 11.5px; color: var(--brand); border: 1px solid var(--brand-2); border-radius: 999px; padding: 3px 9px; align-self: flex-start; }
+  .jsn { color: #f0a; border-color: #a35; }
+
+  button.trigger, .menuitem { font: inherit; cursor: pointer; }
+  .btn { background: var(--brand-2); color: #fff; border: none; border-radius: 10px; padding: 9px 14px; font-weight: 600; font-size: 14px; }
+  .btn.ghost { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
+
+  /* ── 공통 popover 스타일 + @starting-style 진입 애니메이션 (JS 0) ── */
+  [popover] { margin: 0; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); border-radius: 12px; padding: 8px; box-shadow: 0 18px 50px -20px rgba(0,0,0,.7); opacity: 0; transform: translateY(-6px) scale(.97); transition: opacity .18s ease, transform .18s ease, overlay .18s allow-discrete, display .18s allow-discrete; }
+  [popover]:popover-open { opacity: 1; transform: none; }
+  @starting-style { [popover]:popover-open { opacity: 0; transform: translateY(-6px) scale(.97); } }
+  [popover]::backdrop { background: rgba(8,10,14,.5); opacity: 0; transition: opacity .2s, overlay .2s allow-discrete, display .2s allow-discrete; }
+  [popover]:popover-open::backdrop { opacity: 1; }
+  @starting-style { [popover]:popover-open::backdrop { opacity: 0; } }
+
+  .menu { min-width: 180px; }
+  .menu .menuitem { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--ink-2); padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+  .menu .menuitem:hover { background: var(--brand-2); color: #fff; }
+  .sep { height: 1px; background: var(--line); margin: 6px 0; }
+
+  /* CSS Anchor Positioning — 트리거 기준 위치 (JS 0) */
+  .anchored { position: absolute; position-area: bottom span-right; margin-top: 8px; }
+  .anchored.right { position-area: right; margin: 0 0 0 8px; }
+
+  /* 툴팁: 순수 CSS(:hover/:focus + anchor) — popover·JS 불필요 */
+  .tipwrap { position: relative; display: inline-block; }
+  .tip-trigger { anchor-name: --tip; text-decoration: underline dotted; text-underline-offset: 3px; color: var(--brand); }
+  .tip { position: absolute; position-anchor: --tip; position-area: top; margin-bottom: 8px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 12.5px; color: var(--ink-2); white-space: nowrap; opacity: 0; transition: opacity .15s; pointer-events: none; }
+  .tip-trigger:hover + .tip, .tip-trigger:focus-visible + .tip { opacity: 1; }
+
+  .dialog { min-width: min(440px, 92vw); padding: 24px; }
+  .dialog h4 { font-size: 18px; margin-bottom: 8px; }
+  .dialog p { color: var(--ink-2); font-size: 14px; }
+  .dialog .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><b>Slate</b> — JS 없는 UI 레이어</h1>
+    <p>툴팁·드롭다운·중첩 메뉴·컨텍스트 메뉴·다이얼로그. 전부 Popover API + CSS Anchor Positioning + <code>@starting-style</code>로.</p>
+  </header>
+
+  <div class="fallback popover">이 브라우저는 Popover API(<code>:popover-open</code>)를 지원하지 않습니다 — 버튼은 보이나 팝오버가 열리지 않을 수 있습니다.</div>
+  <div class="fallback anchor">이 브라우저는 CSS Anchor Positioning을 지원하지 않습니다 — 레이어 위치가 어긋날 수 있습니다.</div>
+
+  <div class="grid">
+    <!-- 툴팁: 순수 CSS -->
+    <div class="card">
+      <h3>툴팁 (Tooltip)</h3>
+      <p class="desc">:hover/:focus + anchor positioning. popover 도 불필요.</p>
+      <div class="demo-row">
+        <span class="tipwrap"><span class="tip-trigger" tabindex="0">호버하세요</span><span class="tip" role="tooltip">앵커에 붙는 CSS 툴팁</span></span>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
+
+    <!-- 드롭다운: popover + anchor -->
+    <div class="card" style="position: relative;">
+      <h3>드롭다운 (Dropdown)</h3>
+      <p class="desc">popovertarget + position-anchor.</p>
+      <div class="demo-row">
+        <button class="btn trigger" style="anchor-name: --dd;" popovertarget="dd-menu">메뉴 열기 ▾</button>
+        <div id="dd-menu" popover class="menu anchored" style="position-anchor: --dd;">
+          <button class="menuitem">프로필</button>
+          <button class="menuitem">설정</button>
+          <div class="sep"></div>
+          <button class="menuitem">로그아웃</button>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
+
+    <!-- 중첩 메뉴: 부모 popover 안의 자식 popover -->
+    <div class="card" style="position: relative;">
+      <h3>중첩 메뉴 (Nested)</h3>
+      <p class="desc">popover 안의 popover, 각자 anchor.</p>
+      <div class="demo-row">
+        <button class="btn trigger" style="anchor-name: --nest;" popovertarget="nest-menu">파일 ▾</button>
+        <div id="nest-menu" popover class="menu anchored" style="position-anchor: --nest;">
+          <button class="menuitem">새로 만들기</button>
+          <button class="menuitem trigger" style="anchor-name: --sub;" popovertarget="sub-menu">내보내기 ▸</button>
+          <div id="sub-menu" popover class="menu anchored right" style="position-anchor: --sub;">
+            <button class="menuitem">PDF</button>
+            <button class="menuitem">PNG</button>
+            <button class="menuitem">Markdown</button>
+          </div>
+          <div class="sep"></div>
+          <button class="menuitem">닫기</button>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
+
+    <!-- 컨텍스트 메뉴: 영역에 anchor, popover -->
+    <div class="card" style="position: relative;">
+      <h3>컨텍스트 메뉴</h3>
+      <p class="desc">버튼 트리거 + anchor(실제 우클릭 위치 추적은 JS 필요 — 정직 표기).</p>
+      <div class="demo-row">
+        <button class="btn ghost trigger" style="anchor-name: --ctx;" popovertarget="ctx-menu">⋯ 동작</button>
+        <div id="ctx-menu" popover class="menu anchored" style="position-anchor: --ctx;">
+          <button class="menuitem">복사</button>
+          <button class="menuitem">이름 바꾸기</button>
+          <button class="menuitem">삭제</button>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄 (버튼 기준)</span>
+    </div>
+
+    <!-- 다이얼로그: popover=auto + backdrop -->
+    <div class="card">
+      <h3>다이얼로그 (Modal)</h3>
+      <p class="desc">popover + ::backdrop + @starting-style. &lt;dialog&gt;.showModal() 없이.</p>
+      <div class="demo-row">
+        <button class="btn trigger" popovertarget="dlg">열기</button>
+        <div id="dlg" popover class="dialog">
+          <h4>정말 삭제할까요?</h4>
+          <p>이 다이얼로그는 Popover API의 backdrop으로 모달처럼 동작합니다. ESC·바깥 클릭으로 닫힘 — 전부 브라우저 기본.</p>
+          <div class="row">
+            <button class="btn ghost" popovertarget="dlg" popovertargetaction="hide">취소</button>
+            <button class="btn" popovertarget="dlg" popovertargetaction="hide">삭제</button>
+          </div>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
+  </div>
+
+  <p style="color: var(--ink-3); font-size: 12.5px; margin-top: 28px; font-family: var(--mono);">합계 — 이 페이지의 인터랙션 JS: <b style="color: var(--brand);">0줄</b>. (Popover API · CSS Anchor Positioning · @starting-style)</p>
+</div>
+</body>
+</html>

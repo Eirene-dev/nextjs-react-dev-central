@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>초록 결 — Folio</title>
+<style>
+  :root { --bg:#faf8f4; --ink:#1c1a17; --ink-2:#6a655c; --line:#e6e1d8; --accent:#2f6b4a;
+    --serif:'Iowan Old Style',Georgia,serif; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Neo','Noto Sans KR',sans-serif; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:var(--sans); background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  @view-transition { navigation: auto; }
+  .hero { height:54vh; min-height:340px; position:relative; view-transition-name: art-c; }
+  .hero > div { position:absolute; inset:0; background:linear-gradient(135deg,#2f6b4a,#a8d06e 70%,#1a3a2a); }
+  .wrap { max-width:720px; margin:0 auto; padding:0 24px; }
+  .back { display:inline-block; margin:24px 0 0; font-family:ui-monospace,monospace; font-size:13px; color:var(--accent); }
+  article { padding:36px 0 90px; }
+  .kicker { font-family:ui-monospace,monospace; font-size:12px; letter-spacing:.25em; text-transform:uppercase; color:var(--accent); }
+  h1 { font-family:var(--serif); font-weight:400; font-size:clamp(34px,7vw,60px); line-height:1.05; letter-spacing:-.02em; margin:10px 0 18px; }
+  p { color:#3a352e; font-size:17px; line-height:1.85; margin-bottom:18px; word-break:keep-all; }
+  .meta { color:var(--ink-2); font-size:13px; }
+</style>
+</head>
+<body>
+  <div class="hero"><div></div></div>
+  <div class="wrap">
+    <a class="back" href="index.html">← 갤러리로</a>
+    <article>
+      <p class="kicker">Package · 2025</p>
+      <h1>초록 결</h1>
+      <p class="meta">미지원 브라우저에서는 이 페이지로 그냥 이동합니다 — 전환만 없을 뿐 기능은 동일(graceful).</p>
+      <p>친환경 차(茶) 브랜드의 패키지. 재생지의 결을 그대로 살리고, 잉크는 단색 녹색 하나로 제한했다. 덜 인쇄할수록 더 정직하다.</p>
+      <p>형태는 손에 쥐는 경험에서 출발했다. 모서리의 둥글기, 뚜껑의 저항감까지가 디자인이었다.</p>
+    </article>
+  </div>
+</body>
+</html>
