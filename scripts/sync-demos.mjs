@@ -4,7 +4,7 @@
 import { cpSync, mkdirSync, existsSync, rmSync } from 'fs'
 import { join } from 'path'
 
-const SLUGS = ['drift', 'slate', 'folio'] // 동기화 대상(여기 없는 slug 는 안전)
+const SLUGS = ['drift', 'slate', 'folio', 'aura-one', 'vanta-ev', 'ledgr'] // 동기화 대상(여기 없는 slug 는 안전)
 
 let synced = 0
 for (const slug of SLUGS) {

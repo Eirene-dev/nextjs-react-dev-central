@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledgr — 개발자에게 파는 디자인 (스타일 연구)</title>
+<meta name="description" content="스트라이프 랜딩의 디자인 문법(그라디언트 메시 히어로·코드와 마케팅 공존·로고월·문서형 푸터)을 연구한 가상 결제 도구 데모. 가상 브랜드, 실제 자산 미사용." />
+<style>
+  :root {
+    --bg: #0a0a14; --panel: #12121f; --ink: #f5f5fa; --ink-2: #a6a6c0; --line: #26263a;
+    --indigo: #6772e5; --indigo-2: #8b5cf6; --teal: #2dd4bf;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  a { color: inherit; }
+  .study { background: #060610; color: var(--ink-2); font-size: 12px; text-align: center; padding: 8px 16px; border-bottom: 1px solid var(--line); }
+  .study b { color: var(--teal); }
+
+  /* 그라디언트 메시 히어로 (CSS 애니메이션) */
+  .hero { position: relative; overflow: hidden; padding: 100px 0 80px; }
+  .hero .mesh { position: absolute; inset: -30% -10%; z-index: 0; filter: blur(60px); opacity: .55; background:
+      radial-gradient(40% 40% at 20% 30%, var(--indigo) 0%, transparent 60%),
+      radial-gradient(45% 45% at 80% 20%, var(--indigo-2) 0%, transparent 60%),
+      radial-gradient(40% 40% at 60% 80%, var(--teal) 0%, transparent 60%);
+    animation: mesh 14s ease-in-out infinite alternate; }
+  @keyframes mesh { to { transform: translate(-6%, 4%) scale(1.1); } }
+  @media (prefers-reduced-motion: reduce) { .hero .mesh { animation: none; } }
+  .hero .inner { position: relative; z-index: 1; }
+  .hero .badge { display: inline-block; font-family: var(--mono); font-size: 12px; color: var(--teal); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; }
+  .hero h1 { font-size: clamp(40px, 8vw, 80px); font-weight: 800; letter-spacing: -.03em; line-height: 1.02; margin: 18px 0 16px; max-width: 14em; }
+  .hero h1 .g { background: linear-gradient(90deg, var(--indigo), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--ink-2); font-size: clamp(16px, 2.4vw, 20px); max-width: 34em; }
+  .hero .row { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { border-radius: 10px; padding: 12px 20px; font-weight: 600; text-decoration: none; font-size: 15px; }
+  .btn.p { background: var(--indigo); color: #fff; }
+  .btn.s { background: rgba(255,255,255,.06); color: var(--ink); border: 1px solid var(--line); }
+
+  /* 코드와 마케팅 공존 — 탭으로 언어 전환 */
+  .feature { padding: 70px 0; display: grid; grid-template-columns: 1fr 1.1fr; gap: 44px; align-items: center; }
+  @media (max-width: 760px) { .feature { grid-template-columns: 1fr; gap: 26px; } }
+  .feature h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 700; letter-spacing: -.02em; }
+  .feature p { color: var(--ink-2); margin-top: 12px; }
+  .feature ul { margin-top: 16px; list-style: none; display: grid; gap: 8px; }
+  .feature li { color: var(--ink-2); padding-left: 22px; position: relative; }
+  .feature li::before { content: '✓'; position: absolute; left: 0; color: var(--teal); }
+  .codecard { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px -40px rgba(103,114,229,.5); }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); padding: 8px 8px 0; }
+  .tab { background: none; border: none; color: var(--ink-2); font: inherit; font-size: 13px; padding: 8px 14px; border-radius: 8px 8px 0 0; cursor: pointer; }
+  .tab[aria-selected="true"] { background: #0a0a14; color: var(--ink); }
+  pre { margin: 0; padding: 18px 20px; font-family: var(--mono); font-size: 13px; line-height: 1.7; overflow-x: auto; color: #d7d7ec; }
+  .panel-code { display: none; }
+  .panel-code[data-active="true"] { display: block; }
+  .tok-k { color: #c792ea; } .tok-s { color: #c3e88d; } .tok-c { color: #6b7390; } .tok-f { color: #82aaff; }
+
+  /* 로고월 — 가상 회사 워드마크(SVG 텍스트) */
+  .logos { padding: 50px 0; border-top: 1px solid var(--line); text-align: center; }
+  .logos p { color: var(--ink-2); font-size: 13px; letter-spacing: .05em; margin-bottom: 24px; }
+  .logos .row { display: flex; flex-wrap: wrap; gap: 36px 48px; justify-content: center; align-items: center; opacity: .6; }
+  .logos .lg { font-weight: 800; font-size: 22px; letter-spacing: -.02em; color: var(--ink); }
+  .logos .lg span { color: var(--indigo); }
+
+  /* 문서형 푸터 */
+  footer { border-top: 1px solid var(--line); padding: 60px 0 50px; }
+  .fgrid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 30px; }
+  @media (max-width: 700px) { .fgrid { grid-template-columns: 1fr 1fr; } }
+  footer h4 { font-size: 13px; color: var(--ink-2); margin-bottom: 12px; }
+  footer .col a { display: block; color: var(--ink); opacity: .8; font-size: 14px; padding: 4px 0; text-decoration: none; }
+  footer .col a:hover { opacity: 1; color: var(--teal); }
+  footer .brand { font-weight: 800; font-size: 20px; }
+  footer .brand span { color: var(--indigo); }
+  footer .fine { color: var(--ink-2); font-size: 12px; margin-top: 10px; max-width: 26em; }
+</style>
+</head>
+<body>
+  <p class="study">스트라이프 랜딩의 <b>디자인 문법</b>(그라디언트 메시·코드와 마케팅 공존·로고월·문서형 푸터)을 연구한 <b>가상 브랜드</b> 데모 — 실제 로고·제품·카피 미사용</p>
+
+  <header class="hero">
+    <div class="mesh" aria-hidden="true"></div>
+    <div class="wrap inner">
+      <span class="badge">payments_api/v3</span>
+      <h1>결제를, <span class="g">몇 줄의 코드로</span>.</h1>
+      <p>Ledgr는 개발자를 위한 결제 인프라입니다. 카드·계좌이체·정산까지, 하나의 API로.</p>
+      <div class="row"><a class="btn p" href="#">문서 보기</a><a class="btn s" href="#">키 발급</a></div>
+    </div>
+  </header>
+
+  <section class="feature wrap">
+    <div>
+      <h2>읽으면 바로 이해되는 API</h2>
+      <p>SDK는 6개 언어. 복사해 붙이면 그대로 동작하는 예제로 시작하세요.</p>
+      <ul><li>멱등성 키 기본 지원</li><li>웹훅 서명 검증 내장</li><li>테스트·운영 키 분리</li></ul>
+    </div>
+    <div class="codecard">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-lang="js">JavaScript</button>
+        <button class="tab" role="tab" aria-selected="false" data-lang="py">Python</button>
+        <button class="tab" role="tab" aria-selected="false" data-lang="go">Go</button>
+      </div>
+      <div class="panel-code" data-lang="js" data-active="true"><pre><span class="tok-c">// 결제 생성</span>
+<span class="tok-k">const</span> charge = <span class="tok-k">await</span> ledgr.charges.<span class="tok-f">create</span>({
+  amount: <span class="tok-s">12000</span>,
+  currency: <span class="tok-s">'krw'</span>,
+  source: token,
+});</pre></div>
+      <div class="panel-code" data-lang="py"><pre><span class="tok-c"># 결제 생성</span>
+charge = ledgr.charges.<span class="tok-f">create</span>(
+  amount=<span class="tok-s">12000</span>,
+  currency=<span class="tok-s">'krw'</span>,
+  source=token,
+)</pre></div>
+      <div class="panel-code" data-lang="go"><pre><span class="tok-c">// 결제 생성</span>
+charge, _ := ledgr.Charges.<span class="tok-f">Create</span>(&ledgr.ChargeParams{
+  Amount:   <span class="tok-s">12000</span>,
+  Currency: <span class="tok-s">"krw"</span>,
+  Source:   token,
+})</pre></div>
+    </div>
+  </section>
+
+  <section class="logos">
+    <div class="wrap">
+      <p>가상의 팀들이 Ledgr로 정산합니다</p>
+      <div class="row">
+        <span class="lg">Northwind<span>.</span></span>
+        <span class="lg">Pixel<span>Forge</span></span>
+        <span class="lg">한들<span>페이</span></span>
+        <span class="lg">Cobalt<span>OS</span></span>
+        <span class="lg">모먼트<span>랩</span></span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="fgrid">
+        <div class="col">
+          <div class="brand">Ledgr<span>.</span></div>
+          <p class="fine">개발자를 위한 결제 인프라(가상 브랜드 데모). 이 페이지는 디자인 문법 연구용입니다.</p>
+        </div>
+        <div class="col"><h4>제품</h4><a href="#">결제</a><a href="#">정산</a><a href="#">청구</a><a href="#">사기 방지</a></div>
+        <div class="col"><h4>개발자</h4><a href="#">문서</a><a href="#">API 레퍼런스</a><a href="#">SDK</a><a href="#">상태</a></div>
+        <div class="col"><h4>회사</h4><a href="#">소개</a><a href="#">블로그</a><a href="#">채용</a><a href="#">문의</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 코드 탭 전환 — 언어 선택 시 해당 코드 블록만 표시(필요한 만큼의 JS).
+    var tabs = document.querySelectorAll('.tab');
+    var panels = document.querySelectorAll('.panel-code');
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
+        panels.forEach(function (p) { p.setAttribute('data-active', p.dataset.lang === t.dataset.lang ? 'true' : 'false'); });
+      });
+    });
+  </script>
+</body>
+</html>
