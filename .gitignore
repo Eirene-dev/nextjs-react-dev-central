@@ -4,6 +4,10 @@
 /node_modules
 /.pnp
 .pnp.js
+
+# 실험 데모(프레임워크 데모 대비 방어 — 바닐라엔 없음). 소스/배포물은 커밋함.
+demos/*/node_modules
+demos/*/dist
 /.yarn/*
 !/.yarn/releases
 !/.yarn/plugins
