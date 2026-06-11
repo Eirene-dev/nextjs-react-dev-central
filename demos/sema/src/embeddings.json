@@ -1,0 +1,5 @@
+{
+  "model": "gemini-embedding-001",
+  "note": "문서 임베딩 자리표시자. `node scripts/embed.mjs`(GEMINI_API_KEY 필요)를 실행해 vectors 를 채우면 '내 키로 실행' 모드의 코사인 유사도가 동작합니다. 샘플 모드는 이 파일 없이도 동작(녹화 매칭).",
+  "vectors": {}
+}
