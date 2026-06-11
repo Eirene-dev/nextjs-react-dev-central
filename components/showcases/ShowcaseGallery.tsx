@@ -19,12 +19,16 @@ export type AnatomyCardData = {
 
 // 3개 틀로 둘러본다 — 카테고리(도메인)는 카드의 보조 태그로 강등.
 type TierFilter = 'all' | Tier
+// 노출 순서: 해부 우선(이 사이트 정체성 = 판단의 기록) → 실험 → 실물.
 const TIERS: { key: TierFilter; label: string; desc: string }[] = [
   { key: 'all', label: '전체', desc: '' },
-  { key: 'built', label: '실물', desc: '직접 만들어 운영 중인 것' },
   { key: 'anatomy', label: '해부', desc: '만들며 내린 결정의 기록' },
   { key: 'experiment', label: '실험', desc: '웹과 AI를 재해석하는 실험' },
+  { key: 'built', label: '실물', desc: '직접 만들어 운영 중인 것' },
 ]
+
+// '전체' 탭 tier 우선순위(해부는 anatomyItems 로 먼저 렌더 — 실험 > 실물).
+const TIER_RANK: Record<Tier, number> = { anatomy: 0, experiment: 1, built: 2 }
 
 // 틀별 빈 상태 카피(저자 확정).
 const EMPTY: Record<Tier, { title: string; sub?: string }> = {
@@ -37,9 +41,10 @@ export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCar
   const [active, setActive] = useState<TierFilter>('all')
 
   // built/experiment 데이터(showcasesData) + anatomy(컬렉션) 를 틀 기준으로 합친다.
+  // '전체'에선 tier 우선순위(실험 > 실물)로 정렬 — 해부는 anatomyItems 로 먼저 렌더.
   const dataItems =
     active === 'all'
-      ? showcasesData
+      ? [...showcasesData].sort((a, b) => TIER_RANK[a.tier] - TIER_RANK[b.tier])
       : active === 'anatomy'
         ? []
         : showcasesData.filter((s) => s.tier === active)
@@ -89,13 +94,7 @@ export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCar
         </div>
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
-          {dataItems.map((s) =>
-            s.tier === 'experiment' ? (
-              <ExperimentCard key={s.slug} s={s} />
-            ) : (
-              <BuiltCard key={s.slug} s={s} />
-            )
-          )}
+          {/* 해부 우선 노출(정체성) → 실험 → 실물 */}
           {anatomyItems.map((a) => (
             <AnatomyCard
               key={a.slug}
@@ -106,6 +105,13 @@ export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCar
               question={a.question}
             />
           ))}
+          {dataItems.map((s) =>
+            s.tier === 'experiment' ? (
+              <ExperimentCard key={s.slug} s={s} />
+            ) : (
+              <BuiltCard key={s.slug} s={s} />
+            )
+          )}
         </div>
       )}
 
