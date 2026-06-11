@@ -91,7 +91,7 @@ export default async function Main() {
                 <i />
                 <i />
               </span>
-              <span>5+ 웹 데모 · 핀테크 실전 경험</span>
+              <span>핀테크 실전 경험 · 직접 내린 결정들</span>
             </div>
           </div>
           <DemoWidget />
