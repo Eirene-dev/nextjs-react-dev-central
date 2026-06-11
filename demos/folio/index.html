@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Folio — 갤러리 (Cross-document View Transitions)</title>
+<meta name="description" content="정적 HTML 페이지 간 이동에서 카드 이미지가 상세 히어로로 모핑. @view-transition(navigation) 기반, JS 0줄. 미지원 시 일반 링크로 폴백." />
+<style>
+  :root {
+    --bg: #faf8f4; --ink: #1c1a17; --ink-2: #6a655c; --line: #e6e1d8; --accent: #b5462f;
+    --serif: 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  /* Cross-document view transitions opt-in (JS 0). 미지원 브라우저는 무시 → 일반 이동. */
+  @view-transition { navigation: auto; }
+
+  .fallback { display: none; background: #2a2622; color: #f0e9dd; text-align: center; padding: 9px 16px; font-size: 13px; }
+  @supports not (view-transition-name: --x) { .fallback { display: block; } }
+
+  header { padding: 72px 0 40px; }
+  header .kicker { font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); }
+  header h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 8vw, 76px); line-height: 1.02; letter-spacing: -.02em; margin: 12px 0 14px; }
+  header p { color: var(--ink-2); max-width: 32em; font-size: 16px; word-break: keep-all; }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 26px; padding-bottom: 90px; }
+  .work { display: block; }
+  .work .frame { aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; position: relative; box-shadow: 0 20px 50px -28px rgba(28,26,23,.45); transition: transform .25s ease; }
+  .work:hover .frame { transform: translateY(-4px); }
+  .work .frame > div { position: absolute; inset: 0; }
+  .work h2 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin-top: 14px; letter-spacing: -.01em; }
+  .work .meta { color: var(--ink-2); font-size: 13px; margin-top: 2px; }
+
+  /* 각 작품 이미지에 고유 view-transition-name → 상세 히어로와 모핑 */
+  .art-a { view-transition-name: art-a; }
+  .art-b { view-transition-name: art-b; }
+  .art-c { view-transition-name: art-c; }
+  .g-a { background: linear-gradient(135deg, #b5462f, #f0a04b 70%, #7a2a1a); }
+  .g-b { background: linear-gradient(135deg, #2f4b8a, #6ea0d8 70%, #1a2a5a); }
+  .g-c { background: linear-gradient(135deg, #2f6b4a, #a8d06e 70%, #1a3a2a); }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 60px; color: var(--ink-2); font-size: 12.5px; font-family: ui-monospace, monospace; }
+</style>
+</head>
+<body>
+  <p class="fallback">이 브라우저는 교차 문서 View Transition을 지원하지 않습니다 — 링크 이동은 정상 동작하며, 페이지 전환 모핑 효과만 생략됩니다.</p>
+  <div class="wrap">
+    <header>
+      <span class="kicker">Folio Studio</span>
+      <h1>작업 갤러리</h1>
+      <p>목록에서 작품을 누르면, 카드 이미지가 다음 페이지의 히어로로 이어집니다. 페이지가 바뀌는데도 끊기지 않는 한 장면처럼.</p>
+    </header>
+
+    <div class="gallery">
+      <a class="work" href="work-a.html">
+        <div class="frame"><div class="art-a g-a"></div></div>
+        <h2>붉은 지평</h2><p class="meta">브랜드 아이덴티티 · 2026</p>
+      </a>
+      <a class="work" href="work-b.html">
+        <div class="frame"><div class="art-b g-b"></div></div>
+        <h2>푸른 정적</h2><p class="meta">에디토리얼 · 2025</p>
+      </a>
+      <a class="work" href="work-c.html">
+        <div class="frame"><div class="art-c g-c"></div></div>
+        <h2>초록 결</h2><p class="meta">패키지 · 2025</p>
+      </a>
+    </div>
+
+    <footer>Folio Studio · @view-transition(navigation: auto) · JS 0줄</footer>
+  </div>
+</body>
+</html>

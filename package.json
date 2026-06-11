@@ -13,6 +13,7 @@
     "analyze": "velite && cross-env ANALYZE=true next build",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "demo:sync": "node scripts/sync-demos.mjs",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts"
   },
   "dependencies": {
