@@ -3,6 +3,7 @@ import Link from '@/components/Link'
 import DemoWidget from '@/components/home/DemoWidget'
 import { listPublishedEssays } from '@/lib/essay-drafts'
 import { allAnatomy } from '@/lib/content'
+import showcasesData, { type ExperimentShowcase } from '@/data/showcasesData'
 
 const ym = (d: string | number | Date) => {
   const dt = new Date(d)
@@ -61,6 +62,11 @@ export default async function Main() {
   const essays = (await listPublishedEssays()).slice(0, 3)
   // 해부 최신 6편 — exhibit 내림차순(빌드타임 데이터). slice 로 향후 증가 대비.
   const anatomy = [...allAnatomy].sort((a, b) => b.exhibit - a.exhibit).slice(0, 6)
+  // 실험 미리보기 6편 — 세 갈래(웹 플랫폼·스타일 연구·AI×웹) 균형 큐레이션(결정적).
+  const EXPERIMENT_HOME = ['drift', 'slate', 'aura-one', 'vanta-ev', 'pilot', 'relay']
+  const experiments = EXPERIMENT_HOME.map((slug) =>
+    showcasesData.find((s) => s.slug === slug && s.tier === 'experiment')
+  ).filter((s): s is ExperimentShowcase => Boolean(s))
 
   return (
     <div className="home">
@@ -161,6 +167,36 @@ export default async function Main() {
         <div style={{ textAlign: 'center', marginTop: 36 }}>
           <Link className="btn btn-p" href="/showcases/anatomy">
             해부 전체 보기 <ArrowRight />
+          </Link>
+        </div>
+      </section>
+
+      {/* experiment preview — 실험(세 갈래 6편) */}
+      <section className="sec" id="experiments">
+        <div className="s-head">
+          <Pill>Experiments</Pill>
+          <h2>실험</h2>
+          <p>최신 웹과 AI로 만든 인터랙티브 실험.</p>
+        </div>
+        <div className="exp-grid">
+          {experiments.map((e) => (
+            <Link className="ecard" href={e.href} key={e.slug}>
+              <span className="pic">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={e.thumb} alt={e.title} loading="lazy" />
+              </span>
+              <span className="b">
+                <span className="cat">{e.category}</span>
+                <h3>{e.title}</h3>
+                <p className="q">{e.blurb}</p>
+                <span className="go">데모 보기 →</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 36 }}>
+          <Link className="btn btn-p" href="/showcases">
+            실험 전체 보기 <ArrowRight />
           </Link>
         </div>
       </section>
