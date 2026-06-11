@@ -141,6 +141,38 @@ const showcasesData: Showcase[] = [
     thumb: '/static/showcases/ledgr.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/ledgr',
   },
+
+  // ── 실험(experiment) — AI×웹 BYOA 3종(Vite+React, 샘플 모드 기본 + 방문자 키) ──
+  {
+    slug: 'pilot',
+    tier: 'experiment',
+    title: 'Pilot',
+    blurb: '자연어가 UI를 조작 — Gemini function calling으로 테마·정렬·필터·스크롤을 실제로 바꿉니다. 샘플 모드 기본, 키 BYOA.',
+    category: 'AI×웹',
+    href: '/showcases/pilot/index.html',
+    thumb: '/static/showcases/pilot.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/pilot',
+  },
+  {
+    slug: 'canvasly',
+    tier: 'experiment',
+    title: 'Canvasly',
+    blurb: '스트리밍 Generative UI — AI의 structured output을 카드·타임라인·체크리스트로 점진 조립. 샘플 모드 기본, 키 BYOA.',
+    category: 'AI×웹',
+    href: '/showcases/canvasly/index.html',
+    thumb: '/static/showcases/canvasly.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/canvasly',
+  },
+  {
+    slug: 'formig',
+    tier: 'experiment',
+    title: 'Formig',
+    blurb: '자연어 한 줄이 폼을 채운다 — AI 구조화 추출로 예약 폼 필드를 순차 채움. 샘플 모드 기본, 키 BYOA.',
+    category: 'AI×웹',
+    href: '/showcases/formig/index.html',
+    thumb: '/static/showcases/formig.png',
+    source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/formig',
+  },
 ]
 
 export default showcasesData
