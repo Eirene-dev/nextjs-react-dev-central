@@ -386,6 +386,84 @@
   font-weight: 600;
 }
 
+/* anatomy preview (판단의 기록) — 홈 전용 경량 카드. 사이트 토큰·Pretendard(세리프/anatomy.css 미사용) */
+.home .anat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.home .acard {
+  display: flex;
+  flex-direction: column;
+  background: hsl(var(--surface-2));
+  border: 1px solid hsl(var(--line));
+  border-radius: 18px;
+  padding: 20px;
+  transition: 0.22s;
+}
+.home .acard:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+  border-color: hsl(var(--coral-soft));
+}
+.home .acard .ex {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-jetbrains-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--coral-2));
+}
+.home .acard .ex::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: hsl(var(--coral));
+  flex: none;
+}
+.home .acard h3 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: hsl(var(--ink));
+  margin: 10px 0 6px;
+  word-break: keep-all;
+}
+.home .acard .q {
+  font-size: 13px;
+  line-height: 1.6;
+  color: hsl(var(--ink-2));
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.home .acard .go {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--ink-3));
+}
+.home .acard:hover h3,
+.home .acard:hover .go {
+  color: hsl(var(--coral-2));
+}
+@media (max-width: 880px) {
+  .home .anat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 540px) {
+  .home .anat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* essays preview */
 .home .elist {
   max-width: 760px;
