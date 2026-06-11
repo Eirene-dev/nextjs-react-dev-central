@@ -11,6 +11,7 @@ const SLUGS = [
   'drift', 'slate', 'folio', // 배치 1 — 바닐라 웹 플랫폼
   'aura-one', 'vanta-ev', 'ledgr', // 배치 2 — 바닐라 스타일 연구
   'pilot', 'canvasly', 'formig', // 배치 3 — Vite+React AI×웹(BYOA)
+  'docent', 'relay', 'sema', // 배치 4 — Vite+React AI×웹 2차(BYOA)
 ]
 
 let synced = 0
