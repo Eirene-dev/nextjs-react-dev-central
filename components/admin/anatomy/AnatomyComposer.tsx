@@ -8,6 +8,8 @@ import {
   toJson,
   validate,
   SLUG_RE,
+  buildByoaiPrompt,
+  parseCanonical,
 } from '@/lib/anatomy-mdx'
 
 // 해부 컴포저 — 폼 → 완성 MDX/JSON 변환 도구. 저장은 그대로 git(MDX). DB 없음.
@@ -67,6 +69,13 @@ export default function AnatomyComposer({
   const [checks, setChecks] = useState<boolean[]>(CHECKLIST.map(() => false))
   const [copied, setCopied] = useState<'' | 'mdx' | 'json'>('')
 
+  // BYOAI(AI로 초안 잡기) 상태
+  const [byoaiOpen, setByoaiOpen] = useState(true)
+  const [context, setContext] = useState('')
+  const [pasteText, setPasteText] = useState('')
+  const [injectErrors, setInjectErrors] = useState<string[]>([])
+  const [promptCopied, setPromptCopied] = useState(false)
+
   const set = <K extends keyof ComposerForm>(k: K, v: ComposerForm[K]) =>
     setForm((f) => ({ ...f, [k]: v }))
 
@@ -113,13 +122,135 @@ export default function AnatomyComposer({
     URL.revokeObjectURL(url)
   }
 
+  // BYOAI: 프롬프트(컨텍스트 반영) + 폼이 비어있지 않은지(덮어쓰기 confirm 용)
+  const byoaiPrompt = useMemo(() => buildByoaiPrompt(context), [context])
+  const formDirty = useMemo(() => {
+    const f = form
+    return !!(
+      f.title || f.slug || f.category || f.question || f.result || f.decisionLabel ||
+      f.decisionSub || f.ledgerClaude || f.ledgerMe || f.date || f.rationale ||
+      f.options.some((o) => o.title || o.tradeoff)
+    )
+  }, [form])
+
+  const copyPrompt = async () => {
+    try {
+      await navigator.clipboard.writeText(byoaiPrompt)
+      setPromptCopied(true)
+      setTimeout(() => setPromptCopied(false), 1500)
+    } catch {
+      /* noop */
+    }
+  }
+
+  const injectFromPaste = () => {
+    const res = parseCanonical(pasteText, form.exhibit)
+    if (!res.ok || !res.form) {
+      setInjectErrors(res.errors)
+      return
+    }
+    if (formDirty && !window.confirm('현재 폼 내용을 덮어씁니다. 계속할까요?')) return
+    setForm(res.form)
+    setInjectErrors(res.errors)
+  }
+
   const btn =
     'rounded-lg bg-coral px-3.5 py-2 text-sm font-bold text-white transition-colors hover:bg-coral-2 disabled:cursor-not-allowed disabled:opacity-40'
   const btnGhost =
     'rounded-lg border border-line bg-surface px-3.5 py-2 text-sm font-bold text-ink-2 transition-colors hover:border-coral-soft hover:text-ink disabled:cursor-not-allowed disabled:opacity-40'
 
   return (
-    <div className="mt-6 grid gap-5 lg:grid-cols-2">
+    <>
+      {/* ── AI로 초안 잡기 (BYOAI) — 폼 상단, 접이식 ── */}
+      <section className="mt-6 rounded-xl border border-dashed border-coral-soft bg-surface-2 p-4 sm:p-5">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-extrabold tracking-tight text-ink">
+            AI로 초안 잡기 <span className="font-normal text-ink-3">— 선택</span>
+          </h2>
+          <button
+            type="button"
+            onClick={() => setByoaiOpen((v) => !v)}
+            className="text-[12px] font-semibold text-ink-3 hover:text-coral-2"
+          >
+            {byoaiOpen ? '접기 ▲' : '펼치기 ▼'}
+          </button>
+        </div>
+
+        {byoaiOpen && (
+          <div className="mt-3 space-y-4">
+            <p className="text-[12.5px] leading-relaxed text-ink-2">
+              프롬프트 복사 → 내 AI와 대화 → 받은 JSON 붙여넣기 → 폼에 채우기 → 검토·수정 → (기존) 커밋
+              <br />
+              <span className="font-semibold text-coral-2">
+                AI는 구조화만 — 판단과 근거는 직접 확인·보강하세요.
+              </span>
+            </p>
+
+            <div className="grid gap-4 lg:grid-cols-2">
+              {/* 프롬프트 */}
+              <div className="space-y-2">
+                <label className={LABEL} htmlFor="ac-ctx">
+                  무슨 결정이었나 <span className="font-normal text-ink-3">— 선택, 비워도 됨</span>
+                </label>
+                <input
+                  id="ac-ctx"
+                  className={FIELD}
+                  value={context}
+                  onChange={(e) => setContext(e.target.value)}
+                  placeholder="예: 댓글 삭제 시 답글 처리"
+                />
+                <button type="button" onClick={copyPrompt} className={btn}>
+                  {promptCopied ? '복사됨 ✓' : '프롬프트 복사'}
+                </button>
+                <pre className="max-h-[220px] overflow-auto rounded-lg border border-line bg-surface p-3 font-mono text-[11.5px] leading-relaxed text-ink-2">
+                  {byoaiPrompt}
+                </pre>
+              </div>
+
+              {/* 붙여넣기 → 주입 */}
+              <div className="space-y-2">
+                <label className={LABEL} htmlFor="ac-paste">
+                  받은 JSON 붙여넣기
+                </label>
+                <textarea
+                  id="ac-paste"
+                  rows={9}
+                  className={`${FIELD} resize-y font-mono text-[12px]`}
+                  value={pasteText}
+                  onChange={(e) => setPasteText(e.target.value)}
+                  placeholder='{ "title": "...", "options": [ … ], "decision": { … }, … }'
+                />
+                <button
+                  type="button"
+                  onClick={injectFromPaste}
+                  disabled={!pasteText.trim()}
+                  className={btn}
+                >
+                  폼에 채우기
+                </button>
+              </div>
+            </div>
+
+            {/* 주입 결과 요약 */}
+            {injectErrors.length > 0 && (
+              <div className="rounded-lg border border-coral-soft bg-coral/5 p-3">
+                <p className="text-[12.5px] font-bold text-coral-2">
+                  주입 결과 — AI가 비웠거나 확인이 필요한 항목
+                </p>
+                <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-[12px] text-ink-2">
+                  {injectErrors.map((e, i) => (
+                    <li key={i} className={e.startsWith('★') ? 'font-bold text-coral-2' : ''}>
+                      {e}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
       {/* ── 입력 ── */}
       <div className="space-y-4">
         <Section title="기본">
@@ -440,5 +571,6 @@ export default function AnatomyComposer({
         </div>
       </div>
     </div>
+    </>
   )
 }
