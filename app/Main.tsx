@@ -35,8 +35,8 @@ const FEATURES = [
     icon: <path d="M4 4h16v16H4zM8 9h8M8 13h5" />,
   },
   {
-    title: '최신 웹 데모',
-    desc: '정보형·게시판·커머스 등 다양한 웹 데모를 카테고리별로.',
+    title: '결정의 해부',
+    desc: '해부·실험·실물 — 무엇을 왜 골랐는지.',
     icon: (
       <>
         <rect x="3" y="3" width="18" height="18" rx="3" />
@@ -75,7 +75,7 @@ export default async function Main() {
               <span className="g">판단과 취향</span>을 기록합니다.
             </h1>
             <p className="lead">
-              튜토리얼이 아니라, 무엇을 왜 골랐는지. 직접 기획한 웹 데모와, 제 생각으로 쓴 글들.
+              튜토리얼이 아니라, 무엇을 왜 골랐는지. 만들며 내린 결정들과, 제 생각으로 쓴 글들.
             </p>
             <div className="cta">
               <Link className="btn btn-p" href="/showcases">
@@ -186,12 +186,12 @@ export default async function Main() {
       {/* cta banner */}
       <section className="banner">
         <div className="box">
-          <h2>직접 만든 데모를 둘러보세요</h2>
-          <p>정보형부터 AI 통합까지 — 카테고리로 탐색하는 standalone 데모 모음.</p>
+          <h2>세 가지 틀로 둘러보세요</h2>
+          <p>해부·실험·실물 — 내린 결정, 재해석한 실험, 운영 중인 것.</p>
           <Link className="btn btn-p" href="/showcases">
             쇼케이스 전체 보기 <ArrowRight />
           </Link>
-          <div className="soon">lab.mindvest.ai 연동 · 곧 공개 예정</div>
+          <div className="soon">lab.mindvest.ai · 곧 공개</div>
         </div>
       </section>
     </div>
