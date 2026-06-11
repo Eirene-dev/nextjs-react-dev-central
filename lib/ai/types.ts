@@ -1,9 +1,10 @@
 // 클라이언트 안전 — AI 제공자 타입/목록(서버 키·SDK import 없음).
-export type AiProvider = 'openai' | 'anthropic'
+export type AiProvider = 'openai' | 'anthropic' | 'gemini'
 
 export const AI_PROVIDERS: { value: AiProvider; label: string }[] = [
   { value: 'anthropic', label: 'Anthropic' },
   { value: 'openai', label: 'OpenAI' },
+  { value: 'gemini', label: 'Gemini' },
 ]
 
 export const DEFAULT_PROVIDER: AiProvider = 'anthropic'
