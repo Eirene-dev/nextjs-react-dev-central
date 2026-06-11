@@ -2,6 +2,7 @@ import 'css/home.css'
 import Link from '@/components/Link'
 import DemoWidget from '@/components/home/DemoWidget'
 import { listPublishedEssays } from '@/lib/essay-drafts'
+import { allAnatomy } from '@/lib/content'
 
 const ym = (d: string | number | Date) => {
   const dt = new Date(d)
@@ -55,53 +56,11 @@ const FEATURES = [
   },
 ]
 
-const SHOWCASES = [
-  {
-    cat: 'AI 통합',
-    title: 'AI 어시스턴트 인터페이스',
-    svg: (
-      <>
-        <circle cx="50" cy="42" r="13" />
-        <path d="M31 73c0-10 8-17 19-17s19 7 19 17" opacity=".7" />
-      </>
-    ),
-  },
-  {
-    cat: '정보형',
-    title: '소개형 랜딩',
-    svg: (
-      <>
-        <circle cx="50" cy="50" r="36" opacity=".5" />
-        <rect x="34" y="46" width="32" height="8" rx="2" stroke="#fff" />
-      </>
-    ),
-  },
-  {
-    cat: '게시판',
-    title: '커뮤니티 게시판',
-    svg: (
-      <>
-        <rect x="26" y="28" width="48" height="9" rx="2" />
-        <rect x="26" y="46" width="48" height="9" rx="2" opacity=".7" />
-        <rect x="26" y="64" width="30" height="9" rx="2" opacity=".5" />
-      </>
-    ),
-  },
-  {
-    cat: '커머스',
-    title: '미니 스토어프런트',
-    svg: (
-      <>
-        <rect x="28" y="28" width="18" height="24" rx="3" />
-        <rect x="54" y="28" width="18" height="24" rx="3" opacity=".7" />
-      </>
-    ),
-  },
-]
-
 export default async function Main() {
   // 발행된 에세이만 라이브로(최대 3). 없으면 graceful "곧 공개".
   const essays = (await listPublishedEssays()).slice(0, 3)
+  // 해부 최신 6편 — exhibit 내림차순(빌드타임 데이터). slice 로 향후 증가 대비.
+  const anatomy = [...allAnatomy].sort((a, b) => b.exhibit - a.exhibit).slice(0, 6)
 
   return (
     <div className="home">
@@ -182,28 +141,27 @@ export default async function Main() {
         </div>
       </section>
 
-      {/* showcases preview */}
-      <section className="sec" id="showcases">
+      {/* anatomy preview — 판단의 기록(해부 최신 6편) */}
+      <section className="sec" id="anatomy">
         <div className="s-head">
-          <Pill>Showcases</Pill>
-          <h2>최신 웹 데모</h2>
-          <p>무엇을 왜 만들지는 제가 정합니다 — 최신 웹을 빠르게 실험한 데모들. 카테고리로 둘러보세요.</p>
+          <Pill>Anatomy</Pill>
+          <h2>판단의 기록</h2>
+          <p>튜토리얼이 아니라, 무엇을 왜 골랐는지 — 이 사이트를 만들며 내린 결정들.</p>
         </div>
-        <div className="grid4">
-          {SHOWCASES.map((s) => (
-            <Link className="uc" href="/showcases" key={s.title}>
-              <div className="pic">
-                <svg viewBox="0 0 100 100" fill="none" stroke="hsl(var(--coral-soft))" strokeWidth="1.6">
-                  {s.svg}
-                </svg>
-              </div>
-              <div className="b">
-                <span className="cat">{s.cat}</span>
-                <h3>{s.title}</h3>
-                <span className="go">데모 보기 →</span>
-              </div>
+        <div className="anat-grid">
+          {anatomy.map((a) => (
+            <Link className="acard" href={`/showcases/anatomy/${a.slug}`} key={a.slug}>
+              <span className="ex">전시 {String(a.exhibit).padStart(2, '0')}</span>
+              <h3>{a.title}</h3>
+              <p className="q">{a.question}</p>
+              <span className="go">읽어 보기 →</span>
             </Link>
           ))}
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 36 }}>
+          <Link className="btn btn-p" href="/showcases/anatomy">
+            해부 전체 보기 <ArrowRight />
+          </Link>
         </div>
       </section>
 
