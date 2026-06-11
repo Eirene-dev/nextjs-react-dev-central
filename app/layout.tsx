@@ -3,7 +3,8 @@ import 'pliny/search/algolia.css'
 
 import { JetBrains_Mono } from 'next/font/google'
 // import { Analytics, AnalyticsConfig } from 'pliny/analytics.js'
-import { SearchProvider, SearchConfig } from 'pliny/search/index.js'
+// 사이트 검색 — pliny KBarSearchProvider 대체(에세이+해부 런타임 인덱스, 코랄·한글 커스텀).
+import SearchProvider from '@/components/search/SearchProvider'
 import Header from '@/components/Header'
 import SectionContainer from '@/components/SectionContainer'
 import Footer from '@/components/Footer'
@@ -90,7 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProviders>
           {/* 글로벌 셸: Header/Footer 는 풀폭(자체 내부 wrap), 본문만 SectionContainer(1180px) */}
           <SessionProviders>
-            <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
+            <SearchProvider>
               <div className="flex min-h-screen flex-col">
                 <Header />
                 <main className="mb-auto">
