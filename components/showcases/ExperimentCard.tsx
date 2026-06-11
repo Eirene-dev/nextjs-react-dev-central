@@ -2,7 +2,6 @@ import type { ExperimentShowcase } from '@/data/showcasesData'
 
 // 실험(experiment) 카드 — 자체완결 정적 데모. category 는 보조 태그.
 // stretched-link: 카드 전체 = 데모 링크(절대 오버레이). source 있으면 "소스 보기"는 그 위(z)의 독립 링크.
-// 정직 라벨: mock(소스 없음)에만 노출 — 소스 공개 플랫폼 데모는 blurb 가 제작/기술을 이미 명시.
 export default function ExperimentCard({ s }: { s: ExperimentShowcase }) {
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:-translate-y-1 hover:border-coral-soft hover:shadow-soft">
@@ -24,9 +23,6 @@ export default function ExperimentCard({ s }: { s: ExperimentShowcase }) {
         </span>
         <h3 className="mt-1 text-lg font-bold tracking-tight text-ink">{s.title}</h3>
         <p className="mt-1 text-sm text-ink-2">{s.blurb}</p>
-        {!s.source && (
-          <p className="mt-2 text-[11.5px] text-ink-3">Claude Code와 페어로 만든 인터랙티브 mock</p>
-        )}
         <div className="mt-3 flex items-center gap-4">
           <span className="text-sm font-semibold text-ink-3 group-hover:text-coral-2">데모 보기 →</span>
           {s.source && (

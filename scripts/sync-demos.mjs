@@ -1,6 +1,6 @@
 // 실험 데모 동기화 — demos/{slug}/ → public/showcases/{slug}/ (단방향, demos 가 source of truth).
-// ★ 화이트리스트만 처리. 기존 데모(ai-assistant/storefront/landing)는 demos/ 에 원본이 없으므로
-//    이 스크립트가 절대 건드리지 않는다. 전체 미러링(public 통째 삭제) 금지 — slug 폴더 단위로만.
+// ★ 화이트리스트만 처리. 목록에 없는 slug 는 절대 건드리지 않는다.
+//    전체 미러링(public 통째 삭제) 금지 — slug 폴더 단위로만.
 // 타입 분기: demos/{slug}/package.json 있으면 React/Vite(npm install + build → dist 복사),
 //            없으면 바닐라(폴더 그대로 복사). React 데모는 vite base:'./' 로 상대 경로 서빙.
 import { cpSync, mkdirSync, existsSync, rmSync } from 'fs'

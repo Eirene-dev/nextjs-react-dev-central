@@ -1,7 +1,7 @@
 // 쇼케이스 갤러리 단일 소스. 3개 틀(tier)로 재편:
 //   built      = 실물 — 직접 만들어 운영 중인 제품(외부 링크 + 핵심 판단 3줄)
 //   anatomy    = 해부 — 이 사이트를 만들며 내린 결정의 기록(배치 2에서 Velite 컬렉션으로 합류 예정)
-//   experiment = 실험 — 웹·AI를 재해석한 인터랙티브 mock(public/ 의 self-contained 정적 데모)
+//   experiment = 실험 — 웹·AI를 재해석한 자체완결 정적 데모(public/ 의 self-contained, 소스 공개)
 // category 는 필터가 아니라 카드의 보조 태그로만 쓴다.
 
 export type Tier = 'built' | 'anatomy' | 'experiment'
@@ -18,7 +18,7 @@ export interface ExperimentShowcase extends ShowcaseBase {
   tier: 'experiment'
   href: string
   thumb: string
-  source?: string // 공개 소스 링크(GitHub). 있으면 카드에 "소스 보기" 노출. 기존 mock 3종은 없음.
+  source?: string // 공개 소스 링크(GitHub). 있으면 카드에 "소스 보기" 노출.
 }
 
 // 실물 — 운영 중인 제품. 외부 링크(새 탭) + 스크린샷 + 핵심 판단 3줄.
@@ -48,35 +48,6 @@ const showcasesData: Showcase[] = [
   //     '직접 운영하며 배운 것 — 한 줄',
   //   ],
   // },
-
-  // ── 실험(experiment) — 기존 mock 데모 3종(브랜드명으로 표기) ──
-  {
-    slug: 'ai-assistant',
-    tier: 'experiment',
-    title: 'Lumina',
-    blurb: 'AI 어시스턴트 인터페이스 — 스트리밍 챗과 대화 히스토리·툴 패널',
-    category: 'AI 통합',
-    href: '/showcases/ai-assistant/index.html',
-    thumb: '/static/showcases/ai-assistant.png',
-  },
-  {
-    slug: 'storefront',
-    tier: 'experiment',
-    title: '새두 Store',
-    blurb: '미니 커머스 스토어프런트 — 제품 그리드·카테고리 필터·장바구니 드로어',
-    category: '커머스',
-    href: '/showcases/storefront/index.html',
-    thumb: '/static/showcases/storefront.png',
-  },
-  {
-    slug: 'landing',
-    tier: 'experiment',
-    title: 'Tempo',
-    blurb: '소개형 랜딩 — 히어로·가격 토글·FAQ 아코디언, 자체 브랜드 테마',
-    category: '정보형',
-    href: '/showcases/landing/index.html',
-    thumb: '/static/showcases/landing.png',
-  },
 
   // ── 실험(experiment) — 최신 웹 플랫폼 데모 3종(바닐라, 소스 공개) ──
   {
