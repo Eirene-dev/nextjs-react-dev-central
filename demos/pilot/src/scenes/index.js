@@ -4,8 +4,10 @@ import { catalog } from './catalog.jsx'
 import { dashboard } from './dashboard.jsx'
 import { form } from './form.jsx'
 import { style } from './style.jsx'
+import { motion } from './motion.jsx'
+import { doc } from './doc.jsx'
 
-export const SCENES = [catalog, dashboard, form, style]
+export const SCENES = [catalog, dashboard, form, style, motion, doc]
 
 // Gemini 에 넘길 도구 union: 전역 THEME_TOOL + 모든 scene 의 (접두사) 도구.
 export const ALL_TOOLS = [THEME_TOOL, ...SCENES.flatMap((s) => s.tools)]
@@ -42,6 +44,8 @@ export const SAMPLES = [
   { label: '범례 숨기고 막대로', calls: [{ name: 'dash_toggle_legend', args: { show: false } }, { name: 'dash_set_chart_type', args: { type: 'bar' } }] },
   { label: '프로 요금제 선택하고 검증', calls: [{ name: 'form_select_plan', args: { plan: 'pro' } }, { name: 'form_validate', args: {} }] },
   { label: '둥근 모서리에 글꼴 크게', calls: [{ name: 'style_set_radius', args: { size: 'round' } }, { name: 'style_set_font_scale', args: { scale: 'large' } }] },
+  { label: '가운데 천천히 떠다니게', calls: [{ name: 'motion_animate', args: { target: 'center', type: 'float' } }, { name: 'motion_set_speed', args: { target: 'center', speed: 'slow' } }] },
+  { label: '셋째 줄 인용구로 바꾸고 가운데', calls: [{ name: 'doc_set_block', args: { index: 3, type: 'quote' } }, { name: 'doc_set_align', args: { index: 3, align: 'center' } }] },
 ]
 // 칩(종류 혼합) — 히어로 칩을 맨 앞에.
 export const CHIPS = SAMPLES.map((s) => s.label)

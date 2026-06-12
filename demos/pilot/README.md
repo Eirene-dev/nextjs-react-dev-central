@@ -3,7 +3,7 @@
 자연어 명령을 **Gemini function calling**으로 받아 실제 DOM/상태를 바꾸는 가상 데모.
 
 ## 아키텍처
-- Vite + React. **scene 레지스트리**(`src/scenes/`) — 각 패널이 `{ tools, initialState, render, onToolCall }`를 들고 있다. 현재 패널: **상품 카탈로그 · 대시보드 · 가입 폼 · 스타일 스튜디오**(`SCENES`에 등록하면 `ALL_TOOLS`/`TOOL_OWNER`/픽스처 union에 자동 편입).
+- Vite + React. **scene 레지스트리**(`src/scenes/`) — 각 패널이 `{ tools, initialState, render, onToolCall }`를 들고 있다. 현재 패널: **상품 카탈로그 · 대시보드 · 가입 폼 · 스타일 스튜디오 · 모션 스튜디오 · 문서 편집기**(6패널, `SCENES`에 등록하면 `ALL_TOOLS`/`TOOL_OWNER`/픽스처 union에 자동 편입).
 - ★ **한 캔버스**: 탭 없음. 모든 패널을 **한 화면에 동시 렌더**(데스크톱 2열·모바일 1열). 위 단일 명령창이 전체를 조종한다.
 - ★ **전역 함수 라우팅**: Gemini tools = 전역 `set_theme` + 모든 패널 도구의 **union**(`ALL_TOOLS`). 도구 이름은 **전역 유일**(`catalog_*`/`dash_*` 접두사). 응답의 `functionCall`을 `TOOL_OWNER[name]`로 소유 패널에 라우팅 → 그 패널 슬라이스만 갱신. 미지의 이름은 무시(graceful).
 - ★ **다중 함수 호출**: 한 응답의 `functionCall`을 **전부 배열로** 받아(`gemini.js`) **순차 적용**(`App.jsx`의 `for (const c of calls)`). 한 문장이 **여러 패널 + 테마**에 걸친다(히어로 칩: theme + catalog_sort_by + dash_highlight_quarter).
