@@ -1,6 +1,4 @@
-import { THEME_TOOL } from './shared.js'
-
-// 장면 B — 대시보드(신규). KPI 카드 + 경량 SVG 차트(라이브러리 없음) + 테마.
+// 장면 B — 대시보드. 도구 이름은 전역 유일(dash_ 접두사). 경량 SVG 차트(라이브러리 없음).
 const KPIS = [
   { label: '매출', value: '₩128.4M', delta: '+12.4%' },
   { label: '주문', value: '3,210', delta: '+5.1%' },
@@ -21,13 +19,11 @@ function Chart({ chartType, highlight, range, legend }) {
   const plotH = H - 2 * PADY
   const hi = QIDX[highlight] ?? -1
   const y = (v) => H - PADY - (v / max) * plotH
-  // 선/영역: 점 좌표(가로 전폭 분포)
   const px = (i) => (n === 1 ? W / 2 : PADX + (i * (W - 2 * PADX)) / (n - 1))
   const pts = values.map((v, i) => `${px(i)},${y(v)}`).join(' ')
 
   return (
     <svg className="chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="분기 차트">
-      {/* 베이스라인 */}
       <line x1={PADX} y1={H - PADY} x2={W - PADX} y2={H - PADY} stroke="var(--line)" strokeWidth="1" />
       {chartType === 'bar' &&
         values.map((v, i) => {
@@ -48,7 +44,6 @@ function Chart({ chartType, highlight, range, legend }) {
           ))}
         </>
       )}
-      {/* x축 라벨 */}
       {labels.map((l, i) => {
         const cx = chartType === 'bar' ? PADX + (i + 0.5) * ((W - 2 * PADX) / n) : px(i)
         return <text key={i} x={cx} y={H - 8} textAnchor="middle" fontSize="11" fill="var(--ink2)">{l}</text>
@@ -67,36 +62,21 @@ export const dashboard = {
   id: 'dashboard',
   label: '대시보드',
   tools: [
-    THEME_TOOL,
-    { name: 'set_chart_type', description: '차트 종류 변경', parameters: { type: 'object', properties: { type: { type: 'string', enum: ['bar', 'line', 'area'] } }, required: ['type'] } },
-    { name: 'highlight_quarter', description: '특정 분기 강조(none 이면 해제)', parameters: { type: 'object', properties: { quarter: { type: 'string', enum: ['q1', 'q2', 'q3', 'q4', 'none'] } }, required: ['quarter'] } },
-    { name: 'set_range', description: '기간 범위 변경', parameters: { type: 'object', properties: { period: { type: 'string', enum: ['ytd', 'quarter', 'month'] } }, required: ['period'] } },
-    { name: 'toggle_legend', description: '범례 표시/숨김', parameters: { type: 'object', properties: { show: { type: 'boolean' } }, required: ['show'] } },
+    { name: 'dash_set_chart_type', description: '차트 종류 변경', parameters: { type: 'object', properties: { type: { type: 'string', enum: ['bar', 'line', 'area'] } }, required: ['type'] } },
+    { name: 'dash_highlight_quarter', description: '특정 분기 강조(none 이면 해제)', parameters: { type: 'object', properties: { quarter: { type: 'string', enum: ['q1', 'q2', 'q3', 'q4', 'none'] } }, required: ['quarter'] } },
+    { name: 'dash_set_range', description: '대시보드 기간 범위 변경', parameters: { type: 'object', properties: { period: { type: 'string', enum: ['ytd', 'quarter', 'month'] } }, required: ['period'] } },
+    { name: 'dash_toggle_legend', description: '차트 범례 표시/숨김', parameters: { type: 'object', properties: { show: { type: 'boolean' } }, required: ['show'] } },
   ],
   initialState: { chartType: 'bar', highlight: 'none', range: 'ytd', legend: true },
   onToolCall(name, args, dispatch) {
-    if (name === 'set_chart_type') dispatch({ chartType: args.type })
-    else if (name === 'highlight_quarter') dispatch({ highlight: args.quarter || 'none' })
-    else if (name === 'set_range') dispatch({ range: args.period })
-    else if (name === 'toggle_legend') dispatch({ legend: !!args.show })
+    if (name === 'dash_set_chart_type') dispatch({ chartType: args.type })
+    else if (name === 'dash_highlight_quarter') dispatch({ highlight: args.quarter || 'none' })
+    else if (name === 'dash_set_range') dispatch({ range: args.period })
+    else if (name === 'dash_toggle_legend') dispatch({ legend: !!args.show })
   },
-  samples: [
-    { label: '선 그래프로', calls: [{ name: 'set_chart_type', args: { type: 'line' } }] },
-    { label: '월간으로', calls: [{ name: 'set_range', args: { period: 'month' } }] },
-    // 다중 도구
-    { label: '4분기 강조하고 다크모드', calls: [
-      { name: 'highlight_quarter', args: { quarter: 'q4' } },
-      { name: 'set_theme', args: { mode: 'dark' } },
-    ] },
-    { label: '범례 숨기고 막대로', calls: [
-      { name: 'toggle_legend', args: { show: false } },
-      { name: 'set_chart_type', args: { type: 'bar' } },
-    ] },
-  ],
-  chips: ['선 그래프로', '4분기 강조하고 다크모드', '범례 숨기고 막대로'],
   render(state) {
     return (
-      <div className="board">
+      <>
         <div className="kpis">
           {KPIS.map((k) => (
             <div className="kpi" key={k.label}>
@@ -115,7 +95,7 @@ export const dashboard = {
         <div className="chartwrap">
           <Chart {...state} />
         </div>
-      </div>
+      </>
     )
   },
 }

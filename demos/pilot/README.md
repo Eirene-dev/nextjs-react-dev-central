@@ -3,11 +3,13 @@
 자연어 명령을 **Gemini function calling**으로 받아 실제 DOM/상태를 바꾸는 가상 데모.
 
 ## 아키텍처
-- Vite + React. **scene 레지스트리**(`src/scenes/`) — 각 장면이 `{ tools, initialState, render, onToolCall, samples, chips }`를 들고 있고, 탭으로 전환하면 함께 교체된다. 현재 장면: **상품 카탈로그 · 대시보드**.
-- 명령 → 활성 장면의 `tools` function calling → 반환 `functionCall`들을 핸들러가 받아 **실제 상태 변경**.
-- ★ **다중 함수 호출**: 한 응답의 `functionCall`을 **전부 배열로** 받아(`gemini.js`) **순차 적용**한다(`App.jsx`의 `for (const c of calls)`). 한 명령이 도구 2~3개를 부른다(예: "전자제품만 가격 낮은 순으로, 다크모드" → filter + sort + theme).
-- `set_theme`은 **전역**(앱 `.app.light/.dark`), 그 외 도구는 장면에 위임.
-- 샘플/실키가 **같은 `onToolCall` 경로**를 탄다(한쪽만 동작하는 일 없음). 샘플 픽스처도 `calls:[]` 배열이라 다중 호출을 동일하게 재생.
+- Vite + React. **scene 레지스트리**(`src/scenes/`) — 각 패널이 `{ tools, initialState, render, onToolCall }`를 들고 있다. 현재 패널: **상품 카탈로그 · 대시보드**.
+- ★ **한 캔버스**: 탭 없음. 모든 패널을 **한 화면에 동시 렌더**(데스크톱 2열·모바일 1열). 위 단일 명령창이 전체를 조종한다.
+- ★ **전역 함수 라우팅**: Gemini tools = 전역 `set_theme` + 모든 패널 도구의 **union**(`ALL_TOOLS`). 도구 이름은 **전역 유일**(`catalog_*`/`dash_*` 접두사). 응답의 `functionCall`을 `TOOL_OWNER[name]`로 소유 패널에 라우팅 → 그 패널 슬라이스만 갱신. 미지의 이름은 무시(graceful).
+- ★ **다중 함수 호출**: 한 응답의 `functionCall`을 **전부 배열로** 받아(`gemini.js`) **순차 적용**(`App.jsx`의 `for (const c of calls)`). 한 문장이 **여러 패널 + 테마**에 걸친다(히어로 칩: theme + catalog_sort_by + dash_highlight_quarter).
+- **변화 피드백**: 바뀐 패널을 강조 플래시 + 화면 밖이면 scroll-into-view. 실행 로그 유지.
+- `set_theme`은 **전역**(앱 `.app.light/.dark`), 그 외 도구는 소유 패널에 위임.
+- 샘플/실키가 **같은 `onToolCall` 경로**. 픽스처는 `{label, calls:[{name,args}]}` **union**(활성 scene 개념 없음 — 도구 이름이 곧 대상 패널).
 
 ## BYOA (Bring Your Own API key)
 - 키는 **방문자 것**. `localStorage`(브라우저 전용)에만 저장되고 **어떤 서버로도 전송되지 않음**. 호출은 브라우저 → Google 직접.
