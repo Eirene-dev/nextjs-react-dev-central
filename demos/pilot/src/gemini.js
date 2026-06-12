@@ -4,7 +4,8 @@ export const GEMINI_MODEL = 'gemini-3.1-flash-lite'
 const endpoint = (model, key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`
 
-// function calling — tools(functionDeclarations) 전달, 첫 functionCall {name,args} 반환.
+// function calling — tools(functionDeclarations) 전달, 한 응답의 functionCall '전부'를 배열로 반환.
+// 한 명령이 여러 작업을 요구하면 모델이 다중 함수 호출(parallel function calling)을 낸다.
 export async function callWithTools({ apiKey, system, user, tools, model = GEMINI_MODEL }) {
   const res = await fetch(endpoint(model, apiKey), {
     method: 'POST',
@@ -19,7 +20,7 @@ export async function callWithTools({ apiKey, system, user, tools, model = GEMIN
   if (!res.ok) throw new Error(`Gemini API ${res.status}`)
   const data = await res.json()
   const parts = data?.candidates?.[0]?.content?.parts || []
-  const fc = parts.find((p) => p.functionCall)?.functionCall
-  if (!fc) throw new Error('함수 호출이 반환되지 않았습니다')
-  return { name: fc.name, args: fc.args || {} }
+  const calls = parts.filter((p) => p.functionCall).map((p) => ({ name: p.functionCall.name, args: p.functionCall.args || {} }))
+  if (!calls.length) throw new Error('함수 호출이 반환되지 않았습니다')
+  return calls
 }

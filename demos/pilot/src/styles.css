@@ -36,6 +36,22 @@ body { font-family: var(--sans); }
 .card .cat { font-size: 11px; color: var(--brand); font-weight: 700; }
 .card .name { font-weight: 700; margin: 6px 0; }
 .card .price { color: var(--ink2); }
+/* scene 선택 탭 */
+.scenes { display: inline-flex; gap: 6px; margin: 18px auto 0; border: 1px solid var(--line); border-radius: 12px; padding: 4px; background: var(--card); }
+.scenes button { font: inherit; font-size: 13px; font-weight: 600; padding: 7px 16px; border: none; border-radius: 9px; background: transparent; color: var(--ink2); cursor: pointer; }
+.scenes button.on { background: var(--brand); color: #fff; }
+.scenes button:disabled { opacity: .5; cursor: not-allowed; }
+/* 대시보드 — KPI 카드 + SVG 차트 */
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.kpi { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.kpi .kl { font-size: 12px; color: var(--ink2); }
+.kpi .kv { font-size: 24px; font-weight: 800; letter-spacing: -.02em; margin: 4px 0; }
+.kpi .kd { font-size: 12px; font-weight: 700; }
+.kpi .kd.up { color: #2fa36b; }
+.kpi .kd.down { color: #e06a4c; }
+.chartwrap { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-top: 16px; }
+.chart { width: 100%; height: auto; display: block; }
+@media (max-width: 560px) { .kpis { grid-template-columns: 1fr; } }
 .log { max-width: 860px; margin: 26px auto 60px; padding: 0 22px; }
 .log h3 { font-size: 13px; color: var(--ink2); margin-bottom: 8px; }
 .logline { font-family: var(--mono); font-size: 12.5px; padding: 5px 0; border-top: 1px solid var(--line); }
