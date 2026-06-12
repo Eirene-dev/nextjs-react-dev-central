@@ -310,15 +310,17 @@
 }
 .home .feats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 .home .fcard {
+  display: block;
   background: hsl(var(--surface-2));
   border: 1px solid hsl(var(--line));
   border-radius: 18px;
   padding: 26px;
   transition: 0.2s;
+  text-decoration: none;
 }
 .home .fcard:hover {
   transform: translateY(-4px);
@@ -735,13 +737,16 @@
     grid-row: 2;
   }
   .home .feats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
   .home .book-strip {
     grid-template-columns: 1fr;
   }
 }
 @media (max-width: 540px) {
+  .home .feats-grid {
+    grid-template-columns: 1fr;
+  }
   .home .elist a {
     flex-direction: column;
     align-items: flex-start;

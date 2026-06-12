@@ -28,8 +28,8 @@ const ArrowRight = () => (
   </svg>
 )
 
-// 카드 순서 = 상단 메뉴와 동일(에세이 → 쇼케이스 → 저서)
-const FEATURES = [
+// 카드 순서 = 상단 메뉴와 동일(에세이 → 쇼케이스 → 저서). href 있으면 카드가 링크.
+const FEATURES: { title: string; desc: string; icon: React.ReactNode; href?: string }[] = [
   {
     title: '개인적인 글',
     desc: '제 생각으로 쓴 판단·취향·실패의 기록.',
@@ -37,11 +37,22 @@ const FEATURES = [
   },
   {
     title: '결정의 해부',
-    desc: '해부·실험·실물 — 무엇을 왜 골랐는지.',
+    desc: '만들며 내린 결정과 과정의 기록.',
     icon: (
       <>
         <rect x="3" y="3" width="18" height="18" rx="3" />
         <path d="M3 9h18M9 21V9" />
+      </>
+    ),
+  },
+  {
+    title: '실험',
+    desc: '최신 웹과 AI로 만든 인터랙티브 데모.',
+    href: '/showcases',
+    icon: (
+      <>
+        <path d="M9 3h6M10 3v6L5 18a2 2 0 002 3h10a2 2 0 002-3l-5-9V3" />
+        <path d="M7.5 14h9" />
       </>
     ),
   },
@@ -62,8 +73,8 @@ export default async function Main() {
   const essays = (await listPublishedEssays()).slice(0, 3)
   // 해부 최신 6편 — exhibit 내림차순(빌드타임 데이터). slice 로 향후 증가 대비.
   const anatomy = [...allAnatomy].sort((a, b) => b.exhibit - a.exhibit).slice(0, 6)
-  // 실험 미리보기 6편 — 세 갈래(웹 플랫폼·스타일 연구·AI×웹) 균형 큐레이션(결정적).
-  const EXPERIMENT_HOME = ['drift', 'slate', 'aura-one', 'vanta-ev', 'pilot', 'relay']
+  // 실험 미리보기 6편 — AI×웹 전체(임팩트 순, 결정적). 전체 보기엔 세 갈래 모두 있음.
+  const EXPERIMENT_HOME = ['pilot', 'relay', 'canvasly', 'docent', 'formig', 'sema']
   const experiments = EXPERIMENT_HOME.map((slug) =>
     showcasesData.find((s) => s.slug === slug && s.tier === 'experiment')
   ).filter((s): s is ExperimentShowcase => Boolean(s))
@@ -107,17 +118,28 @@ export default async function Main() {
       {/* features */}
       <section className="feats">
         <div className="feats-grid">
-          {FEATURES.map((f) => (
-            <div className="fcard" key={f.title}>
-              <div className="ic">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  {f.icon}
-                </svg>
+          {FEATURES.map((f) => {
+            const inner = (
+              <>
+                <div className="ic">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    {f.icon}
+                  </svg>
+                </div>
+                <h3>{f.title}</h3>
+                <p>{f.desc}</p>
+              </>
+            )
+            return f.href ? (
+              <Link className="fcard" href={f.href} key={f.title}>
+                {inner}
+              </Link>
+            ) : (
+              <div className="fcard" key={f.title}>
+                {inner}
               </div>
-              <h3>{f.title}</h3>
-              <p>{f.desc}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </section>
 
