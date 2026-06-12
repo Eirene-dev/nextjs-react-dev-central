@@ -47,5 +47,6 @@ export const SAMPLES = [
   { label: '가운데 천천히 떠다니게', calls: [{ name: 'motion_animate', args: { target: 'center', type: 'float' } }, { name: 'motion_set_speed', args: { target: 'center', speed: 'slow' } }] },
   { label: '셋째 줄 인용구로 바꾸고 가운데', calls: [{ name: 'doc_set_block', args: { index: 3, type: 'quote' } }, { name: 'doc_set_align', args: { index: 3, align: 'center' } }] },
 ]
-// 칩(종류 혼합) — 히어로 칩을 맨 앞에.
-export const CHIPS = SAMPLES.map((s) => s.label)
+// 전체(cross) 칩 — 어느 패널에도 안 속하고 여러 패널에 걸친다. 상단 명령창에 노출.
+// 패널별 칩은 각 scene.chips 가 보유 → App 이 해당 패널 안에 렌더(패널 제목이 곧 카테고리 라벨).
+export const CROSS_CHIPS = [HERO.label, CROSS.label]

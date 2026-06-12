@@ -16,6 +16,7 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 export const form = {
   id: 'form',
   label: '가입 폼',
+  chips: ['프로 요금제 선택하고 검증'],
   tools: [
     { name: 'form_fill_field', description: '폼 필드 채우기', parameters: { type: 'object', properties: { field: { type: 'string', enum: ['name', 'email', 'phone'] }, value: { type: 'string' } }, required: ['field', 'value'] } },
     { name: 'form_clear_field', description: '폼 필드 비우기', parameters: { type: 'object', properties: { field: { type: 'string', enum: ['name', 'email', 'phone'] } }, required: ['field'] } },

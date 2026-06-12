@@ -2,8 +2,12 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--sans); }
 .app { min-height: 100vh; transition: background .3s, color .3s; }
-.app.light { background: #f6f7f9; color: #1a1c20; --bg: #f6f7f9; --card: #fff; --line: #e4e6ea; --ink2: #5a606b; --brand: #4f46e5; }
-.app.dark { background: #0f1115; color: #eef0f4; --bg: #0f1115; --card: #181b22; --line: #2a2e38; --ink2: #9aa2b1; --brand: #818cf8; }
+.app.light { background: #f7f8fa; color: #161a1f; --bg: #f7f8fa; --card: #ffffff; --line: #e6e8ec; --ink2: #5a606b; --brand: #4f46e5; }
+/* midnight terminal — 더 깊은 near-black(미세 쿨톤) + 표면 분리(정제 border·은은한 elevation/inner highlight) */
+.app.dark { background: #0a0c11; color: #eceef3; --bg: #0a0c11; --card: #141823; --line: #262c3a; --ink2: #949cad; --brand: #8b8cf8; }
+.app.dark .panel { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 12px 32px -22px rgba(0, 0, 0, .75); }
+.app.dark .cmdsticky { box-shadow: 0 10px 22px -20px rgba(0, 0, 0, .85); }
+.app.light .panel { box-shadow: 0 1px 2px rgba(20, 24, 32, .04); }
 .hero { max-width: 860px; margin: 0 auto; padding: 48px 22px 8px; text-align: center; }
 .badge { font-family: var(--mono); font-size: 12px; color: var(--brand); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
 .hero h1 { font-size: clamp(32px, 6vw, 52px); font-weight: 800; letter-spacing: -.02em; margin: 12px 0 8px; }
@@ -28,8 +32,14 @@ body { font-family: var(--sans); }
 .chips button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--card); color: var(--ink2); border-radius: 999px; padding: 7px 13px; cursor: pointer; }
 .chips button:hover { color: var(--brand); border-color: var(--brand); }
 .chips button:disabled { opacity: .5; }
-.state { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--ink2); border: 1px dashed var(--line); border-radius: 12px; padding: 12px 16px; }
-.state b { color: var(--brand); }
+/* 전체(cross) 칩 — 상단 명령창에 라벨과 함께 */
+.crosswrap { text-align: center; }
+.crosslabel { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .02em; color: var(--ink2); margin-bottom: 8px; }
+/* 패널 소속 칩 — 패널 안, 좌측 정렬·소형(패널 제목이 곧 카테고리) */
+.pchips { justify-content: flex-start; margin-bottom: 14px; }
+.pchips button { font-size: 12px; padding: 5px 11px; }
+.state { display: flex; gap: 14px 18px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; letter-spacing: .01em; color: var(--ink2); border: 1px dashed var(--line); border-radius: 12px; padding: 12px 16px; }
+.state b { color: var(--brand); font-weight: 700; }
 .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 16px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
 .card .cat { font-size: 11px; color: var(--brand); font-weight: 700; }

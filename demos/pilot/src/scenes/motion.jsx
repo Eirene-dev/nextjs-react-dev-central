@@ -11,6 +11,7 @@ const DUR = { slow: '2.4s', normal: '1.4s', fast: '0.7s' }
 export const motion = {
   id: 'motion',
   label: '모션 스튜디오',
+  chips: ['가운데 천천히 떠다니게'],
   tools: [
     { name: 'motion_animate', description: '도형 애니메이션 지정', parameters: { type: 'object', properties: { target: { type: 'string', enum: ['left', 'center', 'right'] }, type: { type: 'string', enum: ['spin', 'float', 'pulse', 'none'] } }, required: ['target', 'type'] } },
     { name: 'motion_set_speed', description: '도형 애니메이션 속도', parameters: { type: 'object', properties: { target: { type: 'string', enum: ['left', 'center', 'right'] }, speed: { type: 'string', enum: ['slow', 'normal', 'fast'] } }, required: ['target', 'speed'] } },

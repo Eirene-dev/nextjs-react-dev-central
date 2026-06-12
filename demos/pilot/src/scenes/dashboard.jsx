@@ -61,6 +61,7 @@ function Chart({ chartType, highlight, range, legend }) {
 export const dashboard = {
   id: 'dashboard',
   label: '대시보드',
+  chips: ['선 그래프로', '범례 숨기고 막대로'],
   tools: [
     { name: 'dash_set_chart_type', description: '차트 종류 변경', parameters: { type: 'object', properties: { type: { type: 'string', enum: ['bar', 'line', 'area'] } }, required: ['type'] } },
     { name: 'dash_highlight_quarter', description: '특정 분기 강조(none 이면 해제)', parameters: { type: 'object', properties: { quarter: { type: 'string', enum: ['q1', 'q2', 'q3', 'q4', 'none'] } }, required: ['quarter'] } },

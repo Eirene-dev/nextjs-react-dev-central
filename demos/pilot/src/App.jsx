@@ -2,7 +2,7 @@ import { useState } from 'react'
 import KeyBar from './KeyBar.jsx'
 import { callWithTools } from './gemini.js'
 import { runSample } from './sample.js'
-import { SCENES, ALL_TOOLS, TOOL_OWNER, SAMPLES, CHIPS } from './scenes/index.js'
+import { SCENES, ALL_TOOLS, TOOL_OWNER, SAMPLES, CROSS_CHIPS } from './scenes/index.js'
 
 const SYSTEM =
   '너는 웹 화면을 조작하는 보조자다. 화면에는 여러 패널(상품 카탈로그·대시보드)이 동시에 있다. ' +
@@ -85,10 +85,13 @@ export default function App() {
           />
           <button onClick={() => { run(input); setInput('') }} disabled={busy || !input.trim()}>{busy ? '실행 중…' : '실행'}</button>
         </div>
-        <div className="chips">
-          {CHIPS.map((c) => (
-            <button key={c} onClick={() => run(c)} disabled={busy}>{c}</button>
-          ))}
+        <div className="crosswrap">
+          <span className="crosslabel">전체 · 한 문장이 여러 패널을 움직입니다</span>
+          <div className="chips">
+            {CROSS_CHIPS.map((c) => (
+              <button key={c} onClick={() => run(c)} disabled={busy}>{c}</button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -96,6 +99,13 @@ export default function App() {
         {SCENES.map((s) => (
           <section className={`panel ${flash[s.id] ? 'flash' : ''}`} id={`panel-${s.id}`} key={s.id}>
             <div className="phead">{s.label}</div>
+            {s.chips?.length > 0 && (
+              <div className="chips pchips">
+                {s.chips.map((c) => (
+                  <button key={c} onClick={() => run(c)} disabled={busy}>{c}</button>
+                ))}
+              </div>
+            )}
             {s.render(states[s.id], makeDispatch(s.id))}
           </section>
         ))}

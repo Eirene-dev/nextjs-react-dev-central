@@ -17,6 +17,7 @@ function Block({ type, align, bold, text }) {
 export const doc = {
   id: 'doc',
   label: '문서 편집기',
+  chips: ['셋째 줄 인용구로 바꾸고 가운데'],
   tools: [
     { name: 'doc_set_block', description: '블록 종류 변경', parameters: { type: 'object', properties: { index: { type: 'integer', enum: [1, 2, 3] }, type: { type: 'string', enum: ['paragraph', 'heading', 'quote', 'list'] } }, required: ['index', 'type'] } },
     { name: 'doc_set_align', description: '블록 정렬', parameters: { type: 'object', properties: { index: { type: 'integer', enum: [1, 2, 3] }, align: { type: 'string', enum: ['left', 'center', 'right'] } }, required: ['index', 'align'] } },

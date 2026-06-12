@@ -11,6 +11,7 @@ const PRODUCTS = [
 export const catalog = {
   id: 'catalog',
   label: '상품 카탈로그',
+  chips: ['전자제품만 보여줘', '가격 낮은 순으로 정렬해줘'],
   tools: [
     { name: 'catalog_sort_by', description: '상품 정렬', parameters: { type: 'object', properties: { field: { type: 'string', enum: ['price', 'name'] }, order: { type: 'string', enum: ['asc', 'desc'] } }, required: ['field', 'order'] } },
     { name: 'catalog_filter_category', description: '상품 카테고리 필터(전자제품/주방, 없으면 전체)', parameters: { type: 'object', properties: { category: { type: 'string' } } } },

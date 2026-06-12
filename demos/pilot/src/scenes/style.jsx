@@ -9,6 +9,7 @@ const SPACING = { tight: '12px', normal: '20px', airy: '32px' }
 export const style = {
   id: 'style',
   label: '스타일 스튜디오',
+  chips: ['둥근 모서리에 글꼴 크게'],
   tools: [
     { name: 'style_set_accent', description: '강조색 변경(미리보기 전용)', parameters: { type: 'object', properties: { color: { type: 'string', enum: ['coral', 'indigo', 'emerald', 'amber', 'rose'] } }, required: ['color'] } },
     { name: 'style_set_radius', description: '모서리 둥글기', parameters: { type: 'object', properties: { size: { type: 'string', enum: ['sharp', 'soft', 'round'] } }, required: ['size'] } },
