@@ -59,6 +59,25 @@ body { font-family: var(--sans); }
 .chartwrap { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-top: 16px; }
 .chart { width: 100%; height: auto; display: block; }
 @media (max-width: 560px) { .kpis { grid-template-columns: 1fr; } }
+/* 가입 폼 */
+.formfields { display: flex; flex-direction: column; gap: 12px; }
+.ff { display: flex; flex-direction: column; gap: 5px; }
+.ff .fl { font-size: 12px; color: var(--ink2); font-weight: 600; }
+.ff .fl .req { color: #e06a4c; font-style: normal; margin-left: 3px; }
+.ff input { border: 1px solid var(--line); background: var(--bg); color: inherit; border-radius: 9px; padding: 9px 12px; font: inherit; font-size: 14px; }
+.plans { display: flex; gap: 8px; margin-top: 14px; }
+.plan { flex: 1; text-align: center; font-size: 13px; font-weight: 600; color: var(--ink2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 0; }
+.plan.on { border-color: var(--brand); color: var(--brand); background: color-mix(in srgb, var(--brand) 10%, transparent); }
+.vmsg { margin-top: 14px; font-size: 13px; }
+.vmsg .muted { color: var(--ink2); }
+.vmsg .ok { color: #2fa36b; font-weight: 600; }
+.vmsg .errs { list-style: none; display: flex; flex-direction: column; gap: 4px; color: #e06a4c; }
+/* 스타일 스튜디오 — 미리보기 토큰은 컨테이너 scoped(전역 --brand 무영향) */
+.sv-preview { border: 1px dashed var(--line); border-radius: 12px; padding: var(--sv-pad); }
+.sv-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--sv-radius); padding: var(--sv-pad); }
+.sv-card h4 { font-size: 1.15em; font-weight: 800; letter-spacing: -.01em; }
+.sv-card p { color: var(--ink2); font-size: 0.92em; margin: 8px 0 14px; line-height: 1.55; }
+.sv-btn { font: inherit; font-size: 0.92em; font-weight: 700; border: none; color: #fff; background: var(--sv-accent); border-radius: var(--sv-radius); padding: 9px 18px; cursor: pointer; }
 .log { max-width: 860px; margin: 26px auto 60px; padding: 0 22px; }
 .log h3 { font-size: 13px; color: var(--ink2); margin-bottom: 8px; }
 .logline { font-family: var(--mono); font-size: 12.5px; padding: 5px 0; border-top: 1px solid var(--line); }
