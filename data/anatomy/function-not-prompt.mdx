@@ -1,0 +1,26 @@
+---
+title: 프롬프트를 강화하는 대신, 함수를 고쳤다
+exhibit: 18
+category: AI 역할
+question: >-
+  챗봇에게 '쇼케이스 보여줘'라고 하면 실험만 나오고 해부가 빠졌다. system prompt에 '해부도 함께 보여줘'라고 더 세게 쓸 수 있다 — 하지만 그건 여전히 모델의 선의에 기대는 확률적 방법이라, 또 빠질 수 있다. 프롬프트를 강화할 것인가, 아니면 함수가 해부를 반드시 반환하게 코드로 보장할 것인가.
+options:
+  - key: A
+    title: 프롬프트 강화
+    tradeoff: system prompt를 고치는 게 빠르지만, 모델의 선의에 기대는 확률적 방법이라 또 빠질 수 있다.
+  - key: B
+    title: 함수가 보장
+    tradeoff: 함수 반환값이 결정적으로 보장하지만, 코드를 고쳐야 하고 데이터 접근 경로를 다시 설계해야 한다.
+decision:
+  key: B
+  label: 모델에 맡길 일과, 코드가 보장할 일
+  sub: 확률적 권유 대신, 결정적 반환값
+result: >-
+  프롬프트를 더 쓰는 대신 list_showcases가 해부를 반드시 반환하게 했다 — tier enum에 'anatomy' 추가, null이면 allAnatomy 상위 5건을 decision 라벨과 함께 반환(OpenAI 가이드의 '연달아 부르는 함수는 합쳐라'). buildSearchRecords 재사용 시 불필요한 DB 호출이 생겨 allAnatomy를 직접 썼다. 모델이 어떻게 판단하든 구조가 해부 포함을 보장한다.
+aiLedger:
+  claude: OpenAI의 API를 활용하여 AI 챗봇을 구현함
+  me: OpenAI의 Functional Call 기능을 활용하도록 지시하고, 각 함수의 스펙을 정해주었다.
+date: "2026-06-12"
+---
+
+챗봇을 통해 모든 것을 대답을 해 주고, 완벽하게 보이는 것을 버렸다.

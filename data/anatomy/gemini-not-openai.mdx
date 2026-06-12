@@ -1,0 +1,25 @@
+---
+title: "AI 데모에 OpenAI를 못 썼다 — CORS와 '서버 없음' 사이에서"
+exhibit: 13
+category: 아키텍처
+question: >-
+  AI 데모를 만들려면 방문자가 브라우저에서 직접 모델을 호출해야 한다 — 데모는 정적 파일이고 사이트 서버를 경유하지 않으니까(전시 01). 그런데 OpenAI API는 브라우저 CORS를 허용하지 않는다. 쓰려면 프록시 서버를 둬야 하는데, 그건 '서버 없음' 원칙을 깬다. 'OpenAI도 지원'이라는 매력을 위해 원칙을 굽힐 것인가, 아니면 CORS가 되는 Gemini만으로 갈 것인가.
+options:
+  - key: A
+    title: OpenAI도 지원(프록시 경유)
+    tradeoff: "익숙한 OpenAI를 쓸 수 있지만, 프록시 서버가 필요해 전시 01의 '서버 없음' 원칙이 깨진다."
+  - key: B
+    title: Gemini 단독
+    tradeoff: 브라우저 CORS가 되는 Gemini만으로 정적·서버 없음을 지키지만, provider 선택지가 하나로 줄고 OpenAI 사용자를 포기한다.
+decision:
+  key: B
+  label: 기능보다 원칙
+  sub: 제약(CORS)이 오히려 설계를 단순하게 만들었다
+result: >-
+  Gemini 단독 + REST fetch로 결정. 정적 파일에서 브라우저가 Google을 직접 호출해 서버가 일절 없다. SDK 번들 대신 REST로 의존성도 줄였고, 각 데모 README에 '왜 Gemini만 쓰는가(OpenAI는 브라우저 CORS 미지원)'를 명시했다.
+aiLedger:
+  claude: 기술적으로 가능한 부분들을 체크하여 옵션들을 주었다.
+  me: 다양한 AI를 지원하는게 목적이 아니라 AI와 웹이 서로 어떻게 연동이 되는지를 보여주는게 중요하기 때문에 Gemini만 쓰도록 결정했다.
+---
+
+'모든 기능을 지원합니다'라는 메시지를 버렸다. 중요한 요소와 본질적인 요소를 놓치지 않게 하였다.
