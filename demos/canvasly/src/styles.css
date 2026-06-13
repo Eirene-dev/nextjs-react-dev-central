@@ -56,4 +56,32 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .metric .md.up { color: #15a06a; }
 .metric .md.down { color: #e06a4c; }
 @media (max-width: 520px) { .metrics { grid-template-columns: 1fr 1fr; } }
+/* compare 컴포넌트 — 첫 열(기준 라벨) 강조 매트릭스 */
+.gtable.cmp th.rl { color: var(--ink2); font-weight: 700; text-transform: none; letter-spacing: 0; }
+.gtable.cmp thead th { text-align: left; }
+/* step 컴포넌트 — 번호 매긴 순차 단계 */
+.steps { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.steps li { display: flex; gap: 12px; align-items: flex-start; }
+.steps .sn { flex: none; width: 24px; height: 24px; border-radius: 999px; background: var(--brand); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+.steps .sb { font-size: 14.5px; }
+.steps .sd { display: block; color: var(--ink2); font-size: 13px; margin-top: 2px; }
+/* spec 컴포넌트 — 키-값 목록 */
+.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.specrow { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.specrow dt { color: var(--ink2); font-size: 13px; }
+.specrow dd { font-size: 13.5px; font-weight: 600; text-align: right; }
+@media (max-width: 520px) { .specs { grid-template-columns: 1fr; } }
+/* callout 컴포넌트 — 강조 노트 */
+.sec.callout { border-left: 3px solid var(--brand); }
+.sec.callout.cv-warn { border-left-color: #e0904c; }
+.sec.callout.cv-tip { border-left-color: #15a06a; }
+.co-row { display: flex; gap: 10px; }
+.co-ic { font-size: 16px; line-height: 1.4; }
+.co-t { font-size: 14.5px; }
+.co-b { color: var(--ink2); font-size: 13.5px; margin-top: 3px; line-height: 1.55; }
+/* gauge 컴포넌트 — 진행/비율 바 */
+.ga-head { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 8px; }
+.ga-head .ga-v { font-weight: 800; color: var(--brand); }
+.ga-track { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.ga-fill { height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand2)); border-radius: 999px; transition: width .5s ease; }
 .assembling { font-family: var(--mono); font-size: 12px; color: var(--brand); text-align: center; padding: 8px; }

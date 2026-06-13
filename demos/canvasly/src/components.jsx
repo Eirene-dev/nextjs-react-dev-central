@@ -58,6 +58,65 @@ function Stat({ metrics }) {
   )
 }
 
+function Compare({ options, rows }) {
+  return (
+    <div className="sec compare pop">
+      <table className="gtable cmp">
+        <thead><tr><th></th>{options.map((o, j) => <th key={j}>{o}</th>)}</tr></thead>
+        <tbody>{rows.map((r, i) => (
+          <tr key={i}><th className="rl">{r.label}</th>{r.values.map((v, j) => <td key={j}>{v}</td>)}</tr>
+        ))}</tbody>
+      </table>
+    </div>
+  )
+}
+
+function Step({ steps }) {
+  return (
+    <div className="sec step pop">
+      <ol className="steps">
+        {steps.map((s, j) => (
+          <li key={j}><span className="sn">{j + 1}</span><span className="sb"><b>{s.title}</b>{s.detail ? <span className="sd">{s.detail}</span> : null}</span></li>
+        ))}
+      </ol>
+    </div>
+  )
+}
+
+function Spec({ specs }) {
+  return (
+    <div className="sec spec pop">
+      <dl className="specs">
+        {specs.map((s, j) => (
+          <div className="specrow" key={j}><dt>{s.label}</dt><dd>{s.value}</dd></div>
+        ))}
+      </dl>
+    </div>
+  )
+}
+
+function Callout({ variant, title, body }) {
+  const icon = variant === 'warn' ? '⚠' : variant === 'tip' ? '💡' : 'ℹ'
+  return (
+    <div className={`sec callout pop cv-${variant}`}>
+      <div className="co-row"><span className="co-ic">{icon}</span><div>
+        {title && <b className="co-t">{title}</b>}
+        {body && <p className="co-b">{body}</p>}
+      </div></div>
+    </div>
+  )
+}
+
+function Gauge({ label, value, num, max }) {
+  const ratio = max > 0 && !Number.isNaN(num) ? Math.max(0, Math.min(1, num / max)) : 0
+  return (
+    <div className="sec gauge pop">
+      <div className="ga-head"><span className="ga-l">{label}</span><span className="ga-v">{value}</span></div>
+      <div className="ga-track"><div className="ga-fill" style={{ width: `${(ratio * 100).toFixed(1)}%` }} /></div>
+    </div>
+  )
+}
+
 export const COMPONENTS = {
   card: {
     normalize: (c) => (c.title || c.body) ? { title: c.title || '', body: c.body || '' } : null,
@@ -90,6 +149,47 @@ export const COMPONENTS = {
       return arr.length ? { metrics: arr.map((m) => ({ label: String(m.label), value: String(m.value), delta: m.delta ? String(m.delta) : '' })) } : null
     },
     render: (p) => <Stat {...p} />,
+  },
+  compare: {
+    normalize: (c) => {
+      if (!Array.isArray(c.options) || !c.options.length || !Array.isArray(c.compare_rows)) return null
+      const rows = c.compare_rows
+        .filter((r) => r && r.label && Array.isArray(r.values))
+        .map((r) => ({ label: String(r.label), values: r.values.map((x) => (x == null ? '' : String(x))) }))
+      return rows.length ? { options: c.options.map(String), rows } : null
+    },
+    render: (p) => <Compare {...p} />,
+  },
+  step: {
+    normalize: (c) => {
+      const arr = Array.isArray(c.steps) ? c.steps.filter((s) => s && s.title) : []
+      return arr.length ? { steps: arr.map((s) => ({ title: String(s.title), detail: s.detail ? String(s.detail) : '' })) } : null
+    },
+    render: (p) => <Step {...p} />,
+  },
+  spec: {
+    normalize: (c) => {
+      const arr = Array.isArray(c.specs) ? c.specs.filter((s) => s && s.label && s.value != null) : []
+      return arr.length ? { specs: arr.map((s) => ({ label: String(s.label), value: String(s.value) })) } : null
+    },
+    render: (p) => <Spec {...p} />,
+  },
+  callout: {
+    normalize: (c) => {
+      if (!c.title && !c.body) return null
+      const variant = ['info', 'warn', 'tip'].includes(c.variant) ? c.variant : 'info'
+      return { variant, title: c.title || '', body: c.body || '' }
+    },
+    render: (p) => <Callout {...p} />,
+  },
+  gauge: {
+    normalize: (c) => {
+      if (c.value == null || String(c.value).trim() === '') return null
+      const num = parseFloat(String(c.value).replace(/[^0-9.\-]/g, ''))
+      const max = parseFloat(String(c.max)) || 100
+      return { label: String(c.label || ''), value: String(c.value), num, max }
+    },
+    render: (p) => <Gauge {...p} />,
   },
 }
 
