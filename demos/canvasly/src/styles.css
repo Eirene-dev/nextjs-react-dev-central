@@ -1,30 +1,37 @@
-:root { --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; --mono: ui-monospace, Menlo, monospace;
-  --bg: #f7f6fb; --card: #fff; --ink: #1b1a22; --ink2: #66626f; --line: #e7e4ef; --brand: #7c3aed; --brand2: #ec4899; }
+:root { --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; --mono: ui-monospace, Menlo, monospace; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
+body { font-family: var(--sans); }
+.app { min-height: 100vh; background: var(--bg); color: var(--ink); transition: background .3s, color .3s; }
+.app.light { --bg: #f7f6fb; --card: #ffffff; --ink: #1b1a22; --ink2: #66626f; --line: #e7e4ef; --brand: #7c3aed; --brand2: #ec4899; }
+/* midnight terminal — 깊은 near-black(쿨톤) + 정제 표면. 보라/핑크 액센트 유지·다크 대비로 채도↑ */
+.app.dark { --bg: #0b0a12; --card: #16141f; --ink: #ececf3; --ink2: #9a96ad; --line: #2a2636; --brand: #a78bfa; --brand2: #f472b6; }
+.app.dark .sec { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 12px 32px -22px rgba(0, 0, 0, .75); }
+.app.light .sec { box-shadow: 0 1px 2px rgba(20, 24, 32, .04); }
+.themetoggle { position: fixed; top: 14px; right: 14px; z-index: 20; font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--card); color: var(--ink2); border-radius: 999px; padding: 7px 13px; cursor: pointer; }
+.themetoggle:hover { color: var(--brand); border-color: var(--brand); }
 .hero { max-width: 820px; margin: 0 auto; padding: 48px 22px 8px; text-align: center; }
-.badge { font-family: var(--mono); font-size: 12px; color: var(--brand); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; background: #fff; }
+.badge { font-family: var(--mono); font-size: 12px; color: var(--brand); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; background: var(--card); }
 .hero h1 { font-size: clamp(30px, 6vw, 50px); font-weight: 800; letter-spacing: -.02em; margin: 12px 0 8px; }
 .hero h1 .g { background: linear-gradient(90deg, var(--brand), var(--brand2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero p { color: var(--ink2); max-width: 32em; margin: 0 auto; }
 .keybar { margin: 22px auto 0; max-width: 560px; text-align: left; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-.seg button { font: inherit; font-size: 13px; padding: 8px 14px; background: #fff; color: var(--ink2); border: none; cursor: pointer; }
+.seg button { font: inherit; font-size: 13px; padding: 8px 14px; background: var(--card); color: var(--ink2); border: none; cursor: pointer; }
 .seg button.on { background: var(--brand); color: #fff; }
 .seg button:disabled { opacity: .5; }
 .keyrow { display: flex; gap: 8px; margin-top: 10px; }
-.keyrow input { flex: 1; border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px; font: inherit; }
+.keyrow input { flex: 1; border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px; font: inherit; background: var(--card); color: inherit; }
 .kbtn { font: inherit; font-size: 13px; font-weight: 600; border: none; border-radius: 9px; padding: 9px 14px; background: var(--brand); color: #fff; cursor: pointer; }
-.kbtn.ghost { background: #fff; border: 1px solid var(--line); color: var(--ink2); }
+.kbtn.ghost { background: var(--card); border: 1px solid var(--line); color: var(--ink2); }
 .kbtn:disabled { opacity: .5; }
 .link { margin-top: 8px; background: none; border: none; color: var(--brand); font: inherit; font-size: 13px; cursor: pointer; }
 .note { font-size: 11.5px; color: var(--ink2); margin-top: 10px; line-height: 1.5; }
 .cmdbar { display: flex; gap: 8px; margin: 22px auto 12px; max-width: 560px; }
-.cmdbar input { flex: 1; border: 1px solid var(--line); border-radius: 11px; padding: 11px 14px; font: inherit; }
+.cmdbar input { flex: 1; border: 1px solid var(--line); border-radius: 11px; padding: 11px 14px; font: inherit; background: var(--card); color: inherit; }
 .cmdbar button { font: inherit; font-weight: 600; border: none; border-radius: 11px; padding: 11px 18px; background: var(--brand); color: #fff; cursor: pointer; }
 .cmdbar button:disabled { opacity: .5; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-.chips button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: #fff; color: var(--ink2); border-radius: 999px; padding: 7px 13px; cursor: pointer; }
+.chips button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--card); color: var(--ink2); border-radius: 999px; padding: 7px 13px; cursor: pointer; }
 .chips button:disabled { opacity: .5; }
 .err { color: #e06a4c; font-size: 13px; margin-top: 10px; }
 .canvas { max-width: 720px; margin: 26px auto 70px; padding: 0 22px; display: flex; flex-direction: column; gap: 14px; }
@@ -85,3 +92,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .ga-track { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
 .ga-fill { height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand2)); border-radius: 999px; transition: width .5s ease; }
 .assembling { font-family: var(--mono); font-size: 12px; color: var(--brand); text-align: center; padding: 8px; }
+
+/* 다크 — 색 있는 컴포넌트 가독(채도↑). 라이트는 위 기본값 유지. */
+.app.dark .metric .md.up { color: #34d399; }
+.app.dark .metric .md.down { color: #fb8a6a; }
+.app.dark .sec.callout.cv-tip { border-left-color: #34d399; }
+.app.dark .sec.callout.cv-warn { border-left-color: #fbbf24; }
+.app.dark .checks input, .app.dark .gauge .ga-track { accent-color: var(--brand); }

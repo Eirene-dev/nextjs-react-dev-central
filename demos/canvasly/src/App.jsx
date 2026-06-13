@@ -7,6 +7,7 @@ import { COMPONENTS, validateComponents } from './components.jsx'
 // 스트리밍 Generative UI — AI 가 질문에 맞는 컴포넌트를 골라 components 배열로 반환,
 // 앱은 레지스트리(COMPONENTS)로 점진 렌더. 같은 셸, 다른 답마다 다른 UI 조합.
 export default function App() {
+  const [theme, setTheme] = useState('dark') // 기본 다크(쇼케이스 미감)
   const [mode, setMode] = useState('sample')
   const [apiKey, setApiKey] = useState('')
   const [prompt, setPrompt] = useState(SAMPLE_PROMPTS[0])
@@ -31,7 +32,10 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${theme}`}>
+      <button className="themetoggle" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}>
+        {theme === 'dark' ? '☀ 라이트' : '🌙 다크'}
+      </button>
       <header className="hero">
         <span className="badge">Canvasly · AI×웹</span>
         <h1>텍스트가 아니라, <span className="g">UI로 답한다</span></h1>

@@ -8,6 +8,7 @@ AI가 텍스트 벽 대신 **질문에 맞는 UI 컴포넌트를 골라** 구조
 - ★ **타입별 검증/정규화**(`validateComponents`): 미지 타입·형식 불량 컴포넌트는 버린다(레지스트리 기준). props가 타입마다 달라 스키마는 타입별 필드를 서로 다른 이름으로 둔 느슨한 객체 + 앱 검증.
 - 받은 배열을 **컴포넌트 단위로 점진 렌더**(`streamComponents` 480ms). 샘플/실키 모두 동일한 `validateComponents → onSection` 경로.
 - 정직 노트: 점진 조립은 응답 수신 후 순차 노출(토큰 단위 SSE는 향후).
+- **테마**: midnight terminal 다크 기본 + 라이트 토글(우상단). 보라/핑크 액센트 유지, 다크에서 채도↑. 10종 컴포넌트(stat 델타·callout variant·gauge 바·compare 매트릭스 포함)는 다크/라이트 모두 가독.
 
 ## BYOA
 - 키는 방문자 것 — `localStorage`에만, 서버 전송 0, 브라우저 → Google 직접. 정적 파일이라 사이트와 분리.
