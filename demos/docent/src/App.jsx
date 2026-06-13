@@ -11,7 +11,7 @@ const markStyle = (i, active) => ({
   borderBottom: `2px solid hsl(${hueOf(i)} 70% 45%)`,
   boxShadow: active ? `0 0 0 3px hsl(${hueOf(i)} 80% 80%)` : 'none',
 })
-const chipStyle = (i) => ({ color: `hsl(${hueOf(i)} 55% 34%)`, borderColor: `hsl(${hueOf(i)} 60% 62%)` })
+const chipStyle = (i, dark) => ({ color: `hsl(${hueOf(i)} ${dark ? 75 : 55}% ${dark ? 70 : 34}%)`, borderColor: `hsl(${hueOf(i)} 60% ${dark ? 50 : 62}%)` })
 
 // 한 문단을 인용 구절 단위로 쪼개 하이라이트(같은 문단 여러 인용·겹침 처리).
 function paraNodes(text, cites, active) {
@@ -40,6 +40,7 @@ function paraNodes(text, cites, active) {
 
 // 근거 안에서만 답하는 Q&A — 답변 + 본문 '구절' 인용(span). 인용 클릭 → 구절 스크롤·강조. 없으면 '없다'(환각 금지).
 export default function App() {
+  const [theme, setTheme] = useState('dark') // 기본 다크(쇼케이스 미감)
   const [mode, setMode] = useState('sample')
   const [apiKey, setApiKey] = useState('')
   const [corpusId, setCorpusId] = useState(CORPORA[0].id)
@@ -90,7 +91,10 @@ export default function App() {
   const cites = result?.citations || []
 
   return (
-    <div className="app">
+    <div className={`app ${theme}`}>
+      <button className="themetoggle" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}>
+        {theme === 'dark' ? '☀ 라이트' : '🌙 다크'}
+      </button>
       <header className="hero">
         <span className="badge">Docent · AI×웹</span>
         <h1>근거 안에서만 답한다</h1>
@@ -123,7 +127,7 @@ export default function App() {
               <div className="cites">
                 <span className="cl">근거</span>
                 {cites.map((c, i) => (
-                  <button key={i} className={`citechip ${active === i ? 'on' : ''}`} style={chipStyle(i)} onClick={() => jumpTo(i)}>
+                  <button key={i} className={`citechip ${active === i ? 'on' : ''}`} style={chipStyle(i, theme === 'dark')} onClick={() => jumpTo(i)}>
                     [{i + 1}] {c.source_id} · “{c.source_quote.length > 16 ? c.source_quote.slice(0, 16) + '…' : c.source_quote}”
                   </button>
                 ))}

@@ -7,6 +7,7 @@
 - 문서는 문단마다 id를 가진다. 질문 → `responseSchema`로 `{found, answer, citations:[{source_quote, source_id}]}` JSON 강제.
 - ★ **span-level 인용**: 각 인용은 문단 통째가 아니라 **본문 속 정확한 구절(`source_quote`, verbatim)** + 문단 id. UI는 그 구절만 하이라이트하고, 답 아래 번호 칩 `[1] p2 · “…”`을 인용 구절과 **색으로 연결**. 칩 클릭 → 해당 구절로 스크롤·강조.
 - 샘플/실키가 **같은 `onAnswer` 경로**(→ `validateCitations`)를 탄다.
+- **테마**: midnight terminal 다크 기본 + 라이트 토글(우상단). teal 액센트 유지·다크 채도↑. span 하이라이트(밝은 pill+짙은 글씨), 번호 인용 칩, 답 상태(teal/coral)는 다크/라이트 모두 가독.
 
 ## 왜 grounding이 핵심인가
 - 모델 답을 그대로 믿지 않고 **본문 구절을 정확히 가리킨다**. 근거가 없으면 `found:false` → “이 문서에는 해당 내용이 없습니다.”
