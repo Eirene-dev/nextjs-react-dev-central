@@ -1,43 +1,62 @@
-// Gemini REST(브라우저 직접 호출). structured output(responseMimeType: application/json)으로
-// 여행 계획 JSON 을 받아 온다. 키는 방문자 것 — 서버 전송 0.
+// Gemini REST(브라우저 직접 호출). ★ 제네릭 Generative UI: AI 가 질문에 맞는 컴포넌트들을 골라
+// components:[{type, ...props}] 배열로 반환 → 앱이 레지스트리로 렌더. 키는 방문자 것 — 서버 전송 0.
 export const GEMINI_MODEL = 'gemini-3.1-flash-lite'
 const endpoint = (model, key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`
 
-const SCHEMA = {
+// 스키마 enum(컴포넌트 타입) — src/components.jsx 의 레지스트리 키와 일치 유지(추가 시 양쪽 한 줄씩).
+export const COMPONENT_TYPES = ['card', 'timeline', 'checklist', 'table', 'stat']
+
+// props 는 타입마다 다르다. anyOf 대신 — 타입별 필드를 '서로 다른 이름'으로 둔 느슨한 객체(컬렉션 충돌 회피).
+// 모델은 type 에 맞는 필드만 채우고, 앱(validateComponents)이 타입별로 검증·정규화한다.
+const COMPONENT_ITEM = {
   type: 'object',
   properties: {
+    type: { type: 'string', enum: COMPONENT_TYPES },
+    // card
     title: { type: 'string' },
-    summary: { type: 'string' },
-    days: {
+    body: { type: 'string' },
+    // timeline
+    timeline_items: {
       type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          day: { type: 'string' },
-          items: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: { time: { type: 'string' }, place: { type: 'string' }, note: { type: 'string' } },
-              required: ['time', 'place'],
-            },
-          },
-        },
-        required: ['day', 'items'],
-      },
+      items: { type: 'object', properties: { time: { type: 'string' }, label: { type: 'string' }, note: { type: 'string' } }, required: ['label'] },
     },
-    checklist: { type: 'array', items: { type: 'string' } },
+    // checklist
+    checklist_items: { type: 'array', items: { type: 'string' } },
+    // table
+    columns: { type: 'array', items: { type: 'string' } },
+    rows: { type: 'array', items: { type: 'array', items: { type: 'string' } } },
+    // stat
+    metrics: {
+      type: 'array',
+      items: { type: 'object', properties: { label: { type: 'string' }, value: { type: 'string' }, delta: { type: 'string' } }, required: ['label', 'value'] },
+    },
   },
-  required: ['title', 'days', 'checklist'],
+  required: ['type'],
 }
 
-export async function planTrip({ apiKey, prompt, model = GEMINI_MODEL }) {
+const SCHEMA = {
+  type: 'object',
+  properties: { components: { type: 'array', items: COMPONENT_ITEM } },
+  required: ['components'],
+}
+
+const SYSTEM =
+  '너는 답을 텍스트 벽이 아니라 UI 컴포넌트로 구성하는 보조자다. 질문에 가장 맞는 컴포넌트들을 골라 순서대로 components 배열로 구성하라. ' +
+  '가용 컴포넌트와 props: ' +
+  'card{title, body}, ' +
+  'timeline{timeline_items:[{time,label,note}]}, ' +
+  'checklist{checklist_items:[문자열]}, ' +
+  'table{columns:[문자열], rows:[[문자열]]}, ' +
+  'stat{metrics:[{label,value,delta}]}. ' +
+  '각 컴포넌트는 type 과 그 type 에 해당하는 필드만 채운다. 비교·사양은 table, 지표·수치는 stat, 일정은 timeline, 준비물·할 일은 checklist, 요약·설명은 card 를 선택하라. 한국어로.'
+
+export async function generateComponents({ apiKey, prompt, model = GEMINI_MODEL }) {
   const res = await fetch(endpoint(model, apiKey), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      systemInstruction: { parts: [{ text: '여행 계획을 한국어로, 주어진 JSON 스키마로만 응답하라.' }] },
+      systemInstruction: { parts: [{ text: SYSTEM }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: { responseMimeType: 'application/json', responseSchema: SCHEMA },
     }),
@@ -45,5 +64,5 @@ export async function planTrip({ apiKey, prompt, model = GEMINI_MODEL }) {
   if (!res.ok) throw new Error(`Gemini API ${res.status}`)
   const data = await res.json()
   const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join('') || ''
-  return JSON.parse(text)
+  return JSON.parse(text) // { components: [...] }
 }

@@ -32,8 +32,8 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .sec { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
 .pop { animation: pop .35s ease both; }
 @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.99); } to { opacity: 1; transform: none; } }
-.sec.head h2 { font-size: 24px; font-weight: 800; letter-spacing: -.01em; }
-.sec.head p { color: var(--ink2); margin-top: 4px; }
+.sec.card h2 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+.sec.card .body { color: var(--ink2); margin-top: 6px; line-height: 1.6; }
 .sec h3 { font-size: 15px; color: var(--brand); margin-bottom: 10px; }
 .timeline { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .timeline li { display: flex; gap: 12px; }
@@ -41,4 +41,19 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .timeline .p { font-size: 14.5px; }
 .checks { display: flex; flex-wrap: wrap; gap: 10px 18px; }
 .checks label { font-size: 14px; color: var(--ink2); display: inline-flex; gap: 6px; align-items: center; }
+/* table 컴포넌트 */
+.gtable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.gtable th, .gtable td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+.gtable th { font-size: 11.5px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: .03em; }
+.gtable td { color: var(--ink); }
+.gtable tr:last-child td { border-bottom: none; }
+/* stat 컴포넌트 */
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.metric { border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.metric .ml { font-size: 12px; color: var(--ink2); }
+.metric .mv { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 3px 0; }
+.metric .md { font-size: 12px; font-weight: 700; }
+.metric .md.up { color: #15a06a; }
+.metric .md.down { color: #e06a4c; }
+@media (max-width: 520px) { .metrics { grid-template-columns: 1fr 1fr; } }
 .assembling { font-family: var(--mono); font-size: 12px; color: var(--brand); text-align: center; padding: 8px; }
