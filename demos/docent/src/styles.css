@@ -29,9 +29,14 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .answer { max-width: 680px; margin: 24px auto 0; padding: 16px 20px; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--brand); border-radius: 12px; }
 .answer.none { border-left-color: #e06a4c; }
 .atext { font-size: 16px; line-height: 1.6; }
-.cite { font-family: var(--mono); font-size: 12px; color: var(--brand); margin-top: 8px; }
+/* 근거 인용 칩 — 클릭 시 본문 구절로 점프. 칩 색 ↔ 구절 하이라이트 색 매칭 */
+.cites { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+.cites .cl { font-family: var(--mono); font-size: 11px; color: var(--ink2); }
+.citechip { font: inherit; font-size: 12px; font-weight: 600; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; transition: box-shadow .2s; }
+.citechip.on { box-shadow: 0 0 0 3px hsl(0 0% 0% / .06); }
 .doc { max-width: 680px; margin: 26px auto 70px; padding: 0 22px; }
 .doc h3 { font-size: 13px; color: var(--ink2); margin-bottom: 12px; }
-.para { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; font-size: 14.5px; line-height: 1.6; transition: background .4s, border-color .4s; }
-.para.hit { background: var(--hit); border-color: #f0c000; }
+.para { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; font-size: 14.5px; line-height: 1.7; }
 .pid { font-family: var(--mono); font-size: 11px; color: var(--brand); margin-right: 6px; }
+/* span-level 인용 하이라이트(문단 통째가 아니라 구절 단위) */
+.para .q { border-radius: 4px; padding: 1px 2px; color: #18202a; transition: box-shadow .25s, background .25s; }

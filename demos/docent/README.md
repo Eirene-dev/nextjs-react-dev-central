@@ -1,15 +1,16 @@
 # Docent — 근거를 보여주는 Q&A (AI×웹)
 
-가상 제품 문서에 질문하면 **Gemini structured output**으로 답하되, 답의 **근거 문단을 본문에서 하이라이트**한다. 문서에 없으면 솔직하게 “없습니다”라고 말한다(grounding).
+가상 제품 문서에 질문하면 **Gemini structured output**으로 답하되, 답의 각 근거를 **본문의 정확한 구절(span)**에 연결한다. 인용을 누르면 그 구절로 점프·강조. 문서에 없으면 솔직하게 “없습니다”라고 말한다(grounding).
 
 ## 아키텍처
-- Vite + React. 문서는 문단마다 id(`p1`…`p6`)를 가진다. 질문 → `responseSchema`로 `{found, answer, source_ids[]}` JSON 강제 → 핸들러가 `source_ids`를 받아 해당 문단으로 **스크롤 + 하이라이트**.
-- 샘플/실키가 **같은 `onAnswer` 경로**를 탄다.
+- Vite + React. 문서는 문단마다 id(`p1`…`p6`)를 가진다. 질문 → `responseSchema`로 `{found, answer, citations:[{source_quote, source_id}]}` JSON 강제.
+- ★ **span-level 인용**: 각 인용은 문단 통째가 아니라 **본문 속 정확한 구절(`source_quote`, verbatim)** + 문단 id. UI는 그 구절만 하이라이트하고, 답 아래 번호 칩 `[1] p2 · “…”`을 인용 구절과 **색으로 연결**. 칩 클릭 → 해당 구절로 스크롤·강조.
+- 샘플/실키가 **같은 `onAnswer` 경로**(→ `validateCitations`)를 탄다.
 
 ## 왜 grounding이 핵심인가
-- 모델 답을 그대로 믿지 않고 **본문 근거를 가리킨다**. 근거가 없으면 `found:false` → “이 문서에는 해당 내용이 없습니다.”
-- **환각 id 방지**: 반환된 `source_ids`를 실제 존재하는 문단 id로 **필터링**한 뒤에만 하이라이트(없는 id는 버림).
-- 실키에서도 시스템 프롬프트가 “본문 근거로만 답하고, 없으면 지어내지 말 것”을 강제.
+- 모델 답을 그대로 믿지 않고 **본문 구절을 정확히 가리킨다**. 근거가 없으면 `found:false` → “이 문서에는 해당 내용이 없습니다.”
+- **★ 환각 인용 방지(span 단위)**: 각 `source_quote`가 해당 `source_id` 문단의 **verbatim substring인지 검증** → 아니면 그 인용을 버린다(formig 소스 검증과 동형). 유효 인용 0이면 `found:false`로 강등.
+- 실키에서도 시스템 프롬프트가 “본문 근거로만 답하고, 구절은 verbatim, 없으면 지어내지 말 것”을 강제.
 
 ## BYOA (Bring Your Own API key)
 - 키는 **방문자 것**. `localStorage`(브라우저 전용)에만 저장되고 **어떤 서버로도 전송되지 않음**. 호출은 브라우저 → Google 직접.
