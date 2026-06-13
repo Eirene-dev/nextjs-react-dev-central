@@ -4,11 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Aura One — 스크롤이 곧 프레젠테이션 (스타일 연구)</title>
-<meta name="description" content="애플 제품 페이지의 디자인 문법(거대 타이포·sticky 스크롤 리빌·여백)을 연구한 가상 무선 이어버드 데모. 가상 브랜드, 실제 자산 미사용." />
+<meta name="description" content="애플 제품 페이지의 디자인 문법(거대 타이포·sticky 스크롤 리빌·명암 리듬·여백)을 연구한 가상 무선 이어버드 데모. CSS scroll-driven animation만으로, JS·이미지 자산 0. 가상 브랜드, 실제 자산 미사용." />
 <style>
   :root {
     --bg: #fbfbfd; --ink: #1d1d1f; --ink-2: #6e6e73; --line: #e3e3e6;
-    --graphite: #3a3a3e; --accent: #5b6b7a;
+    --graphite: #3a3a3e; --accent: #5b6b7a; --blue: #2b7de0;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,25 +16,54 @@
   body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
   .wrap { max-width: 980px; margin: 0 auto; padding: 0 22px; }
 
+  /* ── 전역: 상단 스크롤 진행 바 (문서 전체 진행 = scroll(root)) ── */
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50;
+    background: linear-gradient(90deg, var(--blue), #7fd0ff); transform: scaleX(0); transform-origin: left; }
+  @supports (animation-timeline: scroll()) {
+    .progress { animation: grow linear both; animation-timeline: scroll(root); }
+  }
+  @keyframes grow { to { transform: scaleX(1); } }
+
   .study { background: var(--ink); color: #fff; text-align: center; font-size: 12.5px; padding: 8px 16px; letter-spacing: -.01em; }
   .study b { color: #7fd0ff; font-weight: 600; }
 
-  /* 히어로 — 거대 타이포 + 여백 */
-  .hero { text-align: center; padding: 90px 22px 40px; }
+  /* ── 섹션 명암 리듬: 라이트 ↔ 드라마틱 딥다크(텍스트 반전) ── */
+  .sec-dark { background: radial-gradient(120% 90% at 50% 0%, #16181d 0%, #0a0b0e 70%); color: #f5f6f8; }
+  .sec-dark .cap, .sec-dark .ncnum, .sec-dark .feat .line { color: #f5f6f8; }
+  .sec-dark .sub { color: #9aa0ab; }
+
+  /* ── 히어로 — 거대 타이포 + 단어 순차 리빌(로드 stagger) + 스크롤 큐 ── */
+  .hero { text-align: center; padding: 90px 22px 48px; }
   .hero .eyebrow { color: var(--accent); font-size: 19px; font-weight: 600; }
-  .hero h1 { font-size: clamp(56px, 13vw, 128px); font-weight: 700; letter-spacing: -.03em; line-height: .98; margin: 6px 0 14px; background: linear-gradient(180deg, #2a2a2e, #6b7785); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero h1 { font-size: clamp(56px, 13vw, 128px); font-weight: 700; letter-spacing: -.03em; line-height: .98; margin: 6px 0 14px; }
+  /* 단어별 그라디언트 클립(부모가 아니라 각 span에 — inline-block 자식에서도 글자 채움 보장) + 로드 stagger 리빌 */
+  .hero h1 .w { display: inline-block;
+    background: linear-gradient(180deg, #2a2a2e, #6b7785); -webkit-background-clip: text; background-clip: text; color: transparent;
+    opacity: 0; transform: translateY(46px); animation: wordrise .72s cubic-bezier(.2,.75,.2,1) forwards; }
+  .hero h1 .w:nth-child(1) { animation-delay: .10s; }
+  .hero h1 .w:nth-child(2) { animation-delay: .28s; }
+  .hero h1 .w:nth-child(3) { animation-delay: .46s; }
+  @keyframes wordrise { to { opacity: 1; transform: none; } }
   .hero p { color: var(--ink-2); font-size: clamp(18px, 2.6vw, 24px); max-width: 24em; margin: 0 auto; }
   .hero .links { margin-top: 22px; display: flex; gap: 22px; justify-content: center; font-size: 17px; }
-  .hero .links a { color: #2b7de0; text-decoration: none; }
+  .hero .links a { color: var(--blue); text-decoration: none; }
   .hero .links a:hover { text-decoration: underline; }
+  .cue { margin: 40px auto 0; width: 26px; height: 26px; color: var(--ink-2); animation: bounce 1.8s ease-in-out infinite; }
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+  @media (prefers-reduced-motion: reduce) {
+    .hero h1 .w { opacity: 1; transform: none; animation: none; }
+    .cue { animation: none; }
+  }
 
-  /* sticky 스크롤 리빌: 스크롤에 따라 제품 SVG 회전·분해 (CSS scroll-driven, JS 0) */
-  .reveal { position: relative; height: 360vh; }
-  @supports not (animation-timeline: view()) { .reveal { height: auto; } }
-  .reveal .stage { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; overflow: hidden; }
-  .bud { width: min(60vw, 420px); }
-  .bud .stem, .bud .body, .bud .tip { transition: transform .1s linear; }
+  /* ── 핀 시퀀스 공통(기존 reveal 패턴 복제: sticky stage + view() scrubbed) ── */
+  .pin { position: relative; height: 360vh; }
+  .pin .stage { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; overflow: hidden; }
+  .pin .cap { position: absolute; bottom: 13%; left: 0; right: 0; text-align: center; font-size: clamp(22px, 4vw, 40px); font-weight: 700; letter-spacing: -.02em; padding: 0 18px; }
+  .pin svg { width: min(72vw, 460px); height: auto; }
+  @supports not (animation-timeline: view()) { .pin { height: auto; } .pin .stage { height: 80vh; } }
 
+  /* reveal — 이어버드 회전·분해(기존) */
+  .reveal .stage svg { width: min(60vw, 420px); }
   @supports (animation-timeline: view()) {
     .reveal .stage svg { animation: spin linear both; animation-timeline: view(); animation-range: cover; }
     .bud .left { animation: split-l linear both; animation-timeline: view(); animation-range: cover 25% cover 60%; }
@@ -45,10 +74,33 @@
   @keyframes split-l { 0%,100% { transform: none; } 50% { transform: translateX(-60px) rotate(-10deg); } }
   @keyframes split-r { 0%,100% { transform: none; } 50% { transform: translateX(60px) rotate(10deg); } }
   @keyframes capfade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-  .reveal .cap { position: absolute; bottom: 12%; left: 0; right: 0; text-align: center; font-size: clamp(22px, 4vw, 40px); font-weight: 700; letter-spacing: -.02em; }
+
+  /* 노이즈 캔슬링 — 동심원 음파가 안쪽으로 소거 + −42dB 리빌 */
+  .nc .wave { transform-box: fill-box; transform-origin: center; fill: none; stroke: #7fd0ff; }
+  .ncnum { position: absolute; top: 16%; left: 0; right: 0; text-align: center; font-size: clamp(40px, 9vw, 96px); font-weight: 700; letter-spacing: -.03em; }
+  @supports (animation-timeline: view()) {
+    .nc .wave { animation: collapse linear both; animation-timeline: view(); }
+    .nc .w1 { animation-range: cover 8% cover 42%; }
+    .nc .w2 { animation-range: cover 16% cover 52%; }
+    .nc .w3 { animation-range: cover 26% cover 64%; }
+    .nc .w4 { animation-range: cover 36% cover 76%; }
+    .nc .ncnum { animation: capfade linear both; animation-timeline: view(); animation-range: cover 60% cover 84%; }
+    .nc .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 68% cover 90%; }
+  }
+  @keyframes collapse { from { transform: scale(1); opacity: .55; } to { transform: scale(0); opacity: 0; } }
+
+  /* 공간 음향 — 방향 필드 회전(head-tracking) */
+  .sp .field { transform-box: fill-box; transform-origin: center; }
+  .sp .ring { fill: none; stroke: #3a4250; stroke-dasharray: 4 10; }
+  .sp .arrow { fill: #7fd0ff; }
+  @supports (animation-timeline: view()) {
+    .sp .field { animation: fieldspin linear both; animation-timeline: view(); animation-range: cover; }
+    .sp .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 60% cover 86%; }
+  }
+  @keyframes fieldspin { from { transform: rotate(-42deg); } to { transform: rotate(42deg); } }
 
   /* 기능 카피 — 한 문장씩 낙하 */
-  .feat { padding: 60px 0; }
+  .feat { padding: 70px 0; }
   .feat .line { font-size: clamp(28px, 6vw, 56px); font-weight: 700; letter-spacing: -.02em; line-height: 1.12; max-width: 16em; margin: 0 auto 40px; text-align: center; color: var(--graphite); }
   .feat .line span { color: var(--accent); }
   @supports (animation-timeline: view()) {
@@ -57,7 +109,7 @@
   @keyframes drop { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
 
   /* 스펙 그리드 */
-  .specs { padding: 60px 0; border-top: 1px solid var(--line); }
+  .specs { padding: 70px 0; border-top: 1px solid var(--line); }
   .specs h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); text-align: center; margin-bottom: 28px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
   .grid .cell { text-align: center; }
@@ -68,20 +120,22 @@
   .cta { text-align: center; padding: 80px 22px 100px; }
   .cta .price { font-size: 28px; font-weight: 700; }
   .cta .sub { color: var(--ink-2); margin: 6px 0 22px; }
-  .cta .btn { display: inline-block; background: #2b7de0; color: #fff; border-radius: 980px; padding: 12px 26px; font-size: 17px; font-weight: 500; text-decoration: none; }
+  .cta .btn { display: inline-block; background: var(--blue); color: #fff; border-radius: 980px; padding: 12px 26px; font-size: 17px; font-weight: 500; text-decoration: none; }
 </style>
 </head>
 <body>
-  <p class="study">애플 제품 페이지의 <b>디자인 문법</b>(거대 타이포·sticky 스크롤 리빌·여백)을 연구한 <b>가상 브랜드</b> 데모 — 실제 로고·제품·카피 미사용</p>
+  <div class="progress" aria-hidden="true"></div>
+  <p class="study">애플 제품 페이지의 <b>디자인 문법</b>(거대 타이포·sticky 스크롤 리빌·명암 리듬·여백)을 연구한 <b>가상 브랜드</b> 데모 — CSS scroll-driven만, JS·이미지 자산 0</p>
 
   <section class="hero">
     <p class="eyebrow">Aura One</p>
-    <h1>들리지 않는 경계.</h1>
+    <h1><span class="w">들리지</span> <span class="w">않는</span> <span class="w">경계.</span></h1>
     <p>주변음과 음악 사이, 그 경계가 사라집니다.</p>
     <div class="links"><a href="#buy">구매하기 ›</a><a href="#specs">자세히 ›</a></div>
+    <svg class="cue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
   </section>
 
-  <section class="reveal">
+  <section class="pin reveal">
     <div class="stage">
       <svg class="bud" viewBox="0 0 400 260" fill="none" aria-label="Aura One 이어버드 일러스트">
         <g class="left">
@@ -96,6 +150,43 @@
         </g>
       </svg>
       <div class="cap">분해할수록, 단순해진다.</div>
+    </div>
+  </section>
+
+  <section class="pin nc sec-dark">
+    <div class="stage">
+      <div class="ncnum">−42dB</div>
+      <svg viewBox="0 0 400 400" fill="none" aria-label="능동 노이즈 캔슬링 — 동심원 음파가 소거되는 일러스트">
+        <circle class="wave w4" cx="200" cy="200" r="180" stroke-width="2"/>
+        <circle class="wave w3" cx="200" cy="200" r="140" stroke-width="2.5"/>
+        <circle class="wave w2" cx="200" cy="200" r="100" stroke-width="3"/>
+        <circle class="wave w1" cx="200" cy="200" r="60" stroke-width="3.5"/>
+        <g>
+          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="#3a3a3e"/>
+          <rect x="206" y="194" width="13" height="58" rx="6" fill="#54545a"/>
+        </g>
+      </svg>
+      <div class="cap">세상이 조용해지는 순간.</div>
+    </div>
+  </section>
+
+  <section class="pin sp sec-dark">
+    <div class="stage">
+      <svg viewBox="0 0 400 400" fill="none" aria-label="공간 음향 — 머리 방향을 따라 회전하는 음장 일러스트">
+        <g class="field">
+          <circle class="ring" cx="200" cy="200" r="150" stroke-width="2"/>
+          <circle class="ring" cx="200" cy="200" r="100" stroke-width="2"/>
+          <path class="arrow" d="M200 26l16 26h-32z"/>
+          <path class="arrow" d="M200 374l16-26h-32z"/>
+          <path class="arrow" d="M26 200l26-16v32z"/>
+          <path class="arrow" d="M374 200l-26-16v32z"/>
+        </g>
+        <g>
+          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="#3a3a3e"/>
+          <rect x="206" y="194" width="13" height="58" rx="6" fill="#54545a"/>
+        </g>
+      </svg>
+      <div class="cap">머리를 돌리면, 소리도 따라옵니다.</div>
     </div>
   </section>
 
