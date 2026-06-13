@@ -99,6 +99,74 @@
   }
   @keyframes fieldspin { from { transform: rotate(-42deg); } to { transform: rotate(42deg); } }
 
+  /* ── 가로 스크롤 기능 스트립 — 세로 스크롤을 트랙 translateX로 scrub(핀 내부에서만 이동) ── */
+  .hstrip { position: relative; height: 440vh; }
+  .hstrip .stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; }
+  .htrack { display: flex; gap: 26px; width: max-content; padding: 0 6vw; will-change: transform; }
+  .hcard { width: min(80vw, 470px); height: 64vh; max-height: 560px; border-radius: 28px; padding: 38px; display: flex; flex-direction: column; justify-content: space-between;
+    background: linear-gradient(155deg, #20232a, #0d0e12); color: #f5f6f8; border: 1px solid #262a32; }
+  .hcard .hn { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #7fd0ff; }
+  .hcard .ico { width: 78px; height: 78px; color: #cfd5dd; }
+  .hcard h3 { font-size: clamp(30px, 5.4vw, 58px); font-weight: 700; letter-spacing: -.02em; line-height: 1.04; }
+  .hcard p { color: #aab0bb; font-size: clamp(15px, 2vw, 18px); margin-top: 8px; }
+  @supports (animation-timeline: view()) {
+    .htrack { animation: htrack linear both; animation-timeline: view(); animation-range: cover; }
+  }
+  @keyframes htrack { from { transform: translateX(0); } to { transform: translateX(calc(-100% + 92vw)); } }
+  @supports not (animation-timeline: view()) {
+    .hstrip { height: auto; } .hstrip .stage { height: auto; overflow-x: auto; padding: 40px 0; } .htrack { padding: 0 22px; }
+  }
+
+  /* ── 패럴랙스 소재 — 레이어별 다른 translateY 속도로 깊이감 ── */
+  .mat { position: relative; min-height: 150vh; overflow: hidden; display: grid; place-items: center; padding: 20vh 22px; }
+  .mat .mattitle { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); position: absolute; top: 9vh; left: 0; right: 0; text-align: center; }
+  .mat .layer { position: absolute; left: 50%; transform: translateX(-50%); }
+  .mat .bg { width: min(86vw, 620px); opacity: .5; }
+  .mat .mid { width: min(56vw, 360px); }
+  .mat .tag { background: var(--ink); color: #fff; font-size: clamp(13px, 1.8vw, 16px); font-weight: 600; padding: 8px 14px; border-radius: 980px; white-space: nowrap; }
+  .mat .t1 { top: 26%; } .mat .t2 { top: 50%; } .mat .t3 { top: 72%; }
+  @supports (animation-timeline: view()) {
+    .mat .bg  { animation: par-bg  linear both; animation-timeline: view(); animation-range: cover; }
+    .mat .mid { animation: par-mid linear both; animation-timeline: view(); animation-range: cover; }
+    .mat .t1  { animation: par-f1  linear both; animation-timeline: view(); animation-range: cover; }
+    .mat .t2  { animation: par-f2  linear both; animation-timeline: view(); animation-range: cover; }
+    .mat .t3  { animation: par-f3  linear both; animation-timeline: view(); animation-range: cover; }
+  }
+  @keyframes par-bg  { from { transform: translateX(-50%) translateY(40px);  } to { transform: translateX(-50%) translateY(-40px);  } }
+  @keyframes par-mid { from { transform: translateX(-50%) translateY(90px);  } to { transform: translateX(-50%) translateY(-90px);  } }
+  @keyframes par-f1  { from { transform: translateX(-50%) translateY(150px); } to { transform: translateX(-50%) translateY(-150px); } }
+  @keyframes par-f2  { from { transform: translateX(-50%) translateY(120px); } to { transform: translateX(-50%) translateY(-120px); } }
+  @keyframes par-f3  { from { transform: translateX(-50%) translateY(170px); } to { transform: translateX(-50%) translateY(-170px); } }
+
+  /* ── 색상 옵션 — 스크롤 진행에 이어버드 색이 팔레트 전환(@property <color> scrubbed) ── */
+  @property --c-body { syntax: '<color>'; inherits: true; initial-value: #3a3a3e; }
+  @property --c-stem { syntax: '<color>'; inherits: true; initial-value: #54545a; }
+  .colorpin { position: relative; height: 320vh; }
+  .colorpin .stage { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; overflow: hidden; }
+  .colorpin .cbud { width: min(56vw, 340px); }
+  .colorpin .cbud .body { fill: var(--c-body); transition: fill .2s linear; }
+  .colorpin .cbud .stem { fill: var(--c-stem); }
+  .colorpin .cname { position: absolute; top: 15%; left: 0; right: 0; text-align: center; font-size: clamp(28px, 7vw, 64px); font-weight: 700; letter-spacing: -.02em; opacity: 0; }
+  @supports (animation-timeline: view()) {
+    .colorpin .cbud { animation: hue linear both; animation-timeline: view(); animation-range: cover; }
+    .colorpin .cname { animation: nflash linear both; animation-timeline: view(); }
+    .colorpin .n1 { animation-range: cover 2% cover 26%; }
+    .colorpin .n2 { animation-range: cover 28% cover 50%; }
+    .colorpin .n3 { animation-range: cover 52% cover 74%; }
+    .colorpin .n4 { animation-range: cover 76% cover 99%; }
+  }
+  @keyframes hue {
+    0%   { --c-body: #3a3a3e; --c-stem: #54545a; }
+    30%  { --c-body: #c7ccd4; --c-stem: #9aa0ab; }
+    60%  { --c-body: #8a9a86; --c-stem: #6f7d6b; }
+    100% { --c-body: #d98b7a; --c-stem: #b86f5e; }
+  }
+  @keyframes nflash { 0% { opacity: 0; transform: translateY(14px); } 22% { opacity: 1; transform: none; } 78% { opacity: 1; } 100% { opacity: 0; } }
+  @supports not (animation-timeline: view()) {
+    .colorpin { height: auto; } .colorpin .stage { height: 80vh; }
+    .colorpin .n1 { opacity: 1; } .colorpin .n2, .colorpin .n3, .colorpin .n4 { display: none; }
+  }
+
   /* 기능 카피 — 한 문장씩 낙하 */
   .feat { padding: 70px 0; }
   .feat .line { font-size: clamp(28px, 6vw, 56px); font-weight: 700; letter-spacing: -.02em; line-height: 1.12; max-width: 16em; margin: 0 auto 40px; text-align: center; color: var(--graphite); }
@@ -187,6 +255,61 @@
         </g>
       </svg>
       <div class="cap">머리를 돌리면, 소리도 따라옵니다.</div>
+    </div>
+  </section>
+
+  <section class="hstrip">
+    <div class="stage">
+      <div class="htrack">
+        <div class="hcard">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 9a5 5 0 1 1 8 4c-1.5 1.2-2 2-2 3.5A2.5 2.5 0 0 1 8.5 19"/><circle cx="9.5" cy="9.5" r="1.3"/></svg>
+          <div><div class="hn">01</div><h3>적응형 핏</h3><p>네 귀의 형태에 맞춰, 종일 잊고 지내는 착용감.</p></div>
+        </div>
+        <div class="hcard">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>
+          <div><div class="hn">02</div><h3>IP57 땀·비</h3><p>운동도, 갑작스런 소나기도. 방수·방진 등급.</p></div>
+        </div>
+        <div class="hcard">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M5 12a7 7 0 0 1 14 0M2.5 12a9.5 9.5 0 0 1 19 0"/></svg>
+          <div><div class="hn">03</div><h3>탭 한 번, 주변음</h3><p>대화가 필요한 순간, 한 번의 탭으로 세상을 연다.</p></div>
+        </div>
+        <div class="hcard">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="8" width="15" height="8" rx="2"/><path d="M21 11v2"/><path d="M7 12h5"/></svg>
+          <div><div class="hn">04</div><h3>케이스에 3회 충전</h3><p>하루를 버티는 배터리, 케이스로 세 번 더.</p></div>
+        </div>
+        <div class="hcard">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 15l6-6M8 13l-2 2a3.5 3.5 0 0 0 5 5l2-2M16 11l2-2a3.5 3.5 0 0 0-5-5l-2 2"/></svg>
+          <div><div class="hn">05</div><h3>근접 자동 연결</h3><p>케이스를 여는 순간, 기기가 알아서 이어진다.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mat">
+    <p class="mattitle">소재의 디테일</p>
+    <svg class="layer bg" viewBox="0 0 400 400" fill="none" aria-hidden="true"><circle cx="200" cy="200" r="180" stroke="#d4d8de" stroke-width="2"/><circle cx="200" cy="200" r="120" stroke="#e0e3e8" stroke-width="2"/></svg>
+    <svg class="layer mid" viewBox="0 0 220 300" fill="none" aria-label="이어버드 단면 일러스트">
+      <path d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z" fill="#33333a"/>
+      <path d="M78 72c22-12 50-6 56 16 4 20-10 42-32 48" stroke="#7a8696" stroke-width="3" fill="none"/>
+      <rect x="96" y="150" width="18" height="96" rx="9" fill="#54545a"/>
+      <circle cx="105" cy="118" r="13" fill="#8a93a3"/>
+    </svg>
+    <span class="layer tag t1">음향 챔버</span>
+    <span class="layer tag t2">실리콘 이어팁</span>
+    <span class="layer tag t3">금속 스템</span>
+  </section>
+
+  <section class="colorpin sec-dark">
+    <div class="stage">
+      <span class="cname n1">미드나이트</span>
+      <span class="cname n2">스타라이트</span>
+      <span class="cname n3">세이지</span>
+      <span class="cname n4">코랄</span>
+      <svg class="cbud" viewBox="0 0 220 300" fill="none" aria-label="색상 옵션이 전환되는 이어버드 일러스트">
+        <path class="body" d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z"/>
+        <rect class="stem" x="96" y="150" width="18" height="96" rx="9"/>
+        <circle cx="105" cy="118" r="13" fill="#cfd5dd"/>
+      </svg>
     </div>
   </section>
 
