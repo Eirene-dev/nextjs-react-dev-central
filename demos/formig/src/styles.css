@@ -27,6 +27,13 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .chips button:disabled { opacity: .5; }
 .err { color: #e06a4c; font-size: 13px; margin-top: 10px; }
 .formwrap { max-width: 620px; margin: 26px auto 70px; padding: 0 22px; }
+/* 입력 문장 + 근거 하이라이트 */
+.srcbox { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; }
+.srclabel { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink2); margin-bottom: 8px; }
+.srcsentence { font-size: 16px; line-height: 1.9; word-break: keep-all; }
+.srcmark { border-radius: 4px; padding: 1px 2px; color: #18201c; transition: box-shadow .2s; }
+.srcmark.active { box-shadow: 0 0 0 3px rgba(15, 157, 110, .18); }
+.srcbadge { font-size: 11px; font-weight: 700; margin-left: 6px; white-space: nowrap; }
 .resform { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .field { display: flex; flex-direction: column; gap: 5px; transition: background .3s; border-radius: 10px; padding: 4px; }
 .field.just { background: rgba(15,157,110,.12); }
