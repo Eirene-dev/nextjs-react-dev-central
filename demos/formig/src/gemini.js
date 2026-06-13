@@ -39,12 +39,21 @@ function buildSystem(fields, systemPrompt) {
   )
 }
 
-export async function fillForm({ apiKey, sentence, fields, systemPrompt, model = GEMINI_MODEL }) {
+// current(현재 폼) 가 있으면 후속 정정 컨텍스트를 더한다(언급 없는 필드는 유지, 수정/추가만 반영).
+function correctionNote(fields, current) {
+  if (!current) return ''
+  const filled = fields.filter((f) => current[f.key] !== undefined && current[f.key] !== '')
+  if (!filled.length) return ''
+  const dump = filled.map((f) => `${f.key}=${current[f.key]}`).join(', ')
+  return ` 현재 폼: { ${dump} }. 다음 문장은 수정/추가만 반영하고, 언급되지 않은 필드는 출력하지 마라(기존 값 유지).`
+}
+
+export async function fillForm({ apiKey, sentence, fields, systemPrompt, current = null, model = GEMINI_MODEL }) {
   const res = await fetch(endpoint(model, apiKey), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      systemInstruction: { parts: [{ text: buildSystem(fields, systemPrompt) }] },
+      systemInstruction: { parts: [{ text: buildSystem(fields, systemPrompt) + correctionNote(fields, current) }] },
       contents: [{ role: 'user', parts: [{ text: sentence }] }],
       generationConfig: { responseMimeType: 'application/json', responseSchema: buildSchema(fields) },
     }),

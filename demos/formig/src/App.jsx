@@ -5,9 +5,10 @@ import { streamFill, getSampleParse } from './sample.js'
 import { DOMAINS, getDomain } from './domains.js'
 
 // 필드별 색(근거 하이라이트 ↔ 배지 연결). 도메인 fields 인덱스로 hue 분배.
+// 하이라이트 pill 은 밝은 배경+짙은 글씨라 다크/라이트 모두 또렷(highlighter). 배지는 테마별 명도 조정.
 const hueAt = (idx) => (idx * 36 + 200) % 360
-const markStyle = (hue) => ({ background: `hsl(${hue} 80% 92%)`, borderBottom: `2px solid hsl(${hue} 65% 45%)` })
-const badgeStyle = (hue) => ({ color: `hsl(${hue} 60% 38%)` })
+const markStyle = (hue) => ({ background: `hsl(${hue} 85% 90%)`, borderBottom: `2px solid hsl(${hue} 70% 48%)` })
+const badgeStyle = (hue, dark) => ({ color: dark ? `hsl(${hue} 80% 72%)` : `hsl(${hue} 60% 38%)` })
 
 // 입력 문장 위에 현재까지 채워진 필드의 source 구절을 하이라이트(겹치면 먼저 온 것 우선).
 function HighlightedSentence({ sentence, sources, active, hueByField }) {
@@ -39,6 +40,7 @@ function HighlightedSentence({ sentence, sources, active, hueByField }) {
 
 // 자연어 한 줄 → 폼 필드 순차 채움 + 근거 구절 문장 하이라이트(동기). 도메인 전환 지원.
 export default function App() {
+  const [theme, setTheme] = useState('dark') // 기본 다크(쇼케이스 미감)
   const [mode, setMode] = useState('sample')
   const [apiKey, setApiKey] = useState('')
   const [domainId, setDomainId] = useState(DOMAINS[0].id)
@@ -74,13 +76,22 @@ export default function App() {
     setTimeout(() => setFilled((s) => ({ ...s, [k]: false })), 700)
   }
 
+  // 새로 — 폼·근거 비우기(명시적 초기화).
+  const reset = () => {
+    if (busy) return
+    setForm(empty); setFilled({}); setSources({}); setRunSentence(''); setActive('')
+  }
+
+  // ★ 후속 정정: 폼을 초기화하지 않고 머지(언급된 필드만 갱신). 근거(sources)는 현재 문장 기준으로 갱신 →
+  //   정정된 필드만 새 source_text 로 재하이라이트(어느 필드가 왜 바뀌었는지 보임). 나머지 값은 유지.
   const run = async () => {
     if (busy || !sentence.trim()) return
-    setBusy(true); setErr(''); setForm(empty); setFilled({}); setSources({}); setActive(null)
+    const hasPrior = Object.values(form).some((v) => v !== '')
+    setBusy(true); setErr(''); setFilled({}); setSources({}); setActive(null)
     setRunSentence(sentence)
     try {
       const raw = mode === 'mykey' && apiKey
-        ? await fillForm({ apiKey, sentence, fields, systemPrompt: domain.systemPrompt })
+        ? await fillForm({ apiKey, sentence, fields, systemPrompt: domain.systemPrompt, current: hasPrior ? form : null })
         : getSampleParse(domain, sentence)
       const items = validateExtractions(raw, sentence, fields)
       streamFill(items, { onField, done: () => { setBusy(false); setActive(null) } })
@@ -91,7 +102,10 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${theme}`}>
+      <button className="themetoggle" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}>
+        {theme === 'dark' ? '☀ 라이트' : '🌙 다크'}
+      </button>
       <header className="hero">
         <span className="badge">Formig · AI×웹</span>
         <h1>한 줄이면, 폼이 채워진다</h1>
@@ -107,8 +121,9 @@ export default function App() {
         </div>
         <div className="cmdbar">
           <input value={sentence} onChange={(e) => setSentence(e.target.value)} disabled={busy}
-            placeholder="자연어 한 줄을 입력하세요" aria-label="입력 문장" />
+            placeholder="자연어 한 줄을 입력하세요 (이어서 정정도 가능)" aria-label="입력 문장" />
           <button onClick={run} disabled={busy}>{busy ? '채우는 중…' : '채우기'}</button>
+          <button className="ghostbtn" onClick={reset} disabled={busy} title="폼 비우기">새로</button>
         </div>
         <div className="chips">
           {domain.samples.map((s) => (
@@ -132,7 +147,7 @@ export default function App() {
             <label key={f.key} className={`field ${filled[f.key] ? 'just' : ''}`}>
               <span className="fl">
                 {f.label}
-                {sources[f.key] && <span className="srcbadge" style={badgeStyle(hueByField[f.key])}>← ‘{sources[f.key]}’</span>}
+                {sources[f.key] && <span className="srcbadge" style={badgeStyle(hueByField[f.key], theme === 'dark')}>← ‘{sources[f.key]}’</span>}
               </span>
               {f.type === 'select' ? (
                 <select value={form[f.key]} onChange={(e) => setForm((s) => ({ ...s, [f.key]: e.target.value }))}>

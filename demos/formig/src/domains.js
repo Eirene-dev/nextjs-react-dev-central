@@ -57,6 +57,19 @@ export const DOMAINS = [
           { field: 'request', value: '케이크 준비 요청', source_text: '케이크 준비' },
         ],
       },
+      // ↓ 후속 정정 시퀀스: 이 문장으로 채운 뒤 ↓의 정정을 적용하면 time 만 갱신·재하이라이트되고 나머지 유지.
+      {
+        sentence: '내일 저녁 7시 두 명 예약',
+        extractions: [
+          { field: 'date', value: '내일', source_text: '내일' },
+          { field: 'time', value: '19:00', source_text: '저녁 7시' },
+          { field: 'adults', value: '2', source_text: '두 명' },
+        ],
+      },
+      {
+        sentence: '아 6시로 앞당겨줘',
+        extractions: [{ field: 'time', value: '18:00', source_text: '6시' }],
+      },
     ],
   },
   {
