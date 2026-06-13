@@ -3,7 +3,8 @@
 가상 제품 문서에 질문하면 **Gemini structured output**으로 답하되, 답의 각 근거를 **본문의 정확한 구절(span)**에 연결한다. 인용을 누르면 그 구절로 점프·강조. 문서에 없으면 솔직하게 “없습니다”라고 말한다(grounding).
 
 ## 아키텍처
-- Vite + React. 문서는 문단마다 id(`p1`…`p6`)를 가진다. 질문 → `responseSchema`로 `{found, answer, citations:[{source_quote, source_id}]}` JSON 강제.
+- Vite + React. ★ **코퍼스 레지스트리**(`src/corpora.js`): `CORPORA=[{id, label, doc:[{id,text}], samples}]`. 현재 3종 — **제품(Nimbus 7) · 환불·교환 정책 · 서비스 FAQ**, 상단 탭으로 전환. `doc`이 단일 소스 — askGrounded 프롬프트 본문 · `validateCitations` 검증 기준 · 문서 패널 렌더 모두 활성 코퍼스에서. 코퍼스 추가 = 배열에 객체 하나.
+- 문서는 문단마다 id를 가진다. 질문 → `responseSchema`로 `{found, answer, citations:[{source_quote, source_id}]}` JSON 강제.
 - ★ **span-level 인용**: 각 인용은 문단 통째가 아니라 **본문 속 정확한 구절(`source_quote`, verbatim)** + 문단 id. UI는 그 구절만 하이라이트하고, 답 아래 번호 칩 `[1] p2 · “…”`을 인용 구절과 **색으로 연결**. 칩 클릭 → 해당 구절로 스크롤·강조.
 - 샘플/실키가 **같은 `onAnswer` 경로**(→ `validateCitations`)를 탄다.
 
@@ -19,7 +20,7 @@
 - 모델: `gemini-3.1-flash-lite`(데모 하드코딩, 사이트 `GEMINI_MODEL`과 무관).
 
 ## 샘플 모드(기본)
-키 없이 프리셋 질문 4종으로 핵심 100% 체험 — **있는 질문 3 + 없는 질문 1**(방수등급)로 `found:false`까지 시연. 녹화된 답을 동일 경로로 재생.
+키 없이 코퍼스별 프리셋 질문으로 핵심 체험 — 각 코퍼스 **있는 질문 3 + 없는 질문 1**로 span 인용·`found:false`까지 시연. 녹화된 답을 동일 경로(→ `validateCitations`)로 재생. span 인용·검증·"없습니다"가 세 코퍼스 모두 동작.
 
 ## 로컬 실행
 `npm install` → `npm run dev`(개발) / `npm run build`(배포물 = `dist/`). 루트에서 `yarn demo:sync`가 빌드 후 `public/showcases/docent/`로 복사.

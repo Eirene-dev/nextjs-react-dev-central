@@ -18,7 +18,11 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .kbtn:disabled { opacity: .5; }
 .link { margin-top: 8px; background: none; border: none; color: var(--brand); font: inherit; font-size: 13px; cursor: pointer; }
 .note { font-size: 11.5px; color: var(--ink2); margin-top: 10px; line-height: 1.5; }
-.cmdbar { display: flex; gap: 8px; margin: 22px auto 12px; max-width: 560px; }
+.corpora { display: inline-flex; flex-wrap: wrap; gap: 4px; margin: 20px auto 0; border: 1px solid var(--line); border-radius: 12px; padding: 4px; background: var(--card); }
+.corpora button { font: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; border: none; border-radius: 9px; background: transparent; color: var(--ink2); cursor: pointer; }
+.corpora button.on { background: var(--brand); color: #fff; }
+.corpora button:disabled { opacity: .5; cursor: not-allowed; }
+.cmdbar { display: flex; gap: 8px; margin: 16px auto 12px; max-width: 560px; }
 .cmdbar input { flex: 1; border: 1px solid var(--line); border-radius: 11px; padding: 11px 14px; font: inherit; }
 .cmdbar button { font: inherit; font-weight: 600; border: none; border-radius: 11px; padding: 11px 18px; background: var(--brand); color: #fff; cursor: pointer; }
 .cmdbar button:disabled { opacity: .5; }
