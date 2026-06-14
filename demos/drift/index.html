@@ -13,7 +13,7 @@
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
   body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.7; -webkit-font-smoothing: antialiased; }
 
   /* ── 미지원 브라우저 안내 배너 (scroll-timeline 미지원 시 표시) ── */
@@ -145,17 +145,41 @@
   }
   @keyframes wordin { from { opacity: .12; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
+  /* ── ⑤ 가로 스크롤 스트립: 테이스팅 노트 (sticky + translateX scrub, JS 0) ── */
+  /* 기본(미지원 폴백): 정적 가로 나열 — 네이티브 스크롤로 접근 가능 */
+  .hstrip { position: relative; }
+  .hstrip-sticky { padding: 26px 22px; overflow-x: auto; overflow-y: hidden; margin: 0 -22px; }
+  .hstrip-head { font-family: var(--serif); font-size: 13px; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .hstrip-track { display: flex; gap: 16px; width: max-content; }
+  .note { flex: 0 0 200px; border-radius: 16px; padding: 22px; background: linear-gradient(160deg, #fff7ec, #eddcc4); border: 1px solid #e3cfb3; box-shadow: 0 16px 32px -24px rgba(42,32,24,.6); }
+  .note svg { width: 44px; height: 44px; display: block; margin-bottom: 16px; }
+  .note b { font-family: var(--serif); font-weight: 400; font-size: 22px; display: block; color: var(--ink); }
+  .note span { font-size: 11.5px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  /* 지원: 세로 스크롤 → 가로 트랙 translateX 스크럽 (핀 시퀀스) */
+  @supports (animation-timeline: view()) {
+    .hstrip { height: 300vh; timeline-scope: --hs; view-timeline: --hs block; }
+    .hstrip-sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+      overflow: hidden; width: 100vw; margin-left: calc(50% - 50vw); padding: 0 22px; }
+    .hstrip-track { animation: hscroll linear both; animation-timeline: --hs; animation-range: contain 0% contain 100%; }
+  }
+  /* 트랙 콘텐츠 폭 = 6×200 + 5×16 = 1280px. min(0px,…)로 넓은 화면 과스크롤 방지 */
+  @keyframes hscroll { from { transform: translateX(0); } to { transform: translateX(min(0px, calc(100vw - 1304px))); } }
+
   /* ── ★ prefers-reduced-motion: 모든 모션 정지(내용은 정적 노출) ── */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .hint, .progress, .scene .reveal, .art .layer, .fog,
     .ill-seed .grow, .ill-harvest .ripe, .ill-roast .crack, .ill-cup .pourart, .ill-cup .drop, .ill-cup .steam path,
     body, .m-alt, .m-dry, .m-temp, .m-brew,
-    .ill-dry .spread, .ill-grind .grindart, .ill-grind .ground, .interlude .w {
+    .ill-dry .spread, .ill-grind .grindart, .ill-grind .ground, .interlude .w, .hstrip-track {
       animation: none !important;
     }
     .ill-roast .curve { animation: none !important; stroke-dashoffset: 0; }
     .scene .reveal, .interlude .w { opacity: 1; transform: none; }
+    /* 가로 스트립 → 정적 가로 나열(스와이프)로 복귀 */
+    .hstrip { height: auto !important; }
+    .hstrip-sticky { position: static !important; height: auto !important; width: auto !important; margin: 0 -22px !important; overflow: visible !important; overflow-x: auto !important; padding: 26px 22px !important; }
+    .hstrip-track { transform: none !important; }
   }
 
   footer { background: var(--bg); color: #b8977a; text-align: center; padding: 80px 22px; font-size: 13px; }
@@ -284,6 +308,38 @@
           <ellipse cx="160" cy="200" rx="26" ry="6" fill="#5a3a1e" opacity=".55"/>
         </svg>
         <span class="cap">Burr · Medium-fine</span></div>
+    </section>
+
+    <section class="hstrip" aria-label="테이스팅 노트">
+      <div class="hstrip-sticky">
+        <p class="hstrip-head">테이스팅 노트 · Tasting Notes</p>
+        <div class="hstrip-track">
+          <article class="note">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="16" cy="27" r="8" fill="#a8324b"/><circle cx="28" cy="28" r="8" fill="#c0392b"/><circle cx="23" cy="16" r="7" fill="#8e2840"/><path d="M23 11 q7 -7 13 -4 q-3 7 -11 6 Z" fill="#6b8f3a"/></svg>
+            <b>베리</b><span>Berry</span>
+          </article>
+          <article class="note">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><rect x="8" y="10" width="28" height="24" rx="3" fill="#5a3a1e"/><path d="M8 18 H36 M8 26 H36 M22 10 V34" stroke="#3a2412" stroke-width="2"/></svg>
+            <b>다크 초콜릿</b><span>Dark Chocolate</span>
+          </article>
+          <article class="note">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="13" fill="#e8a33d"/><g stroke="#fff3df" stroke-width="1.6"><path d="M22 9 V35 M9 22 H35 M13 13 L31 31 M31 13 L13 31"/></g><circle cx="22" cy="22" r="3" fill="#fff3df"/></svg>
+            <b>시트러스</b><span>Citrus</span>
+          </article>
+          <article class="note">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M14 13 h16 v11 q0 12 -8 16 q-8 -4 -8 -16 Z" fill="#b5793a"/><ellipse cx="22" cy="14" rx="8" ry="3.5" fill="#caa066"/></svg>
+            <b>캐러멜</b><span>Caramel</span>
+          </article>
+          <article class="note">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><g fill="#c98aa8"><circle cx="22" cy="12" r="6"/><circle cx="32" cy="22" r="6"/><circle cx="22" cy="32" r="6"/><circle cx="12" cy="22" r="6"/></g><circle cx="22" cy="22" r="5" fill="#e8a33d"/></svg>
+            <b>꽃향</b><span>Floral</span>
+          </article>
+          <article class="note">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M22 8 q12 4 12 16 q0 12 -12 14 q-12 -2 -12 -14 q0 -12 12 -16 Z" fill="#8a5a32"/><path d="M22 12 V34 M14 20 q8 4 16 0" stroke="#5e3c1f" stroke-width="2" fill="none"/></svg>
+            <b>견과</b><span>Nutty</span>
+          </article>
+        </div>
+      </div>
     </section>
 
     <section class="scene">
