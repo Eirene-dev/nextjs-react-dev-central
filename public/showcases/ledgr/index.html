@@ -38,22 +38,45 @@
   .btn.p { background: var(--indigo); color: #fff; }
   .btn.s { background: rgba(255,255,255,.06); color: var(--ink); border: 1px solid var(--line); }
 
-  /* 코드와 마케팅 공존 — 탭으로 언어 전환 */
-  .feature { padding: 70px 0; display: grid; grid-template-columns: 1fr 1.1fr; gap: 44px; align-items: center; }
-  @media (max-width: 760px) { .feature { grid-template-columns: 1fr; gap: 26px; } }
-  .feature h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 700; letter-spacing: -.02em; }
-  .feature p { color: var(--ink-2); margin-top: 12px; }
-  .feature ul { margin-top: 16px; list-style: none; display: grid; gap: 8px; }
-  .feature li { color: var(--ink-2); padding-left: 22px; position: relative; }
-  .feature li::before { content: '✓'; position: absolute; left: 0; color: var(--teal); }
+  /* ── 스크롤 리빌 (CSS scroll-driven, JS 0) ── */
+  @supports (animation-timeline: view()) {
+    .rv { animation: rvup linear both; animation-timeline: view(); animation-range: entry 2% cover 26%; }
+  }
+  @keyframes rvup { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .rv { animation: none !important; } }
+
+  /* ── 스티키 코드 워크스루 (스트라이프 시그니처: 읽으면 코드가 따라옴) ── */
+  .walk { padding: 40px 0 30px; }
+  .walk .lead { max-width: 24em; margin-bottom: 6px; }
+  .walk .lead h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -.02em; }
+  .walk .lead p { color: var(--ink-2); margin-top: 10px; }
+  .walkgrid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 48px; align-items: start; margin-top: 30px; }
+  .steps { display: flex; flex-direction: column; min-width: 0; }
+  .step { min-height: 60vh; display: flex; flex-direction: column; justify-content: center; padding: 18px 0 18px 20px;
+    border-left: 2px solid var(--line); opacity: .4; transition: opacity .35s, border-color .35s; }
+  .step.active { opacity: 1; border-left-color: var(--indigo); }
+  .step .sn { font-family: var(--mono); font-size: 12px; color: var(--teal); letter-spacing: .06em; }
+  .step h3 { font-size: clamp(22px, 3.4vw, 32px); font-weight: 700; letter-spacing: -.02em; margin: 8px 0 8px; }
+  .step p { color: var(--ink-2); max-width: 22em; }
+  .codeside { position: sticky; top: 84px; min-width: 0; }
+  .codecard { max-width: 100%; }
   .codecard { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px -40px rgba(103,114,229,.5); }
   .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); padding: 8px 8px 0; }
   .tab { background: none; border: none; color: var(--ink-2); font: inherit; font-size: 13px; padding: 8px 14px; border-radius: 8px 8px 0 0; cursor: pointer; }
   .tab[aria-selected="true"] { background: #0a0a14; color: var(--ink); }
+  .cbody { position: relative; min-height: 168px; }
   pre { margin: 0; padding: 18px 20px; font-family: var(--mono); font-size: 13px; line-height: 1.7; overflow-x: auto; color: #d7d7ec; }
-  .panel-code { display: none; }
-  .panel-code[data-active="true"] { display: block; }
+  .wcode { display: none; }
+  .wcode.on { display: block; animation: codein .3s ease; }
+  @keyframes codein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .wcode.on { animation: none; } }
   .tok-k { color: #c792ea; } .tok-s { color: #c3e88d; } .tok-c { color: #6b7390; } .tok-f { color: #82aaff; }
+  @media (max-width: 860px) {
+    .walkgrid { grid-template-columns: 1fr; gap: 0; }
+    .codeside { order: -1; position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0 12px; }
+    .step { min-height: 46vh; opacity: 1; border-left: none; padding-left: 0; }
+    .step.active h3 { color: var(--indigo); }
+  }
 
   /* 로고월 — 가상 회사 워드마크(SVG 텍스트) */
   .logos { padding: 50px 0; border-top: 1px solid var(--line); text-align: center; }
@@ -87,41 +110,104 @@
     </div>
   </header>
 
-  <section class="feature wrap">
-    <div>
-      <h2>읽으면 바로 이해되는 API</h2>
-      <p>SDK는 6개 언어. 복사해 붙이면 그대로 동작하는 예제로 시작하세요.</p>
-      <ul><li>멱등성 키 기본 지원</li><li>웹훅 서명 검증 내장</li><li>테스트·운영 키 분리</li></ul>
+  <section class="walk wrap" id="docs">
+    <div class="lead rv">
+      <h2>읽으면 그대로 동작하는 API</h2>
+      <p>아래로 읽어 내려가면, 코드가 단계를 따라옵니다. 결제부터 환불까지 네 줄로.</p>
     </div>
-    <div class="codecard">
-      <div class="tabs" role="tablist">
-        <button class="tab" role="tab" aria-selected="true" data-lang="js">JavaScript</button>
-        <button class="tab" role="tab" aria-selected="false" data-lang="py">Python</button>
-        <button class="tab" role="tab" aria-selected="false" data-lang="go">Go</button>
+    <div class="walkgrid">
+      <div class="steps">
+        <div class="step" data-step="0">
+          <span class="sn">01 · CHARGES</span>
+          <h3>결제 생성</h3>
+          <p>한 번의 호출로 카드·계좌이체 결제를 만듭니다. 멱등성 키로 중복도 안전합니다.</p>
+        </div>
+        <div class="step" data-step="1">
+          <span class="sn">02 · WEBHOOKS</span>
+          <h3>웹훅 서명 검증</h3>
+          <p>수신 이벤트의 서명을 내장 함수로 검증해 위·변조를 차단합니다.</p>
+        </div>
+        <div class="step" data-step="2">
+          <span class="sn">03 · PAYOUTS</span>
+          <h3>정산 조회</h3>
+          <p>정산 상태와 도착 예정일을 정산 ID로 조회합니다.</p>
+        </div>
+        <div class="step" data-step="3">
+          <span class="sn">04 · REFUNDS</span>
+          <h3>환불</h3>
+          <p>전액·부분 환불을 한 줄로. 원거래에 자동으로 연결됩니다.</p>
+        </div>
       </div>
-      <div class="panel-code" data-lang="js" data-active="true"><pre><span class="tok-c">// 결제 생성</span>
+      <div class="codeside">
+        <div class="codecard">
+          <div class="tabs" role="tablist">
+            <button class="tab" role="tab" aria-selected="true" data-lang="js">JavaScript</button>
+            <button class="tab" role="tab" aria-selected="false" data-lang="py">Python</button>
+            <button class="tab" role="tab" aria-selected="false" data-lang="go">Go</button>
+          </div>
+          <div class="cbody">
+<div class="wcode on" data-step="0" data-lang="js"><pre><span class="tok-c">// 결제 생성</span>
 <span class="tok-k">const</span> charge = <span class="tok-k">await</span> ledgr.charges.<span class="tok-f">create</span>({
   amount: <span class="tok-s">12000</span>,
   currency: <span class="tok-s">'krw'</span>,
   source: token,
 });</pre></div>
-      <div class="panel-code" data-lang="py"><pre><span class="tok-c"># 결제 생성</span>
+<div class="wcode" data-step="0" data-lang="py"><pre><span class="tok-c"># 결제 생성</span>
 charge = ledgr.charges.<span class="tok-f">create</span>(
   amount=<span class="tok-s">12000</span>,
   currency=<span class="tok-s">'krw'</span>,
   source=token,
 )</pre></div>
-      <div class="panel-code" data-lang="go"><pre><span class="tok-c">// 결제 생성</span>
+<div class="wcode" data-step="0" data-lang="go"><pre><span class="tok-c">// 결제 생성</span>
 charge, _ := ledgr.Charges.<span class="tok-f">Create</span>(&ledgr.ChargeParams{
   Amount:   <span class="tok-s">12000</span>,
   Currency: <span class="tok-s">"krw"</span>,
   Source:   token,
 })</pre></div>
+<div class="wcode" data-step="1" data-lang="js"><pre><span class="tok-c">// 웹훅 서명 검증</span>
+<span class="tok-k">const</span> event = ledgr.webhooks.<span class="tok-f">constructEvent</span>(
+  payload,
+  sig,
+  endpointSecret,
+);</pre></div>
+<div class="wcode" data-step="1" data-lang="py"><pre><span class="tok-c"># 웹훅 서명 검증</span>
+event = ledgr.webhooks.<span class="tok-f">construct_event</span>(
+  payload, sig, endpoint_secret
+)</pre></div>
+<div class="wcode" data-step="1" data-lang="go"><pre><span class="tok-c">// 웹훅 서명 검증</span>
+event, _ := webhook.<span class="tok-f">ConstructEvent</span>(
+  payload, sig, endpointSecret,
+)</pre></div>
+<div class="wcode" data-step="2" data-lang="js"><pre><span class="tok-c">// 정산 조회</span>
+<span class="tok-k">const</span> payout = <span class="tok-k">await</span> ledgr.payouts.<span class="tok-f">retrieve</span>(
+  <span class="tok-s">'po_1NxYz9'</span>,
+);</pre></div>
+<div class="wcode" data-step="2" data-lang="py"><pre><span class="tok-c"># 정산 조회</span>
+payout = ledgr.payouts.<span class="tok-f">retrieve</span>(<span class="tok-s">'po_1NxYz9'</span>)</pre></div>
+<div class="wcode" data-step="2" data-lang="go"><pre><span class="tok-c">// 정산 조회</span>
+payout, _ := ledgr.Payouts.<span class="tok-f">Retrieve</span>(<span class="tok-s">"po_1NxYz9"</span>)</pre></div>
+<div class="wcode" data-step="3" data-lang="js"><pre><span class="tok-c">// 환불</span>
+<span class="tok-k">const</span> refund = <span class="tok-k">await</span> ledgr.refunds.<span class="tok-f">create</span>({
+  charge: charge.id,
+  amount: <span class="tok-s">12000</span>,
+});</pre></div>
+<div class="wcode" data-step="3" data-lang="py"><pre><span class="tok-c"># 환불</span>
+refund = ledgr.refunds.<span class="tok-f">create</span>(
+  charge=charge.id, amount=<span class="tok-s">12000</span>,
+)</pre></div>
+<div class="wcode" data-step="3" data-lang="go"><pre><span class="tok-c">// 환불</span>
+refund, _ := ledgr.Refunds.<span class="tok-f">Create</span>(&ledgr.RefundParams{
+  Charge: charge.ID,
+  Amount: <span class="tok-s">12000</span>,
+})</pre></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="logos">
-    <div class="wrap">
+    <div class="wrap rv">
       <p>가상의 팀들이 Ledgr로 정산합니다</p>
       <div class="row">
         <span class="lg">Northwind<span>.</span></span>
@@ -135,7 +221,7 @@ charge, _ := ledgr.Charges.<span class="tok-f">Create</span>(&ledgr.ChargeParams
 
   <footer>
     <div class="wrap">
-      <div class="fgrid">
+      <div class="fgrid rv">
         <div class="col">
           <div class="brand">Ledgr<span>.</span></div>
           <p class="fine">개발자를 위한 결제 인프라(가상 브랜드 데모). 이 페이지는 디자인 문법 연구용입니다.</p>
@@ -148,15 +234,32 @@ charge, _ := ledgr.Charges.<span class="tok-f">Create</span>(&ledgr.ChargeParams
   </footer>
 
   <script>
-    // 코드 탭 전환 — 언어 선택 시 해당 코드 블록만 표시(필요한 만큼의 JS).
-    var tabs = document.querySelectorAll('.tab');
-    var panels = document.querySelectorAll('.panel-code');
-    tabs.forEach(function (t) {
-      t.addEventListener('click', function () {
-        tabs.forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
-        panels.forEach(function (p) { p.setAttribute('data-active', p.dataset.lang === t.dataset.lang ? 'true' : 'false'); });
+    // 스티키 코드 워크스루 — 탭(언어) + IntersectionObserver(단계). 코드 패널이 읽기를 따라온다.
+    // JS 는 이 둘뿐. JS 미실행 시 첫 블록(.wcode.on)이 정적 노출(폴백).
+    (function () {
+      var steps = [].slice.call(document.querySelectorAll('.step'));
+      var langTabs = [].slice.call(document.querySelectorAll('.tab'));
+      var codes = [].slice.call(document.querySelectorAll('.wcode'));
+      if (!codes.length) return;
+      var activeStep = 0, activeLang = 'js';
+      function sync() {
+        codes.forEach(function (c) {
+          c.classList.toggle('on', +c.dataset.step === activeStep && c.dataset.lang === activeLang);
+        });
+        steps.forEach(function (s) { s.classList.toggle('active', +s.dataset.step === activeStep); });
+        langTabs.forEach(function (t) { t.setAttribute('aria-selected', t.dataset.lang === activeLang ? 'true' : 'false'); });
+      }
+      langTabs.forEach(function (t) {
+        t.addEventListener('click', function () { activeLang = t.dataset.lang; sync(); });
       });
-    });
+      if ('IntersectionObserver' in window && steps.length) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { if (e.isIntersecting) { activeStep = +e.target.dataset.step; sync(); } });
+        }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+        steps.forEach(function (s) { io.observe(s); });
+      }
+      sync();
+    })();
   </script>
 </body>
 </html>
