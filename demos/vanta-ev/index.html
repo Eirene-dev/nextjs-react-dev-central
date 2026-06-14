@@ -58,6 +58,13 @@
   .total { display: flex; align-items: baseline; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 18px; }
   .total .price { font-size: clamp(28px, 6vw, 44px); font-weight: 700; }
   .total .btn { background: var(--accent); color: #fff; border: none; border-radius: 999px; padding: 13px 28px; font: inherit; font-weight: 600; cursor: pointer; }
+  .breakdown { font-size: 12.5px; color: var(--ink-2); margin-top: 6px; }
+  /* 옵션 그룹 데이터화 — 그룹을 2열 그리드로(높이 절약), 모바일 1열 */
+  .optgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 34px; text-align: left; }
+  .opts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .config { overflow-y: auto; align-items: start; padding-top: 11vh; padding-bottom: 6vh; }
+  .config .inner { gap: 20px; }
+  @media (max-width: 700px) { .optgrid { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .scene .specbar { gap: 18px; } }
 </style>
 </head>
@@ -197,33 +204,27 @@
     <section class="scene config s3">
       <div class="inner">
         <h2>당신의 Vanta를 구성하세요</h2>
-        <div class="car-wrap" style="margin:0;">
+        <div class="car-wrap" style="margin:0 auto;max-width:400px;">
           <svg viewBox="0 0 560 200" aria-label="구성 중인 차량">
             <path id="body" d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="#2f3a55"/>
+            <rect id="cabin" x="196" y="74" width="142" height="24" rx="9" fill="#1c1c22" opacity=".92"/>
             <g id="wheels">
               <circle class="hub" cx="160" cy="152" r="26" fill="#15151a"/><circle class="rim" cx="160" cy="152" r="11" fill="#444"/>
               <circle class="hub" cx="430" cy="152" r="26" fill="#15151a"/><circle class="rim" cx="430" cy="152" r="11" fill="#444"/>
+              <g class="spokes" style="display:none" stroke="#c0c4cc" stroke-width="2.4" stroke-linecap="round">
+                <line x1="160" y1="134" x2="160" y2="170"/><line x1="142" y1="152" x2="178" y2="152"/><line x1="148" y1="140" x2="172" y2="164"/><line x1="172" y1="140" x2="148" y2="164"/>
+                <line x1="430" y1="134" x2="430" y2="170"/><line x1="412" y1="152" x2="448" y2="152"/><line x1="418" y1="140" x2="442" y2="164"/><line x1="442" y1="140" x2="418" y2="164"/>
+              </g>
             </g>
           </svg>
         </div>
-        <div class="opt-group">
-          <div class="label">색상 — <span id="color-name">미드나잇 블루</span></div>
-          <div class="swatches" id="colors">
-            <button class="swatch" data-name="미드나잇 블루" data-fill="#2f3a55" data-delta="0" style="background:#2f3a55" aria-pressed="true" aria-label="미드나잇 블루"></button>
-            <button class="swatch" data-name="펄 화이트" data-fill="#e8e8ec" data-delta="600000" style="background:#e8e8ec" aria-pressed="false" aria-label="펄 화이트"></button>
-            <button class="swatch" data-name="카본 그레이" data-fill="#3a3a40" data-delta="600000" style="background:#3a3a40" aria-pressed="false" aria-label="카본 그레이"></button>
-            <button class="swatch" data-name="에버 그린" data-fill="#2e5040" data-delta="900000" style="background:#2e5040" aria-pressed="false" aria-label="에버 그린"></button>
-          </div>
-        </div>
-        <div class="opt-group">
-          <div class="label">휠</div>
-          <div class="wheels" id="wheelopts">
-            <button class="wheel-btn" data-rim="#444" data-delta="0" aria-pressed="true">19" 에어로 (기본)</button>
-            <button class="wheel-btn" data-rim="#9aa0aa" data-delta="2400000" aria-pressed="false">21" 퍼포먼스 (+₩2,400,000)</button>
-          </div>
-        </div>
+        <div class="optgrid" id="cfg"></div>
         <div class="total">
-          <div><div style="font-size:12px;color:var(--ink-2)">예상 가격</div><div class="price" id="price">₩ 64,900,000</div></div>
+          <div>
+            <div style="font-size:12px;color:var(--ink-2)">예상 가격 · 주행거리 <b id="range" style="color:var(--ink)">628km</b></div>
+            <div class="price" id="price">₩ 64,900,000</div>
+            <div class="breakdown" id="breakdown"></div>
+          </div>
           <button class="btn">주문하기</button>
         </div>
       </div>
@@ -231,34 +232,86 @@
   </div>
 
   <script>
-    // 컨피규레이터 — 색·휠 선택 → 차 SVG·가격 즉시 반영(필요한 만큼의 JS).
-    var BASE = 64900000;
-    var state = { color: 0, wheel: 0 };
-    var colorDeltas = [], wheelDeltas = [];
-    var fmt = function (n) { return '₩ ' + n.toLocaleString('ko-KR'); };
-    function render() {
-      document.getElementById('price').textContent = fmt(BASE + colorDeltas[state.color] + wheelDeltas[state.wheel]);
-    }
-    document.querySelectorAll('#colors .swatch').forEach(function (b, i) {
-      colorDeltas[i] = +b.dataset.delta;
-      b.addEventListener('click', function () {
-        state.color = i;
-        document.getElementById('body').setAttribute('fill', b.dataset.fill);
-        document.getElementById('color-name').textContent = b.dataset.name;
-        document.querySelectorAll('#colors .swatch').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-        render();
+    // 컨피규레이터(데이터화) — 옵션 그룹 배열을 순회해 버튼 렌더·바인딩, 선택 시 비주얼·주행거리·가격 즉시 반영.
+    // 그룹 추가 = 배열 한 항목. (JS 1블록 유지 — 신규 핸들러를 데이터 순회로 흡수.)
+    (function () {
+      var BASE = 64900000;
+      var fmt = function (n) { return '₩ ' + n.toLocaleString('ko-KR'); };
+      var $ = function (s) { return document.querySelector(s); };
+      var GROUPS = [
+        { id: 'color', label: '색상', type: 'swatch',
+          options: [
+            { label: '미드나잇 블루', delta: 0, fill: '#2f3a55', sw: '#2f3a55' },
+            { label: '펄 화이트', delta: 600000, fill: '#e8e8ec', sw: '#e8e8ec' },
+            { label: '카본 그레이', delta: 600000, fill: '#3a3a40', sw: '#3a3a40' },
+            { label: '에버 그린', delta: 900000, fill: '#2e5040', sw: '#2e5040' },
+            { label: '벨벳 레드', delta: 1200000, fill: '#5a2330', sw: '#7a2f3e' },
+          ],
+          apply: function (o) { $('#body').setAttribute('fill', o.fill); } },
+        { id: 'wheel', label: '휠',
+          options: [
+            { label: '19" 에어로', delta: 0, rim: '#444', spoke: false },
+            { label: '21" 퍼포먼스', delta: 2400000, rim: '#c0c4cc', spoke: true },
+          ],
+          apply: function (o) {
+            document.querySelectorAll('#wheels .rim').forEach(function (r) { r.setAttribute('fill', o.rim); });
+            $('#wheels .spokes').style.display = o.spoke ? '' : 'none';
+          } },
+        { id: 'interior', label: '실내',
+          options: [
+            { label: '블랙', delta: 0, fill: '#1c1c22' },
+            { label: '화이트', delta: 1500000, fill: '#cfcfd6' },
+            { label: '우드 트림', delta: 2200000, fill: '#5a4632' },
+          ],
+          apply: function (o) { $('#cabin').setAttribute('fill', o.fill); } },
+        { id: 'range', label: '배터리·주행거리',
+          options: [
+            { label: '스탠다드 · 628km', delta: 0, range: '628km' },
+            { label: '롱레인지 · 720km', delta: 6800000, range: '720km' },
+          ],
+          apply: function (o) { $('#range').textContent = o.range; } },
+        { id: 'assist', label: '주행 보조',
+          options: [
+            { label: '기본', delta: 0 },
+            { label: '풀 자율주행 (베타)', delta: 9000000 },
+          ],
+          apply: function () {} },
+      ];
+      var state = GROUPS.map(function () { return 0; });
+      function render() {
+        var total = BASE, paid = [];
+        GROUPS.forEach(function (g, gi) {
+          var o = g.options[state[gi]];
+          total += o.delta;
+          if (o.delta > 0) paid.push(g.label + ' +' + fmt(o.delta));
+        });
+        $('#price').textContent = fmt(total);
+        $('#breakdown').textContent = paid.length ? '기본 ' + fmt(BASE) + ' · ' + paid.join(' · ') : '기본가 포함 · 추가 옵션 없음';
+      }
+      var cfg = $('#cfg');
+      GROUPS.forEach(function (g, gi) {
+        var grp = document.createElement('div'); grp.className = 'opt-group';
+        var lab = document.createElement('div'); lab.className = 'label';
+        var opts = document.createElement('div'); opts.className = g.type === 'swatch' ? 'opts swatches' : 'opts';
+        lab.textContent = g.type === 'swatch' ? g.label + ' — ' + g.options[0].label : g.label;
+        g.options.forEach(function (o, oi) {
+          var btn = document.createElement('button');
+          if (g.type === 'swatch') { btn.className = 'swatch'; btn.style.background = o.sw; btn.title = o.label; btn.setAttribute('aria-label', o.label); }
+          else { btn.className = 'wheel-btn'; btn.textContent = o.delta > 0 ? o.label + ' (+' + fmt(o.delta) + ')' : o.label; }
+          btn.setAttribute('aria-pressed', oi === 0 ? 'true' : 'false');
+          btn.addEventListener('click', function () {
+            state[gi] = oi; g.apply(o);
+            [].forEach.call(opts.children, function (c, ci) { c.setAttribute('aria-pressed', ci === oi ? 'true' : 'false'); });
+            if (g.type === 'swatch') lab.textContent = g.label + ' — ' + o.label;
+            render();
+          });
+          opts.appendChild(btn);
+        });
+        grp.appendChild(lab); grp.appendChild(opts); cfg.appendChild(grp);
+        g.apply(g.options[0]); // 기본값 적용
       });
-    });
-    document.querySelectorAll('#wheelopts .wheel-btn').forEach(function (b, i) {
-      wheelDeltas[i] = +b.dataset.delta;
-      b.addEventListener('click', function () {
-        state.wheel = i;
-        document.querySelectorAll('#wheels .rim').forEach(function (r) { r.setAttribute('fill', b.dataset.rim); });
-        document.querySelectorAll('#wheelopts .wheel-btn').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-        render();
-      });
-    });
-    render();
+      render();
+    })();
   </script>
 </body>
 </html>
