@@ -78,6 +78,64 @@
     .step.active h3 { color: var(--indigo); }
   }
 
+  /* ── 개발자 콘텐츠 섹션 공통 ── */
+  .sec { padding: 64px 0; border-top: 1px solid var(--line); }
+  .sec .head { max-width: 28em; margin-bottom: 30px; }
+  .sec .head h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -.02em; }
+  .sec .head p { color: var(--ink-2); margin-top: 10px; }
+  .panelcard { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+
+  /* ① API 기능 그리드 */
+  .fgridx { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); gap: 18px; }
+  .fcard { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .fcard .ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--indigo); background: rgba(103,114,229,.13); margin-bottom: 14px; }
+  .fcard .ic svg { width: 22px; height: 22px; }
+  .fcard h3 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+  .fcard p { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+
+  /* ② 작동 플로우 — SVG 다이어그램 */
+  .flowwrap { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px 22px; overflow-x: auto; }
+  .flowsvg { width: 100%; min-width: 640px; height: auto; display: block; }
+  .flowsvg .node { fill: #0a0a14; stroke: var(--line); }
+  .flowsvg .node.hi { stroke: var(--indigo); }
+  .flowsvg .nl { fill: var(--ink); font: 600 15px var(--sans); }
+  .flowsvg .ns { fill: var(--ink-2); font: 12px var(--mono); }
+  .flowsvg .ar { stroke: var(--indigo-2); stroke-width: 2; fill: none; marker-end: url(#ah); }
+  .flowsvg .ahf { fill: var(--indigo-2); }
+
+  /* ③ 웹훅 예제 */
+  .whgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  .whcard { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .whcard .wl { font-family: var(--mono); font-size: 12px; color: var(--ink-2); padding: 12px 18px; border-bottom: 1px solid var(--line); }
+  .tok-p { color: #82aaff; } /* JSON 키 */
+  @media (max-width: 860px) { .whgrid { grid-template-columns: 1fr; } }
+
+  /* ④ 대시보드 미리보기 — SVG/CSS 목업 */
+  .dashcard { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 24px; box-shadow: 0 40px 100px -50px rgba(103,114,229,.5); }
+  .dkpis { display: flex; gap: 30px; flex-wrap: wrap; }
+  .dkpi .kv { font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -.02em; }
+  .dkpi .kv span { font-size: 14px; color: var(--teal); font-weight: 700; margin-left: 6px; }
+  .dkpi .kk { color: var(--ink-2); font-size: 13px; }
+  .dchart { width: 100%; height: auto; display: block; margin: 18px 0 8px; }
+  .dchart .area { fill: url(#dg); } .dchart .ln { fill: none; stroke: var(--teal); stroke-width: 2.5; }
+  .dchart .gl { stroke: var(--line); stroke-width: 1; }
+  .txns { border-top: 1px solid var(--line); margin-top: 6px; }
+  .txn { display: grid; grid-template-columns: 1.4fr 1fr auto; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .txn .id { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); }
+  .txn .amt { font-weight: 600; }
+  .badge2 { font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .badge2.ok { color: #6ee7b7; background: rgba(45,212,191,.12); }
+  .badge2.pend { color: #fcd34d; background: rgba(252,211,77,.12); }
+
+  /* ⑤ 가격(컴팩트) */
+  .pricecard { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 30px; text-align: center; max-width: 520px; margin: 0 auto; }
+  .pricecard .rate { font-size: clamp(30px, 6vw, 48px); font-weight: 800; letter-spacing: -.02em; }
+  .pricecard .rate .g { background: linear-gradient(90deg, var(--indigo), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .pricecard .note { color: var(--ink-2); margin-top: 8px; }
+  .pchecks { display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: center; margin-top: 20px; }
+  .pchecks span { color: var(--ink-2); font-size: 14px; }
+  .pchecks span::before { content: '✓'; color: var(--teal); margin-right: 7px; }
+
   /* 로고월 — 가상 회사 워드마크(SVG 텍스트) */
   .logos { padding: 50px 0; border-top: 1px solid var(--line); text-align: center; }
   .logos p { color: var(--ink-2); font-size: 13px; letter-spacing: .05em; margin-bottom: 24px; }
@@ -202,6 +260,136 @@ refund, _ := ledgr.Refunds.<span class="tok-f">Create</span>(&ledgr.RefundParams
 })</pre></div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="products">
+    <div class="wrap">
+      <div class="head rv">
+        <h2>필요한 건, 다 있습니다</h2>
+        <p>결제부터 사기 방지까지. 하나의 API로 끝내는 결제 인프라.</p>
+      </div>
+      <div class="fgridx rv">
+        <div class="fcard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div>
+          <h3>결제</h3><p>카드·계좌이체·간편결제를 한 번의 호출로 처리합니다.</p>
+        </div>
+        <div class="fcard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></div>
+          <h3>정산</h3><p>도착 예정일·상태를 추적하고 자동으로 입금합니다.</p>
+        </div>
+        <div class="fcard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg></div>
+          <h3>청구</h3><p>구독·인보이스·미터링 과금을 코드로 구성합니다.</p>
+        </div>
+        <div class="fcard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>사기 방지</h3><p>위험 점수와 규칙으로 의심 거래를 자동 차단합니다.</p>
+        </div>
+        <div class="fcard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7l8 9"/></svg></div>
+          <h3>웹훅</h3><p>이벤트를 실시간으로 받고, 서명 검증이 내장돼 있습니다.</p>
+        </div>
+        <div class="fcard">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="12" r="4"/><path d="M13 12h8M17 12v3"/></svg></div>
+          <h3>멱등성·테스트키</h3><p>안전한 재시도와 운영·테스트 키 분리를 기본 제공합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="head rv">
+        <h2>요청 한 번이 정산까지</h2>
+        <p>결제 요청부터 정산·웹훅 알림까지, Ledgr가 흐름을 잇습니다.</p>
+      </div>
+      <div class="flowwrap rv">
+        <svg class="flowsvg" viewBox="0 0 920 180" role="img" aria-label="결제 요청 → Ledgr → 카드사·은행 → 정산·웹훅 플로우">
+          <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path class="ahf" d="M0 0L9 4.5L0 9z"/></marker></defs>
+          <g><rect class="node" x="14" y="58" width="170" height="64" rx="12"/><text class="nl" x="99" y="86" text-anchor="middle">결제 요청</text><text class="ns" x="99" y="106" text-anchor="middle">charges.create</text></g>
+          <path class="ar" d="M188 90H236"/>
+          <g><rect class="node hi" x="240" y="58" width="170" height="64" rx="12"/><text class="nl" x="325" y="86" text-anchor="middle">Ledgr API</text><text class="ns" x="325" y="106" text-anchor="middle">payments/v3</text></g>
+          <path class="ar" d="M414 90H462"/>
+          <g><rect class="node" x="466" y="58" width="180" height="64" rx="12"/><text class="nl" x="556" y="86" text-anchor="middle">카드사 · 은행</text><text class="ns" x="556" y="106" text-anchor="middle">acquiring</text></g>
+          <path class="ar" d="M650 90H698"/>
+          <g><rect class="node" x="702" y="58" width="200" height="64" rx="12"/><text class="nl" x="802" y="82" text-anchor="middle">정산 · 웹훅</text><text class="ns" x="802" y="104" text-anchor="middle">payouts · webhooks</text></g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="head rv">
+        <h2>웹훅, 검증까지 한 줄</h2>
+        <p>이벤트 페이로드를 받고, 내장 함수로 서명을 검증해 위·변조를 막습니다.</p>
+      </div>
+      <div class="whgrid rv">
+        <div class="whcard">
+          <div class="wl">POST /webhooks · event payload</div>
+          <pre>{
+  <span class="tok-p">"id"</span>: <span class="tok-s">"evt_1NxY"</span>,
+  <span class="tok-p">"type"</span>: <span class="tok-s">"charge.succeeded"</span>,
+  <span class="tok-p">"data"</span>: {
+    <span class="tok-p">"amount"</span>: <span class="tok-s">12000</span>,
+    <span class="tok-p">"currency"</span>: <span class="tok-s">"krw"</span>
+  }
+}</pre>
+        </div>
+        <div class="whcard">
+          <div class="wl">verify.js · 서명 검증</div>
+          <pre><span class="tok-c">// 서명 검증 후 안전하게 처리</span>
+<span class="tok-k">const</span> event = ledgr.webhooks.<span class="tok-f">constructEvent</span>(
+  payload, sig, endpointSecret,
+);
+<span class="tok-k">if</span> (event.type === <span class="tok-s">'charge.succeeded'</span>) {
+  <span class="tok-f">fulfill</span>(event.data);
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="head rv">
+        <h2>콘솔에서 보이는 그대로</h2>
+        <p>매출·거래·정산을 한눈에. (가상 데이터 미리보기)</p>
+      </div>
+      <div class="dashcard rv">
+        <div class="dkpis">
+          <div class="dkpi"><div class="kv">₩ 48.2M <span>+12%</span></div><div class="kk">이번 달 매출</div></div>
+          <div class="dkpi"><div class="kv">3,182</div><div class="kk">거래 건수</div></div>
+          <div class="dkpi"><div class="kv">99.98%</div><div class="kk">성공률</div></div>
+        </div>
+        <svg class="dchart" viewBox="0 0 720 180" preserveAspectRatio="none" aria-label="매출 추이 차트(가상)">
+          <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf" stop-opacity=".35"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/></linearGradient></defs>
+          <line class="gl" x1="0" y1="45" x2="720" y2="45"/><line class="gl" x1="0" y1="90" x2="720" y2="90"/><line class="gl" x1="0" y1="135" x2="720" y2="135"/>
+          <polygon class="area" points="0,140 90,120 180,128 270,96 360,104 450,70 540,80 630,44 720,52 720,180 0,180"/>
+          <polyline class="ln" points="0,140 90,120 180,128 270,96 360,104 450,70 540,80 630,44 720,52"/>
+        </svg>
+        <div class="txns">
+          <div class="txn"><span class="id">ch_1NxYa9</span><span class="amt">₩ 12,000</span><span class="badge2 ok">성공</span></div>
+          <div class="txn"><span class="id">ch_1NxYb3</span><span class="amt">₩ 39,500</span><span class="badge2 ok">성공</span></div>
+          <div class="txn"><span class="id">ch_1NxYc7</span><span class="amt">₩ 8,900</span><span class="badge2 pend">대기</span></div>
+          <div class="txn"><span class="id">ch_1NxYd1</span><span class="amt">₩ 120,000</span><span class="badge2 ok">성공</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="head rv" style="max-width:none;text-align:center;margin-bottom:24px">
+        <h2>단순한 가격</h2>
+        <p style="margin-left:auto;margin-right:auto;max-width:24em">숨은 비용 없이, 성공한 결제당 한 가지 수수료.</p>
+      </div>
+      <div class="pricecard rv">
+        <div class="rate"><span class="g">2.9% + ₩30</span></div>
+        <div class="note">성공한 결제당 · 월 고정비 없음</div>
+        <div class="pchecks"><span>정산 수수료 0</span><span>테스트 환경 무료</span><span>웹훅·SDK 포함</span><span>대시보드 기본</span></div>
       </div>
     </div>
   </section>
