@@ -21,6 +21,18 @@
   .s1 { background: radial-gradient(120% 80% at 50% 10%, #1b2740, #0c0c0e 70%); }
   .s2 { background: radial-gradient(120% 80% at 50% 90%, #2a1b40, #0c0c0e 70%); }
   .s3 { background: radial-gradient(120% 80% at 50% 50%, #16161a, #0c0c0e 80%); }
+  /* 신규 패널 배경(scene별 radial 그라디언트, 다크 유지) */
+  .s4 { background: radial-gradient(120% 80% at 50% 16%, #3a1e24, #0c0c0e 70%); }
+  .s5 { background: radial-gradient(120% 80% at 50% 84%, #15402c, #0c0c0e 70%); }
+  .s6 { background: radial-gradient(120% 80% at 50% 30%, #26222e, #0c0c0e 75%); }
+  .s7 { background: radial-gradient(120% 80% at 50% 50%, #1a2742, #0c0c0e 80%); }
+  /* 성능 — 모션 스트릭(CSS 애니, JS 0) */
+  .streak line { animation: streak 1.2s ease-in-out infinite alternate; }
+  .streak line:nth-child(2) { animation-delay: .2s; }
+  .streak line:nth-child(3) { animation-delay: .4s; }
+  @keyframes streak { from { transform: translateX(-12px); opacity: .3; } to { transform: translateX(10px); opacity: .65; } }
+  @media (prefers-reduced-motion: reduce) { .streak line { animation: none; } }
+  .disp { fill: #0e0e12; stroke: var(--accent); stroke-width: 2; }
   .scene h1 { font-size: clamp(40px, 9vw, 92px); font-weight: 700; letter-spacing: -.03em; line-height: 1; }
   .scene .sub { color: var(--ink-2); font-size: clamp(15px, 2.4vw, 19px); margin-top: 12px; }
   .car-wrap { width: min(78vw, 560px); margin: 26px auto 0; }
@@ -73,6 +85,53 @@
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
 
+    <section class="scene s4">
+      <div>
+        <h1>정지에서 속도까지,<br>망설임 없이.</h1>
+        <p class="sub">듀얼 모터가 네 바퀴를 동시에 민다. 생각하는 순간, 이미 달린다.</p>
+        <div class="car-wrap">
+          <svg viewBox="0 0 560 200" aria-label="가속하는 Vanta">
+            <g class="streak" stroke="#3b82f6" stroke-width="5" stroke-linecap="round">
+              <line x1="0" y1="96" x2="96" y2="96"/>
+              <line x1="14" y1="118" x2="128" y2="118"/>
+              <line x1="0" y1="138" x2="74" y2="138"/>
+            </g>
+            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="#3a1e24" stroke="#e0556a" stroke-width="1.5"/>
+            <circle cx="160" cy="152" r="26" fill="#15151a"/><circle cx="160" cy="152" r="11" fill="#666"/>
+            <circle cx="430" cy="152" r="26" fill="#15151a"/><circle cx="430" cy="152" r="11" fill="#666"/>
+          </svg>
+        </div>
+      </div>
+      <div class="specbar">
+        <div class="c"><div class="v">500마력</div><div class="k">최고 출력</div></div>
+        <div class="c"><div class="v">920N·m</div><div class="k">최대 토크</div></div>
+        <div class="c"><div class="v">듀얼모터</div><div class="k">AWD 상시 사륜</div></div>
+      </div>
+      <div class="scroll-cue">스크롤 ↓</div>
+    </section>
+
+    <section class="scene s5">
+      <div>
+        <h1>하루를 채우고도<br>남는다.</h1>
+        <p class="sub">아침 출근부터 주말 여행까지. 충전 걱정은 잠시 잊어도 좋다.</p>
+        <div class="car-wrap">
+          <svg viewBox="0 0 560 200" aria-label="배터리·충전">
+            <defs><linearGradient id="bg5" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#34d399"/></linearGradient></defs>
+            <rect x="150" y="64" width="244" height="96" rx="16" fill="none" stroke="#3a3a42" stroke-width="3"/>
+            <rect x="398" y="92" width="14" height="40" rx="5" fill="#3a3a42"/>
+            <rect x="160" y="74" width="168" height="76" rx="9" fill="url(#bg5)"/>
+            <path d="M258 78 L230 118 H254 L242 148 L286 104 H260 Z" fill="#0c0c0e" opacity=".82"/>
+          </svg>
+        </div>
+      </div>
+      <div class="specbar">
+        <div class="c"><div class="v">628km</div><div class="k">1회 충전 주행</div></div>
+        <div class="c"><div class="v">18분</div><div class="k">10→80% 급속충전</div></div>
+        <div class="c"><div class="v">16.5kWh</div><div class="k">100km 효율</div></div>
+      </div>
+      <div class="scroll-cue">스크롤 ↓</div>
+    </section>
+
     <section class="scene s2">
       <div>
         <h1>멈출 때를 안다.</h1>
@@ -82,6 +141,55 @@
         <div class="c"><div class="v">8</div><div class="k">서라운드 카메라</div></div>
         <div class="c"><div class="v">5★</div><div class="k">가상 안전 등급</div></div>
         <div class="c"><div class="v">OTA</div><div class="k">무선 업데이트</div></div>
+      </div>
+      <div class="scroll-cue">스크롤 ↓</div>
+    </section>
+
+    <section class="scene s6">
+      <div>
+        <h1>운전석이 곧<br>인터페이스.</h1>
+        <p class="sub">버튼을 지웠다. 모든 조작이 하나의 화면으로, 그리고 목소리로.</p>
+        <div class="car-wrap">
+          <svg viewBox="0 0 560 220" aria-label="실내 대시보드">
+            <path d="M30 172 Q280 122 530 172" fill="none" stroke="#2a2a30" stroke-width="3"/>
+            <rect class="disp" x="232" y="76" width="150" height="94" rx="10"/>
+            <line x1="250" y1="104" x2="364" y2="104" stroke="#3b82f6" stroke-width="3" opacity=".7"/>
+            <line x1="250" y1="124" x2="330" y2="124" stroke="#a0a0a8" stroke-width="3" opacity=".5"/>
+            <line x1="250" y1="143" x2="346" y2="143" stroke="#a0a0a8" stroke-width="3" opacity=".4"/>
+            <path d="M150 150 a44 30 0 0 1 88 0" fill="none" stroke="#3a3a42" stroke-width="6"/>
+            <path d="M420 172 q0-42 26-42 q26 0 26 42 z" fill="#1c1c22"/>
+          </svg>
+        </div>
+      </div>
+      <div class="specbar">
+        <div class="c"><div class="v">15"</div><div class="k">중앙 디스플레이</div></div>
+        <div class="c"><div class="v">통풍·열선</div><div class="k">전 좌석 시트</div></div>
+        <div class="c"><div class="v">17</div><div class="k">스피커 사운드</div></div>
+      </div>
+      <div class="scroll-cue">스크롤 ↓</div>
+    </section>
+
+    <section class="scene s7">
+      <div>
+        <h1>스스로 보고,<br>스스로 판단한다.</h1>
+        <p class="sub">차선 유지부터 자동 차선 변경까지. 길고 지루한 길일수록 빛난다.</p>
+        <div class="car-wrap">
+          <svg viewBox="0 0 560 220" aria-label="주행 보조 — 센서·경로">
+            <path d="M120 204 L250 74 M440 204 L310 74" stroke="#2a2a30" stroke-width="3"/>
+            <line x1="280" y1="196" x2="280" y2="92" stroke="#3b82f6" stroke-width="3" stroke-dasharray="10 12" opacity=".8"/>
+            <g fill="none" stroke="#3b82f6" stroke-linecap="round">
+              <path d="M252 150 a68 68 0 0 1 56 0" stroke-width="2.5" opacity=".6"/>
+              <path d="M236 150 a92 92 0 0 1 88 0" stroke-width="2" opacity=".35"/>
+            </g>
+            <path d="M224 150 h112 v22 a8 8 0 0 1-8 8 h-96 a8 8 0 0 1-8-8 z" fill="#2f3a55"/>
+            <rect x="246" y="132" width="68" height="22" rx="6" fill="#1c2436"/>
+          </svg>
+        </div>
+      </div>
+      <div class="specbar">
+        <div class="c"><div class="v">250m</div><div class="k">전방 감지 거리</div></div>
+        <div class="c"><div class="v">자동</div><div class="k">차선 변경 보조</div></div>
+        <div class="c"><div class="v">베타</div><div class="k">가상 자율주행</div></div>
       </div>
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
