@@ -41,7 +41,29 @@
   .scene .specbar { position: absolute; bottom: 9vh; left: 0; right: 0; display: flex; gap: clamp(20px, 6vw, 64px); justify-content: center; }
   .specbar .c .v { font-size: clamp(22px, 4vw, 34px); font-weight: 700; }
   .specbar .c .k { font-size: 12px; color: var(--ink-2); letter-spacing: .03em; }
-  .scroll-cue { position: absolute; bottom: 3vh; left: 0; right: 0; font-size: 12px; color: var(--ink-2); letter-spacing: .2em; }
+  .scroll-cue { position: absolute; bottom: 3vh; left: 0; right: 0; font-size: 12px; color: var(--ink-2); letter-spacing: .2em; animation: cue 1.8s ease-in-out infinite; }
+  @keyframes cue { 0%,100% { transform: translateY(0); opacity: .7; } 50% { transform: translateY(6px); opacity: 1; } }
+
+  /* ── 스냅 인디케이터(우측 점) — 클릭 시 해당 패널로(앵커), 현재 패널 강조(JS) ── */
+  .dots { position: fixed; top: 50%; right: 18px; transform: translateY(-50%); z-index: 40; display: flex; flex-direction: column; gap: 12px; }
+  .dots a { width: 10px; height: 10px; border-radius: 50%; background: #3a3a42; transition: background .25s, transform .25s; }
+  .dots a:hover { background: var(--ink-2); }
+  .dots a.on { background: var(--accent); transform: scale(1.35); }
+  @media (max-width: 700px) { .dots { display: none; } }
+
+  /* ── 패널 진입 리빌(은은) — CSS scroll-driven, .snap 스크롤러 기준 ── */
+  @supports (animation-timeline: view()) {
+    .scene h1, .scene .sub, .scene .specbar { animation: rise linear both; animation-timeline: view(); }
+    .scene h1 { animation-range: entry 8% cover 34%; }
+    .scene .sub { animation-range: entry 14% cover 40%; }
+    .scene .specbar { animation-range: entry 20% cover 46%; }
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .snap { scroll-behavior: auto; }
+    .scroll-cue, .streak line { animation: none; }
+    .scene h1, .scene .sub, .scene .specbar { animation: none !important; opacity: 1; transform: none; }
+  }
 
   /* 컨피규레이터 */
   .config { background: var(--panel); }
@@ -72,7 +94,16 @@
   <p class="study">테슬라 홈의 <b>디자인 문법</b>(풀스크린 scroll-snap·하단 고정 스펙·인라인 컨피규레이터)을 연구한 <b>가상 브랜드</b> 데모 — 실제 로고·차종·카피 미사용</p>
 
   <div class="snap">
-    <section class="scene s1">
+    <nav class="dots" aria-label="패널 내비게이션">
+      <a href="#p1" aria-label="패널 1"></a>
+      <a href="#p2" aria-label="패널 2"></a>
+      <a href="#p3" aria-label="패널 3"></a>
+      <a href="#p4" aria-label="패널 4"></a>
+      <a href="#p5" aria-label="패널 5"></a>
+      <a href="#p6" aria-label="패널 6"></a>
+      <a href="#p7" aria-label="패널 7"></a>
+    </nav>
+    <section class="scene s1" id="p1">
       <div>
         <h1>Vanta</h1>
         <p class="sub">전기로 다시 그린 주행.</p>
@@ -92,7 +123,7 @@
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
 
-    <section class="scene s4">
+    <section class="scene s4" id="p2">
       <div>
         <h1>정지에서 속도까지,<br>망설임 없이.</h1>
         <p class="sub">듀얼 모터가 네 바퀴를 동시에 민다. 생각하는 순간, 이미 달린다.</p>
@@ -117,7 +148,7 @@
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
 
-    <section class="scene s5">
+    <section class="scene s5" id="p3">
       <div>
         <h1>하루를 채우고도<br>남는다.</h1>
         <p class="sub">아침 출근부터 주말 여행까지. 충전 걱정은 잠시 잊어도 좋다.</p>
@@ -139,7 +170,7 @@
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
 
-    <section class="scene s2">
+    <section class="scene s2" id="p4">
       <div>
         <h1>멈출 때를 안다.</h1>
         <p class="sub">8개의 카메라가 360°를 본다. 끼어드는 차도, 갑자기 멈춘 차도.</p>
@@ -152,7 +183,7 @@
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
 
-    <section class="scene s6">
+    <section class="scene s6" id="p5">
       <div>
         <h1>운전석이 곧<br>인터페이스.</h1>
         <p class="sub">버튼을 지웠다. 모든 조작이 하나의 화면으로, 그리고 목소리로.</p>
@@ -176,7 +207,7 @@
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
 
-    <section class="scene s7">
+    <section class="scene s7" id="p6">
       <div>
         <h1>스스로 보고,<br>스스로 판단한다.</h1>
         <p class="sub">차선 유지부터 자동 차선 변경까지. 길고 지루한 길일수록 빛난다.</p>
@@ -201,7 +232,7 @@
       <div class="scroll-cue">스크롤 ↓</div>
     </section>
 
-    <section class="scene config s3">
+    <section class="scene config s3" id="p7">
       <div class="inner">
         <h2>당신의 Vanta를 구성하세요</h2>
         <div class="car-wrap" style="margin:0 auto;max-width:400px;">
@@ -311,6 +342,23 @@
         g.apply(g.options[0]); // 기본값 적용
       });
       render();
+    })();
+
+    // 스냅 인디케이터 — 현재 패널 강조(.snap 스크롤러 기준 IntersectionObserver). 클릭 이동은 앵커(JS 0).
+    (function () {
+      var dots = [].slice.call(document.querySelectorAll('.dots a'));
+      var scenes = [].slice.call(document.querySelectorAll('.scene'));
+      var snap = document.querySelector('.snap');
+      if (!dots.length || !('IntersectionObserver' in window)) { if (dots[0]) dots[0].classList.add('on'); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            var i = scenes.indexOf(e.target);
+            dots.forEach(function (d, di) { d.classList.toggle('on', di === i); });
+          }
+        });
+      }, { root: snap, threshold: 0.5 });
+      scenes.forEach(function (s) { io.observe(s); });
     })();
   </script>
 </body>
