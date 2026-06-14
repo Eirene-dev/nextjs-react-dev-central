@@ -136,11 +136,33 @@
   .pchecks span { color: var(--ink-2); font-size: 14px; }
   .pchecks span::before { content: '✓'; color: var(--teal); margin-right: 7px; }
 
-  /* 로고월 — 가상 회사 워드마크(SVG 텍스트) */
+  /* ── 마감 CTA 밴드 (스트라이프식 클로징) ── */
+  .closeband { position: relative; overflow: hidden; border-top: 1px solid var(--line); padding: 96px 22px; text-align: center; }
+  .closeband .mesh2 { position: absolute; inset: -40% -10%; z-index: 0; filter: blur(70px); opacity: .42; background:
+      radial-gradient(38% 40% at 24% 36%, var(--indigo) 0%, transparent 60%),
+      radial-gradient(42% 44% at 78% 26%, var(--indigo-2) 0%, transparent 60%),
+      radial-gradient(40% 40% at 58% 82%, var(--teal) 0%, transparent 60%);
+    animation: mesh 16s ease-in-out infinite alternate; }
+  @media (prefers-reduced-motion: reduce) { .closeband .mesh2 { animation: none; } }
+  .closeband .inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+  .closeband h2 { font-size: clamp(32px, 6vw, 62px); font-weight: 800; letter-spacing: -.03em; line-height: 1.04;
+    background: linear-gradient(90deg, #fff, var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .closeband p { color: var(--ink-2); margin: 16px auto 0; max-width: 30em; }
+  .closeband .row { margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .closeband .snippet { margin: 26px auto 0; max-width: 430px; background: #0a0a14; border: 1px solid var(--line); border-radius: 10px;
+    padding: 13px 16px; font-family: var(--mono); font-size: 13.5px; text-align: left; color: #d7d7ec; overflow-x: auto; }
+  .closeband .snippet .pr { color: var(--teal); user-select: none; }
+
+  /* 로고월 — 가상 회사 워드마크(느린 마퀴, hover 시 일시정지·강조) */
   .logos { padding: 50px 0; border-top: 1px solid var(--line); text-align: center; }
   .logos p { color: var(--ink-2); font-size: 13px; letter-spacing: .05em; margin-bottom: 24px; }
-  .logos .row { display: flex; flex-wrap: wrap; gap: 36px 48px; justify-content: center; align-items: center; opacity: .6; }
-  .logos .lg { font-weight: 800; font-size: 22px; letter-spacing: -.02em; color: var(--ink); }
+  .marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .track { display: flex; gap: 56px; width: max-content; align-items: center; animation: marq 34s linear infinite; }
+  .track:hover { animation-play-state: paused; }
+  @keyframes marq { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; } }
+  .logos .lg { font-weight: 800; font-size: 22px; letter-spacing: -.02em; color: var(--ink); opacity: .55; transition: opacity .25s, color .25s; white-space: nowrap; }
+  .logos .lg:hover { opacity: 1; }
   .logos .lg span { color: var(--indigo); }
 
   /* 문서형 푸터 */
@@ -395,15 +417,32 @@ refund, _ := ledgr.Refunds.<span class="tok-f">Create</span>(&ledgr.RefundParams
   </section>
 
   <section class="logos">
-    <div class="wrap rv">
-      <p>가상의 팀들이 Ledgr로 정산합니다</p>
-      <div class="row">
+    <div class="wrap rv"><p>가상의 팀들이 Ledgr로 정산합니다</p></div>
+    <div class="marquee rv">
+      <div class="track" aria-hidden="false">
         <span class="lg">Northwind<span>.</span></span>
         <span class="lg">Pixel<span>Forge</span></span>
         <span class="lg">한들<span>페이</span></span>
         <span class="lg">Cobalt<span>OS</span></span>
         <span class="lg">모먼트<span>랩</span></span>
+        <span class="lg">Helios<span>Bank</span></span>
+        <span class="lg" aria-hidden="true">Northwind<span>.</span></span>
+        <span class="lg" aria-hidden="true">Pixel<span>Forge</span></span>
+        <span class="lg" aria-hidden="true">한들<span>페이</span></span>
+        <span class="lg" aria-hidden="true">Cobalt<span>OS</span></span>
+        <span class="lg" aria-hidden="true">모먼트<span>랩</span></span>
+        <span class="lg" aria-hidden="true">Helios<span>Bank</span></span>
       </div>
+    </div>
+  </section>
+
+  <section class="closeband">
+    <div class="mesh2" aria-hidden="true"></div>
+    <div class="inner rv">
+      <h2>지금, 첫 결제를 받아보세요.</h2>
+      <p>테스트 키로 5분 만에 첫 결제를. 카드 등록 없이 시작합니다.</p>
+      <div class="snippet"><span class="pr">$ </span>npm i @ledgr/node</div>
+      <div class="row"><a class="btn p" href="#">키 발급</a><a class="btn s" href="#">문서 보기</a></div>
     </div>
   </section>
 
