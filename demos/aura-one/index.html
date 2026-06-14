@@ -189,6 +189,60 @@
   .cta .price { font-size: 28px; font-weight: 700; }
   .cta .sub { color: var(--ink-2); margin: 6px 0 22px; }
   .cta .btn { display: inline-block; background: var(--blue); color: #fff; border-radius: 980px; padding: 12px 26px; font-size: 17px; font-weight: 500; text-decoration: none; }
+
+  /* ── ① 배터리 — 스크롤 진행에 게이지 채움(scaleX scrubbed) ── */
+  .batt { padding: 22vh 22px; text-align: center; }
+  .batt .bsvg { width: min(82vw, 440px); height: auto; margin: 0 auto; display: block; }
+  .batt .shell { fill: none; stroke: var(--line); }
+  .batt .cap { fill: var(--line); }
+  .batt .fill { fill: url(#bgrad); transform-box: fill-box; transform-origin: left; }
+  .batt .bcap { font-size: clamp(15px, 2.4vw, 20px); color: var(--ink-2); margin-top: 24px; }
+  .batt .bbig { font-size: clamp(32px, 6.5vw, 64px); font-weight: 700; letter-spacing: -.02em; margin-top: 8px; color: var(--graphite); }
+  .batt .bbig span { color: var(--accent); }
+  @supports (animation-timeline: view()) {
+    .batt .fill { animation: fillup linear both; animation-timeline: view(); animation-range: entry 18% cover 64%; }
+    .batt .bbig { animation: drop linear both; animation-timeline: view(); animation-range: entry 30% cover 66%; }
+  }
+  @keyframes fillup { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @supports not (animation-timeline: view()) { .batt .fill { transform: scaleX(1); } }
+
+  /* ── ② 스펙 강화 + 숫자 카운터(순수 CSS: @property <integer> + counter-reset + counter(), JS 0) ── */
+  @property --c6  { syntax: '<integer>'; inherits: false; initial-value: 0; }
+  @property --c30 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+  @property --cnc { syntax: '<integer>'; inherits: false; initial-value: 0; }
+  .specs .c6 .num  { counter-reset: c6 var(--c6); }
+  .specs .c30 .num { counter-reset: c30 var(--c30); }
+  .specs .cnc .num { counter-reset: cnc var(--cnc); }
+  .specs .c6 .num::after  { content: counter(c6); }
+  .specs .c30 .num::after { content: counter(c30); }
+  .specs .cnc .num::after { content: counter(cnc); }
+  @supports (animation-timeline: view()) {
+    .specs .cell { animation: srise linear both; animation-timeline: view(); animation-range: entry 4% cover 38%; }
+    .specs .c6 .num  { animation: count6  linear both; animation-timeline: view(); animation-range: entry 12% cover 56%; }
+    .specs .c30 .num { animation: count30 linear both; animation-timeline: view(); animation-range: entry 12% cover 56%; }
+    .specs .cnc .num { animation: count42 linear both; animation-timeline: view(); animation-range: entry 12% cover 56%; }
+  }
+  @keyframes srise  { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+  @keyframes count6  { to { --c6: 6; } }
+  @keyframes count30 { to { --c30: 30; } }
+  @keyframes count42 { to { --cnc: 42; } }
+  /* 폴백: 카운터 미작동 시 최종값 고정 표시 */
+  @supports not (animation-timeline: view()) {
+    .specs .c6 .num  { --c6: 6; }
+    .specs .c30 .num { --c30: 30; }
+    .specs .cnc .num { --cnc: 42; }
+  }
+
+  /* ── ③ CTA 강화 — 딥다크 클로징 + 최종 리빌 ── */
+  .cta.sec-dark { padding: 22vh 22px 18vh; }
+  .cta .closing { font-size: clamp(34px, 7.5vw, 76px); font-weight: 700; letter-spacing: -.03em; line-height: 1.02; margin-bottom: 30px;
+    background: linear-gradient(180deg, #f2f3f6, #9aa6b4); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  @supports (animation-timeline: view()) {
+    .cta .closing, .cta .price, .cta .sub, .cta .btn { animation: drop linear both; animation-timeline: view(); animation-range: entry 8% cover 46%; }
+    .cta .price { animation-range: entry 16% cover 52%; }
+    .cta .sub { animation-range: entry 22% cover 56%; }
+    .cta .btn { animation-range: entry 28% cover 60%; }
+  }
 </style>
 </head>
 <body>
@@ -313,6 +367,19 @@
     </div>
   </section>
 
+  <section class="batt">
+    <svg class="bsvg" viewBox="0 0 360 140" fill="none" aria-label="배터리 게이지 — 스크롤에 따라 채워짐">
+      <defs><linearGradient id="bgrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2b7de0"/><stop offset="1" stop-color="#7fd0ff"/>
+      </linearGradient></defs>
+      <rect class="shell" x="8" y="28" width="320" height="84" rx="18" stroke-width="3"/>
+      <rect class="cap" x="332" y="54" width="16" height="32" rx="6"/>
+      <rect class="fill" x="20" y="40" width="296" height="60" rx="10"/>
+    </svg>
+    <p class="bcap">6시간 연속, 케이스로 세 번 더.</p>
+    <p class="bbig">하루를 넘기는 <span>30시간</span>.</p>
+  </section>
+
   <section class="feat wrap">
     <p class="line">한 번의 탭으로 <span>주변음</span>이 들어옵니다.</p>
     <p class="line">머리를 돌리면, 소리도 <span>따라옵니다</span>.</p>
@@ -322,14 +389,15 @@
   <section class="specs wrap" id="specs">
     <h2>핵심 스펙</h2>
     <div class="grid">
-      <div class="cell"><div class="v">6h</div><div class="k">연속 재생</div></div>
-      <div class="cell"><div class="v">30h</div><div class="k">케이스 포함</div></div>
-      <div class="cell"><div class="v">−42dB</div><div class="k">노이즈 캔슬링</div></div>
+      <div class="cell c6"><div class="v"><span class="num"></span>h</div><div class="k">연속 재생</div></div>
+      <div class="cell c30"><div class="v"><span class="num"></span>h</div><div class="k">케이스 포함</div></div>
+      <div class="cell cnc"><div class="v">−<span class="num"></span>dB</div><div class="k">노이즈 캔슬링</div></div>
       <div class="cell"><div class="v">IP57</div><div class="k">방수·방진</div></div>
     </div>
   </section>
 
-  <section class="cta" id="buy">
+  <section class="cta sec-dark" id="buy">
+    <p class="closing">경계가 사라지는 경험.</p>
     <div class="price">₩ 269,000</div>
     <div class="sub">또는 12개월 무이자 월 ₩ 22,416</div>
     <a class="btn" href="#">구매하기</a>
