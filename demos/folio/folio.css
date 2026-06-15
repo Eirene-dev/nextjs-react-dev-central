@@ -53,10 +53,34 @@ article .meta { color: var(--ink-2); font-size: 13px; }
 .g-e { background: linear-gradient(135deg, #b5862f, #e8c46e 70%, #7a5a1a); }
 .g-f { background: linear-gradient(135deg, #2f7a6e, #6ed0c0 70%, #1a4a44); }
 
-/* ── view-transition-name 매칭: 카드(.art-*) ↔ 히어로(.hero.h-*) — 같은 이름이 양쪽에 ── */
+/* ── view-transition-name 매칭 (작품별 고유 — index 6카드 동시 존재해도 충돌 0) ── */
+/* 이미지: 카드(.art-*) ↔ 히어로(.hero.h-*) */
 .art-a { view-transition-name: art-a; } .hero.h-a { view-transition-name: art-a; }
 .art-b { view-transition-name: art-b; } .hero.h-b { view-transition-name: art-b; }
 .art-c { view-transition-name: art-c; } .hero.h-c { view-transition-name: art-c; }
 .art-d { view-transition-name: art-d; } .hero.h-d { view-transition-name: art-d; }
 .art-e { view-transition-name: art-e; } .hero.h-e { view-transition-name: art-e; }
 .art-f { view-transition-name: art-f; } .hero.h-f { view-transition-name: art-f; }
+/* 제목: 카드 h2(.t-*) ↔ 상세 h1(.t-*) / 메타: 카드 메타(.m-*) ↔ 상세 kicker(.m-*) */
+.t-a { view-transition-name: title-a; } .m-a { view-transition-name: meta-a; }
+.t-b { view-transition-name: title-b; } .m-b { view-transition-name: meta-b; }
+.t-c { view-transition-name: title-c; } .m-c { view-transition-name: meta-c; }
+.t-d { view-transition-name: title-d; } .m-d { view-transition-name: meta-d; }
+.t-e { view-transition-name: title-e; } .m-e { view-transition-name: meta-e; }
+.t-f { view-transition-name: title-f; } .m-f { view-transition-name: meta-f; }
+
+/* ── ::view-transition 커스텀 애니: 부드러운 ease-out 모핑(기본 크로스페이드보다 의도적) ── */
+/* 미지원 브라우저는 이 의사요소를 무시 → 일반 링크 이동(폴백). */
+::view-transition-group(*) { animation-duration: .5s; animation-timing-function: cubic-bezier(.2, 0, 0, 1); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .42s; animation-timing-function: ease; }
+/* 들어오는 새 콘텐츠에 미세한 떠오름(제목/메타 그룹) — 과하지 않게 */
+::view-transition-new(title-a), ::view-transition-new(title-b), ::view-transition-new(title-c),
+::view-transition-new(title-d), ::view-transition-new(title-e), ::view-transition-new(title-f) { animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
+
+/* ── ★ prefers-reduced-motion: 모핑/커스텀 애니 정지(모션 제거, 단순 전환) ── */
+/* 양쪽 문서(공유 CSS)에 적용 → 접근성 보장 */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
