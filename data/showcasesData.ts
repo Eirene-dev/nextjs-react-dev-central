@@ -157,6 +157,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/drift/index.html',
     thumb: '/static/showcases/drift.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/drift',
+    narrative: '/showcases/drift', // 서사형 인트로(animation-timeline 메타 해설) → 그 안에서 데모 실행
   },
   {
     slug: 'slate',
@@ -167,6 +168,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/slate/index.html',
     thumb: '/static/showcases/slate.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/slate',
+    narrative: '/showcases/slate', // 서사형 인트로(Popover·Anchor·@starting-style 메타 해설) → 그 안에서 데모 실행
   },
   {
     slug: 'folio',
@@ -177,6 +179,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/folio/index.html',
     thumb: '/static/showcases/folio.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/folio',
+    narrative: '/showcases/folio', // 서사형 인트로(cross-document View Transitions 메타 해설) → 그 안에서 데모 실행
   },
 ]
 
