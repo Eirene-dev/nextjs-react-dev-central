@@ -58,10 +58,20 @@ function AuraOneNarrative({ title, demoHref }: { title: string; demoHref: string
           이어버드입니다. 아래는 제품이 아니라 <em className="not-italic text-ink">그 문법 자체</em>에 대한
           노트 — 네 가지 기법을, 그 기법으로 설명합니다.
         </p>
+        {/* 상단 빠른 진입 — 설명을 건너뛰고 데모를 바로 실행하고 싶을 때 */}
+        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <a
+            href={demoHref}
+            className="inline-flex items-center gap-2 rounded-full bg-coral-2 px-6 py-3 text-sm font-semibold text-white transition hover:bg-coral"
+          >
+            {title} 데모 바로 실행 →
+          </a>
+          <span className="text-sm text-ink-3">또는 아래로 — 네 가지 기법을 먼저 보기 ↓</span>
+        </div>
       </header>
 
       {/* ── 기법 ① 거대 타이포 ── */}
-      <section className="mt-40">
+      <section className="mt-24 sm:mt-28">
         <BeatLabel n="01" name="타이포가 곧 레이아웃" />
         <GiantType
           words={['크게,', '단순하게,', '한 단어씩.']}
@@ -74,7 +84,7 @@ function AuraOneNarrative({ title, demoHref }: { title: string; demoHref: string
       </section>
 
       {/* ── 기법 ② sticky 리빌 ── */}
-      <section className="mt-40">
+      <section className="mt-24 sm:mt-28">
         <BeatLabel n="02" name="스크롤 = 프레젠테이션" />
         <Pinned
           focal={
@@ -91,7 +101,7 @@ function AuraOneNarrative({ title, demoHref }: { title: string; demoHref: string
       </section>
 
       {/* ── 기법 ③ 라이트↔다크 리듬 ── */}
-      <section className="mt-40">
+      <section className="mt-24 sm:mt-28">
         <BeatLabel n="03" name="명암의 리듬" />
         <div className="mt-8">
           <ToneFlip>
@@ -106,7 +116,7 @@ function AuraOneNarrative({ title, demoHref }: { title: string; demoHref: string
       </section>
 
       {/* ── 기법 ④ 움직이는 숫자 ── */}
-      <section className="mt-40">
+      <section className="mt-24 sm:mt-28">
         <BeatLabel n="04" name="움직이는 숫자" />
         <div className="mt-10 grid gap-10 sm:grid-cols-[auto_1fr] sm:items-end">
           <CounterScrub to={4} label="이 페이지가 모은 애플-문법 기법" />
@@ -118,7 +128,7 @@ function AuraOneNarrative({ title, demoHref }: { title: string; demoHref: string
       </section>
 
       {/* ── CTA: 문법이 제품에 적용된 모습은 데모에서 ── */}
-      <section className="mt-40 rounded-3xl border border-line bg-surface-2 px-7 py-16 text-center sm:py-20">
+      <section className="mt-24 rounded-3xl border border-line bg-surface-2 px-7 py-16 text-center sm:mt-28 sm:py-20">
         <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           이 문법이 제품을 만나면?
         </h2>

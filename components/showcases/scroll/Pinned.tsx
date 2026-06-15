@@ -18,7 +18,7 @@ export default function Pinned({ focal, steps }: { focal: ReactNode; steps: stri
         scrollTrigger: {
           trigger: ref.current,
           start: 'top top',
-          end: `+=${steps.length * 300}`,
+          end: `+=${steps.length * 230}`,
           pin: true,
           scrub: 0.5,
         },
@@ -30,7 +30,7 @@ export default function Pinned({ focal, steps }: { focal: ReactNode; steps: stri
     { scope: ref }
   )
   return (
-    <div ref={ref} className="flex min-h-screen flex-col justify-center gap-10 py-16">
+    <div ref={ref} className="flex min-h-[78vh] flex-col justify-center gap-8 py-10">
       <div>{focal}</div>
       <ul className="space-y-5">
         {steps.map((s, i) => (
