@@ -3,10 +3,13 @@ import type { ExperimentShowcase } from '@/data/showcasesData'
 // 실험(experiment) 카드 — 자체완결 정적 데모. category 는 보조 태그.
 // stretched-link: 카드 전체 = 데모 링크(절대 오버레이). source 있으면 "소스 보기"는 그 위(z)의 독립 링크.
 export default function ExperimentCard({ s }: { s: ExperimentShowcase }) {
+  // narrative 있으면 본 사이트 서사형 인트로로(그 안에 데모 실행 CTA), 없으면 정적 데모로 직행.
+  const href = s.narrative ?? s.href
+  const cta = s.narrative ? '살펴보기' : '데모 보기'
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:-translate-y-1 hover:border-coral-soft hover:shadow-soft">
-      {/* 데모로 가는 stretched 링크(카드 전체 클릭) */}
-      <a href={s.href} aria-label={`${s.title} 데모 보기`} className="absolute inset-0 z-10" />
+      {/* 카드 전체 클릭 = 진입(narrative 또는 데모) — stretched 링크 */}
+      <a href={href} aria-label={`${s.title} ${cta}`} className="absolute inset-0 z-10" />
       <div className="aspect-[16/10] overflow-hidden border-b border-line bg-ink/5">
         {/* 정적 데모 썸네일 (self-contained 데모 스크린샷) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -24,7 +27,7 @@ export default function ExperimentCard({ s }: { s: ExperimentShowcase }) {
         <h3 className="mt-1 text-lg font-bold tracking-tight text-ink">{s.title}</h3>
         <p className="mt-1 text-sm text-ink-2">{s.blurb}</p>
         <div className="mt-3 flex items-center gap-4">
-          <span className="text-sm font-semibold text-ink-3 group-hover:text-coral-2">데모 보기 →</span>
+          <span className="text-sm font-semibold text-ink-3 group-hover:text-coral-2">{cta} →</span>
           {s.source && (
             <a
               href={s.source}

@@ -19,6 +19,7 @@ export interface ExperimentShowcase extends ShowcaseBase {
   href: string
   thumb: string
   source?: string // 공개 소스 링크(GitHub). 있으면 카드에 "소스 보기" 노출.
+  narrative?: string // 본 사이트 서사형 인트로 라우트(/showcases/{slug}). 있으면 카드가 데모 대신 이리로.
 }
 
 // 실물 — 운영 중인 제품. 외부 링크(새 탭) + 스크린샷 + 핵심 판단 3줄.
@@ -121,6 +122,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/aura-one/index.html',
     thumb: '/static/showcases/aura-one.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/aura-one',
+    narrative: '/showcases/aura-one', // 서사형 인트로(애플 문법 메타 해설) → 그 안에서 데모 실행
   },
   {
     slug: 'vanta-ev',
