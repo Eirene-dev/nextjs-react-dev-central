@@ -10,6 +10,7 @@ import LedgrNarrative from './LedgrNarrative'
 import DriftNarrative from './DriftNarrative'
 import SlateNarrative from './SlateNarrative'
 import FolioNarrative from './FolioNarrative'
+import PilotNarrative from './PilotNarrative'
 
 // 실험 서사형 인트로(본 사이트). ★ 데모가 scroll-native/시그니처이므로 내러티브는 "연구한 디자인 문법"의
 // 메타 해설 전용 — 데모의 제품 시퀀스를 재연하지 않는다(슬러그별 컴포넌트에 가드레일 명시).
@@ -23,6 +24,7 @@ const REGISTRY: Record<string, ComponentType<NarrativeProps>> = {
   drift: DriftNarrative,
   slate: SlateNarrative,
   folio: FolioNarrative,
+  pilot: PilotNarrative,
 }
 
 export default function ExperimentNarrative({

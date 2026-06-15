@@ -60,6 +60,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/pilot/index.html',
     thumb: '/static/showcases/pilot.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/pilot',
+    narrative: '/showcases/pilot', // 서사형 인트로(function calling 개념 시연) → 그 안에서 데모 실행
   },
   {
     slug: 'canvasly',
