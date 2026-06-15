@@ -243,16 +243,87 @@
     .cta .sub { animation-range: entry 22% cover 56%; }
     .cta .btn { animation-range: entry 28% cover 60%; }
   }
+
+  /* ── 히어로 보조 카피 ── */
+  .hero .lead2 { color: var(--ink-2); font-size: clamp(15px, 1.9vw, 17px); max-width: 30em; margin: 18px auto 0; line-height: 1.65; }
+
+  /* ── 브랜드 스토리/철학 ── */
+  .story { padding: 96px 22px; text-align: center; }
+  .story .ey { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .story .lead { font-size: clamp(26px, 5vw, 46px); font-weight: 700; letter-spacing: -.025em; line-height: 1.16; max-width: 16em; margin: 14px auto 26px;
+    background: linear-gradient(180deg, #2a2a2e, #6b7785); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .story p { color: var(--ink-2); font-size: clamp(16px, 2.2vw, 19px); max-width: 30em; margin: 0 auto 14px; line-height: 1.75; }
+  @supports (animation-timeline: view()) { .story .lead { animation: drop linear both; animation-timeline: view(); animation-range: entry 6% cover 38%; } }
+
+  /* ── 비교표(CSS grid, JS 0) ── */
+  .compare { padding: 76px 0; border-top: 1px solid var(--line); }
+  .compare h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); text-align: center; margin-bottom: 30px; }
+  .ctable { max-width: 660px; margin: 0 auto; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #fff; }
+  .ctable .row { display: grid; grid-template-columns: 1.5fr 1fr 1fr; align-items: center; }
+  .ctable .row + .row { border-top: 1px solid var(--line); }
+  .ctable .row.head { background: #f3f4f6; }
+  .ctable .c { padding: 15px 16px; text-align: center; font-size: 15px; }
+  .ctable .c.k { text-align: left; color: var(--ink-2); font-size: 14px; font-weight: 500; }
+  .ctable .row.head .c { font-size: 13px; font-weight: 700; letter-spacing: -.01em; color: var(--ink-2); }
+  .ctable .row.head .me { color: var(--blue); }
+  .ctable .me { font-weight: 600; color: var(--ink); }
+  .ctable .yes { color: #1aa463; font-weight: 700; }
+  .ctable .no { color: #c4c7cd; }
+
+  /* ── FAQ — JS 0(<details>/<summary>) ── */
+  .faq { padding: 76px 0 92px; border-top: 1px solid var(--line); }
+  .faq h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); text-align: center; margin-bottom: 22px; }
+  .faq .qa { max-width: 660px; margin: 0 auto; }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; padding: 20px 4px; font-size: clamp(16px, 2.2vw, 19px); font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; color: var(--blue); font-weight: 300; font-size: 26px; line-height: 1; transition: transform .2s ease; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq .a { padding: 0 4px 22px; color: var(--ink-2); font-size: 16px; line-height: 1.75; max-width: 54em; }
+
+  /* ── 보증/지원 콜아웃 ── */
+  .assure { padding: 64px 22px; border-top: 1px solid var(--line); }
+  .assure .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; max-width: 800px; margin: 0 auto; }
+  .assure .ai { text-align: center; }
+  .assure .ai svg { width: 30px; height: 30px; color: var(--blue); margin: 0 auto 12px; display: block; }
+  .assure .ai h3 { font-size: 17px; font-weight: 600; margin-bottom: 5px; }
+  .assure .ai p { color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+
+  /* ── 스펙 보조(서브라벨) ── */
+  .grid .cell .s { color: var(--ink-2); font-size: 11.5px; margin-top: 2px; opacity: .8; }
 </style>
 </head>
 <body>
   <div class="progress" aria-hidden="true"></div>
   <p class="study">애플 제품 페이지의 <b>디자인 문법</b>(거대 타이포·sticky 스크롤 리빌·명암 리듬·여백)을 연구한 <b>가상 브랜드</b> 데모 — CSS scroll-driven만, JS·이미지 자산 0</p>
 
+  <!-- 공유 SVG 디테일(그라디언트·스피커 메시·광택·그림자) — 모든 이어버드 SVG가 url(#id)로 참조. 이미지 자산 0 유지. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5c5c64"/><stop offset=".5" stop-color="#3a3a40"/><stop offset="1" stop-color="#1d1d21"/>
+    </linearGradient>
+    <linearGradient id="bodyG2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#64646c"/><stop offset=".5" stop-color="#434349"/><stop offset="1" stop-color="#242428"/>
+    </linearGradient>
+    <linearGradient id="stemG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#74747c"/><stop offset=".5" stop-color="#48484e"/><stop offset="1" stop-color="#2a2a30"/>
+    </linearGradient>
+    <radialGradient id="sheenG" cx=".34" cy=".26" r=".75">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".55"/><stop offset=".45" stop-color="#ffffff" stop-opacity=".06"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="meshG" cx=".5" cy=".42" r=".6">
+      <stop offset="0" stop-color="#15151a"/><stop offset="1" stop-color="#3a3a42"/>
+    </radialGradient>
+    <filter id="budShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+  </defs></svg>
+
   <section class="hero">
     <p class="eyebrow">Aura One</p>
     <h1><span class="w">들리지</span> <span class="w">않는</span> <span class="w">경계.</span></h1>
     <p>주변음과 음악 사이, 그 경계가 사라집니다.</p>
+    <p class="lead2">11mm 다이내믹 드라이버와 적응형 액티브 노이즈 캔슬링. 귀에 들어오는 순간부터, 당신의 세계와 바깥세상 사이를 자연스럽게 오갑니다.</p>
     <div class="links"><a href="#buy">구매하기 ›</a><a href="#specs">자세히 ›</a></div>
     <svg class="cue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
   </section>
@@ -260,15 +331,27 @@
   <section class="pin reveal">
     <div class="stage">
       <svg class="bud" viewBox="0 0 400 260" fill="none" aria-label="Aura One 이어버드 일러스트">
-        <g class="left">
-          <path class="body" d="M120 60c30-16 64-8 70 22 5 26-12 52-40 60-26 8-52-6-58-30-6-26 8-44 28-52z" fill="#3a3a3e"/>
-          <rect class="stem" x="150" y="118" width="16" height="78" rx="8" fill="#48484c"/>
-          <circle class="tip" cx="158" cy="92" r="10" fill="#7a8696"/>
+        <g class="left" filter="url(#budShadow)">
+          <path class="body" d="M120 60c30-16 64-8 70 22 5 26-12 52-40 60-26 8-52-6-58-30-6-26 8-44 28-52z" fill="url(#bodyG)"/>
+          <ellipse cx="98" cy="110" rx="17" ry="15" transform="rotate(-18 98 110)" fill="url(#meshG)"/>
+          <circle cx="98" cy="110" r="10" fill="none" stroke="#54545c" stroke-width="1.6"/>
+          <circle cx="98" cy="110" r="4.6" fill="none" stroke="#60606a" stroke-width="1.2"/>
+          <circle cx="150" cy="78" r="3.2" fill="#7fd0ff"/>
+          <path d="M120 60c30-16 64-8 70 22 5 26-12 52-40 60-26 8-52-6-58-30-6-26 8-44 28-52z" fill="url(#sheenG)"/>
+          <rect class="stem" x="150" y="118" width="16" height="82" rx="8" fill="url(#stemG)"/>
+          <rect x="153" y="123" width="3" height="72" rx="1.5" fill="#8a8a92" opacity=".5"/>
+          <circle cx="158" cy="192" r="2.3" fill="#caa24a"/><circle cx="158" cy="183" r="2.3" fill="#caa24a"/>
         </g>
-        <g class="right">
-          <path class="body" d="M280 60c-30-16-64-8-70 22-5 26 12 52 40 60 26 8 52-6 58-30 6-26-8-44-28-52z" fill="#46464a"/>
-          <rect class="stem" x="234" y="118" width="16" height="78" rx="8" fill="#54545a"/>
-          <circle class="tip" cx="242" cy="92" r="10" fill="#7a8696"/>
+        <g class="right" filter="url(#budShadow)">
+          <path class="body" d="M280 60c-30-16-64-8-70 22-5 26 12 52 40 60 26 8 52-6 58-30 6-26-8-44-28-52z" fill="url(#bodyG2)"/>
+          <ellipse cx="302" cy="110" rx="17" ry="15" transform="rotate(18 302 110)" fill="url(#meshG)"/>
+          <circle cx="302" cy="110" r="10" fill="none" stroke="#54545c" stroke-width="1.6"/>
+          <circle cx="302" cy="110" r="4.6" fill="none" stroke="#60606a" stroke-width="1.2"/>
+          <circle cx="250" cy="78" r="3.2" fill="#7fd0ff"/>
+          <path d="M280 60c-30-16-64-8-70 22-5 26 12 52 40 60 26 8 52-6 58-30 6-26-8-44-28-52z" fill="url(#sheenG)"/>
+          <rect class="stem" x="234" y="118" width="16" height="82" rx="8" fill="url(#stemG)"/>
+          <rect x="244" y="123" width="3" height="72" rx="1.5" fill="#8a8a92" opacity=".5"/>
+          <circle cx="242" cy="192" r="2.3" fill="#caa24a"/><circle cx="242" cy="183" r="2.3" fill="#caa24a"/>
         </g>
       </svg>
       <div class="cap">분해할수록, 단순해진다.</div>
@@ -283,9 +366,12 @@
         <circle class="wave w3" cx="200" cy="200" r="140" stroke-width="2.5"/>
         <circle class="wave w2" cx="200" cy="200" r="100" stroke-width="3"/>
         <circle class="wave w1" cx="200" cy="200" r="60" stroke-width="3.5"/>
-        <g>
-          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="#3a3a3e"/>
-          <rect x="206" y="194" width="13" height="58" rx="6" fill="#54545a"/>
+        <g filter="url(#budShadow)">
+          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#bodyG)"/>
+          <circle cx="195" cy="182" r="8" fill="url(#meshG)"/>
+          <circle cx="195" cy="182" r="8" fill="none" stroke="#4a4a52" stroke-width="1.2"/>
+          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#sheenG)"/>
+          <rect x="206" y="194" width="13" height="58" rx="6" fill="url(#stemG)"/>
         </g>
       </svg>
       <div class="cap">세상이 조용해지는 순간.</div>
@@ -303,9 +389,12 @@
           <path class="arrow" d="M26 200l26-16v32z"/>
           <path class="arrow" d="M374 200l-26-16v32z"/>
         </g>
-        <g>
-          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="#3a3a3e"/>
-          <rect x="206" y="194" width="13" height="58" rx="6" fill="#54545a"/>
+        <g filter="url(#budShadow)">
+          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#bodyG)"/>
+          <circle cx="195" cy="182" r="8" fill="url(#meshG)"/>
+          <circle cx="195" cy="182" r="8" fill="none" stroke="#4a4a52" stroke-width="1.2"/>
+          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#sheenG)"/>
+          <rect x="206" y="194" width="13" height="58" rx="6" fill="url(#stemG)"/>
         </g>
       </svg>
       <div class="cap">머리를 돌리면, 소리도 따라옵니다.</div>
@@ -343,10 +432,15 @@
     <p class="mattitle">소재의 디테일</p>
     <svg class="layer bg" viewBox="0 0 400 400" fill="none" aria-hidden="true"><circle cx="200" cy="200" r="180" stroke="#d4d8de" stroke-width="2"/><circle cx="200" cy="200" r="120" stroke="#e0e3e8" stroke-width="2"/></svg>
     <svg class="layer mid" viewBox="0 0 220 300" fill="none" aria-label="이어버드 단면 일러스트">
-      <path d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z" fill="#33333a"/>
-      <path d="M78 72c22-12 50-6 56 16 4 20-10 42-32 48" stroke="#7a8696" stroke-width="3" fill="none"/>
-      <rect x="96" y="150" width="18" height="96" rx="9" fill="#54545a"/>
-      <circle cx="105" cy="118" r="13" fill="#8a93a3"/>
+      <g filter="url(#budShadow)">
+        <path d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z" fill="url(#bodyG)"/>
+        <path d="M78 72c22-12 50-6 56 16 4 20-10 42-32 48" stroke="#7f8a98" stroke-width="3" fill="none"/>
+        <ellipse cx="74" cy="116" rx="15" ry="13" transform="rotate(-16 74 116)" fill="url(#meshG)"/>
+        <circle cx="74" cy="116" r="9" fill="none" stroke="#54545c" stroke-width="1.4"/>
+        <path d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z" fill="url(#sheenG)"/>
+        <rect x="96" y="150" width="18" height="96" rx="9" fill="url(#stemG)"/>
+        <rect x="99" y="155" width="3.4" height="84" rx="1.7" fill="#8a8a92" opacity=".5"/>
+      </g>
     </svg>
     <span class="layer tag t1">음향 챔버</span>
     <span class="layer tag t2">실리콘 이어팁</span>
@@ -360,9 +454,13 @@
       <span class="cname n3">세이지</span>
       <span class="cname n4">코랄</span>
       <svg class="cbud" viewBox="0 0 220 300" fill="none" aria-label="색상 옵션이 전환되는 이어버드 일러스트">
-        <path class="body" d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z"/>
-        <rect class="stem" x="96" y="150" width="18" height="96" rx="9"/>
-        <circle cx="105" cy="118" r="13" fill="#cfd5dd"/>
+        <g filter="url(#budShadow)">
+          <path class="body" d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z"/>
+          <ellipse cx="74" cy="116" rx="15" ry="13" transform="rotate(-16 74 116)" fill="url(#meshG)"/>
+          <circle cx="74" cy="116" r="9" fill="none" stroke="#00000028" stroke-width="1.4"/>
+          <path d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z" fill="url(#sheenG)"/>
+          <rect class="stem" x="96" y="150" width="18" height="96" rx="9"/>
+        </g>
       </svg>
     </div>
   </section>
@@ -386,13 +484,71 @@
     <p class="line">하루를 버티는 <span>배터리</span>, 그리고 케이스에 세 번 더.</p>
   </section>
 
+  <section class="story">
+    <p class="ey">Design Philosophy</p>
+    <p class="lead">덜어낼수록, 더 잘 들린다.</p>
+    <p>Aura One은 기능을 늘리는 대신 방해를 지웠습니다. 버튼도, 복잡한 설정도 없이 — 한 번의 착용과 한 번의 탭이면 충분합니다.</p>
+    <p>음향 챔버는 더 깊게, 외형은 더 단순하게. 손에 쥐었을 때의 균형과 귀에 닿는 실리콘의 촉감까지, 보이지 않는 곳을 다듬는 데 시간을 썼습니다.</p>
+  </section>
+
   <section class="specs wrap" id="specs">
     <h2>핵심 스펙</h2>
     <div class="grid">
-      <div class="cell c6"><div class="v"><span class="num"></span>h</div><div class="k">연속 재생</div></div>
-      <div class="cell c30"><div class="v"><span class="num"></span>h</div><div class="k">케이스 포함</div></div>
-      <div class="cell cnc"><div class="v">−<span class="num"></span>dB</div><div class="k">노이즈 캔슬링</div></div>
-      <div class="cell"><div class="v">IP57</div><div class="k">방수·방진</div></div>
+      <div class="cell c6"><div class="v"><span class="num"></span>h</div><div class="k">연속 재생</div><div class="s">ANC 켜짐 기준</div></div>
+      <div class="cell c30"><div class="v"><span class="num"></span>h</div><div class="k">케이스 포함</div><div class="s">3회 추가 충전</div></div>
+      <div class="cell cnc"><div class="v">−<span class="num"></span>dB</div><div class="k">노이즈 캔슬링</div><div class="s">최대 감쇠량</div></div>
+      <div class="cell"><div class="v">IP57</div><div class="k">방수·방진</div><div class="s">땀·소나기 대응</div></div>
+      <div class="cell"><div class="v">11mm</div><div class="k">드라이버</div><div class="s">다이내믹 우퍼</div></div>
+      <div class="cell"><div class="v">5.3</div><div class="k">Bluetooth</div><div class="s">LE Audio 지원</div></div>
+      <div class="cell"><div class="v">AAC</div><div class="k">오디오 코덱</div><div class="s">SBC·AAC</div></div>
+      <div class="cell"><div class="v">5g</div><div class="k">한쪽 무게</div><div class="s">케이스 48g</div></div>
+      <div class="cell"><div class="v">5분</div><div class="k">급속 충전</div><div class="s">= 2시간 재생</div></div>
+      <div class="cell"><div class="v">S·M·L</div><div class="k">이어팁</div><div class="s">3쌍 기본 제공</div></div>
+      <div class="cell"><div class="v">Qi</div><div class="k">무선 충전</div><div class="s">케이스 지원</div></div>
+      <div class="cell"><div class="v">1년</div><div class="k">제한 보증</div><div class="s">무상 A/S</div></div>
+    </div>
+  </section>
+
+  <section class="compare wrap">
+    <h2>무엇이 다른가</h2>
+    <div class="ctable">
+      <div class="row head">
+        <div class="c k">항목</div><div class="c me">Aura One</div><div class="c">일반 무선 이어버드</div>
+      </div>
+      <div class="row"><div class="c k">액티브 노이즈 캔슬링</div><div class="c me">−42dB 적응형</div><div class="c">−25dB 고정</div></div>
+      <div class="row"><div class="c k">공간 음향 · 헤드 트래킹</div><div class="c yes">✓</div><div class="c no">—</div></div>
+      <div class="row"><div class="c k">배터리 · 케이스 포함</div><div class="c me">30시간</div><div class="c">20시간</div></div>
+      <div class="row"><div class="c k">방수 · 방진</div><div class="c me">IP57</div><div class="c">IPX4</div></div>
+      <div class="row"><div class="c k">무선 충전</div><div class="c yes">✓ Qi</div><div class="c no">—</div></div>
+      <div class="row"><div class="c k">가격</div><div class="c me">₩269,000</div><div class="c">₩299,000</div></div>
+    </div>
+  </section>
+
+  <section class="faq wrap">
+    <h2>자주 묻는 질문</h2>
+    <div class="qa">
+      <details><summary>한쪽만 따로 쓸 수 있나요?</summary><p class="a">네. 왼쪽·오른쪽 어느 쪽이든 단독으로 사용할 수 있고, 나머지 한쪽은 케이스에서 계속 충전됩니다.</p></details>
+      <details><summary>안드로이드에서도 작동하나요?</summary><p class="a">Bluetooth 5.3 표준을 따르므로 안드로이드·iOS·노트북 등 어떤 기기와도 페어링됩니다. 공간 음향과 적응형 ANC는 모든 플랫폼에서 동작합니다.</p></details>
+      <details><summary>완전 방수인가요?</summary><p class="a">IP57 등급으로 땀·비·물보라에 강합니다. 다만 수영이나 잠수 등 장시간 침수에는 적합하지 않습니다.</p></details>
+      <details><summary>충전은 얼마나 걸리나요?</summary><p class="a">5분 급속 충전으로 약 2시간 재생이 가능하며, 완충까지는 약 60분입니다. 케이스는 Qi 무선 충전도 지원합니다.</p></details>
+      <details><summary>구성품은 무엇인가요?</summary><p class="a">이어버드 한 쌍, 충전 케이스, S·M·L 실리콘 이어팁 3쌍, USB-C 케이블, 사용 설명서가 들어 있습니다.</p></details>
+    </div>
+  </section>
+
+  <section class="assure">
+    <div class="grid3">
+      <div class="ai">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+        <h3>1년 제한 보증</h3><p>제조상 결함은 무상 수리·교체.</p>
+      </div>
+      <div class="ai">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>
+        <h3>30일 반품 보장</h3><p>마음에 들지 않으면 전액 환불.</p>
+      </div>
+      <div class="ai">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 18v-6a8 8 0 0 1 16 0v6"/><rect x="2" y="15" width="5" height="6" rx="1.5"/><rect x="17" y="15" width="5" height="6" rx="1.5"/></svg>
+        <h3>연중무휴 지원</h3><p>챗·이메일로 언제든 문의.</p>
+      </div>
     </div>
   </section>
 
