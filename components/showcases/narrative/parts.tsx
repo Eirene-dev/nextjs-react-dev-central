@@ -77,7 +77,7 @@ export function BottomCta({
   children: ReactNode
 }) {
   return (
-    <section className="mt-24 rounded-3xl border border-line bg-surface-2 px-7 py-16 text-center sm:mt-28 sm:py-20">
+    <section className="mt-16 rounded-3xl border border-line bg-surface-2 px-7 py-16 text-center sm:mt-20 sm:py-20">
       <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{heading}</h2>
       <p className="mx-auto mt-3 max-w-md text-ink-2">{children}</p>
       <a

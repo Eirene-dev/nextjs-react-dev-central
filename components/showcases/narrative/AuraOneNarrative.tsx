@@ -27,7 +27,7 @@ export default function AuraOneNarrative({ title, demoHref }: { title: string; d
       </Hero>
 
       {/* ── 기법 ① 거대 타이포 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="01" name="타이포가 곧 레이아웃" />
         <GiantType
           words={['크게,', '단순하게,', '한 단어씩.']}
@@ -40,7 +40,7 @@ export default function AuraOneNarrative({ title, demoHref }: { title: string; d
       </section>
 
       {/* ── 기법 ② sticky 리빌 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="02" name="스크롤 = 프레젠테이션" />
         <Pinned
           focal={
@@ -57,7 +57,7 @@ export default function AuraOneNarrative({ title, demoHref }: { title: string; d
       </section>
 
       {/* ── 기법 ③ 라이트↔다크 리듬 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="03" name="명암의 리듬" />
         <div className="mt-8">
           <ToneFlip>
@@ -72,7 +72,7 @@ export default function AuraOneNarrative({ title, demoHref }: { title: string; d
       </section>
 
       {/* ── 기법 ④ 움직이는 숫자 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="04" name="움직이는 숫자" />
         <div className="mt-10 grid gap-10 sm:grid-cols-[auto_1fr] sm:items-end">
           <CounterScrub to={4} label="이 페이지가 모은 애플-문법 기법" />
