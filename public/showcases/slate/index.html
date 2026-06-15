@@ -34,8 +34,14 @@
   .jsn { color: #f0a; border-color: #a35; }
 
   button.trigger, .menuitem { font: inherit; cursor: pointer; }
-  .btn { background: var(--brand-2); color: #fff; border: none; border-radius: 10px; padding: 9px 14px; font-weight: 600; font-size: 14px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; background: var(--brand-2); color: #fff; border: none; border-radius: 10px; padding: 9px 14px; font-weight: 600; font-size: 14px; }
   .btn.ghost { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
+
+  /* ── 인라인 SVG 스트로크 아이콘 (currentColor, 이미지 0) ── */
+  .ico { width: 1em; height: 1em; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -.13em; }
+  .ico.fill { fill: currentColor; stroke: none; }
+  .menuitem .ico { width: 16px; height: 16px; color: var(--ink-3); }
+  .menuitem:hover .ico { color: #fff; }
 
   /* ── 공통 popover 스타일 + @starting-style 진입 애니메이션 (JS 0) ── */
   [popover] { margin: 0; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); border-radius: 12px; padding: 8px; box-shadow: 0 18px 50px -20px rgba(0,0,0,.7); opacity: 0; transform: translateY(-6px) scale(.97); transition: opacity .18s ease, transform .18s ease, overlay .18s allow-discrete, display .18s allow-discrete; }
@@ -46,7 +52,7 @@
   @starting-style { [popover]:popover-open::backdrop { opacity: 0; } }
 
   .menu { min-width: 180px; }
-  .menu .menuitem { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--ink-2); padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+  .menu .menuitem { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; background: none; border: none; color: var(--ink-2); padding: 8px 12px; border-radius: 8px; font-size: 14px; }
   .menu .menuitem:hover { background: var(--brand-2); color: #fff; }
   .sep { height: 1px; background: var(--line); margin: 6px 0; }
 
@@ -82,8 +88,8 @@
   .ac + .ac { margin-top: 8px; }
   .ac summary { cursor: pointer; padding: 10px 12px; font-size: 13.5px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .ac summary::-webkit-details-marker { display: none; }
-  .ac summary::after { content: '+'; color: var(--ink-3); font-family: var(--mono); }
-  .ac[open] summary::after { content: '\2212'; }
+  .ac summary .ac-chev { margin-left: auto; color: var(--ink-3); transition: transform .22s ease; }
+  .ac[open] summary .ac-chev { transform: rotate(180deg); }
   .ac-body { padding: 0 12px 12px; color: var(--ink-2); font-size: 13px; }
   /* 미지원 시 네이티브 즉시 토글 / 지원 시 block-size 애니 */
   @supports (interpolate-size: allow-keywords) {
@@ -147,18 +153,15 @@
     .cselect:open::picker-icon { transform: rotate(180deg); }
   }
 
-  /* ── 캐러셀: scroll-snap(넓은 지원) + ::scroll-button/::scroll-marker(신규) ── */
+  /* ── 캐러셀: scroll-snap(넓은 지원) + ::scroll-marker 도트(신규) ── */
   .carousel { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 8px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
   .slide { flex: 0 0 100%; scroll-snap-align: center; height: 92px; border-radius: 12px; display: grid; place-content: center; font-family: var(--mono); font-size: 26px; color: #fff; background: linear-gradient(135deg, var(--brand-2), #7c3aed); }
   /* 신규 CSS 캐러셀: 화살표·도트가 JS 없이. 미지원 시 위 스크롤(스와이프)만 */
   @supports selector(::scroll-marker) {
-    .carousel { scroll-marker-group: after; anchor-name: --carousel; position: relative; }
-    .carousel::scroll-button(left), .carousel::scroll-button(right) { position: absolute; top: 31px; z-index: 2; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: rgba(24,27,34,.92); color: var(--ink); cursor: pointer; font-size: 16px; line-height: 1; box-shadow: 0 6px 16px -4px rgba(0,0,0,.7); }
-    .carousel::scroll-button(left) { content: '\2039'; left: 4px; }
-    .carousel::scroll-button(right) { content: '\203A'; right: 4px; }
-    .carousel::scroll-button(*):disabled { opacity: .35; }
-    .carousel::scroll-marker-group { display: flex; gap: 7px; justify-content: center; margin-top: 10px; }
-    .slide::scroll-marker { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--line); border: 0; cursor: pointer; }
+    .carousel { scroll-marker-group: after; }
+    .carousel::scroll-marker-group { display: flex; gap: 7px; justify-content: center; margin-top: 12px; }
+    .slide::scroll-marker { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--line); border: 0; cursor: pointer; transition: background .2s; }
+    .slide::scroll-marker:hover { background: var(--ink-3); }
     .slide::scroll-marker:target-current { background: var(--brand); }
   }
 
@@ -167,10 +170,26 @@
   .toast:popover-open { transform: none; }
   @starting-style { .toast:popover-open { transform: translateY(12px); } }
   .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; flex: none; }
-  .toast-x { margin-left: auto; background: none; border: none; color: var(--ink-3); cursor: pointer; font: inherit; padding: 0 2px; }
+  .toast-x { display: inline-flex; align-items: center; margin-left: auto; background: none; border: none; color: var(--ink-3); cursor: pointer; font: inherit; padding: 2px; }
+  .toast-x:hover { color: var(--ink); }
 </style>
 </head>
 <body>
+<!-- 인라인 SVG 스프라이트(이미지 0 — 외부 이미지·url 없이 fragment 참조) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h10"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-rename" viewBox="0 0 24 24"><path d="M4 20h4L18.5 9.5l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 0 0 4 0"/></symbol>
+</svg>
 <div class="wrap">
   <header>
     <h1><b>Slate</b> — JS 없는 UI 레이어</h1>
@@ -196,12 +215,12 @@
       <h3>드롭다운 (Dropdown)</h3>
       <p class="desc">popovertarget + position-anchor.</p>
       <div class="demo-row">
-        <button class="btn trigger" style="anchor-name: --dd;" popovertarget="dd-menu">메뉴 열기 ▾</button>
+        <button class="btn trigger" style="anchor-name: --dd;" popovertarget="dd-menu">메뉴 열기 <svg class="ico"><use href="#i-chev-down"/></svg></button>
         <div id="dd-menu" popover class="menu anchored" style="position-anchor: --dd;">
-          <button class="menuitem">프로필</button>
-          <button class="menuitem">설정</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-user"/></svg>프로필</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-gear"/></svg>설정</button>
           <div class="sep"></div>
-          <button class="menuitem">로그아웃</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-logout"/></svg>로그아웃</button>
         </div>
       </div>
       <span class="js0">JS: 0줄</span>
@@ -212,17 +231,17 @@
       <h3>중첩 메뉴 (Nested)</h3>
       <p class="desc">popover 안의 popover, 각자 anchor.</p>
       <div class="demo-row">
-        <button class="btn trigger" style="anchor-name: --nest;" popovertarget="nest-menu">파일 ▾</button>
+        <button class="btn trigger" style="anchor-name: --nest;" popovertarget="nest-menu">파일 <svg class="ico"><use href="#i-chev-down"/></svg></button>
         <div id="nest-menu" popover class="menu anchored" style="position-anchor: --nest;">
-          <button class="menuitem">새로 만들기</button>
-          <button class="menuitem trigger" style="anchor-name: --sub;" popovertarget="sub-menu">내보내기 ▸</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-plus"/></svg>새로 만들기</button>
+          <button class="menuitem trigger" style="anchor-name: --sub;" popovertarget="sub-menu"><svg class="ico"><use href="#i-copy"/></svg>내보내기<svg class="ico" style="margin-left:auto"><use href="#i-chev-right"/></svg></button>
           <div id="sub-menu" popover class="menu anchored right" style="position-anchor: --sub;">
             <button class="menuitem">PDF</button>
             <button class="menuitem">PNG</button>
             <button class="menuitem">Markdown</button>
           </div>
           <div class="sep"></div>
-          <button class="menuitem">닫기</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-x"/></svg>닫기</button>
         </div>
       </div>
       <span class="js0">JS: 0줄</span>
@@ -233,11 +252,11 @@
       <h3>컨텍스트 메뉴</h3>
       <p class="desc">버튼 트리거 + anchor(실제 우클릭 위치 추적은 JS 필요 — 정직 표기).</p>
       <div class="demo-row">
-        <button class="btn ghost trigger" style="anchor-name: --ctx;" popovertarget="ctx-menu">⋯ 동작</button>
+        <button class="btn ghost trigger" style="anchor-name: --ctx;" popovertarget="ctx-menu"><svg class="ico fill"><use href="#i-dots"/></svg> 동작</button>
         <div id="ctx-menu" popover class="menu anchored" style="position-anchor: --ctx;">
-          <button class="menuitem">복사</button>
-          <button class="menuitem">이름 바꾸기</button>
-          <button class="menuitem">삭제</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-copy"/></svg>복사</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-rename"/></svg>이름 바꾸기</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-trash"/></svg>삭제</button>
         </div>
       </div>
       <span class="js0">JS: 0줄 (버튼 기준)</span>
@@ -267,15 +286,15 @@
       <p class="desc">&lt;details&gt; + interpolate-size 높이 애니. 한 번에 하나만(name).</p>
       <div class="demo-row">
         <details class="ac" name="faq" open>
-          <summary>JS가 정말 0줄인가요?</summary>
+          <summary>JS가 정말 0줄인가요?<svg class="ico ac-chev"><use href="#i-chev-down"/></svg></summary>
           <div class="ac-body">네 — 인터랙션 스크립트가 0줄입니다. 펼침/접힘은 &lt;details&gt;의 브라우저 기본 동작입니다.</div>
         </details>
         <details class="ac" name="faq">
-          <summary>높이 애니메이션은 어떻게?</summary>
+          <summary>높이 애니메이션은 어떻게?<svg class="ico ac-chev"><use href="#i-chev-down"/></svg></summary>
           <div class="ac-body"><code>interpolate-size: allow-keywords</code> + <code>::details-content</code>의 <code>block-size</code> transition. 미지원 시 즉시 토글로 폴백.</div>
         </details>
         <details class="ac" name="faq">
-          <summary>접근성은요?</summary>
+          <summary>접근성은요?<svg class="ico ac-chev"><use href="#i-chev-down"/></svg></summary>
           <div class="ac-body">네이티브 요소라 키보드·스크린리더가 기본 지원됩니다.</div>
         </details>
       </div>
@@ -324,12 +343,12 @@
       <h3>드로어 (Drawer)</h3>
       <p class="desc">popover=auto + position:fixed + translateX 슬라이드.</p>
       <div class="demo-row">
-        <button class="btn trigger" popovertarget="drawer">패널 열기 ▸</button>
+        <button class="btn trigger" popovertarget="drawer">패널 열기 <svg class="ico"><use href="#i-chev-right"/></svg></button>
         <div id="drawer" popover class="drawer">
-          <div class="drawer-head"><b>설정</b><button class="btn ghost x" popovertarget="drawer" popovertargetaction="hide">✕</button></div>
-          <button class="menuitem">계정</button>
-          <button class="menuitem">알림</button>
-          <button class="menuitem">테마</button>
+          <div class="drawer-head"><b>설정</b><button class="btn ghost x" popovertarget="drawer" popovertargetaction="hide" aria-label="닫기"><svg class="ico"><use href="#i-x"/></svg></button></div>
+          <button class="menuitem"><svg class="ico"><use href="#i-user"/></svg>계정</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-bell"/></svg>알림</button>
+          <button class="menuitem"><svg class="ico"><use href="#i-gear"/></svg>테마</button>
           <p class="drawer-foot">ESC·바깥 클릭으로 닫힘 — 전부 브라우저 기본.</p>
         </div>
       </div>
@@ -369,10 +388,10 @@
       <span class="support">신규 — <code>appearance: base-select</code>(Chrome 135+). 미지원 시 네이티브 select 폴백.</span>
     </div>
 
-    <!-- 캐러셀: scroll-snap + ::scroll-button/::scroll-marker -->
+    <!-- 캐러셀: scroll-snap + ::scroll-marker 도트 -->
     <div class="card">
       <h3>캐러셀 (Carousel)</h3>
-      <p class="desc"><code>scroll-snap</code>(넓은 지원) + <code>::scroll-button</code>/<code>::scroll-marker</code>(신규).</p>
+      <p class="desc"><code>scroll-snap</code>(넓은 지원) + <code>::scroll-marker</code> 도트(신규). 스와이프/드래그로 이동.</p>
       <div class="demo-row">
         <div class="carousel">
           <div class="slide">01</div>
@@ -382,7 +401,7 @@
         </div>
       </div>
       <span class="js0">JS: 0줄</span>
-      <span class="support">화살표·도트는 <code>::scroll-button</code>/<code>::scroll-marker</code>(Chrome 135+) — 미지원 시 스크롤(스와이프)만.</span>
+      <span class="support">도트(마커)는 <code>::scroll-marker</code>(Chrome 135+) — 미지원 시 스크롤(스와이프)만.</span>
     </div>
 
     <!-- 토스트: popover=manual 수동 닫기 (자동 닫힘은 JS 필요 — 미구현) -->
@@ -394,7 +413,7 @@
         <div id="toast" popover="manual" class="toast">
           <span class="toast-dot"></span>
           <span>저장되었습니다.</span>
-          <button class="toast-x" popovertarget="toast" popovertargetaction="hide" aria-label="닫기">✕</button>
+          <button class="toast-x" popovertarget="toast" popovertargetaction="hide" aria-label="닫기"><svg class="ico"><use href="#i-x"/></svg></button>
         </div>
       </div>
       <span class="js0">JS: 0줄 (수동)</span>

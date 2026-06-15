@@ -14,7 +14,8 @@
 - **`:checked`** 라디오/체크박스 + 인접 선택자로 탭·토글 스위치·세그먼트 컨트롤.
 - **`command`/`commandfor` 인보커(신규)**: `<button command="show-modal"/"close">`로 `<dialog>`를 JS 없이 제어(`popovertarget`가 못 여는 모달까지).
 - **커스터마이저블 `<select>`(신규)**: `appearance: base-select` + `::picker(select)` + `option::checkmark`로 완전 커스텀 드롭다운. 미지원 시 네이티브 select.
-- **CSS 캐러셀**: `scroll-snap`(넓은 지원) + `::scroll-button()`/`::scroll-marker`(신규)로 화살표·도트를 JS 없이. 미지원 시 스크롤(스와이프)만.
+- **CSS 캐러셀**: `scroll-snap`(넓은 지원) + `::scroll-marker` 도트(신규)로 위치 표시를 JS 없이. 스와이프/드래그로 이동, 미지원 시 스크롤만.
+- **아이콘**: 모든 UI 아이콘(chevron·dots·×·복사·이름변경·삭제 등)을 **인라인 `<svg>` 스프라이트**(`<symbol>` + `<use href="#…">`, `currentColor`)로 — **이미지 0**(`<img>`·외부 url·background-image 없음).
 - **토스트**: `popover="manual"`로 표시/수동 닫기.
 - 툴팁은 popover도 없이 순수 `:hover`/`:focus` + anchor.
 
