@@ -133,6 +133,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/vanta-ev/index.html',
     thumb: '/static/showcases/vanta-ev.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/vanta-ev',
+    narrative: '/showcases/vanta-ev', // 서사형 인트로(테슬라 문법 메타 해설) → 그 안에서 데모 실행
   },
   {
     slug: 'ledgr',
@@ -143,6 +144,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/ledgr/index.html',
     thumb: '/static/showcases/ledgr.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/ledgr',
+    narrative: '/showcases/ledgr', // 서사형 인트로(스트라이프 문법 메타 해설) → 그 안에서 데모 실행
   },
 
   // ── 실험(experiment) — 최신 웹 플랫폼 데모 3종(바닐라, 소스 공개) ──
