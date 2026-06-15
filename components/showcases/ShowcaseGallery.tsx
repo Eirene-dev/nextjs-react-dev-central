@@ -1,9 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import Link from '@/components/Link'
 import { cn } from '@/lib/utils'
-import showcasesData, { type Tier, type ExperimentShowcase } from '@/data/showcasesData'
+import showcasesData, {
+  type Tier,
+  type ExperimentShowcase,
+  type BuiltShowcase,
+} from '@/data/showcasesData'
 import ExperimentCard from './ExperimentCard'
 import BuiltCard from './BuiltCard'
 import AnatomyCard from '@/components/anatomy/AnatomyCard'
@@ -30,6 +34,11 @@ const TIERS: { key: TierFilter; label: string; desc: string }[] = [
 
 // '전체' 탭 tier 우선순위(해부는 anatomyItems 로 먼저 렌더 — 실험 > 실물).
 const TIER_RANK: Record<Tier, number> = { anatomy: 0, experiment: 1, built: 2 }
+
+// '전체' 탭 미리보기: 틀별 섹션에 최대 N개만 노출하고 "전체 보기 →"로 해당 탭 유도.
+const SECTION_CAP = 6
+const allExperiments = showcasesData.filter((s): s is ExperimentShowcase => s.tier === 'experiment')
+const allBuilt = showcasesData.filter((s): s is BuiltShowcase => s.tier === 'built')
 
 // 틀별 빈 상태 카피(저자 확정).
 const EMPTY: Record<Tier, { title: string; sub?: string }> = {
@@ -101,6 +110,39 @@ export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCar
             <p className="mt-2 text-sm text-ink-3">{EMPTY[active as Tier].sub}</p>
           )}
         </div>
+      ) : active === 'all' ? (
+        // 전체 탭: 틀별 섹션 미리보기(각 최대 SECTION_CAP개) + "전체 보기 →". 해부 먼저(정체성) → 실험 → 실물.
+        // SSR 기본 탭이라 진입 리빌 없이 정적(플래시 방지).
+        <div className="space-y-14">
+          {anatomyItems.length > 0 && (
+            <SectionBlock label="해부" total={anatomyItems.length} onMore={() => setActive('anatomy')}>
+              {anatomyItems.slice(0, SECTION_CAP).map((a) => (
+                <AnatomyCard
+                  key={a.slug}
+                  slug={a.slug}
+                  exhibit={a.exhibit}
+                  category={a.category}
+                  title={a.title}
+                  question={a.question}
+                />
+              ))}
+            </SectionBlock>
+          )}
+          {allExperiments.length > 0 && (
+            <SectionBlock label="실험" total={allExperiments.length} onMore={() => setActive('experiment')}>
+              {allExperiments.slice(0, SECTION_CAP).map((s) => (
+                <ExperimentCard key={s.slug} s={s} />
+              ))}
+            </SectionBlock>
+          )}
+          {allBuilt.length > 0 && (
+            <SectionBlock label="실물" total={allBuilt.length} onMore={() => setActive('built')}>
+              {allBuilt.slice(0, SECTION_CAP).map((s) => (
+                <BuiltCard key={s.slug} s={s} />
+              ))}
+            </SectionBlock>
+          )}
+        </div>
       ) : active === 'experiment' ? (
         // 실험 탭: 카테고리 섹션별로 진입 리빌(섹션 단위 페이드, 카드 스태거 없음).
         <div className="space-y-14">
@@ -159,5 +201,38 @@ export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCar
         </p>
       )}
     </div>
+  )
+}
+
+// '전체' 탭 틀별 섹션 — 라벨 + 가로줄 + (캡 초과 시) "전체 N 보기 →"(해당 탭으로), 그 아래 카드 그리드.
+function SectionBlock({
+  label,
+  total,
+  onMore,
+  children,
+}: {
+  label: string
+  total: number
+  onMore: () => void
+  children: ReactNode
+}) {
+  return (
+    <section>
+      <div className="mb-5 flex items-center gap-3">
+        <h2 className="text-sm font-bold text-ink-2">{label}</h2>
+        <span className="h-px flex-1 bg-line" />
+        {total > SECTION_CAP ? (
+          <button
+            onClick={onMore}
+            className="font-mono text-xs text-ink-3 transition-colors hover:text-coral-2"
+          >
+            전체 {total} 보기 →
+          </button>
+        ) : (
+          <span className="font-mono text-xs text-ink-3">{total}</span>
+        )}
+      </div>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">{children}</div>
+    </section>
   )
 }
