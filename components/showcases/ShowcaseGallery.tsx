@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import Link from '@/components/Link'
 import { cn } from '@/lib/utils'
-import showcasesData, { type Tier } from '@/data/showcasesData'
+import showcasesData, { type Tier, type ExperimentShowcase } from '@/data/showcasesData'
 import ExperimentCard from './ExperimentCard'
 import BuiltCard from './BuiltCard'
 import AnatomyCard from '@/components/anatomy/AnatomyCard'
+import ScrollSection from '@/components/showcases/scroll/ScrollSection'
 
 // 해부 카드 데이터(빌드 타임 anatomy 컬렉션에서 서버 페이지가 전달 — 클라이언트엔 평문 prop).
 export type AnatomyCardData = {
@@ -52,6 +53,14 @@ export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCar
   const empty = dataItems.length + anatomyItems.length === 0
   const showCrossLink = active === 'experiment' && anatomy.some((a) => a.slug === 'demo-isolation')
 
+  // 실험 탭은 카테고리별 섹션으로 묶어 섹션 단위로 가볍게 리빌(카드 스태거 없음).
+  // 카테고리 순서 = 배열 첫 등장 순서(= showcasesData 순서: AI×웹 → 스타일 연구 → 웹 플랫폼).
+  const experimentItems =
+    active === 'experiment'
+      ? dataItems.filter((s): s is ExperimentShowcase => s.tier === 'experiment')
+      : []
+  const experimentCategories = [...new Set(experimentItems.map((s) => s.category))]
+
   return (
     <div className="py-12">
       <header className="mb-8 text-center">
@@ -92,7 +101,29 @@ export default function ShowcaseGallery({ anatomy = [] }: { anatomy?: AnatomyCar
             <p className="mt-2 text-sm text-ink-3">{EMPTY[active as Tier].sub}</p>
           )}
         </div>
+      ) : active === 'experiment' ? (
+        // 실험 탭: 카테고리 섹션별로 진입 리빌(섹션 단위 페이드, 카드 스태거 없음).
+        <div className="space-y-14">
+          {experimentCategories.map((cat) => {
+            const items = experimentItems.filter((s) => s.category === cat)
+            return (
+              <ScrollSection key={cat}>
+                <div className="mb-5 flex items-center gap-3">
+                  <h2 className="text-sm font-bold text-ink-2">{cat}</h2>
+                  <span className="h-px flex-1 bg-line" />
+                  <span className="font-mono text-xs text-ink-3">{items.length}</span>
+                </div>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
+                  {items.map((s) => (
+                    <ExperimentCard key={s.slug} s={s} />
+                  ))}
+                </div>
+              </ScrollSection>
+            )
+          })}
+        </div>
       ) : (
+        // 전체·해부·실물: 단일 그리드(SSR 기본 탭이라 리빌 없이 정적 — 진입 플래시 방지).
         <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
           {/* 해부 우선 노출(정체성) → 실험 → 실물 */}
           {anatomyItems.map((a) => (
