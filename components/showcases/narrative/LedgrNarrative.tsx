@@ -26,7 +26,7 @@ export default function LedgrNarrative({ title, demoHref }: { title: string; dem
       </Hero>
 
       {/* ── 기법 ① sticky 코드 왈츠 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="01" name="코드는 고정, 설명은 흐른다" />
         <Pinned
           focal={
@@ -43,7 +43,7 @@ export default function LedgrNarrative({ title, demoHref }: { title: string; dem
       </section>
 
       {/* ── 기법 ② 마케팅↔코드 듀얼리티 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="02" name="설득과 증거" />
         <div className="mt-8">
           <ToneFlip>
@@ -59,7 +59,7 @@ export default function LedgrNarrative({ title, demoHref }: { title: string; dem
       </section>
 
       {/* ── 기법 ③ 그라디언트 메시 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="03" name="그라디언트 메시" />
         <ScrollSection className="mt-8">
           <div className="relative h-56 overflow-hidden rounded-3xl border border-line sm:h-72">

@@ -26,7 +26,7 @@ export default function VantaNarrative({ title, demoHref }: { title: string; dem
       </Hero>
 
       {/* ── 기법 ① 풀스크린 scroll-snap = 슬라이드 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="01" name="한 패널, 한 주장" />
         <Pinned
           focal={
@@ -43,7 +43,7 @@ export default function VantaNarrative({ title, demoHref }: { title: string; dem
       </section>
 
       {/* ── 기법 ② 스펙을 크기로 ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="02" name="스펙을 크기로" />
         <GiantType
           words={['스펙은', '말이 아니라', '크기.']}
@@ -56,7 +56,7 @@ export default function VantaNarrative({ title, demoHref }: { title: string; dem
       </section>
 
       {/* ── 기법 ③ 선택이 즉시 반영 = 컨피규레이터(클라이맥스) ── */}
-      <section className="mt-24 sm:mt-28">
+      <section className="mt-16 sm:mt-20">
         <BeatLabel n="03" name="고르면 즉시 바뀐다" />
         <ScrollSection className="mt-8 max-w-xl">
           {/* 컨피규레이터 '선택'을 evoke하는 정적 일러스트(데모의 실제 컨피거 재연 아님) */}
