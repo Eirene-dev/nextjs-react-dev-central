@@ -122,13 +122,59 @@
   .drawer-head b { font-size: 15px; }
   .drawer .x { padding: 4px 9px; }
   .drawer-foot { margin-top: auto; color: var(--ink-3); font-size: 12px; }
+
+  /* 지원 캐비엇/정직 노트 (.warn = JS 필요 부분) */
+  .support { display: block; margin-top: 6px; font-family: var(--mono); font-size: 11px; color: var(--ink-3); line-height: 1.45; }
+  .support.warn { color: #f0a; }
+
+  /* ── 인보커: <button command commandfor> 로 <dialog> 제어 (신규·Chrome 135+) ── */
+  /* @supports로 HTML 속성 감지는 불가 → 정직 노트로 지원범위 명시(미지원 시 버튼 무동작) */
+  dialog.cdlg { border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); border-radius: 12px; box-shadow: 0 18px 50px -20px rgba(0,0,0,.7); }
+  dialog.cdlg::backdrop { background: rgba(8,10,14,.5); }
+
+  /* ── 커스터마이저블 select: appearance: base-select + ::picker(select) (신규) ── */
+  /* 미지원 시 아래 네이티브 select 스타일로 폴백 */
+  .cselect { font: inherit; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; cursor: pointer; min-width: 160px; }
+  @supports (appearance: base-select) {
+    .cselect, .cselect::picker(select) { appearance: base-select; }
+    .cselect { display: inline-flex; align-items: center; gap: 8px; }
+    .cselect::picker(select) { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 6px; box-shadow: 0 18px 50px -20px rgba(0,0,0,.7); }
+    .cselect option { border-radius: 7px; padding: 7px 10px; color: var(--ink-2); display: flex; align-items: center; gap: 8px; }
+    .cselect option:hover, .cselect option:focus { background: var(--brand-2); color: #fff; }
+    .cselect option:checked { color: var(--brand); }
+    .cselect option::checkmark { content: '\2713'; margin-left: auto; }
+    .cselect::picker-icon { color: var(--ink-3); transition: transform .2s; }
+    .cselect:open::picker-icon { transform: rotate(180deg); }
+  }
+
+  /* ── 캐러셀: scroll-snap(넓은 지원) + ::scroll-button/::scroll-marker(신규) ── */
+  .carousel { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 8px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+  .slide { flex: 0 0 100%; scroll-snap-align: center; height: 92px; border-radius: 12px; display: grid; place-content: center; font-family: var(--mono); font-size: 26px; color: #fff; background: linear-gradient(135deg, var(--brand-2), #7c3aed); }
+  /* 신규 CSS 캐러셀: 화살표·도트가 JS 없이. 미지원 시 위 스크롤(스와이프)만 */
+  @supports selector(::scroll-marker) {
+    .carousel { scroll-marker-group: after; anchor-name: --carousel; position: relative; }
+    .carousel::scroll-button(left), .carousel::scroll-button(right) { position: absolute; top: 31px; z-index: 2; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: rgba(24,27,34,.92); color: var(--ink); cursor: pointer; font-size: 16px; line-height: 1; box-shadow: 0 6px 16px -4px rgba(0,0,0,.7); }
+    .carousel::scroll-button(left) { content: '\2039'; left: 4px; }
+    .carousel::scroll-button(right) { content: '\203A'; right: 4px; }
+    .carousel::scroll-button(*):disabled { opacity: .35; }
+    .carousel::scroll-marker-group { display: flex; gap: 7px; justify-content: center; margin-top: 10px; }
+    .slide::scroll-marker { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--line); border: 0; cursor: pointer; }
+    .slide::scroll-marker:target-current { background: var(--brand); }
+  }
+
+  /* ── 토스트: popover=manual 표시/수동 닫기. 자동 닫힘(타이머)은 JS 필요 → 미구현 ── */
+  .toast { position: fixed; left: 50%; bottom: 24px; translate: -50% 0; display: flex; align-items: center; gap: 10px; min-width: min(280px, 90vw); padding: 12px 14px; transform: translateY(12px); }
+  .toast:popover-open { transform: none; }
+  @starting-style { .toast:popover-open { transform: translateY(12px); } }
+  .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; flex: none; }
+  .toast-x { margin-left: auto; background: none; border: none; color: var(--ink-3); cursor: pointer; font: inherit; padding: 0 2px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1><b>Slate</b> — JS 없는 UI 레이어</h1>
-    <p>툴팁·드롭다운·중첩·컨텍스트·다이얼로그·아코디언·탭·토글·드로어. 전부 Popover API + CSS Anchor Positioning + <code>@starting-style</code> + <code>&lt;details&gt;</code> + <code>:checked</code>로.</p>
+    <p>오버레이·폼·내비 UI 13종 — 툴팁·드롭다운·중첩·컨텍스트·다이얼로그·아코디언·탭·토글·드로어·인보커·커스텀 셀렉트·캐러셀·토스트. 전부 Popover API + CSS Anchor Positioning + <code>@starting-style</code> + <code>&lt;details&gt;</code> + <code>:checked</code> + <code>command</code> + <code>base-select</code>로.</p>
   </header>
 
   <div class="fallback popover">이 브라우저는 Popover API(<code>:popover-open</code>)를 지원하지 않습니다 — 버튼은 보이나 팝오버가 열리지 않을 수 있습니다.</div>
@@ -289,9 +335,74 @@
       </div>
       <span class="js0">JS: 0줄</span>
     </div>
+
+    <!-- 인보커: command/commandfor 로 <dialog> 제어 (신규) -->
+    <div class="card">
+      <h3>인보커 (command)</h3>
+      <p class="desc">&lt;button command commandfor&gt; — 신규 인보커. <code>popovertarget</code>가 못 여는 <code>&lt;dialog&gt;</code>까지 JS 없이.</p>
+      <div class="demo-row">
+        <button class="btn" command="show-modal" commandfor="cmd-dlg">다이얼로그 열기</button>
+        <dialog id="cmd-dlg" class="dialog cdlg">
+          <h4>command로 연 &lt;dialog&gt;</h4>
+          <p><code>command="show-modal"</code>이 <code>showModal()</code> 호출 없이 모달로 엽니다. 닫기는 <code>command="close"</code>.</p>
+          <div class="row">
+            <button class="btn ghost" command="close" commandfor="cmd-dlg">닫기</button>
+          </div>
+        </dialog>
+      </div>
+      <span class="js0">JS: 0줄</span>
+      <span class="support">신규 프리미티브 — <code>command</code>/<code>commandfor</code>(Chrome 135+). 미지원 시 버튼 무동작(정직 표기).</span>
+    </div>
+
+    <!-- 커스터마이저블 select: appearance: base-select + ::picker(select) -->
+    <div class="card">
+      <h3>커스텀 셀렉트</h3>
+      <p class="desc"><code>appearance: base-select</code> + <code>::picker(select)</code>로 완전 커스텀 드롭다운.</p>
+      <div class="demo-row">
+        <select class="cselect">
+          <option value="light">라이트 테마</option>
+          <option value="dark" selected>다크 테마</option>
+          <option value="auto">시스템 자동</option>
+        </select>
+      </div>
+      <span class="js0">JS: 0줄</span>
+      <span class="support">신규 — <code>appearance: base-select</code>(Chrome 135+). 미지원 시 네이티브 select 폴백.</span>
+    </div>
+
+    <!-- 캐러셀: scroll-snap + ::scroll-button/::scroll-marker -->
+    <div class="card">
+      <h3>캐러셀 (Carousel)</h3>
+      <p class="desc"><code>scroll-snap</code>(넓은 지원) + <code>::scroll-button</code>/<code>::scroll-marker</code>(신규).</p>
+      <div class="demo-row">
+        <div class="carousel">
+          <div class="slide">01</div>
+          <div class="slide">02</div>
+          <div class="slide">03</div>
+          <div class="slide">04</div>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄</span>
+      <span class="support">화살표·도트는 <code>::scroll-button</code>/<code>::scroll-marker</code>(Chrome 135+) — 미지원 시 스크롤(스와이프)만.</span>
+    </div>
+
+    <!-- 토스트: popover=manual 수동 닫기 (자동 닫힘은 JS 필요 — 미구현) -->
+    <div class="card">
+      <h3>토스트 (Toast)</h3>
+      <p class="desc">Popover로 표시 + 수동 닫기.</p>
+      <div class="demo-row">
+        <button class="btn" popovertarget="toast">알림 표시</button>
+        <div id="toast" popover="manual" class="toast">
+          <span class="toast-dot"></span>
+          <span>저장되었습니다.</span>
+          <button class="toast-x" popovertarget="toast" popovertargetaction="hide" aria-label="닫기">✕</button>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄 (수동)</span>
+      <span class="support warn">자동 닫힘(타이머)은 JS 필요 — 정직 표기, 미구현(수동 닫기만).</span>
+    </div>
   </div>
 
-  <p style="color: var(--ink-3); font-size: 12.5px; margin-top: 28px; font-family: var(--mono);">합계 — 이 페이지의 인터랙션 JS: <b style="color: var(--brand);">0줄</b>. (Popover API · CSS Anchor Positioning · position-try · @starting-style · &lt;details&gt; · :checked)</p>
+  <p style="color: var(--ink-3); font-size: 12.5px; margin-top: 28px; font-family: var(--mono);">합계 — 이 페이지의 인터랙션 JS: <b style="color: var(--brand);">0줄</b>. (Popover API · CSS Anchor Positioning · position-try · @starting-style · &lt;details&gt; · :checked · command/commandfor · base-select · scroll-snap) · 토스트 자동 닫힘 등 타이머·좌표가 필요한 부분은 만들지 않거나 정직 표기.</p>
 </div>
 </body>
 </html>
