@@ -6,7 +6,20 @@ import { genPageMetadata } from 'app/seo'
 
 // 실험 서사형 인트로 — SSG. 내러티브가 있는 슬러그만 사전 생성(나머지 실험 카드는 정적 데모로 직행).
 // dynamicParams=false → 목록의 다른 실험 카드는 여전히 정적 데모(/showcases/{slug}/index.html)로 직행.
-const NARRATIVE_SLUGS = ['aura-one', 'vanta-ev', 'ledgr', 'drift', 'slate', 'folio', 'pilot']
+const NARRATIVE_SLUGS = [
+  'aura-one',
+  'vanta-ev',
+  'ledgr',
+  'drift',
+  'slate',
+  'folio',
+  'pilot',
+  'formig',
+  'canvasly',
+  'docent',
+  'relay',
+  'sema',
+]
 
 export const dynamicParams = false
 export const generateStaticParams = () => NARRATIVE_SLUGS.map((slug) => ({ slug }))

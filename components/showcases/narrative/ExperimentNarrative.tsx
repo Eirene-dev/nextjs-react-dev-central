@@ -11,6 +11,11 @@ import DriftNarrative from './DriftNarrative'
 import SlateNarrative from './SlateNarrative'
 import FolioNarrative from './FolioNarrative'
 import PilotNarrative from './PilotNarrative'
+import FormigNarrative from './FormigNarrative'
+import CanvaslyNarrative from './CanvaslyNarrative'
+import DocentNarrative from './DocentNarrative'
+import RelayNarrative from './RelayNarrative'
+import SemaNarrative from './SemaNarrative'
 
 // 실험 서사형 인트로(본 사이트). ★ 데모가 scroll-native/시그니처이므로 내러티브는 "연구한 디자인 문법"의
 // 메타 해설 전용 — 데모의 제품 시퀀스를 재연하지 않는다(슬러그별 컴포넌트에 가드레일 명시).
@@ -25,6 +30,11 @@ const REGISTRY: Record<string, ComponentType<NarrativeProps>> = {
   slate: SlateNarrative,
   folio: FolioNarrative,
   pilot: PilotNarrative,
+  formig: FormigNarrative,
+  canvasly: CanvaslyNarrative,
+  docent: DocentNarrative,
+  relay: RelayNarrative,
+  sema: SemaNarrative,
 }
 
 export default function ExperimentNarrative({

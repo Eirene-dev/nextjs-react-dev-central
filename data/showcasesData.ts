@@ -71,6 +71,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/canvasly/index.html',
     thumb: '/static/showcases/canvasly.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/canvasly',
+    narrative: '/showcases/canvasly', // 서사형 인트로(생성형 UI 개념 시연) → 그 안에서 데모 실행
   },
   {
     slug: 'formig',
@@ -81,6 +82,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/formig/index.html',
     thumb: '/static/showcases/formig.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/formig',
+    narrative: '/showcases/formig', // 서사형 인트로(구조화 추출 개념 시연) → 그 안에서 데모 실행
   },
   {
     slug: 'docent',
@@ -91,6 +93,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/docent/index.html',
     thumb: '/static/showcases/docent.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/docent',
+    narrative: '/showcases/docent', // 서사형 인트로(근거 있는 답 개념 시연) → 그 안에서 데모 실행
   },
   {
     slug: 'relay',
@@ -101,6 +104,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/relay/index.html',
     thumb: '/static/showcases/relay.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/relay',
+    narrative: '/showcases/relay', // 서사형 인트로(승인형 에이전트 개념 시연) → 그 안에서 데모 실행
   },
   {
     slug: 'sema',
@@ -111,6 +115,7 @@ const showcasesData: Showcase[] = [
     href: '/showcases/sema/index.html',
     thumb: '/static/showcases/sema.png',
     source: 'https://github.com/Eirene-dev/nextjs-react-dev-central/tree/main/demos/sema',
+    narrative: '/showcases/sema', // 서사형 인트로(의미 검색 개념 시연) → 그 안에서 데모 실행
   },
 
   // ── 실험(experiment) — 선진 업체 스타일 연구 3종(가상 브랜드, 디자인 문법만 연구) ──
