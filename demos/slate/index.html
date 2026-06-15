@@ -51,8 +51,16 @@
   .sep { height: 1px; background: var(--line); margin: 6px 0; }
 
   /* CSS Anchor Positioning — 트리거 기준 위치 (JS 0) */
-  .anchored { position: absolute; position-area: bottom span-right; margin-top: 8px; }
+  /* popover 는 top layer → position: fixed 로 뷰포트 기준(가장자리 플립이 뷰포트로 평가됨) */
+  .anchored { position: fixed; position-area: bottom span-right; margin-top: 8px; }
   .anchored.right { position-area: right; margin: 0 0 0 8px; }
+  /* ── position-try 가장자리 플립: 공간 없으면 자동으로 뒤집힘 (JS 0) ── */
+  /* 미지원 시 위 고정 position-area 유지(폴백) */
+  @supports (position-try-fallbacks: flip-block) {
+    /* 가로 넘침은 flip-inline, 아래 공간 없으면 flip-block. 순서대로 첫 적합 위치 채택 */
+    .anchored { position-try-fallbacks: flip-inline, flip-block, flip-block flip-inline; }
+    .anchored.right { position-try-fallbacks: flip-inline, flip-block, flip-inline flip-block; }
+  }
 
   /* 툴팁: 순수 CSS(:hover/:focus + anchor) — popover·JS 불필요 */
   .tipwrap { position: relative; display: inline-block; }
@@ -64,13 +72,63 @@
   .dialog h4 { font-size: 18px; margin-bottom: 8px; }
   .dialog p { color: var(--ink-2); font-size: 14px; }
   .dialog .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  /* sr-only: 체크박스/라디오는 숨기되 포커스 가능(label로 조작) */
+  html { interpolate-size: allow-keywords; }
+  .tabin, .segmented > input, .switch > input { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* ── 아코디언: <details>/<summary> 네이티브 + 높이 애니 (JS 0) ── */
+  .ac { border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); overflow: hidden; }
+  .ac + .ac { margin-top: 8px; }
+  .ac summary { cursor: pointer; padding: 10px 12px; font-size: 13.5px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .ac summary::-webkit-details-marker { display: none; }
+  .ac summary::after { content: '+'; color: var(--ink-3); font-family: var(--mono); }
+  .ac[open] summary::after { content: '\2212'; }
+  .ac-body { padding: 0 12px 12px; color: var(--ink-2); font-size: 13px; }
+  /* 미지원 시 네이티브 즉시 토글 / 지원 시 block-size 애니 */
+  @supports (interpolate-size: allow-keywords) {
+    .ac::details-content { block-size: 0; overflow: clip; transition: block-size .26s ease, content-visibility .26s allow-discrete; }
+    .ac[open]::details-content { block-size: auto; }
+  }
+
+  /* ── 탭: :checked 라디오 + 인접 선택자 (JS 0) ── */
+  .tabs { display: block; }
+  .tablist { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+  .tab { padding: 7px 12px; font-size: 13px; color: var(--ink-3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  #tab1:checked ~ .tablist [for=tab1], #tab2:checked ~ .tablist [for=tab2], #tab3:checked ~ .tablist [for=tab3] { color: var(--brand); border-bottom-color: var(--brand); }
+  .tabin:focus-visible ~ .tablist label { outline: none; }
+  #tab1:focus-visible ~ .tablist [for=tab1], #tab2:focus-visible ~ .tablist [for=tab2], #tab3:focus-visible ~ .tablist [for=tab3] { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+  .panel { display: none; font-size: 13px; color: var(--ink-2); }
+  #tab1:checked ~ .panels .p1, #tab2:checked ~ .panels .p2, #tab3:checked ~ .panels .p3 { display: block; }
+
+  /* ── 토글 스위치 + 세그먼트 컨트롤: :checked + CSS (JS 0) ── */
+  .seg-wrap { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+  .switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: var(--ink-2); }
+  .switch .track { width: 42px; height: 24px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); position: relative; transition: background .2s, border-color .2s; flex: none; }
+  .switch .thumb { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink-2); transition: transform .2s, background .2s; }
+  .switch > input:checked + .track { background: var(--brand-2); border-color: var(--brand-2); }
+  .switch > input:checked + .track .thumb { transform: translateX(18px); background: #fff; }
+  .switch > input:focus-visible + .track { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .segmented { display: inline-flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+  .segmented label { padding: 6px 13px; font-size: 13px; color: var(--ink-2); cursor: pointer; border-radius: 7px; transition: background .15s, color .15s; }
+  .segmented > input:checked + label { background: var(--brand-2); color: #fff; }
+  .segmented > input:focus-visible + label { outline: 2px solid var(--brand); outline-offset: 1px; }
+
+  /* ── 드로어: popover=auto + position:fixed 풀하이트 + translateX 슬라이드 (JS 0) ── */
+  .drawer { position: fixed; inset: 0 0 0 auto; width: min(320px, 86vw); height: 100dvh; max-height: 100dvh; margin: 0; border-radius: 0; border-width: 0 0 0 1px; padding: 18px; display: flex; flex-direction: column; gap: 6px; opacity: 1; transform: translateX(100%); transition: transform .26s ease, overlay .26s allow-discrete, display .26s allow-discrete; }
+  .drawer:popover-open { transform: none; }
+  @starting-style { .drawer:popover-open { transform: translateX(100%); } }
+  .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .drawer-head b { font-size: 15px; }
+  .drawer .x { padding: 4px 9px; }
+  .drawer-foot { margin-top: auto; color: var(--ink-3); font-size: 12px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1><b>Slate</b> — JS 없는 UI 레이어</h1>
-    <p>툴팁·드롭다운·중첩 메뉴·컨텍스트 메뉴·다이얼로그. 전부 Popover API + CSS Anchor Positioning + <code>@starting-style</code>로.</p>
+    <p>툴팁·드롭다운·중첩·컨텍스트·다이얼로그·아코디언·탭·토글·드로어. 전부 Popover API + CSS Anchor Positioning + <code>@starting-style</code> + <code>&lt;details&gt;</code> + <code>:checked</code>로.</p>
   </header>
 
   <div class="fallback popover">이 브라우저는 Popover API(<code>:popover-open</code>)를 지원하지 않습니다 — 버튼은 보이나 팝오버가 열리지 않을 수 있습니다.</div>
@@ -156,9 +214,84 @@
       </div>
       <span class="js0">JS: 0줄</span>
     </div>
+
+    <!-- 아코디언: <details> 네이티브 + 높이 애니 -->
+    <div class="card">
+      <h3>아코디언 (Accordion)</h3>
+      <p class="desc">&lt;details&gt; + interpolate-size 높이 애니. 한 번에 하나만(name).</p>
+      <div class="demo-row">
+        <details class="ac" name="faq" open>
+          <summary>JS가 정말 0줄인가요?</summary>
+          <div class="ac-body">네 — 인터랙션 스크립트가 0줄입니다. 펼침/접힘은 &lt;details&gt;의 브라우저 기본 동작입니다.</div>
+        </details>
+        <details class="ac" name="faq">
+          <summary>높이 애니메이션은 어떻게?</summary>
+          <div class="ac-body"><code>interpolate-size: allow-keywords</code> + <code>::details-content</code>의 <code>block-size</code> transition. 미지원 시 즉시 토글로 폴백.</div>
+        </details>
+        <details class="ac" name="faq">
+          <summary>접근성은요?</summary>
+          <div class="ac-body">네이티브 요소라 키보드·스크린리더가 기본 지원됩니다.</div>
+        </details>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
+
+    <!-- 탭: :checked 라디오 + 인접 선택자 -->
+    <div class="card">
+      <h3>탭 (Tabs)</h3>
+      <p class="desc">:checked 라디오 + 인접 선택자로 패널 전환.</p>
+      <div class="demo-row tabs">
+        <input type="radio" name="tab" id="tab1" class="tabin" checked />
+        <input type="radio" name="tab" id="tab2" class="tabin" />
+        <input type="radio" name="tab" id="tab3" class="tabin" />
+        <div class="tablist">
+          <label class="tab" for="tab1">개요</label>
+          <label class="tab" for="tab2">사용법</label>
+          <label class="tab" for="tab3">FAQ</label>
+        </div>
+        <div class="panels">
+          <div class="panel p1">상태를 라디오가 들고, CSS가 패널을 전환합니다 — JS 없음.</div>
+          <div class="panel p2">각 탭은 <code>&lt;label for&gt;</code>, 패널은 <code>:checked ~ .panels</code>로 표시.</div>
+          <div class="panel p3">키보드 방향키로도 전환됩니다(네이티브 라디오).</div>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
+
+    <!-- 토글 스위치 + 세그먼트 컨트롤: :checked -->
+    <div class="card">
+      <h3>토글 · 세그먼트</h3>
+      <p class="desc">:checked 체크박스/라디오 + CSS만.</p>
+      <div class="demo-row seg-wrap">
+        <label class="switch"><input type="checkbox" checked /><span class="track"><span class="thumb"></span></span><span>알림</span></label>
+        <div class="segmented">
+          <input type="radio" name="seg" id="seg-day" checked /><label for="seg-day">낮</label>
+          <input type="radio" name="seg" id="seg-auto" /><label for="seg-auto">자동</label>
+          <input type="radio" name="seg" id="seg-night" /><label for="seg-night">밤</label>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
+
+    <!-- 드로어: popover=auto + translateX 슬라이드 -->
+    <div class="card">
+      <h3>드로어 (Drawer)</h3>
+      <p class="desc">popover=auto + position:fixed + translateX 슬라이드.</p>
+      <div class="demo-row">
+        <button class="btn trigger" popovertarget="drawer">패널 열기 ▸</button>
+        <div id="drawer" popover class="drawer">
+          <div class="drawer-head"><b>설정</b><button class="btn ghost x" popovertarget="drawer" popovertargetaction="hide">✕</button></div>
+          <button class="menuitem">계정</button>
+          <button class="menuitem">알림</button>
+          <button class="menuitem">테마</button>
+          <p class="drawer-foot">ESC·바깥 클릭으로 닫힘 — 전부 브라우저 기본.</p>
+        </div>
+      </div>
+      <span class="js0">JS: 0줄</span>
+    </div>
   </div>
 
-  <p style="color: var(--ink-3); font-size: 12.5px; margin-top: 28px; font-family: var(--mono);">합계 — 이 페이지의 인터랙션 JS: <b style="color: var(--brand);">0줄</b>. (Popover API · CSS Anchor Positioning · @starting-style)</p>
+  <p style="color: var(--ink-3); font-size: 12.5px; margin-top: 28px; font-family: var(--mono);">합계 — 이 페이지의 인터랙션 JS: <b style="color: var(--brand);">0줄</b>. (Popover API · CSS Anchor Positioning · position-try · @starting-style · &lt;details&gt; · :checked)</p>
 </div>
 </body>
 </html>
