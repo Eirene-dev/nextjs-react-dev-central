@@ -1,0 +1,62 @@
+/* Folio — 공유 스타일 (index + work-* 전 페이지 공통, 이미지 0 · JS 0) */
+/* ★ 모든 페이지가 이 파일을 link → @view-transition 이 양쪽 문서에 존재 → 교차 문서 모핑 성립 */
+:root {
+  --bg: #faf8f4; --ink: #1c1a17; --ink-2: #6a655c; --line: #e6e1d8; --accent: #b5462f;
+  --serif: 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+}
+/* 작품별 accent (work 페이지 body class) */
+.acc-a { --accent: #b5462f; } .acc-b { --accent: #2f4b8a; } .acc-c { --accent: #2f6b4a; }
+.acc-d { --accent: #7a3f6e; } .acc-e { --accent: #b5862f; } .acc-f { --accent: #2f7a6e; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+.wrap.reading { max-width: 720px; }
+
+/* Cross-document view transitions opt-in (JS 0). 미지원 브라우저는 무시 → 일반 이동. */
+@view-transition { navigation: auto; }
+
+.fallback { display: none; background: #2a2622; color: #f0e9dd; text-align: center; padding: 9px 16px; font-size: 13px; }
+@supports not (view-transition-name: --x) { .fallback { display: block; } }
+
+.kicker { font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); }
+
+/* ── index: 갤러리 ── */
+header { padding: 72px 0 40px; }
+header h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 8vw, 76px); line-height: 1.02; letter-spacing: -.02em; margin: 12px 0 14px; }
+header p { color: var(--ink-2); max-width: 32em; font-size: 16px; word-break: keep-all; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 26px; padding-bottom: 90px; }
+.work { display: block; }
+.work .frame { aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; position: relative; box-shadow: 0 20px 50px -28px rgba(28,26,23,.45); transition: transform .25s ease; }
+.work:hover .frame { transform: translateY(-4px); }
+.work .frame > div { position: absolute; inset: 0; }
+.work h2 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin-top: 14px; letter-spacing: -.01em; }
+.work .meta { color: var(--ink-2); font-size: 13px; margin-top: 2px; }
+footer { border-top: 1px solid var(--line); padding: 28px 0 60px; color: var(--ink-2); font-size: 12.5px; font-family: ui-monospace, monospace; }
+
+/* ── work: 상세 ── */
+.hero { height: 54vh; min-height: 340px; position: relative; }
+.hero > div { position: absolute; inset: 0; }
+.back { display: inline-block; margin: 24px 0 0; font-family: ui-monospace, monospace; font-size: 13px; color: var(--accent); }
+article { padding: 36px 0 90px; }
+article h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 7vw, 60px); line-height: 1.05; letter-spacing: -.02em; margin: 10px 0 18px; }
+article p { color: #3a352e; font-size: 17px; line-height: 1.85; margin-bottom: 18px; word-break: keep-all; }
+article .meta { color: var(--ink-2); font-size: 13px; }
+
+/* ── 작품 비주얼: CSS 그라디언트만 (이미지 0) ── */
+.g-a { background: linear-gradient(135deg, #b5462f, #f0a04b 70%, #7a2a1a); }
+.g-b { background: linear-gradient(135deg, #2f4b8a, #6ea0d8 70%, #1a2a5a); }
+.g-c { background: linear-gradient(135deg, #2f6b4a, #a8d06e 70%, #1a3a2a); }
+.g-d { background: linear-gradient(135deg, #7a3f6e, #c87fb0 70%, #4a2350); }
+.g-e { background: linear-gradient(135deg, #b5862f, #e8c46e 70%, #7a5a1a); }
+.g-f { background: linear-gradient(135deg, #2f7a6e, #6ed0c0 70%, #1a4a44); }
+
+/* ── view-transition-name 매칭: 카드(.art-*) ↔ 히어로(.hero.h-*) — 같은 이름이 양쪽에 ── */
+.art-a { view-transition-name: art-a; } .hero.h-a { view-transition-name: art-a; }
+.art-b { view-transition-name: art-b; } .hero.h-b { view-transition-name: art-b; }
+.art-c { view-transition-name: art-c; } .hero.h-c { view-transition-name: art-c; }
+.art-d { view-transition-name: art-d; } .hero.h-d { view-transition-name: art-d; }
+.art-e { view-transition-name: art-e; } .hero.h-e { view-transition-name: art-e; }
+.art-f { view-transition-name: art-f; } .hero.h-f { view-transition-name: art-f; }
