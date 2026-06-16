@@ -55,8 +55,8 @@
     .cue { animation: none; }
   }
 
-  /* ── 핀 시퀀스 공통(기존 reveal 패턴 복제: sticky stage + view() scrubbed) ── */
-  .pin { position: relative; height: 360vh; }
+  /* ── 핀 시퀀스 공통(sticky stage + view() scrubbed) — 높이 축소로 '스크롤해도 반응 없는' 구간 제거 ── */
+  .pin { position: relative; height: 200vh; }
   .pin .stage { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; overflow: hidden; }
   .pin .cap { position: absolute; bottom: 13%; left: 0; right: 0; text-align: center; font-size: clamp(22px, 4vw, 40px); font-weight: 700; letter-spacing: -.02em; padding: 0 18px; }
   .pin svg { width: min(72vw, 460px); height: auto; }
@@ -66,38 +66,50 @@
   .reveal .stage svg { width: min(60vw, 420px); }
   @supports (animation-timeline: view()) {
     .reveal .stage svg { animation: spin linear both; animation-timeline: view(); animation-range: cover; }
-    .bud .left { animation: split-l linear both; animation-timeline: view(); animation-range: cover 25% cover 60%; }
-    .bud .right { animation: split-r linear both; animation-timeline: view(); animation-range: cover 25% cover 60%; }
-    .reveal .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 62% cover 85%; }
+    .bud .left { animation: split-l linear both; animation-timeline: view(); animation-range: cover 16% cover 70%; }
+    .bud .right { animation: split-r linear both; animation-timeline: view(); animation-range: cover 16% cover 70%; }
+    .reveal .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 60% cover 84%; }
   }
   @keyframes spin { from { transform: rotate(-12deg); } to { transform: rotate(8deg); } }
   @keyframes split-l { 0%,100% { transform: none; } 50% { transform: translateX(-60px) rotate(-10deg); } }
   @keyframes split-r { 0%,100% { transform: none; } 50% { transform: translateX(60px) rotate(10deg); } }
   @keyframes capfade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 
-  /* 노이즈 캔슬링 — 동심원 음파가 안쪽으로 소거 + −42dB 리빌 */
-  .nc .wave { transform-box: fill-box; transform-origin: center; fill: none; stroke: #7fd0ff; }
-  .ncnum { position: absolute; top: 16%; left: 0; right: 0; text-align: center; font-size: clamp(40px, 9vw, 96px); font-weight: 700; letter-spacing: -.03em; }
+  /* 노이즈 캔슬링 — 소음 파형 + 역위상이 더해져 평평해짐(상쇄). 스크롤에 따라 출력이 '정적'이 됨 */
+  .nc .noise, .nc .anti, .nc .flat { fill: none; stroke-linecap: round; }
+  .nc .noise { stroke: #7fd0ff; stroke-width: 3.4; }
+  .nc .anti { stroke: #8fb6cc; stroke-width: 2.4; stroke-dasharray: 5 7; opacity: .7; }
+  .nc .flat { stroke: #d7ecff; stroke-width: 3.4; stroke-dasharray: 330; stroke-dashoffset: 330; }
+  .nc .wlab { fill: #9aa0ab; font-size: 14px; font-weight: 600; }
+  .nc .wlab.hi { fill: #7fd0ff; }
+  .ncnum { position: absolute; top: 12%; left: 0; right: 0; text-align: center; font-size: clamp(40px, 9vw, 92px); font-weight: 700; letter-spacing: -.03em; }
   @supports (animation-timeline: view()) {
-    .nc .wave { animation: collapse linear both; animation-timeline: view(); }
-    .nc .w1 { animation-range: cover 8% cover 42%; }
-    .nc .w2 { animation-range: cover 16% cover 52%; }
-    .nc .w3 { animation-range: cover 26% cover 64%; }
-    .nc .w4 { animation-range: cover 36% cover 76%; }
-    .nc .ncnum { animation: capfade linear both; animation-timeline: view(); animation-range: cover 60% cover 84%; }
-    .nc .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 68% cover 90%; }
+    .nc .resultwave { animation: cancel linear both; animation-timeline: view(); animation-range: cover 18% cover 66%; transform-box: fill-box; transform-origin: center; }
+    .nc .flat { animation: drawline linear both; animation-timeline: view(); animation-range: cover 36% cover 78%; }
+    .nc .ncnum { animation: capfade linear both; animation-timeline: view(); animation-range: cover 54% cover 80%; }
+    .nc .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 70% cover 92%; }
   }
-  @keyframes collapse { from { transform: scale(1); opacity: .55; } to { transform: scale(0); opacity: 0; } }
+  @keyframes cancel { from { transform: scaleY(1); } to { transform: scaleY(.05); } }
+  @keyframes drawline { to { stroke-dashoffset: 0; } }
+  @supports not (animation-timeline: view()) { .nc .flat { stroke-dashoffset: 0; } }
 
-  /* 공간 음향 — 방향 필드 회전(head-tracking) */
+  /* 공간 음향 — 중심에서 음파가 퍼지고(상시 emit), 방향 필드가 스크롤에 회전(head-tracking) */
+  .sp .emit { transform-box: fill-box; transform-origin: center; opacity: 0; }
+  @keyframes emit { 0% { transform: scale(.5); opacity: .85; } 70% { opacity: .22; } 100% { transform: scale(4.4); opacity: 0; } }
+  .sp .e1 { animation: emit 3s ease-out infinite; }
+  .sp .e2 { animation: emit 3s ease-out infinite 1s; }
+  .sp .e3 { animation: emit 3s ease-out infinite 2s; }
+  .sp .ring { fill: none; stroke: #39414e; stroke-dasharray: 3 10; }
+  .sp .cone { fill: rgba(127,208,255,.10); stroke: #7fd0ff; stroke-width: 1.5; }
+  .sp .tick { stroke: #7fd0ff; stroke-width: 2; }
+  .sp .dlabel { fill: #6b7686; font-size: 13px; font-weight: 600; }
   .sp .field { transform-box: fill-box; transform-origin: center; }
-  .sp .ring { fill: none; stroke: #3a4250; stroke-dasharray: 4 10; }
-  .sp .arrow { fill: #7fd0ff; }
   @supports (animation-timeline: view()) {
     .sp .field { animation: fieldspin linear both; animation-timeline: view(); animation-range: cover; }
-    .sp .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 60% cover 86%; }
+    .sp .cap { animation: capfade linear both; animation-timeline: view(); animation-range: cover 60% cover 88%; }
   }
-  @keyframes fieldspin { from { transform: rotate(-42deg); } to { transform: rotate(42deg); } }
+  @keyframes fieldspin { from { transform: rotate(-62deg); } to { transform: rotate(62deg); } }
+  @media (prefers-reduced-motion: reduce) { .sp .emit { animation: none; opacity: .3; } }
 
   /* ── 가로 스크롤 기능 스트립 — 세로 스크롤을 트랙 translateX로 scrub(핀 내부에서만 이동) ── */
   /* ── 가로 스트립 — 네이티브 가로 스크롤 + scroll-snap(JS 0, 사용자가 직접 좌우로) ──
@@ -124,31 +136,25 @@
   @keyframes cardrise { from { opacity: 0; transform: translateY(46px) scale(.97); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .hcard { animation: none; opacity: 1; transform: none; } }
 
-  /* ── 패럴랙스 소재 — 레이어별 다른 translateY 속도로 깊이감 ── */
-  .mat { position: relative; min-height: 150vh; overflow: hidden; display: grid; place-items: center; padding: 20vh 22px; }
-  .mat .mattitle { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); position: absolute; top: 9vh; left: 0; right: 0; text-align: center; }
-  .mat .layer { position: absolute; left: 50%; transform: translateX(-50%); }
-  .mat .bg { width: min(86vw, 620px); opacity: .5; }
-  .mat .mid { width: min(56vw, 360px); }
-  .mat .tag { background: var(--ink); color: #fff; font-size: clamp(13px, 1.8vw, 16px); font-weight: 600; padding: 8px 14px; border-radius: 980px; white-space: nowrap; }
-  .mat .t1 { top: 26%; } .mat .t2 { top: 50%; } .mat .t3 { top: 72%; }
+  /* ── 소재 단면 — 라벨을 SVG 좌표 안에 넣어 부품 위치와 항상 정합(이전 패럴랙스 어긋남 해결) ── */
+  .mat { padding: 96px 22px 108px; text-align: center; }
+  .mat .mattitle { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
+  .mat .matsub { font-size: clamp(17px, 2.4vw, 21px); color: var(--ink-2); max-width: 26em; margin: 0 auto 42px; }
+  .mat .diagram { width: min(94vw, 580px); height: auto; margin: 0 auto; display: block; }
   @supports (animation-timeline: view()) {
-    .mat .bg  { animation: par-bg  linear both; animation-timeline: view(); animation-range: cover; }
-    .mat .mid { animation: par-mid linear both; animation-timeline: view(); animation-range: cover; }
-    .mat .t1  { animation: par-f1  linear both; animation-timeline: view(); animation-range: cover; }
-    .mat .t2  { animation: par-f2  linear both; animation-timeline: view(); animation-range: cover; }
-    .mat .t3  { animation: par-f3  linear both; animation-timeline: view(); animation-range: cover; }
+    .mat .diagram { animation: drop linear both; animation-timeline: view(); animation-range: entry 4% cover 38%; }
+    .mat .anno { animation: annofade linear both; animation-timeline: view(); }
+    .mat .a1 { animation-range: entry 24% cover 46%; }
+    .mat .a2 { animation-range: entry 32% cover 54%; }
+    .mat .a3 { animation-range: entry 40% cover 62%; }
   }
-  @keyframes par-bg  { from { transform: translateX(-50%) translateY(40px);  } to { transform: translateX(-50%) translateY(-40px);  } }
-  @keyframes par-mid { from { transform: translateX(-50%) translateY(90px);  } to { transform: translateX(-50%) translateY(-90px);  } }
-  @keyframes par-f1  { from { transform: translateX(-50%) translateY(150px); } to { transform: translateX(-50%) translateY(-150px); } }
-  @keyframes par-f2  { from { transform: translateX(-50%) translateY(120px); } to { transform: translateX(-50%) translateY(-120px); } }
-  @keyframes par-f3  { from { transform: translateX(-50%) translateY(170px); } to { transform: translateX(-50%) translateY(-170px); } }
+  @keyframes annofade { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .mat .anno { opacity: 1; } }
 
   /* ── 색상 옵션 — 스크롤 진행에 이어버드 색이 팔레트 전환(@property <color> scrubbed) ── */
   @property --c-body { syntax: '<color>'; inherits: true; initial-value: #3a3a3e; }
   @property --c-stem { syntax: '<color>'; inherits: true; initial-value: #54545a; }
-  .colorpin { position: relative; height: 320vh; }
+  .colorpin { position: relative; height: 230vh; }
   .colorpin .stage { position: sticky; top: 0; height: 100vh; display: grid; place-items: center; overflow: hidden; }
   .colorpin .cbud { width: min(56vw, 340px); }
   .colorpin .cbud .body { fill: var(--c-body); transition: fill .2s linear; }
@@ -417,18 +423,17 @@
     <div class="stage">
       <div class="plabel"><span class="ey">능동 노이즈 캔슬링</span><span class="sub">주변 소음을 실시간으로 측정해 역위상으로 상쇄합니다.</span></div>
       <div class="ncnum">−42dB</div>
-      <svg viewBox="0 0 400 400" fill="none" aria-label="능동 노이즈 캔슬링 — 동심원 음파가 소거되는 일러스트">
-        <circle class="wave w4" cx="200" cy="200" r="180" stroke-width="2"/>
-        <circle class="wave w3" cx="200" cy="200" r="140" stroke-width="2.5"/>
-        <circle class="wave w2" cx="200" cy="200" r="100" stroke-width="3"/>
-        <circle class="wave w1" cx="200" cy="200" r="60" stroke-width="3.5"/>
-        <g class="floaty" filter="url(#budShadow)">
-          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#bodyG)"/>
-          <circle cx="195" cy="182" r="8" fill="url(#meshG)"/>
-          <circle cx="195" cy="182" r="8" fill="none" stroke="#4a4a52" stroke-width="1.2"/>
-          <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#sheenG)"/>
-          <rect x="206" y="194" width="13" height="58" rx="6" fill="url(#stemG)"/>
+      <svg viewBox="0 0 400 300" fill="none" aria-label="능동 노이즈 캔슬링 — 소음 파형과 역위상이 더해져 정적이 되는 일러스트">
+        <!-- 결과: 정적(평평한 선) — 스크롤에 따라 그려짐 -->
+        <line class="flat" x1="38" y1="150" x2="362" y2="150"/>
+        <!-- 소음 + 역위상(거울상) — 스크롤에 따라 평평해지며 상쇄 -->
+        <g class="resultwave">
+          <path class="noise" d="M40 150 q16 -36 32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0"/>
+          <path class="anti"  d="M40 150 q16 36 32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0"/>
         </g>
+        <text class="wlab hi" x="44" y="96">소음</text>
+        <text class="wlab" x="44" y="214">역위상</text>
+        <text class="wlab hi" x="358" y="138" text-anchor="end">정적</text>
       </svg>
       <div class="cap">세상이 조용해지는 순간.</div>
     </div>
@@ -437,15 +442,27 @@
   <section class="pin sp sec-dark">
     <div class="stage">
       <div class="plabel"><span class="ey">공간 음향</span><span class="sub">머리를 움직이면 음장이 따라 돌아, 소리가 한자리에 머뭅니다.</span></div>
-      <svg viewBox="0 0 400 400" fill="none" aria-label="공간 음향 — 머리 방향을 따라 회전하는 음장 일러스트">
+      <svg viewBox="0 0 400 400" fill="none" aria-label="공간 음향 — 중심에서 음파가 퍼지고 방향 필드가 회전하는 일러스트">
+        <!-- 퍼지는 음파(상시 emit) -->
+        <circle class="emit e1" cx="200" cy="200" r="40" stroke="#7fd0ff" stroke-width="2"/>
+        <circle class="emit e2" cx="200" cy="200" r="40" stroke="#7fd0ff" stroke-width="2"/>
+        <circle class="emit e3" cx="200" cy="200" r="40" stroke="#7fd0ff" stroke-width="2"/>
+        <!-- 방향 필드(스크롤에 회전 = 헤드 트래킹) -->
         <g class="field">
-          <circle class="ring" cx="200" cy="200" r="150" stroke-width="2"/>
-          <circle class="ring" cx="200" cy="200" r="100" stroke-width="2"/>
-          <path class="arrow" d="M200 26l16 26h-32z"/>
-          <path class="arrow" d="M200 374l16-26h-32z"/>
-          <path class="arrow" d="M26 200l26-16v32z"/>
-          <path class="arrow" d="M374 200l-26-16v32z"/>
+          <circle class="ring" cx="200" cy="200" r="150"/>
+          <circle class="ring" cx="200" cy="200" r="104"/>
+          <path class="cone" d="M200 200 L128 74 A150 150 0 0 1 272 74 Z"/>
+          <line class="tick" x1="200" y1="42" x2="200" y2="64"/>
+          <line class="tick" x1="200" y1="336" x2="200" y2="358"/>
+          <line class="tick" x1="42" y1="200" x2="64" y2="200"/>
+          <line class="tick" x1="336" y1="200" x2="358" y2="200"/>
         </g>
+        <!-- 고정 방향 라벨(공간에 고정 — 머리를 돌려도 소리는 제자리) -->
+        <text class="dlabel" x="200" y="32" text-anchor="middle">전</text>
+        <text class="dlabel" x="200" y="384" text-anchor="middle">후</text>
+        <text class="dlabel" x="20" y="205" text-anchor="middle">좌</text>
+        <text class="dlabel" x="380" y="205" text-anchor="middle">우</text>
+        <!-- 중심 이어버드 -->
         <g class="floaty" filter="url(#budShadow)">
           <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#bodyG)"/>
           <circle cx="195" cy="182" r="8" fill="url(#meshG)"/>
@@ -492,9 +509,11 @@
 
   <section class="mat">
     <p class="mattitle">소재의 디테일</p>
-    <svg class="layer bg" viewBox="0 0 400 400" fill="none" aria-hidden="true"><circle cx="200" cy="200" r="180" stroke="#d4d8de" stroke-width="2"/><circle cx="200" cy="200" r="120" stroke="#e0e3e8" stroke-width="2"/></svg>
-    <svg class="layer mid" viewBox="0 0 220 300" fill="none" aria-label="이어버드 단면 일러스트">
-      <g filter="url(#budShadow)">
+    <p class="matsub">보이지 않는 곳까지 — 세 겹의 정교한 설계.</p>
+    <svg class="diagram" viewBox="0 0 480 320" fill="none" aria-label="이어버드 단면 — 음향 챔버·실리콘 이어팁·금속 스템">
+      <circle cx="252" cy="138" r="150" stroke="#eef0f3" stroke-width="2"/>
+      <circle cx="252" cy="138" r="102" stroke="#f3f5f7" stroke-width="2"/>
+      <g transform="translate(150 8)" filter="url(#budShadow)">
         <path d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z" fill="url(#bodyG)"/>
         <path d="M78 72c22-12 50-6 56 16 4 20-10 42-32 48" stroke="#7f8a98" stroke-width="3" fill="none"/>
         <ellipse cx="74" cy="116" rx="15" ry="13" transform="rotate(-16 74 116)" fill="url(#meshG)"/>
@@ -503,10 +522,25 @@
         <rect x="96" y="150" width="18" height="96" rx="9" fill="url(#stemG)"/>
         <rect x="99" y="155" width="3.4" height="84" rx="1.7" fill="#8a8a92" opacity=".5"/>
       </g>
+      <g class="anno a1">
+        <circle cx="244" cy="104" r="3.5" fill="#5b6b7a"/>
+        <line x1="244" y1="104" x2="340" y2="74" stroke="#c4c8d0" stroke-width="1.5"/>
+        <rect x="340" y="60" width="120" height="30" rx="15" fill="#1d1d1f"/>
+        <text x="400" y="80" text-anchor="middle" fill="#fff" font-size="15" font-weight="600">음향 챔버</text>
+      </g>
+      <g class="anno a2">
+        <circle cx="221" cy="124" r="3.5" fill="#5b6b7a"/>
+        <line x1="221" y1="124" x2="170" y2="158" stroke="#c4c8d0" stroke-width="1.5"/>
+        <rect x="20" y="144" width="150" height="30" rx="15" fill="#1d1d1f"/>
+        <text x="95" y="164" text-anchor="middle" fill="#fff" font-size="15" font-weight="600">실리콘 이어팁</text>
+      </g>
+      <g class="anno a3">
+        <circle cx="255" cy="214" r="3.5" fill="#5b6b7a"/>
+        <line x1="255" y1="214" x2="340" y2="240" stroke="#c4c8d0" stroke-width="1.5"/>
+        <rect x="340" y="226" width="112" height="30" rx="15" fill="#1d1d1f"/>
+        <text x="396" y="246" text-anchor="middle" fill="#fff" font-size="15" font-weight="600">금속 스템</text>
+      </g>
     </svg>
-    <span class="layer tag t1">음향 챔버</span>
-    <span class="layer tag t2">실리콘 이어팁</span>
-    <span class="layer tag t3">금속 스템</span>
   </section>
 
   <section class="colorpin sec-dark">
