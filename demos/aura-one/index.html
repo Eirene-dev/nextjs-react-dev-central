@@ -291,6 +291,25 @@
 
   /* ── 스펙 보조(서브라벨) ── */
   .grid .cell .s { color: var(--ink-2); font-size: 11.5px; margin-top: 2px; opacity: .8; }
+
+  /* ── 핀 섹션 상시 라벨 — 스크롤 중에도 맥락 유지(덩그러니 SVG만 보이지 않게) ── */
+  .plabel { position: absolute; top: 9%; left: 0; right: 0; z-index: 2; text-align: center; padding: 0 18px; }
+  .plabel .ey { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  .plabel .sub { display: block; margin: 9px auto 0; max-width: 24em; font-size: clamp(15px, 2.1vw, 18px); color: var(--ink-2); line-height: 1.5; }
+  .sec-dark .plabel .ey { color: #7fd0ff; }
+  .sec-dark .plabel .sub { color: #9aa0ab; }
+  .nc .plabel { top: 5%; }
+
+  /* ── 상시 미세 모션(JS 0 — @keyframes만, reduced-motion 대안 포함) ── */
+  @keyframes ledpulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+  @keyframes floaty   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @keyframes grilleglow { 0%, 100% { opacity: .9; } 50% { opacity: .45; } }
+  .led { animation: ledpulse 2.6s ease-in-out infinite; }
+  .floaty { animation: floaty 5.6s ease-in-out infinite; }
+  .grille { animation: grilleglow 3.6s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .led, .floaty, .grille { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -330,13 +349,14 @@
 
   <section class="pin reveal">
     <div class="stage">
+      <div class="plabel"><span class="ey">형태</span><span class="sub">한 쌍이 한 몸처럼 맞물리고, 분해할수록 단순해집니다.</span></div>
       <svg class="bud" viewBox="0 0 400 260" fill="none" aria-label="Aura One 이어버드 일러스트">
         <g class="left" filter="url(#budShadow)">
           <path class="body" d="M120 60c30-16 64-8 70 22 5 26-12 52-40 60-26 8-52-6-58-30-6-26 8-44 28-52z" fill="url(#bodyG)"/>
           <ellipse cx="98" cy="110" rx="17" ry="15" transform="rotate(-18 98 110)" fill="url(#meshG)"/>
-          <circle cx="98" cy="110" r="10" fill="none" stroke="#54545c" stroke-width="1.6"/>
+          <circle class="grille" cx="98" cy="110" r="10" fill="none" stroke="#54545c" stroke-width="1.6"/>
           <circle cx="98" cy="110" r="4.6" fill="none" stroke="#60606a" stroke-width="1.2"/>
-          <circle cx="150" cy="78" r="3.2" fill="#7fd0ff"/>
+          <circle class="led" cx="150" cy="78" r="3.2" fill="#7fd0ff"/>
           <path d="M120 60c30-16 64-8 70 22 5 26-12 52-40 60-26 8-52-6-58-30-6-26 8-44 28-52z" fill="url(#sheenG)"/>
           <rect class="stem" x="150" y="118" width="16" height="82" rx="8" fill="url(#stemG)"/>
           <rect x="153" y="123" width="3" height="72" rx="1.5" fill="#8a8a92" opacity=".5"/>
@@ -345,9 +365,9 @@
         <g class="right" filter="url(#budShadow)">
           <path class="body" d="M280 60c-30-16-64-8-70 22-5 26 12 52 40 60 26 8 52-6 58-30 6-26-8-44-28-52z" fill="url(#bodyG2)"/>
           <ellipse cx="302" cy="110" rx="17" ry="15" transform="rotate(18 302 110)" fill="url(#meshG)"/>
-          <circle cx="302" cy="110" r="10" fill="none" stroke="#54545c" stroke-width="1.6"/>
+          <circle class="grille" cx="302" cy="110" r="10" fill="none" stroke="#54545c" stroke-width="1.6"/>
           <circle cx="302" cy="110" r="4.6" fill="none" stroke="#60606a" stroke-width="1.2"/>
-          <circle cx="250" cy="78" r="3.2" fill="#7fd0ff"/>
+          <circle class="led" cx="250" cy="78" r="3.2" fill="#7fd0ff"/>
           <path d="M280 60c-30-16-64-8-70 22-5 26 12 52 40 60 26 8 52-6 58-30 6-26-8-44-28-52z" fill="url(#sheenG)"/>
           <rect class="stem" x="234" y="118" width="16" height="82" rx="8" fill="url(#stemG)"/>
           <rect x="244" y="123" width="3" height="72" rx="1.5" fill="#8a8a92" opacity=".5"/>
@@ -360,13 +380,14 @@
 
   <section class="pin nc sec-dark">
     <div class="stage">
+      <div class="plabel"><span class="ey">능동 노이즈 캔슬링</span><span class="sub">주변 소음을 실시간으로 측정해 역위상으로 상쇄합니다.</span></div>
       <div class="ncnum">−42dB</div>
       <svg viewBox="0 0 400 400" fill="none" aria-label="능동 노이즈 캔슬링 — 동심원 음파가 소거되는 일러스트">
         <circle class="wave w4" cx="200" cy="200" r="180" stroke-width="2"/>
         <circle class="wave w3" cx="200" cy="200" r="140" stroke-width="2.5"/>
         <circle class="wave w2" cx="200" cy="200" r="100" stroke-width="3"/>
         <circle class="wave w1" cx="200" cy="200" r="60" stroke-width="3.5"/>
-        <g filter="url(#budShadow)">
+        <g class="floaty" filter="url(#budShadow)">
           <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#bodyG)"/>
           <circle cx="195" cy="182" r="8" fill="url(#meshG)"/>
           <circle cx="195" cy="182" r="8" fill="none" stroke="#4a4a52" stroke-width="1.2"/>
@@ -380,6 +401,7 @@
 
   <section class="pin sp sec-dark">
     <div class="stage">
+      <div class="plabel"><span class="ey">공간 음향</span><span class="sub">머리를 움직이면 음장이 따라 돌아, 소리가 한자리에 머뭅니다.</span></div>
       <svg viewBox="0 0 400 400" fill="none" aria-label="공간 음향 — 머리 방향을 따라 회전하는 음장 일러스트">
         <g class="field">
           <circle class="ring" cx="200" cy="200" r="150" stroke-width="2"/>
@@ -389,7 +411,7 @@
           <path class="arrow" d="M26 200l26-16v32z"/>
           <path class="arrow" d="M374 200l-26-16v32z"/>
         </g>
-        <g filter="url(#budShadow)">
+        <g class="floaty" filter="url(#budShadow)">
           <path d="M182 150c22-12 48-6 52 16 4 20-10 40-30 46-20 6-40-4-44-22-4-20 6-34 22-40z" fill="url(#bodyG)"/>
           <circle cx="195" cy="182" r="8" fill="url(#meshG)"/>
           <circle cx="195" cy="182" r="8" fill="none" stroke="#4a4a52" stroke-width="1.2"/>
@@ -449,12 +471,13 @@
 
   <section class="colorpin sec-dark">
     <div class="stage">
+      <div class="plabel"><span class="ey">색상</span><span class="sub">네 가지 마감 — 무광 알루미늄과 부드러운 실리콘의 조합.</span></div>
       <span class="cname n1">미드나이트</span>
       <span class="cname n2">스타라이트</span>
       <span class="cname n3">세이지</span>
       <span class="cname n4">코랄</span>
       <svg class="cbud" viewBox="0 0 220 300" fill="none" aria-label="색상 옵션이 전환되는 이어버드 일러스트">
-        <g filter="url(#budShadow)">
+        <g class="floaty" filter="url(#budShadow)">
           <path class="body" d="M60 50c34-18 80-8 88 28 6 32-16 66-52 76-34 10-66-8-72-38-6-30 12-56 36-66z"/>
           <ellipse cx="74" cy="116" rx="15" ry="13" transform="rotate(-16 74 116)" fill="url(#meshG)"/>
           <circle cx="74" cy="116" r="9" fill="none" stroke="#00000028" stroke-width="1.4"/>
