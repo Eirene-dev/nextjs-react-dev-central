@@ -76,12 +76,17 @@
   @keyframes capfade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 
   /* 노이즈 캔슬링 — 소음 파형 + 역위상이 더해져 평평해짐(상쇄). 스크롤에 따라 출력이 '정적'이 됨 */
+  .nc svg { width: min(92vw, 680px); }
   .nc .noise, .nc .anti, .nc .flat { fill: none; stroke-linecap: round; }
-  .nc .noise { stroke: #7fd0ff; stroke-width: 3.4; }
-  .nc .anti { stroke: #8fb6cc; stroke-width: 2.4; stroke-dasharray: 5 7; opacity: .7; }
-  .nc .flat { stroke: #d7ecff; stroke-width: 3.4; stroke-dasharray: 330; stroke-dashoffset: 330; }
-  .nc .wlab { fill: #9aa0ab; font-size: 14px; font-weight: 600; }
+  .nc .noise { stroke: #7fd0ff; stroke-width: 4; }
+  .nc .anti { stroke: #8fb6cc; stroke-width: 2.8; stroke-dasharray: 6 8; opacity: .7; }
+  .nc .flat { stroke: #d7ecff; stroke-width: 4; stroke-dasharray: 360; stroke-dashoffset: 360; }
+  .nc .wlab { fill: #9aa0ab; font-size: 16px; font-weight: 600; }
   .nc .wlab.hi { fill: #7fd0ff; }
+  /* 상시 흐름 — 소음/역위상 파형이 살아있게 좌로 한 파장씩 끊김 없이 흐름(seamless loop) */
+  @keyframes waveflow { from { transform: translateX(0); } to { transform: translateX(-64px); } }
+  .nc .flow { animation: waveflow 1.5s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .nc .flow { animation: none; } }
   .ncnum { position: absolute; top: 12%; left: 0; right: 0; text-align: center; font-size: clamp(40px, 9vw, 92px); font-weight: 700; letter-spacing: -.03em; }
   @supports (animation-timeline: view()) {
     .nc .resultwave { animation: cancel linear both; animation-timeline: view(); animation-range: cover 18% cover 66%; transform-box: fill-box; transform-origin: center; }
@@ -428,12 +433,14 @@
         <line class="flat" x1="38" y1="150" x2="362" y2="150"/>
         <!-- 소음 + 역위상(거울상) — 스크롤에 따라 평평해지며 상쇄 -->
         <g class="resultwave">
-          <path class="noise" d="M40 150 q16 -36 32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0"/>
-          <path class="anti"  d="M40 150 q16 36 32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0"/>
+          <g class="flow">
+            <path class="noise" d="M-80 150 q16 -50 32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0"/>
+            <path class="anti"  d="M-80 150 q16 50 32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0 t32 0"/>
+          </g>
         </g>
-        <text class="wlab hi" x="44" y="96">소음</text>
-        <text class="wlab" x="44" y="214">역위상</text>
-        <text class="wlab hi" x="358" y="138" text-anchor="end">정적</text>
+        <text class="wlab hi" x="40" y="80">소음</text>
+        <text class="wlab" x="40" y="230">역위상</text>
+        <text class="wlab hi" x="360" y="128" text-anchor="end">정적</text>
       </svg>
       <div class="cap">세상이 조용해지는 순간.</div>
     </div>
