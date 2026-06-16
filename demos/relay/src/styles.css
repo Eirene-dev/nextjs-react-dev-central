@@ -49,3 +49,24 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); }
 .ci.coup { color: var(--brand); }
 .ci.total { border-top: 1px solid var(--line); margin-top: 4px; font-size: 15px; }
 .ckbox { margin-top: 12px; font-size: 12.5px; color: var(--brand); border: 1px dashed var(--brand); border-radius: 10px; padding: 10px; }
+
+/* ── 상품 카탈로그 + 작동 방식(콘텐츠 보강) ── */
+.store, .how { max-width: 860px; margin: 26px auto 0; padding: 0 22px; }
+.store h3, .how h3 { font-size: 13px; color: var(--ink2); margin-bottom: 12px; }
+.store .cnt { color: var(--brand); font-family: var(--mono); }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 12px; }
+.pcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; transition: border-color .2s; }
+.pcard.incart { border-color: var(--brand); }
+.pcat { font-size: 11px; color: var(--brand); font-family: var(--mono); letter-spacing: .04em; }
+.pname { font-weight: 700; margin-top: 5px; }
+.pdesc { font-size: 12px; color: var(--ink2); margin-top: 3px; }
+.prow { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.pprice { font-weight: 700; }
+.prow .pq { font-size: 11.5px; color: var(--brand); font-family: var(--mono); }
+.coupons { margin-top: 14px; font-size: 12.5px; color: var(--ink2); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cpill { font-family: var(--mono); font-size: 11.5px; color: var(--brand); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+.hgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.hc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.hc .hi { font-size: 22px; line-height: 1; color: var(--brand); font-weight: 800; font-family: var(--mono); }
+.hc b { display: block; margin: 9px 0 5px; }
+.hc p { font-size: 12.5px; color: var(--ink2); line-height: 1.55; }
