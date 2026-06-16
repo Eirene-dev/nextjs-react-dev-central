@@ -1,18 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import KeyBar from './KeyBar.jsx'
 import { planNext, appendTurn } from './gemini.js'
-import { PRODUCTS, COUPONS, SAMPLE_GOALS, SAMPLE_GOAL_LIST } from './sample.js'
+import { PRODUCTS, COUPONS, COUPON_LIST, SAMPLE_GOALS, SAMPLE_GOAL_LIST } from './sample.js'
 
 const MAX_STEPS = 6
 const pname = (id) => PRODUCTS.find((p) => p.id === id)?.name || id
+const PIDS = PRODUCTS.map((p) => p.id)
 const TOOLS = [
-  { name: 'add_to_cart', description: '상품을 장바구니에 1개 추가', parameters: { type: 'object', properties: { product: { type: 'string', enum: ['laptop', 'mouse', 'kbd'] } }, required: ['product'] } },
-  { name: 'set_qty', description: '장바구니 상품 수량 변경', parameters: { type: 'object', properties: { product: { type: 'string', enum: ['laptop', 'mouse', 'kbd'] }, qty: { type: 'integer' } }, required: ['product', 'qty'] } },
+  { name: 'add_to_cart', description: '상품을 장바구니에 1개 추가', parameters: { type: 'object', properties: { product: { type: 'string', enum: PIDS } }, required: ['product'] } },
+  { name: 'set_qty', description: '장바구니 상품 수량 변경', parameters: { type: 'object', properties: { product: { type: 'string', enum: PIDS }, qty: { type: 'integer' } }, required: ['product', 'qty'] } },
   { name: 'apply_coupon', description: '쿠폰 적용', parameters: { type: 'object', properties: { code: { type: 'string' } }, required: ['code'] } },
   { name: 'go_checkout', description: '결제 단계로 이동(실제 결제는 없음)', parameters: { type: 'object', properties: {} } },
 ]
+const CATALOG = PRODUCTS.map((p) => `${p.id}=${p.name}(₩${p.price.toLocaleString('ko-KR')})`).join(', ')
 const SYSTEM =
-  '너는 미니 쇼핑몰을 조작하는 에이전트다. 사용자 목표를 함수로 한 단계씩 수행하라. 목표를 달성했으면 더 호출하지 말고 끝내라. 결제는 go_checkout 까지만(실제 결제 없음).'
+  '너는 미니 쇼핑몰을 조작하는 에이전트다. 상품 목록: ' + CATALOG +
+  '. 쿠폰: SAVE10(10%), SAVE20(20%), WELCOME(15%). 사용자 목표를 함수로 한 단계씩 수행하라. 목표를 달성했으면 더 호출하지 말고 끝내라. 결제는 go_checkout 까지만(실제 결제 없음).'
 
 export default function App() {
   const [mode, setMode] = useState('sample')
@@ -107,6 +110,34 @@ export default function App() {
         </div>
         {err && <p className="err">⚠ {err}</p>}
       </header>
+
+      <section className="store">
+        <h3>상품 카탈로그 <span className="cnt">{PRODUCTS.length}종</span></h3>
+        <div className="pgrid">
+          {PRODUCTS.map((p) => {
+            const q = cart[p.id] || 0
+            return (
+              <div className={'pcard' + (q > 0 ? ' incart' : '')} key={p.id}>
+                <div className="pcat">{p.cat}</div>
+                <div className="pname">{p.name}</div>
+                <div className="pdesc">{p.desc}</div>
+                <div className="prow"><span className="pprice">₩ {p.price.toLocaleString('ko-KR')}</span>{q > 0 && <span className="pq">담김 ×{q}</span>}</div>
+              </div>
+            )
+          })}
+        </div>
+        <div className="coupons">사용 가능 쿠폰 {COUPON_LIST.map((c) => <span key={c.code} className="cpill">{c.code} · {c.label}</span>)}</div>
+      </section>
+
+      <section className="how">
+        <h3>작동 방식 · 안전장치</h3>
+        <div className="hgrid">
+          <div className="hc"><div className="hi">✓</div><b>승인 게이트</b><p>모든 단계는 [실행]을 눌러야 진행됩니다. 사람이 매 칸을 통과시킵니다.</p></div>
+          <div className="hc"><div className="hi">6</div><b>최대 6단계</b><p>무한정 돌지 않도록 단계 수를 제한합니다.</p></div>
+          <div className="hc"><div className="hi">↻</div><b>루프 가드</b><p>직전과 같은 동작이 감지되면 즉시 멈춥니다.</p></div>
+          <div className="hc"><div className="hi">⏸</div><b>결제 직전 정지</b><p>go_checkout까지만 — 실제 결제는 일어나지 않습니다.</p></div>
+        </div>
+      </section>
 
       <main className="grid2">
         <section className="agent">
