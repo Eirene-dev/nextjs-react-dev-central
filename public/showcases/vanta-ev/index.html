@@ -88,10 +88,38 @@
   .config .inner { gap: 20px; }
   @media (max-width: 700px) { .optgrid { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .scene .specbar { gap: 18px; } }
+
+  /* ── 차량 SVG 정교화 + 컨피그 확장 ── */
+  #body { transition: fill .35s ease; }
+  #cabin { transition: fill .35s ease; }
+  /* 안전 패널 — 카메라 FOV 다이어그램(상시 모션) */
+  .fov > path { animation: fovsweep 3.2s ease-in-out infinite; }
+  .fov > path:nth-child(2) { animation-delay: .8s; } .fov > path:nth-child(3) { animation-delay: 1.6s; } .fov > path:nth-child(4) { animation-delay: 2.4s; }
+  @keyframes fovsweep { 0%,100% { opacity: .10; } 50% { opacity: .30; } }
+  .cam circle { animation: campulse 2.4s ease-in-out infinite; }
+  @keyframes campulse { 0%,100% { opacity: .55; r: 3.4px; } 50% { opacity: 1; r: 4.4px; } }
+  .ring360 { animation: ring360 2.6s ease-in-out infinite; }
+  @keyframes ring360 { 0%,100% { opacity: .3; } 50% { opacity: .6; } }
+  /* 컨피그 — 가격 범위 배너 + 선택 요약 */
+  .pricerange { font-size: 12px; color: var(--ink-2); margin-bottom: 4px; }
+  .pricerange b { color: #7fd0ff; }
+  .cfgsummary { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 30px; font-size: 12.5px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 14px; }
+  .cfgsummary .row { display: flex; justify-content: space-between; gap: 12px; }
+  .cfgsummary .row b { color: var(--ink); font-weight: 600; }
+  @media (max-width: 560px) { .cfgsummary { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .fov > path, .cam circle, .ring360, .streak line { animation: none !important; } }
 </style>
 </head>
 <body>
   <p class="study">테슬라 홈의 <b>디자인 문법</b>(풀스크린 scroll-snap·하단 고정 스펙·인라인 컨피규레이터)을 연구한 <b>가상 브랜드</b> 데모 — 실제 로고·차종·카피 미사용</p>
+
+  <!-- 공유 차량 그라디언트 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#42527a"/><stop offset="1" stop-color="#1f273c"/></linearGradient>
+    <linearGradient id="carBodyR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a2a36"/><stop offset="1" stop-color="#26151c"/></linearGradient>
+    <linearGradient id="glassG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c121e"/><stop offset="1" stop-color="#1e2638"/></linearGradient>
+    <radialGradient id="carSheen" cx=".32" cy="0" r=".9"><stop offset="0" stop-color="#ffffff" stop-opacity=".30"/><stop offset=".55" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+  </defs></svg>
 
   <div class="snap">
     <nav class="dots" aria-label="패널 내비게이션">
@@ -108,10 +136,17 @@
         <h1>Vanta</h1>
         <p class="sub">전기로 다시 그린 주행.</p>
         <div class="car-wrap">
-          <svg viewBox="0 0 560 200" aria-label="Vanta 세단 실루엣">
-            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="#2f3a55"/>
-            <circle cx="160" cy="152" r="26" fill="#15151a"/><circle cx="160" cy="152" r="11" fill="#444"/>
-            <circle cx="430" cy="152" r="26" fill="#15151a"/><circle cx="430" cy="152" r="11" fill="#444"/>
+          <svg viewBox="0 0 560 210" aria-label="Vanta 세단 실루엣">
+            <ellipse cx="290" cy="186" rx="234" ry="13" fill="#000" opacity=".32"/>
+            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="url(#carBody)"/>
+            <path d="M170 86 Q214 60 312 64 Q372 66 396 94 L188 95 Q174 92 170 86 Z" fill="url(#glassG)"/>
+            <line x1="286" y1="62" x2="286" y2="94" stroke="#0c0c0e" stroke-width="2.5" opacity=".5"/>
+            <path d="M212 95 Q216 122 222 148" stroke="#0c0c0e" stroke-width="1.6" fill="none" opacity=".3"/>
+            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="url(#carSheen)"/>
+            <path d="M44 126 q15 -4 28 2 l-2 11 q-15 2 -26 -2 Z" fill="#7fd0ff"/>
+            <rect x="512" y="118" width="25" height="9" rx="3" fill="#e0556a"/>
+            <g><circle cx="160" cy="152" r="29" fill="#0a0a0c"/><circle cx="160" cy="152" r="18" fill="#3a3a42"/><circle cx="160" cy="152" r="5.5" fill="#15151a"/></g>
+            <g><circle cx="430" cy="152" r="29" fill="#0a0a0c"/><circle cx="430" cy="152" r="18" fill="#3a3a42"/><circle cx="430" cy="152" r="5.5" fill="#15151a"/></g>
           </svg>
         </div>
       </div>
@@ -128,15 +163,21 @@
         <h1>정지에서 속도까지,<br>망설임 없이.</h1>
         <p class="sub">듀얼 모터가 네 바퀴를 동시에 민다. 생각하는 순간, 이미 달린다.</p>
         <div class="car-wrap">
-          <svg viewBox="0 0 560 200" aria-label="가속하는 Vanta">
-            <g class="streak" stroke="#3b82f6" stroke-width="5" stroke-linecap="round">
-              <line x1="0" y1="96" x2="96" y2="96"/>
-              <line x1="14" y1="118" x2="128" y2="118"/>
-              <line x1="0" y1="138" x2="74" y2="138"/>
+          <svg viewBox="0 0 560 210" aria-label="가속하는 Vanta">
+            <ellipse cx="290" cy="186" rx="234" ry="13" fill="#000" opacity=".32"/>
+            <g class="streak" stroke="#e0556a" stroke-width="5" stroke-linecap="round">
+              <line x1="0" y1="100" x2="96" y2="100"/>
+              <line x1="14" y1="122" x2="128" y2="122"/>
+              <line x1="0" y1="142" x2="74" y2="142"/>
             </g>
-            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="#3a1e24" stroke="#e0556a" stroke-width="1.5"/>
-            <circle cx="160" cy="152" r="26" fill="#15151a"/><circle cx="160" cy="152" r="11" fill="#666"/>
-            <circle cx="430" cy="152" r="26" fill="#15151a"/><circle cx="430" cy="152" r="11" fill="#666"/>
+            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="url(#carBodyR)"/>
+            <path d="M170 86 Q214 60 312 64 Q372 66 396 94 L188 95 Q174 92 170 86 Z" fill="url(#glassG)"/>
+            <line x1="286" y1="62" x2="286" y2="94" stroke="#0c0c0e" stroke-width="2.5" opacity=".5"/>
+            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="url(#carSheen)"/>
+            <path d="M44 126 q15 -4 28 2 l-2 11 q-15 2 -26 -2 Z" fill="#ffd27f"/>
+            <rect x="512" y="116" width="25" height="10" rx="3" fill="#ff5a6e"/>
+            <g><circle cx="160" cy="152" r="29" fill="#0a0a0c"/><circle cx="160" cy="152" r="18" fill="#5a5a64"/><circle cx="160" cy="152" r="5.5" fill="#15151a"/></g>
+            <g><circle cx="430" cy="152" r="29" fill="#0a0a0c"/><circle cx="430" cy="152" r="18" fill="#5a5a64"/><circle cx="430" cy="152" r="5.5" fill="#15151a"/></g>
           </svg>
         </div>
       </div>
@@ -174,6 +215,27 @@
       <div>
         <h1>멈출 때를 안다.</h1>
         <p class="sub">8개의 카메라가 360°를 본다. 끼어드는 차도, 갑자기 멈춘 차도.</p>
+        <div class="car-wrap" style="max-width:340px">
+          <svg viewBox="0 0 360 296" aria-label="360도 서라운드 카메라 감지 범위">
+            <g class="fov" fill="#3b82f6">
+              <path d="M180 145 L118 18 L242 18 Z"/>
+              <path d="M180 145 L118 272 L242 272 Z"/>
+              <path d="M180 145 L32 84 L32 206 Z"/>
+              <path d="M180 145 L328 84 L328 206 Z"/>
+            </g>
+            <circle class="ring360" cx="180" cy="145" r="116" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 9"/>
+            <rect x="150" y="86" width="60" height="118" rx="24" fill="#2f3a55"/>
+            <rect x="158" y="98" width="44" height="36" rx="10" fill="#1c2436"/>
+            <rect x="158" y="156" width="44" height="30" rx="9" fill="#1c2436" opacity=".7"/>
+            <g class="cam" fill="#7fd0ff">
+              <circle cx="180" cy="88" r="3.6"/><circle cx="180" cy="202" r="3.6"/>
+              <circle cx="152" cy="145" r="3.6"/><circle cx="208" cy="145" r="3.6"/>
+              <circle cx="156" cy="96" r="3.6"/><circle cx="204" cy="96" r="3.6"/>
+              <circle cx="156" cy="194" r="3.6"/><circle cx="204" cy="194" r="3.6"/>
+            </g>
+            <text x="180" y="290" text-anchor="middle" fill="#a0a0a8" font-size="12">8 카메라 · 360° 서라운드</text>
+          </svg>
+        </div>
       </div>
       <div class="specbar">
         <div class="c"><div class="v">8</div><div class="k">서라운드 카메라</div></div>
@@ -236,23 +298,30 @@
       <div class="inner">
         <h2>당신의 Vanta를 구성하세요</h2>
         <div class="car-wrap" style="margin:0 auto;max-width:400px;">
-          <svg viewBox="0 0 560 200" aria-label="구성 중인 차량">
+          <svg viewBox="0 0 560 210" aria-label="구성 중인 차량">
+            <ellipse cx="290" cy="186" rx="234" ry="13" fill="#000" opacity=".32"/>
             <path id="body" d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="#2f3a55"/>
-            <rect id="cabin" x="196" y="74" width="142" height="24" rx="9" fill="#1c1c22" opacity=".92"/>
+            <path id="cabin" d="M170 86 Q214 60 312 64 Q372 66 396 94 L188 95 Q174 92 170 86 Z" fill="#1c1c22" opacity=".95"/>
+            <line x1="286" y1="62" x2="286" y2="94" stroke="#0c0c0e" stroke-width="2.5" opacity=".5"/>
+            <path d="M40 140 Q70 96 150 88 Q210 56 320 60 Q430 64 470 96 L520 110 Q540 116 540 140 L540 150 L40 150 Z" fill="url(#carSheen)"/>
+            <path d="M44 126 q15 -4 28 2 l-2 11 q-15 2 -26 -2 Z" fill="#7fd0ff"/>
+            <rect x="512" y="118" width="25" height="9" rx="3" fill="#e0556a"/>
             <g id="wheels">
-              <circle class="hub" cx="160" cy="152" r="26" fill="#15151a"/><circle class="rim" cx="160" cy="152" r="11" fill="#444"/>
-              <circle class="hub" cx="430" cy="152" r="26" fill="#15151a"/><circle class="rim" cx="430" cy="152" r="11" fill="#444"/>
+              <g><circle cx="160" cy="152" r="29" fill="#0a0a0c"/><circle class="rim" cx="160" cy="152" r="18" fill="#444"/><circle cx="160" cy="152" r="5.5" fill="#15151a"/></g>
+              <g><circle cx="430" cy="152" r="29" fill="#0a0a0c"/><circle class="rim" cx="430" cy="152" r="18" fill="#444"/><circle cx="430" cy="152" r="5.5" fill="#15151a"/></g>
               <g class="spokes" style="display:none" stroke="#c0c4cc" stroke-width="2.4" stroke-linecap="round">
-                <line x1="160" y1="134" x2="160" y2="170"/><line x1="142" y1="152" x2="178" y2="152"/><line x1="148" y1="140" x2="172" y2="164"/><line x1="172" y1="140" x2="148" y2="164"/>
-                <line x1="430" y1="134" x2="430" y2="170"/><line x1="412" y1="152" x2="448" y2="152"/><line x1="418" y1="140" x2="442" y2="164"/><line x1="442" y1="140" x2="418" y2="164"/>
+                <line x1="160" y1="135" x2="160" y2="169"/><line x1="143" y1="152" x2="177" y2="152"/><line x1="148" y1="140" x2="172" y2="164"/><line x1="172" y1="140" x2="148" y2="164"/>
+                <line x1="430" y1="135" x2="430" y2="169"/><line x1="413" y1="152" x2="447" y2="152"/><line x1="418" y1="140" x2="442" y2="164"/><line x1="442" y1="140" x2="418" y2="164"/>
               </g>
             </g>
           </svg>
         </div>
         <div class="optgrid" id="cfg"></div>
+        <div class="cfgsummary" id="cfgsummary"></div>
         <div class="total">
           <div>
             <div style="font-size:12px;color:var(--ink-2)">예상 가격 · 주행거리 <b id="range" style="color:var(--ink)">628km</b></div>
+            <div class="pricerange" id="pricerange"></div>
             <div class="price" id="price">₩ 64,900,000</div>
             <div class="breakdown" id="breakdown"></div>
           </div>
@@ -307,6 +376,19 @@
             { label: '풀 자율주행 (베타)', delta: 9000000 },
           ],
           apply: function () {} },
+        { id: 'pkg', label: '패키지',
+          options: [
+            { label: '스탠다드', delta: 0 },
+            { label: '프리미엄', delta: 3500000 },
+            { label: '퍼포먼스', delta: 5500000 },
+          ],
+          apply: function () {} },
+        { id: 'charge', label: '충전',
+          options: [
+            { label: '기본 벽 충전기', delta: 0 },
+            { label: '수퍼차저 3년', delta: 1200000 },
+          ],
+          apply: function () {} },
       ];
       var state = GROUPS.map(function () { return 0; });
       function render() {
@@ -318,6 +400,15 @@
         });
         $('#price').textContent = fmt(total);
         $('#breakdown').textContent = paid.length ? '기본 ' + fmt(BASE) + ' · ' + paid.join(' · ') : '기본가 포함 · 추가 옵션 없음';
+        // 가능 가격 범위(최소~최대 옵션 합산)
+        var maxP = BASE;
+        GROUPS.forEach(function (g) { maxP += Math.max.apply(null, g.options.map(function (o) { return o.delta; })); });
+        var pr = $('#pricerange'); if (pr) pr.innerHTML = '가능 가격 ' + fmt(BASE) + ' ~ <b>' + fmt(maxP) + '</b>';
+        // 선택 요약(전 그룹)
+        var sm = $('#cfgsummary');
+        if (sm) sm.innerHTML = GROUPS.map(function (g, gi) {
+          return '<div class="row"><span>' + g.label + '</span><b>' + g.options[state[gi]].label + '</b></div>';
+        }).join('');
       }
       var cfg = $('#cfg');
       GROUPS.forEach(function (g, gi) {
