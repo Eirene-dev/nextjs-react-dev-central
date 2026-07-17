@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { isAdmin } from '@/lib/auth-helpers'
 import { getPublishedEssayBySlug } from '@/lib/essay-drafts'
-import { hashIp, today, recordView } from '@/lib/essay-views'
+import { hashIp, today, recordView, isBot } from '@/lib/essay-views'
 
 export const runtime = 'nodejs'
 
@@ -23,6 +23,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ slug: stri
     if (!essay) return NextResponse.json({ error: 'not found' }, { status: 404 })
 
     const current = essay.viewCount ?? 0
+
+    // 봇 → 카운트 없이 현재값만. 집계 정확도보다 비용이 이유다:
+    // 쓰기 1건이 Neon 을 깨우고 5분치 compute 로 결제된다. 위 조회는 캐시라 DB 를 안 친다.
+    if (isBot(req.headers.get('user-agent'))) return NextResponse.json({ count: current })
 
     // 관리자(작성자 본인) → 카운트 없이 현재값만(뻥튀기 방지)
     const session = await auth()
