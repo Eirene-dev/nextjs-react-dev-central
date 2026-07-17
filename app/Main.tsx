@@ -1,7 +1,7 @@
 import 'css/home.css'
 import Link from '@/components/Link'
 import DemoWidget from '@/components/home/DemoWidget'
-import { listPublishedEssays } from '@/lib/essay-drafts'
+import { listPublishedEssaysSafe } from '@/lib/essay-drafts'
 import { allAnatomy } from '@/lib/content'
 import showcasesData, { type ExperimentShowcase } from '@/data/showcasesData'
 
@@ -70,7 +70,9 @@ const FEATURES: { title: string; desc: string; icon: React.ReactNode; href?: str
 
 export default async function Main() {
   // 발행된 에세이만 라이브로(최대 3). 없으면 graceful "곧 공개".
-  const essays = (await listPublishedEssays()).slice(0, 3)
+  // null = DB 장애로 못 불러옴(≠ 글이 없음). 홈의 나머지는 정적 데이터라 그대로 뜬다.
+  const published = await listPublishedEssaysSafe()
+  const essays = (published ?? []).slice(0, 3)
   // 해부 최신 6편 — exhibit 내림차순(빌드타임 데이터). slice 로 향후 증가 대비.
   const anatomy = [...allAnatomy].sort((a, b) => b.exhibit - a.exhibit).slice(0, 6)
   // 실험 미리보기 6편 — AI×웹 전체(임팩트 순, 결정적). 전체 보기엔 세 갈래 모두 있음.
@@ -152,7 +154,14 @@ export default async function Main() {
           <p>AI가 아닌, 제 생각으로 쓴 글.</p>
         </div>
         <div className="elist">
-          {essays.length === 0 ? (
+          {published === null ? (
+            // DB 장애 — "글이 없다"고 하면 거짓말이 된다. 나머지 섹션은 정상 표시.
+            <div className="note" style={{ justifyContent: 'center' }}>
+              <h3 style={{ color: 'hsl(var(--ink-2))', fontWeight: 600 }}>
+                에세이를 잠시 불러올 수 없습니다 — 곧 복구됩니다
+              </h3>
+            </div>
+          ) : essays.length === 0 ? (
             <Link href="/essays" style={{ justifyContent: 'center' }}>
               <h3 style={{ color: 'hsl(var(--ink-2))', fontWeight: 600 }}>
                 첫 에세이를 준비 중입니다 — 곧 공개

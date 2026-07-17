@@ -105,6 +105,26 @@ export const listPublishedEssays = unstable_cache(selectPublishedEssays, ['essay
   revalidate: PUBLIC_TTL,
 })
 
+export type PublicEssaySummary = Awaited<ReturnType<typeof selectPublishedEssays>>[number]
+
+// 캐시 미스 + DB 장애(Neon 할당량 402·콜드스타트 타임아웃 등) 시 페이지 전체를 500 으로
+// 무너뜨리지 않기 위한 변형. 홈·목록은 나머지 콘텐츠(쇼케이스·해부·책)가 velite 정적
+// 데이터라 DB 없이도 의미가 있다 — 에세이 한 섹션 때문에 사이트를 내릴 이유가 없다.
+//
+// 실패를 [] 가 아니라 null 로 돌리는 게 핵심이다. [] 로 뭉개면 "발행된 글이 없음"과
+// "불러오지 못함"이 구분되지 않아 방문자에게 "아직 글이 없습니다"라고 거짓말하게 된다.
+//
+// 단건(getPublishedEssayBySlug)·sitemap 에는 일부러 쓰지 않는다 — 실제 글을 404 로,
+// 사이트맵을 "에세이 없음"으로 내보내면 색인이 지워질 수 있다. 그쪽은 500(재시도 요청)이 맞다.
+export async function listPublishedEssaysSafe(): Promise<PublicEssaySummary[] | null> {
+  try {
+    return await listPublishedEssays()
+  } catch (err) {
+    console.error('[essays] 발행 목록 조회 실패 — 캐시 미스 + DB 장애:', err)
+    return null
+  }
+}
+
 // 공개 단건 — 발행된 글만(slug + status='published'). 없으면 null → 라우트에서 notFound.
 async function selectPublishedEssayBySlug(slug: string) {
   const [row] = await db
