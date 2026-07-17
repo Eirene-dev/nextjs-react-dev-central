@@ -23,6 +23,8 @@ var s=parseInt(localStorage.getItem('essay:readingSize'),10); if(!isNaN(s)&&S[s]
 
 // 공개 읽기 — 발행된 글만(없거나 비공개 → 404). 색인 대상(noindex 아님).
 // 읽기 컨트롤·각주는 4·5단계.
+// Neon 은 getPublishedEssayBySlug 의 데이터 캐시 + cache() 요청 내 dedupe 가 지킨다
+// (요청당 왕복 4회 → 캐시 히트 시 0회). 발행/수정 시 revalidatePublicEssays() 가 무효화.
 export const dynamic = 'force-dynamic'
 
 const AUTHOR = 'Pax Code'

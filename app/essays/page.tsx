@@ -8,6 +8,7 @@ export const metadata = genPageMetadata({
 })
 
 // DB(발행 글) 의존 → 매 요청 렌더. 공개·색인 대상(noindex 아님).
+// Neon 은 listPublishedEssays 의 데이터 캐시가 지킨다 — 렌더는 해도 DB 왕복은 0.
 export const dynamic = 'force-dynamic'
 
 const fmtDate = (d: Date | string) => {

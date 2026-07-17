@@ -5,6 +5,9 @@ import siteMetadata from '@/data/siteMetadata'
 // 자동 OG 이미지 — 1200×630 브랜드 카드. 한글은 satori 기본 라틴 폰트로 깨지므로 Pretendard OTF 직접 제공.
 // (next/og 는 woff2 미지원 → otf 사용.) published 글만 의미, 폰트 실패 시 사이트 기본 이미지로 폴백.
 export const runtime = 'nodejs'
+// 형제 라우트와 캐시 정책을 맞춘다. 이전엔 TTL 이 없어 제목·발췌를 고쳐도
+// 카드가 영구히 낡은 채로 남을 수 있었다.
+export const revalidate = 3600
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 export const alt = '에세이 — ReactNext Central'
