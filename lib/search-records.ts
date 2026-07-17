@@ -1,4 +1,4 @@
-import { listPublishedEssays } from '@/lib/essay-drafts'
+import { listPublishedEssaysSafe } from '@/lib/essay-drafts'
 import { allAnatomy } from '@/lib/content'
 
 // 사이트 검색/안내 인덱스 — 발행 에세이(DB) + 해부(velite). 헤더 검색(/api/search-index)과
@@ -14,7 +14,8 @@ export type SearchRecord = {
 
 export async function buildSearchRecords(): Promise<SearchRecord[]> {
   // 발행 에세이(DB) — slug 있는 것만, path=essays/{slug}
-  const essays = await listPublishedEssays()
+  // DB 장애 시 검색 전체를 죽이지 않고 해부(velite)만으로 축소 동작한다.
+  const essays = (await listPublishedEssaysSafe()) ?? []
   const essayRecs: SearchRecord[] = essays
     .filter((e) => !!e.slug)
     .map((e) => ({

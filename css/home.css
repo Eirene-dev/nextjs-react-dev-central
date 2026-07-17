@@ -597,7 +597,9 @@
   flex-direction: column;
   gap: 14px;
 }
-.home .elist a {
+/* .note = 링크가 아닌 알림 카드(DB 장애 등). 카드 모양은 같고 hover 만 없다. */
+.home .elist a,
+.home .elist .note {
   display: flex;
   justify-content: space-between;
   align-items: center;

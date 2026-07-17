@@ -1,5 +1,5 @@
 import Link from '@/components/Link'
-import { listPublishedEssays } from '@/lib/essay-drafts'
+import { listPublishedEssaysSafe } from '@/lib/essay-drafts'
 import { genPageMetadata } from 'app/seo'
 
 export const metadata = genPageMetadata({
@@ -17,7 +17,8 @@ const fmtDate = (d: Date | string) => {
 }
 
 export default async function EssaysPage() {
-  const essays = await listPublishedEssays()
+  // null = DB 장애로 못 불러옴(≠ 글이 없음). 둘을 구분해 표시한다.
+  const essays = await listPublishedEssaysSafe()
 
   return (
     <div className="py-12">
@@ -27,7 +28,12 @@ export default async function EssaysPage() {
       </header>
 
       <div className="mx-auto flex min-w-0 max-w-[760px] flex-col gap-3.5">
-        {essays.length === 0 ? (
+        {essays === null ? (
+          <div className="rounded-2xl border border-dashed border-line bg-surface-2 py-20 text-center">
+            <p className="text-ink-2">에세이를 잠시 불러올 수 없습니다.</p>
+            <p className="mt-2 text-sm text-ink-3">일시적인 문제입니다 — 잠시 후 다시 시도해 주세요.</p>
+          </div>
+        ) : essays.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-line bg-surface-2 py-20 text-center">
             <p className="text-ink-2">아직 발행된 글이 없습니다.</p>
             <p className="mt-2 text-sm text-ink-3">곧 첫 글을 올립니다 — AI가 아닌, 제 생각으로.</p>
