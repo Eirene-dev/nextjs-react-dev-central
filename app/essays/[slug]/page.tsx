@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from '@/components/Link'
 import { getPublishedEssayBySlug, getAdjacentEssays } from '@/lib/essay-drafts'
+import { readDeltas } from '@/lib/counters'
 import EssayBody from '@/components/essays/EssayBody'
 import ReadingControls from '@/components/essays/ReadingControls'
 import FootnotePopover from '@/components/essays/FootnotePopover'
@@ -82,6 +83,11 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
   // 발행일 기준 인접 발행 글(이전/다음 글 내비게이션)
   const { prev, next } = await getAdjacentEssays(essay.publishedAt, essay.id)
 
+  // 캐시된 행의 카운트(base)는 마지막 플러시 시점 값이다. 아직 Postgres 에 안 내려간
+  // 증분을 Redis 에서 얹어야 초기 표시가 맞는다 — Redis 왕복이라 Neon 을 깨우지 않는다.
+  // (특히 조회수: 오늘 이미 본 방문자는 ViewCounter 가 POST 를 건너뛰어 이 값이 최종 표시값이다.)
+  const deltas = await readDeltas(essay.id)
+
   const url = essayUrl(decoded)
   // JSON-LD(BlogPosting) — published 글만. image 는 동적 OG(커밋 2 파일 컨벤션 URL).
   const jsonLd = {
@@ -116,7 +122,7 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
         <div className="essay-meta mt-3 flex flex-wrap items-center gap-x-2">
           {essay.publishedAt && <span>{fmtDate(essay.publishedAt)}</span>}
           {essay.publishedAt && <span aria-hidden>·</span>}
-          <ViewCounter slug={decoded} initialCount={essay.viewCount ?? 0} />
+          <ViewCounter slug={decoded} initialCount={(essay.viewCount ?? 0) + deltas.views} />
         </div>
         <hr className="essay-rule" />
         <div className="essay-body min-w-0">
@@ -134,7 +140,10 @@ export default async function EssayReadingPage(props: { params: Promise<{ slug: 
       <EssayPrevNext prev={prev} next={next} />
 
       {/* 하단 반응(👍) — 본문·각주·끝장식 아래 절제된 영역. */}
-      <EssayReaction slug={decoded} initialCount={essay.reactionCount ?? 0} />
+      <EssayReaction
+        slug={decoded}
+        initialCount={Math.max(0, (essay.reactionCount ?? 0) + deltas.reactions)}
+      />
 
       {/* 댓글(평면) — 반응 아래. 런타임 GET 로드(SSG 보존), 사이트 UI 폰트. */}
       <EssayComments slug={decoded} />

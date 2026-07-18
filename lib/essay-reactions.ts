@@ -20,7 +20,10 @@ export async function toggleReaction(
       .values({ essayId, reactorId })
       .onConflictDoNothing()
       .returning({ id: essayReactions.id })
-    if (inserted.length === 0) return currentCount // 이미 누름 — 그대로
+    // 이미 누름. currentCount(캐시된 행의 base)를 그대로 돌려주면 최대 TTL 만큼 낡은 값이라
+    // 방금 올라간 카운트가 도로 내려간 것처럼 보인다. 위 INSERT 로 compute 는 이미 깨어 있으므로
+    // 여기서의 SELECT 는 wake 를 새로 만들지 않는다. (Redis 경로는 여기까지 오지 않는다.)
+    if (inserted.length === 0) return await getReactionCount(essayId)
 
     const [row] = await db
       .update(essayDrafts)
@@ -35,7 +38,7 @@ export async function toggleReaction(
     .delete(essayReactions)
     .where(and(eq(essayReactions.essayId, essayId), eq(essayReactions.reactorId, reactorId)))
     .returning({ id: essayReactions.id })
-  if (deleted.length === 0) return currentCount // 누른 적 없음 — 그대로
+  if (deleted.length === 0) return await getReactionCount(essayId) // 누른 적 없음 — 위와 같은 이유
 
   // 0 미만 방지(GREATEST)
   const [row] = await db

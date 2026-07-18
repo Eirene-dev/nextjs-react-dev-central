@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { allAnatomy } from '@/lib/content'
 import { hashIp } from '@/lib/essay-views'
 import { getVoteCounts, castVote } from '@/lib/anatomy-votes'
+import { bufferVote, mergeVoteDeltas } from '@/lib/counters'
 
 export const runtime = 'nodejs'
 // 런타임 신선도 — 빌드에 굽지 않음. 페이지(SSG)와 분리, GET 은 no-store.
@@ -42,7 +43,9 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ slug: stri
   const slug = decodeSlug((await ctx.params).slug)
   if (!OPTION_KEYS[slug]) return NextResponse.json({ error: 'not found' }, { status: 404 })
   try {
-    const { counts, total } = await getVoteCounts(slug)
+    // base(캐시된 Postgres 집계) + 아직 플러시 안 된 Redis 증분.
+    const { counts: base } = await getVoteCounts(slug)
+    const { counts, total } = await mergeVoteDeltas(slug, base)
     return NextResponse.json({ counts, total }, { headers: { 'cache-control': 'no-store, max-age=0' } })
   } catch {
     return NextResponse.json({ counts: {}, total: 0 }, { headers: { 'cache-control': 'no-store, max-age=0' } })
@@ -77,8 +80,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ slug: stri
   }
 
   try {
-    await castVote(slug, parsed.data.option, parsed.data.token) // 중복은 ON CONFLICT 로 무시
-    const { counts, total } = await getVoteCounts(slug)
+    // Redis 버퍼 우선 — 표를 여기 모았다가 cron 이 하루 1회 Postgres 에 재생한다.
+    // 미설정·장애·대기열 포화면 null → 예전처럼 즉시 Postgres 에 쓴다.
+    const buffered = await bufferVote(slug, parsed.data.option, parsed.data.token)
+    if (buffered === null) {
+      await castVote(slug, parsed.data.option, parsed.data.token) // 중복은 ON CONFLICT 로 무시
+    }
+    const { counts: base } = await getVoteCounts(slug)
+    const { counts, total } = await mergeVoteDeltas(slug, base)
     return NextResponse.json({ counts, total })
   } catch {
     return NextResponse.json({ counts: {}, total: 0 }, { status: 200 })

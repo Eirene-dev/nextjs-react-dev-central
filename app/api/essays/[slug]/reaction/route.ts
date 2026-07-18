@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getPublishedEssayBySlug } from '@/lib/essay-drafts'
 import { toggleReaction } from '@/lib/essay-reactions'
+import { bufferReaction } from '@/lib/counters'
 
 export const runtime = 'nodejs'
 
@@ -35,8 +36,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ slug: stri
     const essay = await getPublishedEssayBySlug(slug)
     if (!essay) return NextResponse.json({ error: 'not found' }, { status: 404 })
 
-    const current = essay.reactionCount ?? 0
-    const count = await toggleReaction(essay.id, parsed.data.token, parsed.data.action, current)
+    // base = 마지막 플러시까지 Postgres 에 반영된 값. Redis 버퍼가 우선, 실패 시 직접 쓰기.
+    const base = essay.reactionCount ?? 0
+
+    const buffered = await bufferReaction(essay.id, parsed.data.token, parsed.data.action, base)
+    if (buffered !== null) return NextResponse.json({ count: buffered })
+
+    const count = await toggleReaction(essay.id, parsed.data.token, parsed.data.action, base)
     return NextResponse.json({ count })
   } catch {
     // 집계 실패는 노출하지 않음 — 가능한 현재 카운트(없으면 0)
