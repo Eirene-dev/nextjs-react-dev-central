@@ -10,7 +10,9 @@ export type VoteCounts = Record<string, number>
 
 // 전시별 태그 — 한 전시의 투표가 다른 20개 전시의 캐시까지 버리지 않게 slug 단위로 끊는다.
 const votesTag = (slug: string) => `anatomy-votes:${slug}`
-const VOTES_TTL = 3600 // 초. 정확성은 투표 시 태그 무효화가 책임진다.
+// 7일. 정확성은 투표 시 태그 무효화가 책임진다. 전시가 21개라 1시간 TTL 은
+// 최악의 경우 하루 21×24 번의 만료 시점을 만들었다 — 전부 개별 wake 후보다.
+const VOTES_TTL = 604800
 
 // slug 의 option별 카운트 집계.
 async function selectVoteCounts(slug: string): Promise<{ counts: VoteCounts; total: number }> {

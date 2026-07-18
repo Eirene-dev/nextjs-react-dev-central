@@ -8,7 +8,9 @@ import { essayComments } from '@/lib/db/schema'
 
 // 에세이별 태그 — 한 글의 댓글이 다른 글의 캐시까지 버리지 않게 essayId 단위로 끊는다.
 const commentsTag = (essayId: number) => `essay-comments:${essayId}`
-const COMMENTS_TTL = 3600 // 초. 정확성은 작성·삭제 시 태그 무효화가 책임진다.
+// 7일. 정확성은 작성·삭제 시 태그 무효화가 책임지므로 TTL 은 안전망일 뿐이다.
+// 글마다 키가 따로라 짧은 TTL 은 글 수만큼의 시차 wake 를 만든다.
+const COMMENTS_TTL = 604800
 
 // 공개로 내보내는 댓글(비삭제) / 묘비(삭제) — 삭제 시 작성자·본문 미노출(안전).
 // createdAt 이 string 인 이유: 어차피 NextResponse.json 이 Date 를 ISO 문자열로 직렬화해

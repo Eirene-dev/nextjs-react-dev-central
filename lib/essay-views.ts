@@ -39,7 +39,13 @@ export async function recordView(
     .onConflictDoNothing()
     .returning({ id: essayViewLog.id })
 
-  if (inserted.length === 0) return currentCount // 오늘 이미 본 IP — 카운트 그대로
+  if (inserted.length === 0) {
+    // 오늘 이미 본 IP. currentCount 를 그대로 돌려주면 안 된다 — 그 값은 캐시된 행에서 온
+    // base 라 최대 TTL 만큼 낡아, 방금 올라간 카운트가 도로 내려간 것처럼 보인다(4 → 3).
+    // 위 INSERT 로 이미 compute 가 깨어 있으므로 여기서의 SELECT 는 wake 를 새로 만들지 않는다.
+    // (Redis 경로에서는 여기까지 오지 않는다 — dedupe 가 enqueue 이전에 끝난다.)
+    return await getPublishedViewCount(essayId)
+  }
 
   const [row] = await db
     .update(essayDrafts)

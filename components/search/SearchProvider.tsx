@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   KBarProvider,
@@ -9,6 +9,7 @@ import {
   KBarAnimator,
   KBarSearch,
   KBarResults,
+  useKBar,
   useMatches,
   useRegisterActions,
   type Action,
@@ -25,7 +26,7 @@ type SearchRecord = {
   date: string
   summary: string
 }
-type LoadState = 'loading' | 'ready' | 'error'
+type LoadState = 'idle' | 'loading' | 'ready' | 'error'
 
 const SECTION = { essay: '에세이', anatomy: '해부' } as const
 
@@ -114,7 +115,7 @@ function SearchModal({ state }: { state: LoadState }) {
             <div className="px-4 py-10 text-center text-sm text-coral-2">
               검색을 불러오지 못했습니다.
             </div>
-          ) : state === 'loading' ? (
+          ) : state === 'loading' || state === 'idle' ? (
             <div className="px-4 py-10 text-center text-sm text-ink-3">불러오는 중…</div>
           ) : (
             <Results />
@@ -125,27 +126,36 @@ function SearchModal({ state }: { state: LoadState }) {
   )
 }
 
+// 인덱스는 검색창을 처음 열 때만 가져온다. 예전엔 마운트 즉시 받아서, 검색을 한 번도
+// 쓰지 않는 방문자까지 모든 페이지 로드마다 /api/search-index 를 때렸다 —
+// 그 라우트는 발행 에세이 목록(DB)을 합성하므로 캐시가 만료된 순간의 방문 하나가
+// Neon 을 깨웠다. 열 때 로드로 바꾸면 그 경로가 실제 사용자 의도에만 연결된다.
+function SearchIndexLoader({ state, onLoad }: { state: LoadState; onLoad: () => void }) {
+  const { opened } = useKBar((s) => ({ opened: s.visualState !== 'hidden' }))
+  useEffect(() => {
+    if (opened && state === 'idle') onLoad()
+  }, [opened, state, onLoad])
+  return null
+}
+
 export default function SearchProvider({ children }: { children: React.ReactNode }) {
   const [records, setRecords] = useState<SearchRecord[]>([])
-  const [state, setState] = useState<LoadState>('loading')
+  const [state, setState] = useState<LoadState>('idle')
 
-  useEffect(() => {
-    let alive = true
+  const load = useCallback(() => {
+    setState('loading')
     fetch('/api/search-index', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error('http'))))
       .then((d) => {
-        if (!alive) return
         setRecords(Array.isArray(d?.records) ? d.records : [])
         setState('ready')
       })
-      .catch(() => alive && setState('error'))
-    return () => {
-      alive = false
-    }
+      .catch(() => setState('error'))
   }, [])
 
   return (
     <KBarProvider>
+      <SearchIndexLoader state={state} onLoad={load} />
       <ActionRegistrar records={records} />
       <SearchModal state={state} />
       {children}
