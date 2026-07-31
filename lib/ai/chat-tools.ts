@@ -113,7 +113,8 @@ export const toolFns: Record<string, ToolFn> = {
           title: s.title,
           blurb: s.blurb,
           category: s.category,
-          path: linkPath(s.tier === 'experiment' ? s.href : s.url),
+          // 서사형 상세가 있으면 본 사이트 안쪽을 먼저 가리킨다(없으면 데모/외부 URL).
+          path: linkPath(s.narrative ?? (s.tier === 'experiment' ? s.href : s.url)),
         }))
       results.push(...sc)
     }

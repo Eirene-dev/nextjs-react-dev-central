@@ -2,9 +2,14 @@ import type { BuiltShowcase } from '@/data/showcasesData'
 
 // 실물(built) 카드 — 직접 만들어 운영 중인 제품.
 // 이름 · 한 줄 설명 · 외부 링크(새 탭) · 스크린샷 자리 · 핵심 판단 3줄.
+// narrative 있으면 카드 전체 = 본 사이트 서사형 상세(stretched 링크), "바로가기 ↗"는 그 위(z-20)의
+// 독립 링크로 외부 운영 URL을 새 탭에 연다. 없으면 종전대로 "바로가기 ↗" 하나만.
 export default function BuiltCard({ s }: { s: BuiltShowcase }) {
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:-translate-y-1 hover:border-coral-soft hover:shadow-soft">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:-translate-y-1 hover:border-coral-soft hover:shadow-soft">
+      {s.narrative && (
+        <a href={s.narrative} aria-label={`${s.title} 살펴보기`} className="absolute inset-0 z-10" />
+      )}
       <div className="aspect-[16/10] overflow-hidden border-b border-line bg-ink/5">
         {s.thumb ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -38,14 +43,21 @@ export default function BuiltCard({ s }: { s: BuiltShowcase }) {
             </li>
           ))}
         </ul>
-        <a
-          href={s.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-1 self-start text-sm font-semibold text-ink-3 transition-colors hover:text-coral-2"
-        >
-          바로가기 <span aria-hidden>↗</span>
-        </a>
+        <div className="mt-4 flex items-center gap-4">
+          {s.narrative && (
+            <span className="text-sm font-semibold text-ink-3 group-hover:text-coral-2">
+              살펴보기 →
+            </span>
+          )}
+          <a
+            href={s.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-20 inline-flex items-center gap-1 text-sm font-semibold text-ink-3 transition-colors hover:text-coral-2"
+          >
+            바로가기 <span aria-hidden>↗</span>
+          </a>
+        </div>
       </div>
     </div>
   )
