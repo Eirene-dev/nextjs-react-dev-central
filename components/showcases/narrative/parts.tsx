@@ -1,14 +1,15 @@
 import type { ReactNode } from 'react'
 import Link from '@/components/Link'
 
-// 실험 서사형 내러티브 공유 파츠 — 12종이 인프라(브레드크럼·히어로·CTA·비트 라벨)는 공유하고
+// 쇼케이스 서사형 내러티브 공유 파츠 — 실험·실물이 인프라(브레드크럼·히어로·CTA·비트 라벨)는 공유하고
 // 비트 안무·카피만 슬러그별로 다르게 짠다(CLAUDE.md: 인프라는 공유, 안무는 맞춤).
+// 실물은 진입 대상이 외부 도메인이라 CTA에 external(=target/rel)과 맞춤 라벨이 필요하다.
 
-export function Breadcrumb() {
+export function Breadcrumb({ tier = '실험' }: { tier?: string }) {
   return (
     <p className="mb-10 font-mono text-[11.5px] tracking-[0.04em] text-ink-3">
       <Link href="/showcases" className="hover:text-coral-2">
-        Showcases <span className="mx-1.5 text-coral-2">/</span> 실험
+        Showcases <span className="mx-1.5 text-coral-2">/</span> {tier}
       </Link>
     </p>
   )
@@ -21,6 +22,8 @@ export function Hero({
   demoHref,
   title,
   hint = '또는 아래로 — 기법을 먼저 보기 ↓',
+  ctaLabel,
+  external = false,
   children,
 }: {
   kicker: string
@@ -28,6 +31,8 @@ export function Hero({
   demoHref: string
   title: string
   hint?: string
+  ctaLabel?: string
+  external?: boolean
   children: ReactNode
 }) {
   return (
@@ -43,9 +48,10 @@ export function Hero({
       <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
         <a
           href={demoHref}
+          {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
           className="inline-flex items-center gap-2 rounded-full bg-coral-2 px-6 py-3 text-sm font-semibold text-white transition hover:bg-coral"
         >
-          {title} 데모 바로 실행 →
+          {ctaLabel ?? `${title} 데모 바로 실행 →`}
         </a>
         <span className="text-sm text-ink-3">{hint}</span>
       </div>
@@ -69,11 +75,15 @@ export function BottomCta({
   demoHref,
   title,
   heading = '이 문법이 제품을 만나면?',
+  ctaLabel,
+  external = false,
   children,
 }: {
   demoHref: string
   title: string
   heading?: string
+  ctaLabel?: string
+  external?: boolean
   children: ReactNode
 }) {
   return (
@@ -82,9 +92,10 @@ export function BottomCta({
       <p className="mx-auto mt-3 max-w-md text-ink-2">{children}</p>
       <a
         href={demoHref}
+        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         className="mt-8 inline-flex items-center gap-2 rounded-full bg-coral-2 px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-coral"
       >
-        {title} 데모 실행 →
+        {ctaLabel ?? `${title} 데모 실행 →`}
       </a>
     </section>
   )

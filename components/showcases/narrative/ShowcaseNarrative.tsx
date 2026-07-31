@@ -16,10 +16,13 @@ import CanvaslyNarrative from './CanvaslyNarrative'
 import DocentNarrative from './DocentNarrative'
 import RelayNarrative from './RelayNarrative'
 import SemaNarrative from './SemaNarrative'
+import DodreamNarrative from './DodreamNarrative'
 
-// 실험 서사형 인트로(본 사이트). ★ 데모가 scroll-native/시그니처이므로 내러티브는 "연구한 디자인 문법"의
-// 메타 해설 전용 — 데모의 제품 시퀀스를 재연하지 않는다(슬러그별 컴포넌트에 가드레일 명시).
+// 쇼케이스 서사형 상세(본 사이트) — 실험(정적 데모) + 실물(외부 운영 URL) 양쪽을 태운다.
+// ★ 대상이 이미 scroll-native/시그니처이므로 내러티브는 "연구한 디자인 문법" 또는 "설계 판단"의
+// 메타 해설 전용 — 대상의 제품 시퀀스를 재연하지 않는다(슬러그별 컴포넌트에 가드레일 명시).
 // 인프라(부드러운 스크롤·핀 보정)는 여기서 공유, 안무는 슬러그별 컴포넌트에서 맞춤.
+// demoHref 는 실험이면 정적 데모 경로, 실물이면 외부 URL — 외부 처리(target/rel)는 각 컴포넌트가 한다.
 type NarrativeProps = { title: string; demoHref: string }
 
 const REGISTRY: Record<string, ComponentType<NarrativeProps>> = {
@@ -35,9 +38,10 @@ const REGISTRY: Record<string, ComponentType<NarrativeProps>> = {
   docent: DocentNarrative,
   relay: RelayNarrative,
   sema: SemaNarrative,
+  dodream: DodreamNarrative,
 }
 
-export default function ExperimentNarrative({
+export default function ShowcaseNarrative({
   slug,
   title,
   demoHref,

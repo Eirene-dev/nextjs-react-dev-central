@@ -28,27 +28,32 @@ export interface BuiltShowcase extends ShowcaseBase {
   url: string // 외부 운영 URL (새 탭, rel=noopener)
   thumb?: string // 스크린샷(없으면 자리표시자)
   judgments: [string, string, string] // 핵심 판단 3줄
+  narrative?: string // 본 사이트 서사형 상세(/showcases/{slug}). 있으면 카드가 외부 대신 이리로.
 }
 
 export type Showcase = ExperimentShowcase | BuiltShowcase
 
 const showcasesData: Showcase[] = [
   // ── 실물(built) ───────────────────────────────────────────────
-  // 0건. 항목이 생기면 아래 주석 샘플처럼 한 건만 추가하면 끝난다.
-  // {
-  //   slug: 'mindvest-lab',
-  //   tier: 'built',
-  //   title: 'lab.mindvest.ai',
-  //   blurb: 'AI 투자 리서치 도구 — 직접 만들어 운영 중',
-  //   category: 'AI 통합',
-  //   url: 'https://lab.mindvest.ai',
-  //   thumb: '/static/showcases/mindvest-lab.png',
-  //   judgments: [
-  //     '왜 만들었나 — 한 줄',
-  //     '핵심 기술 결정 — 한 줄',
-  //     '직접 운영하며 배운 것 — 한 줄',
-  //   ],
-  // },
+  // 항목을 늘릴 땐 아래 형태로 한 건씩 추가한다.
+  // narrative 를 주면 카드가 외부 대신 본 사이트 서사형 상세(/showcases/{slug})로 진입하고,
+  // "바로가기 ↗"는 그 위(z-20)의 독립 링크로 남아 외부 운영 URL을 새 탭으로 연다.
+  {
+    slug: 'dodream',
+    tier: 'built',
+    title: '두드림글로벌 러닝센터',
+    blurb:
+      '중국어 학원 홈페이지 디자인 시안 15종 — 같은 학원, 열다섯 개의 얼굴. 15벌 × 31화면이 전부 동작하는 선택용 쇼케이스.',
+    category: '학원 · 홈페이지 시안',
+    url: 'https://dodream-showcase.vercel.app/',
+    thumb: '/static/showcases/dodream.png',
+    judgments: [
+      '데이터도 기능도 하나, 다른 건 디자인뿐 — 그래서 열다섯을 나란히 놓고 비교가 성립한다',
+      '첫 화면만 예쁜 목업 금지 — 15벌 × 31화면 465장을 다 만들어 끝까지 눌러보게 했다',
+      '홈페이지의 목적은 문의를 받는 것 — 그 뒤 문의→상담→등록을 잇는 운영 화면을 공통으로',
+    ],
+    narrative: '/showcases/dodream', // 서사형 상세(시안 15종의 설계 판단) → 그 안에서 사이트 열기
+  },
 
   // ── 실험(experiment) — AI×웹 BYOA 3종(Vite+React, 샘플 모드 기본 + 방문자 키) ──
   {

@@ -258,7 +258,9 @@ export default async function Main() {
           <Link className="btn btn-p" href="/showcases">
             쇼케이스 전체 보기 <ArrowRight />
           </Link>
-          <div className="soon">lab.mindvest.ai · 곧 공개</div>
+          <div className="soon">
+            <Link href="/showcases/dodream">두드림글로벌 러닝센터 · 홈페이지 시안 15종</Link>
+          </div>
         </div>
       </section>
     </div>
