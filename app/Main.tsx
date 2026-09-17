@@ -1,4 +1,5 @@
 import 'css/home.css'
+import Image from 'next/image'
 import Link from '@/components/Link'
 import DemoWidget from '@/components/home/DemoWidget'
 import { listPublishedEssaysSafe } from '@/lib/essay-drafts'
@@ -58,7 +59,7 @@ const FEATURES: { title: string; desc: string; icon: React.ReactNode; href?: str
   },
   {
     title: '출간한 책',
-    desc: 'Next.js 실전 가이드, 그리고 『AI 시대, 판단하는 개발자』.',
+    desc: 'Next.js 실전 가이드, 그리고 『코드를 넘어서』.',
     icon: (
       <>
         <path d="M4 19V5a2 2 0 012-2h12v18H6a2 2 0 01-2-2z" />
@@ -240,12 +241,31 @@ export default async function Main() {
         </div>
         <div className="book-strip">
           <Link href="/levelup/book">
-            <span className="bt">레벨업 리액트 프로그래밍 with Next.js</span>
-            <span className="bd">웹앱의 작동 원리부터 SSR 방식을 적용한 현대적 접근까지.</span>
+            <Image
+              className="bimg"
+              src="/static/images/levelup/cover_front.png"
+              alt="레벨업 리액트 프로그래밍 with Next.js 앞면"
+              width={93}
+              height={132}
+            />
+            <span className="btext">
+              <span className="bt">레벨업 리액트 프로그래밍 with Next.js</span>
+              <span className="bd">웹앱의 작동 원리부터 SSR 방식을 적용한 현대적 접근까지.</span>
+            </span>
           </Link>
           <Link href="/book/judgment-dev">
-            <span className="bt">AI 시대, 판단하는 개발자</span>
-            <span className="bd">출간 예정 — 무엇을 왜 선택하는가, 판단의 기록.</span>
+            <Image
+              className="bimg"
+              src="/static/images/beyond_code/cover_front.jpeg"
+              alt="코드를 넘어서 앞면"
+              width={92}
+              height={132}
+            />
+            <span className="btext">
+              <span className="bt">코드를 넘어서</span>
+              <span className="bsub">판단하는 개발자</span>
+              <span className="bd">무엇을 왜 선택하는가, 판단의 기록.</span>
+            </span>
           </Link>
         </div>
       </section>

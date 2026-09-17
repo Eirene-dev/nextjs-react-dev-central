@@ -5,8 +5,11 @@ import { genPageMetadata } from 'app/seo'
 
 export const metadata = genPageMetadata({
   title: 'Book',
-  description: '출간한 책들 — Next.js 실전 가이드와 『AI 시대, 판단하는 개발자』.',
+  description: '출간한 책들 — Next.js 실전 가이드와 『코드를 넘어서』.',
 })
+
+// 두 카드의 표지 높이를 맞추는 기준값(px). 폭은 원본 비율대로 계산해 늘어남/잘림 없이 둔다.
+const COVER_H = 171
 
 export default function BookPage() {
   return (
@@ -33,17 +36,18 @@ export default function BookPage() {
                 {b.status}
               </span>
             </div>
-            {b.cover && (
+            {b.cover && b.coverWidth && b.coverHeight && (
               <Image
                 src={b.cover}
-                alt={b.title}
-                width={120}
-                height={171}
-                className="rounded-md shadow-soft"
+                alt={`${b.title} 앞면`}
+                width={Math.round((COVER_H * b.coverWidth) / b.coverHeight)}
+                height={COVER_H}
+                className="h-[171px] w-auto max-w-full self-start rounded-md shadow-soft"
               />
             )}
             <div>
               <h2 className="text-lg font-bold tracking-tight text-ink">{b.title}</h2>
+              {b.subtitle && <p className="mt-1 text-sm font-semibold text-ink-2">{b.subtitle}</p>}
               <p className="mt-2 text-sm text-ink-2">{b.description}</p>
             </div>
           </Link>

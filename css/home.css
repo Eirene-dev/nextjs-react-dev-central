@@ -638,8 +638,8 @@
 }
 .home .book-strip a {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 18px;
   padding: 22px 24px;
   border: 1px solid hsl(var(--line));
   border-radius: 16px;
@@ -650,12 +650,32 @@
   border-color: hsl(var(--coral-soft));
   box-shadow: var(--shadow);
 }
+/* 표지: 두 카드의 높이를 맞추고 폭은 원본 비율대로(늘어남/잘림 없음). */
+.home .book-strip .bimg {
+  flex: none;
+  height: 132px;
+  width: auto;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+.home .book-strip .btext {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 .home .book-strip .bt {
   font-size: 16px;
   font-weight: 700;
   color: hsl(var(--ink));
 }
+.home .book-strip .bsub {
+  margin-top: 3px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: hsl(var(--ink-2));
+}
 .home .book-strip .bd {
+  margin-top: 6px;
   font-size: 13.5px;
   color: hsl(var(--ink-2));
 }
@@ -748,6 +768,13 @@
 @media (max-width: 540px) {
   .home .feats-grid {
     grid-template-columns: 1fr;
+  }
+  .home .book-strip a {
+    gap: 14px;
+    padding: 18px;
+  }
+  .home .book-strip .bimg {
+    height: 104px;
   }
   .home .elist a {
     flex-direction: column;

@@ -6,7 +6,7 @@ import Link from '@/components/Link'
 import { genPageMetadata } from 'app/seo'
 
 export const metadata = genPageMetadata({
-  title: '판단하는 개발자 — 문의·토론·오타 제보',
+  title: '코드를 넘어서 — 문의·토론·오타 제보',
   description: '책에 대한 문의·토론·오타 제보 게시판.',
 })
 
@@ -36,7 +36,7 @@ export default async function BoardPage() {
       </Link>
       <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-ink">문의 · 토론 · 오타 제보</h1>
       <p className="mb-8 mt-3 text-ink-2">
-        『AI 시대, 판단하는 개발자』에 대한 질문과 토론, 오타 제보를 남겨주세요.
+        『코드를 넘어서』에 대한 질문과 토론, 오타 제보를 남겨주세요.
       </p>
       <Board
         initial={initial}

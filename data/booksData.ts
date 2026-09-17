@@ -1,10 +1,14 @@
 // /book 인덱스 정적 카드. Next.js 책은 기존 /levelup/book URL 유지(리스타일 없음).
 export interface Book {
   title: string
+  subtitle?: string
   description: string
   href: string
   status: '출간' | '출간 예정'
   cover?: string
+  // 표지 원본 비율(px). 두 카드의 표지 높이를 맞추면서 비율을 유지하려고 함께 둔다.
+  coverWidth?: number
+  coverHeight?: number
 }
 
 const booksData: Book[] = [
@@ -14,12 +18,18 @@ const booksData: Book[] = [
     href: '/levelup/book',
     status: '출간',
     cover: '/static/images/levelup/cover_front.png',
+    coverWidth: 458,
+    coverHeight: 653,
   },
   {
-    title: 'AI 시대, 판단하는 개발자',
-    description: 'AI가 코드를 쓰는 시대에 더 중요해진 것 — 무엇을 왜 선택하는가, 판단과 취향의 기록.',
+    title: '코드를 넘어서',
+    subtitle: '판단하는 개발자',
+    description: '무엇을 왜 선택하는가, 판단의 기록.',
     href: '/book/judgment-dev',
-    status: '출간 예정',
+    status: '출간',
+    cover: '/static/images/beyond_code/cover_front.jpeg',
+    coverWidth: 837,
+    coverHeight: 1200,
   },
 ]
 
