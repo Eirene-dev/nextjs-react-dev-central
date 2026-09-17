@@ -68,7 +68,7 @@ export default function AboutBio() {
               결합한 혁신적인 서비스 개발에 집중하고 있으며, 저서{' '}
               <Link href={BOOK_URL}>『Level Up React Programming with Next.js</Link>』를 통해 사용자
               중심 소프트웨어 설계와 지속 가능한 개발 방법론에 대한 통찰을 나누고자 합니다. 또한{' '}
-              <Link href={JUDGMENT_URL}>『AI 시대, 판단하는 개발자』</Link>와{' '}
+              <Link href={JUDGMENT_URL}>『코드를 넘어서』</Link>와{' '}
               <Link href="/essays">에세이</Link>를 통해 AI 시대에 개발자가 스스로 사고하고 판단하는
               힘을 어떻게 기를지 함께 고민하고자 합니다.
             </p>
@@ -94,7 +94,7 @@ export default function AboutBio() {
               share insights on user-centric software design and sustainable development
               methodologies. Through{' '}
               <Link href={JUDGMENT_URL}>
-                『AI 시대, 판단하는 개발자』 (The Developer Who Judges in the AI Era)
+                『코드를 넘어서: 판단하는 개발자』 (Beyond Code: The Developer Who Judges)
               </Link>{' '}
               and his <Link href="/essays">essays</Link>, he also explores how developers can
               cultivate the ability to think and judge for themselves in the age of AI.
